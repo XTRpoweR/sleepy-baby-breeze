@@ -1,6 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   Moon, 
   Clock, 
@@ -17,6 +18,17 @@ import {
 } from "lucide-react";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
   const features = [
     {
       icon: Clock,
@@ -85,10 +97,16 @@ const Index = () => {
               <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">Features</a>
               <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-colors">Insights</a>
               <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-colors">Reviews</a>
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
+              {user ? (
+                <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700">
+                  Go to Dashboard
+                </Button>
+              ) : (
+                <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700">
+                  <Download className="h-4 w-4 mr-2" />
+                  Get Started
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -111,7 +129,11 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
+                <Button 
+                  size="lg" 
+                  className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6"
+                  onClick={handleGetStarted}
+                >
                   <Play className="h-5 w-5 mr-2" />
                   Start Tracking Now
                 </Button>
@@ -232,7 +254,11 @@ const Index = () => {
                   <span className="text-gray-700">Progress tracking and milestones</span>
                 </div>
               </div>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                size="lg" 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={handleGetStarted}
+              >
                 See Your Sleep Insights
               </Button>
             </div>
@@ -319,7 +345,11 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6">
+            <Button 
+              size="lg" 
+              className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6"
+              onClick={handleGetStarted}
+            >
               <Download className="h-5 w-5 mr-2" />
               Start Tracking Now
             </Button>
