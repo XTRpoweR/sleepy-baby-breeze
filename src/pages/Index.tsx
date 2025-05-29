@@ -1,7 +1,6 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
 import { 
   Moon, 
   Clock, 
@@ -18,12 +17,6 @@ import {
 } from "lucide-react";
 
 const Index = () => {
-  const navigate = useNavigate();
-
-  const handleDashboardAccess = () => {
-    navigate("/dashboard");
-  };
-
   const features = [
     {
       icon: Clock,
@@ -92,20 +85,10 @@ const Index = () => {
               <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">Features</a>
               <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-colors">Insights</a>
               <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-colors">Reviews</a>
-              <SignedOut>
-                <SignUpButton mode="modal" fallbackRedirectUrl="/dashboard">
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                </SignUpButton>
-              </SignedOut>
-              <SignedIn>
-                <Button onClick={handleDashboardAccess} className="bg-blue-600 hover:bg-blue-700">
-                  <Download className="h-4 w-4 mr-2" />
-                  Go to Dashboard
-                </Button>
-              </SignedIn>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
             </div>
           </div>
         </div>
@@ -128,20 +111,10 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <SignedOut>
-                  <SignUpButton mode="modal" fallbackRedirectUrl="/dashboard">
-                    <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
-                      <Play className="h-5 w-5 mr-2" />
-                      Start Tracking Now
-                    </Button>
-                  </SignUpButton>
-                </SignedOut>
-                <SignedIn>
-                  <Button size="lg" onClick={handleDashboardAccess} className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
-                    <Play className="h-5 w-5 mr-2" />
-                    Go to Dashboard
-                  </Button>
-                </SignedIn>
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
+                  <Play className="h-5 w-5 mr-2" />
+                  Start Tracking Now
+                </Button>
                 <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-blue-200 hover:bg-blue-50">
                   Explore All Features
                 </Button>
@@ -346,20 +319,10 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <SignedOut>
-              <SignUpButton mode="modal" fallbackRedirectUrl="/dashboard">
-                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6">
-                  <Download className="h-5 w-5 mr-2" />
-                  Start Tracking Now
-                </Button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <Button size="lg" onClick={handleDashboardAccess} className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6">
-                <Download className="h-5 w-5 mr-2" />
-                Go to Dashboard
-              </Button>
-            </SignedIn>
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6">
+              <Download className="h-5 w-5 mr-2" />
+              Start Tracking Now
+            </Button>
             <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600 text-lg px-8 py-6">
               Explore All Features
             </Button>
