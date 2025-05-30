@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,10 @@ const Dashboard = () => {
 
   const handleTrackActivity = () => {
     navigate('/track');
+  };
+
+  const handleSleepSchedule = () => {
+    navigate('/sleep-schedule');
   };
 
   if (loading) {
@@ -106,6 +109,16 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleSleepSchedule}>
+            <CardContent className="p-6 text-center">
+              <div className="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                <Moon className="h-6 w-6 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Sleep Schedule</h3>
+              <p className="text-sm text-gray-600">Get personalized sleep recommendations</p>
+            </CardContent>
+          </Card>
+
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-6 text-center">
               <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
@@ -118,21 +131,11 @@ const Dashboard = () => {
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-6 text-center">
-              <div className="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="h-6 w-6 text-purple-600" />
+              <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="h-6 w-6 text-orange-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">View Reports</h3>
               <p className="text-sm text-gray-600">Analyze sleep and activity patterns</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                <Calendar className="h-6 w-6 text-orange-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Schedule</h3>
-              <p className="text-sm text-gray-600">Manage sleep and activity schedules</p>
             </CardContent>
           </Card>
         </div>
