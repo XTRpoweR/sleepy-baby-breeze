@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,19 +7,40 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { BabyProfileSetup } from '@/components/baby-profile/BabyProfileSetup';
+import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
 import { SleepScheduleSetup } from '@/components/sleep-schedule/SleepScheduleSetup';
 import { SleepScheduleDisplay } from '@/components/sleep-schedule/SleepScheduleDisplay';
 import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { ScheduleAdjustmentNotifications } from '@/components/sleep-schedule/ScheduleAdjustmentNotifications';
 import { Tables } from '@/integrations/supabase/types';
 import { BabyGrowthTracker } from '@/components/growth/BabyGrowthTracker';
+import { useBabyProfile } from '@/hooks/useBabyProfile';
+
+// Type definitions for sleep schedule functionality
+export interface SleepScheduleData {
+  childAge: number;
+  currentBedtime: string;
+  currentWakeTime: string;
+  napFrequency: 'none' | 'one' | 'two' | 'three-plus';
+  sleepChallenges: string[];
+}
+
+export interface ScheduleRecommendation {
+  bedtime: string;
+  wakeTime: string;
+  naps: Array<{
+    name: string;
+    startTime: string;
+    duration: number;
+  }>;
+  totalSleepHours: number;
+}
 
 const SleepSchedule = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { user } = useAuth();
-  const [selectedBaby, setSelectedBaby] = useState<Tables<'baby_profiles'> | null>(null);
+  const { profile, loading, createProfile } = useBabyProfile();
   const [currentSchedule, setCurrentSchedule] = useState<Tables<'sleep_schedules'> | null>(null);
   const [pendingAdjustments, setPendingAdjustments] = useState<any[]>([]);
 
@@ -26,38 +48,9 @@ const SleepSchedule = () => {
     const babyId = searchParams.get('baby');
 
     if (babyId && user) {
-      fetchBabyProfile(babyId);
       fetchCurrentSchedule(babyId);
     }
   }, [searchParams, user]);
-
-  const fetchBabyProfile = async (babyId: string) => {
-    try {
-      const { data: babyProfile, error } = await supabase
-        .from('baby_profiles')
-        .select('*')
-        .eq('id', babyId)
-        .single();
-
-      if (error) {
-        console.error("Error fetching baby profile:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load baby profile",
-          variant: "destructive",
-        });
-      }
-
-      setSelectedBaby(babyProfile);
-    } catch (error) {
-      console.error("Error fetching baby profile:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load baby profile",
-        variant: "destructive",
-      });
-    }
-  };
 
   const fetchCurrentSchedule = async (babyId: string) => {
     try {
@@ -93,6 +86,17 @@ const SleepSchedule = () => {
     setCurrentSchedule(schedule);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -103,8 +107,8 @@ const SleepSchedule = () => {
           </p>
         </div>
 
-        {!selectedBaby ? (
-          <BabyProfileSetup />
+        {!profile ? (
+          <BabyProfileSetup onProfileCreated={createProfile} />
         ) : (
           <Tabs defaultValue="sleep-schedule" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -115,20 +119,22 @@ const SleepSchedule = () => {
             <TabsContent value="sleep-schedule" className="space-y-6">
               {pendingAdjustments.length > 0 && (
                 <ScheduleAdjustmentNotifications
-                  babyId={selectedBaby.id}
+                  babyId={profile.id}
                   currentSchedule={currentSchedule}
                 />
               )}
 
               {!currentSchedule ? (
-                <SleepScheduleSetup babyId={selectedBaby.id} />
+                <SleepScheduleSetup 
+                  babyId={profile.id}
+                />
               ) : (
                 <div className="grid gap-6">
                   <SleepScheduleDisplay schedule={currentSchedule} />
                   
                   <div className="grid md:grid-cols-2 gap-6">
                     <SavedSchedules 
-                      babyId={selectedBaby.id}
+                      babyId={profile.id}
                       onScheduleSelect={handleScheduleSelect}
                     />
                     <Card>
@@ -152,9 +158,9 @@ const SleepSchedule = () => {
 
             <TabsContent value="growth-tracker">
               <BabyGrowthTracker
-                babyId={selectedBaby.id}
-                babyName={selectedBaby.name}
-                birthDate={selectedBaby.birth_date || ''}
+                babyId={profile.id}
+                babyName={profile.name}
+                birthDate={profile.birth_date || ''}
               />
             </TabsContent>
           </Tabs>
