@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,6 +10,7 @@ import { SleepScheduleDisplay } from '@/components/sleep-schedule/SleepScheduleD
 import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSleepSchedule } from '@/hooks/useSleepSchedule';
+import { Tables } from '@/integrations/supabase/types';
 
 export interface SleepScheduleData {
   childAge: number; // in months
@@ -38,7 +38,7 @@ const SleepSchedule = () => {
   const { saveSleepSchedule } = useSleepSchedule(profile?.id || null);
   const [scheduleData, setScheduleData] = useState<SleepScheduleData | null>(null);
   const [recommendation, setRecommendation] = useState<ScheduleRecommendation | null>(null);
-  const [viewingSchedule, setViewingSchedule] = useState<any>(null);
+  const [viewingSchedule, setViewingSchedule] = useState<Tables<'sleep_schedules'> | null>(null);
   const [activeTab, setActiveTab] = useState('create');
 
   useEffect(() => {
@@ -90,20 +90,20 @@ const SleepSchedule = () => {
     }
   };
 
-  const handleViewSavedSchedule = (schedule: any) => {
+  const handleViewSavedSchedule = (schedule: Tables<'sleep_schedules'>) => {
     // Convert saved schedule to display format
     const scheduleRecommendation: ScheduleRecommendation = {
       bedtime: schedule.recommended_bedtime,
       wakeTime: schedule.recommended_wake_time,
-      naps: schedule.recommended_naps || [],
-      totalSleepHours: schedule.total_sleep_hours
+      naps: Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps as any[] : [],
+      totalSleepHours: Number(schedule.total_sleep_hours)
     };
     
     const scheduleData: SleepScheduleData = {
       childAge: schedule.child_age,
       currentBedtime: schedule.current_bedtime,
       currentWakeTime: schedule.current_wake_time,
-      napFrequency: schedule.nap_frequency,
+      napFrequency: schedule.nap_frequency as 'none' | 'one' | 'two' | 'three-plus',
       sleepChallenges: schedule.sleep_challenges || []
     };
 

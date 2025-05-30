@@ -2,13 +2,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { History, Trash2, Eye, Calendar } from 'lucide-react';
 import { useSleepSchedule } from '@/hooks/useSleepSchedule';
+import { Tables } from '@/integrations/supabase/types';
 
 interface SavedSchedulesProps {
   babyId: string;
-  onViewSchedule: (schedule: any) => void;
+  onViewSchedule: (schedule: Tables<'sleep_schedules'>) => void;
 }
 
 export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) => {
@@ -122,7 +122,9 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
                 </div>
                 <div>
                   <div className="font-medium text-gray-700">Naps</div>
-                  <div className="text-green-600">{schedule.recommended_naps?.length || 0} naps</div>
+                  <div className="text-green-600">
+                    {Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps.length : 0} naps
+                  </div>
                 </div>
                 <div>
                   <div className="font-medium text-gray-700">Challenges</div>

@@ -4,22 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { SleepScheduleData, ScheduleRecommendation } from '@/pages/SleepSchedule';
+import { Tables } from '@/integrations/supabase/types';
 
-interface SavedSleepSchedule {
-  id: string;
-  baby_id: string;
-  child_age: number;
-  current_bedtime: string;
-  current_wake_time: string;
-  nap_frequency: 'none' | 'one' | 'two' | 'three-plus';
-  sleep_challenges: string[];
-  recommended_bedtime: string;
-  recommended_wake_time: string;
-  recommended_naps: any;
-  total_sleep_hours: number;
-  created_at: string;
-  updated_at: string;
-}
+// Use the database type directly and extend it if needed
+type SavedSleepSchedule = Tables<'sleep_schedules'>;
 
 export const useSleepSchedule = (babyId: string | null) => {
   const { user } = useAuth();
