@@ -13,7 +13,6 @@ import {
   Baby,
   Heart,
   CheckCircle,
-  Download,
   Play
 } from "lucide-react";
 
@@ -103,7 +102,6 @@ const Index = () => {
                 </Button>
               ) : (
                 <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700">
-                  <Download className="h-4 w-4 mr-2" />
                   Get Started
                 </Button>
               )}
@@ -350,7 +348,6 @@ const Index = () => {
               className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6"
               onClick={handleGetStarted}
             >
-              <Download className="h-5 w-5 mr-2" />
               Start Tracking Now
             </Button>
             <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600 text-lg px-8 py-6">
