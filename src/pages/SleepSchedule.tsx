@@ -135,7 +135,7 @@ const SleepSchedule = () => {
                   <div className="grid md:grid-cols-2 gap-6">
                     <SavedSchedules 
                       babyId={profile.id}
-                      onScheduleSelect={handleScheduleSelect}
+                      onViewSchedule={handleScheduleSelect}
                     />
                     <Card>
                       <CardHeader>
