@@ -13,13 +13,13 @@ import {
   Plus,
   ArrowLeft,
   Clock,
-  Bath,
-  Activity
+  History
 } from 'lucide-react';
 import { SleepTracker } from '@/components/tracking/SleepTracker';
 import { FeedingTracker } from '@/components/tracking/FeedingTracker';
 import { DiaperTracker } from '@/components/tracking/DiaperTracker';
 import { CustomActivityTracker } from '@/components/tracking/CustomActivityTracker';
+import { ActivityLogsList } from '@/components/tracking/ActivityLogsList';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 
@@ -68,7 +68,7 @@ const TrackActivity = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
@@ -90,43 +90,52 @@ const TrackActivity = () => {
           </div>
         </div>
 
-        {/* Activity Tracking Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 mb-8">
-            <TabsTrigger value="sleep" className="flex items-center space-x-2">
-              <Moon className="h-4 w-4" />
-              <span>Sleep</span>
-            </TabsTrigger>
-            <TabsTrigger value="feeding" className="flex items-center space-x-2">
-              <Bottle className="h-4 w-4" />
-              <span>Feeding</span>
-            </TabsTrigger>
-            <TabsTrigger value="diaper" className="flex items-center space-x-2">
-              <Heart className="h-4 w-4" />
-              <span>Diaper</span>
-            </TabsTrigger>
-            <TabsTrigger value="custom" className="flex items-center space-x-2">
-              <Plus className="h-4 w-4" />
-              <span>Custom</span>
-            </TabsTrigger>
-          </TabsList>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Activity Tracking */}
+          <div className="lg:col-span-2">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-4 mb-8">
+                <TabsTrigger value="sleep" className="flex items-center space-x-2">
+                  <Moon className="h-4 w-4" />
+                  <span>Sleep</span>
+                </TabsTrigger>
+                <TabsTrigger value="feeding" className="flex items-center space-x-2">
+                  <Bottle className="h-4 w-4" />
+                  <span>Feeding</span>
+                </TabsTrigger>
+                <TabsTrigger value="diaper" className="flex items-center space-x-2">
+                  <Heart className="h-4 w-4" />
+                  <span>Diaper</span>
+                </TabsTrigger>
+                <TabsTrigger value="custom" className="flex items-center space-x-2">
+                  <Plus className="h-4 w-4" />
+                  <span>Custom</span>
+                </TabsTrigger>
+              </TabsList>
 
-          <TabsContent value="sleep">
-            <SleepTracker babyId={profile.id} />
-          </TabsContent>
+              <TabsContent value="sleep">
+                <SleepTracker babyId={profile.id} />
+              </TabsContent>
 
-          <TabsContent value="feeding">
-            <FeedingTracker babyId={profile.id} />
-          </TabsContent>
+              <TabsContent value="feeding">
+                <FeedingTracker babyId={profile.id} />
+              </TabsContent>
 
-          <TabsContent value="diaper">
-            <DiaperTracker babyId={profile.id} />
-          </TabsContent>
+              <TabsContent value="diaper">
+                <DiaperTracker babyId={profile.id} />
+              </TabsContent>
 
-          <TabsContent value="custom">
-            <CustomActivityTracker babyId={profile.id} />
-          </TabsContent>
-        </Tabs>
+              <TabsContent value="custom">
+                <CustomActivityTracker babyId={profile.id} />
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Activity Logs */}
+          <div className="lg:col-span-1">
+            <ActivityLogsList babyId={profile.id} />
+          </div>
+        </div>
       </div>
     </div>
   );
