@@ -9,6 +9,80 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      baby_activities: {
+        Row: {
+          activity_type: string
+          baby_id: string
+          created_at: string
+          duration_minutes: number | null
+          end_time: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          activity_type: string
+          baby_id: string
+          created_at?: string
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          activity_type?: string
+          baby_id?: string
+          created_at?: string
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "baby_activities_baby_id_fkey"
+            columns: ["baby_id"]
+            isOneToOne: false
+            referencedRelation: "baby_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      baby_profiles: {
+        Row: {
+          birth_date: string | null
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          birth_date?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          birth_date?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

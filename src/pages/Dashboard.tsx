@@ -12,7 +12,8 @@ import {
   LogOut,
   Baby,
   Plus,
-  TrendingUp
+  TrendingUp,
+  Activity
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -29,6 +30,10 @@ const Dashboard = () => {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+  };
+
+  const handleTrackActivity = () => {
+    navigate('/track');
   };
 
   if (loading) {
@@ -85,19 +90,19 @@ const Dashboard = () => {
             Welcome back, {user.user_metadata?.full_name?.split(' ')[0] || 'there'}! 👋
           </h1>
           <p className="text-gray-600">
-            Ready to track your baby's sleep patterns today?
+            Ready to track your baby's sleep patterns and activities today?
           </p>
         </div>
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleTrackActivity}>
             <CardContent className="p-6 text-center">
               <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                <Plus className="h-6 w-6 text-blue-600" />
+                <Activity className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Start Sleep Session</h3>
-              <p className="text-sm text-gray-600">Begin tracking a new sleep period</p>
+              <h3 className="font-semibold text-gray-900 mb-2">Track Activities</h3>
+              <p className="text-sm text-gray-600">Log sleep, feeding, diaper changes</p>
             </CardContent>
           </Card>
 
@@ -107,7 +112,7 @@ const Dashboard = () => {
                 <Clock className="h-6 w-6 text-green-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Quick Log</h3>
-              <p className="text-sm text-gray-600">Add a completed sleep session</p>
+              <p className="text-sm text-gray-600">Add a completed activity session</p>
             </CardContent>
           </Card>
 
@@ -117,7 +122,7 @@ const Dashboard = () => {
                 <BarChart3 className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">View Reports</h3>
-              <p className="text-sm text-gray-600">Analyze sleep patterns</p>
+              <p className="text-sm text-gray-600">Analyze sleep and activity patterns</p>
             </CardContent>
           </Card>
 
@@ -127,7 +132,7 @@ const Dashboard = () => {
                 <Calendar className="h-6 w-6 text-orange-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Schedule</h3>
-              <p className="text-sm text-gray-600">Manage sleep schedules</p>
+              <p className="text-sm text-gray-600">Manage sleep and activity schedules</p>
             </CardContent>
           </Card>
         </div>
@@ -139,19 +144,19 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Baby className="h-5 w-5 text-blue-600" />
-                <span>Today's Sleep Summary</span>
+                <span>Today's Activity Summary</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <Moon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Start Tracking Sleep</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Start Tracking Activities</h3>
                 <p className="text-gray-600 mb-4">
-                  Begin logging your baby's sleep to see insights and patterns here.
+                  Begin logging your baby's activities to see insights and patterns here.
                 </p>
-                <Button className="bg-blue-600 hover:bg-blue-700">
+                <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleTrackActivity}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Log First Sleep Session
+                  Start Tracking
                 </Button>
               </div>
             </CardContent>
@@ -168,15 +173,15 @@ const Dashboard = () => {
             <CardContent className="space-y-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">0h 0m</div>
-                <div className="text-sm text-gray-600">Average Night Sleep</div>
+                <div className="text-sm text-gray-600">Average Sleep</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">0</div>
-                <div className="text-sm text-gray-600">Sleep Sessions</div>
+                <div className="text-sm text-gray-600">Feedings</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">-</div>
-                <div className="text-sm text-gray-600">Sleep Quality</div>
+                <div className="text-2xl font-bold text-gray-900">0</div>
+                <div className="text-sm text-gray-600">Diaper Changes</div>
               </div>
               <div className="pt-4 border-t">
                 <p className="text-xs text-gray-500 text-center">
