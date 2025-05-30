@@ -37,7 +37,12 @@ export const useActivityLogs = (babyId: string) => {
           variant: "destructive",
         });
       } else {
-        setLogs(data || []);
+        // Type assertion to ensure activity_type matches our interface
+        const typedData = (data || []).map(log => ({
+          ...log,
+          activity_type: log.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom'
+        }));
+        setLogs(typedData);
       }
     } catch (error) {
       console.error('Error fetching activity logs:', error);

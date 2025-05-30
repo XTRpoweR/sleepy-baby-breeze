@@ -26,7 +26,7 @@ import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { EditActivityDialog } from './EditActivityDialog';
 import { 
   Moon, 
-  Bottle, 
+  Milk, 
   Heart, 
   Plus, 
   Edit, 
@@ -42,7 +42,7 @@ interface ActivityLogsListProps {
 
 const ACTIVITY_ICONS = {
   sleep: Moon,
-  feeding: Bottle,
+  feeding: Milk,
   diaper: Heart,
   custom: Plus
 };
