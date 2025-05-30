@@ -2,15 +2,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Moon, Sun, Clock, RotateCcw, Download } from 'lucide-react';
+import { Moon, Sun, Clock, RotateCcw, Download, Calendar, CheckCircle } from 'lucide-react';
 import { ScheduleRecommendation } from '@/pages/SleepSchedule';
 
 interface SleepScheduleDisplayProps {
   recommendation: ScheduleRecommendation;
   onReset: () => void;
+  savedSchedule?: any;
 }
 
-export const SleepScheduleDisplay = ({ recommendation, onReset }: SleepScheduleDisplayProps) => {
+export const SleepScheduleDisplay = ({ recommendation, onReset, savedSchedule }: SleepScheduleDisplayProps) => {
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
@@ -25,6 +26,16 @@ export const SleepScheduleDisplay = ({ recommendation, onReset }: SleepScheduleD
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -34,6 +45,12 @@ export const SleepScheduleDisplay = ({ recommendation, onReset }: SleepScheduleD
             <div className="flex items-center space-x-2">
               <Moon className="h-6 w-6 text-purple-600" />
               <span>Your Personalized Sleep Schedule</span>
+              {savedSchedule && (
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="text-sm text-green-700 font-medium">Saved</span>
+                </div>
+              )}
             </div>
             <Badge variant="secondary" className="bg-purple-100 text-purple-800">
               {recommendation.totalSleepHours}h total sleep
@@ -41,10 +58,16 @@ export const SleepScheduleDisplay = ({ recommendation, onReset }: SleepScheduleD
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-2">
             Based on your child's age and current habits, here's a biologically appropriate sleep schedule 
             designed to optimize their rest and development.
           </p>
+          {savedSchedule && (
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <Calendar className="h-4 w-4" />
+              <span>Originally created on {formatDate(savedSchedule.created_at)}</span>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -165,7 +188,7 @@ export const SleepScheduleDisplay = ({ recommendation, onReset }: SleepScheduleD
         </Button>
         <Button className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700">
           <Download className="h-4 w-4" />
-          <span>Save Schedule</span>
+          <span>Export Schedule</span>
         </Button>
       </div>
     </div>

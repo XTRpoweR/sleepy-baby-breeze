@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Baby, Clock } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowLeft, Baby, Clock, Plus } from 'lucide-react';
 import { SleepScheduleSetup } from '@/components/sleep-schedule/SleepScheduleSetup';
 import { SleepScheduleDisplay } from '@/components/sleep-schedule/SleepScheduleDisplay';
+import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { useSleepSchedule } from '@/hooks/useSleepSchedule';
 
 export interface SleepScheduleData {
   childAge: number; // in months
@@ -32,8 +35,11 @@ const SleepSchedule = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { profile, loading: profileLoading } = useBabyProfile();
+  const { saveSleepSchedule } = useSleepSchedule(profile?.id || null);
   const [scheduleData, setScheduleData] = useState<SleepScheduleData | null>(null);
   const [recommendation, setRecommendation] = useState<ScheduleRecommendation | null>(null);
+  const [viewingSchedule, setViewingSchedule] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState('create');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -72,11 +78,39 @@ const SleepSchedule = () => {
     );
   }
 
-  const handleScheduleSubmit = (data: SleepScheduleData) => {
+  const handleScheduleSubmit = async (data: SleepScheduleData) => {
     setScheduleData(data);
     // Generate recommendation based on the data
     const generated = generateSleepSchedule(data);
     setRecommendation(generated);
+    
+    // Save to database
+    if (profile?.id) {
+      await saveSleepSchedule(data, generated);
+    }
+  };
+
+  const handleViewSavedSchedule = (schedule: any) => {
+    // Convert saved schedule to display format
+    const scheduleRecommendation: ScheduleRecommendation = {
+      bedtime: schedule.recommended_bedtime,
+      wakeTime: schedule.recommended_wake_time,
+      naps: schedule.recommended_naps || [],
+      totalSleepHours: schedule.total_sleep_hours
+    };
+    
+    const scheduleData: SleepScheduleData = {
+      childAge: schedule.child_age,
+      currentBedtime: schedule.current_bedtime,
+      currentWakeTime: schedule.current_wake_time,
+      napFrequency: schedule.nap_frequency,
+      sleepChallenges: schedule.sleep_challenges || []
+    };
+
+    setScheduleData(scheduleData);
+    setRecommendation(scheduleRecommendation);
+    setViewingSchedule(schedule);
+    setActiveTab('create');
   };
 
   const generateSleepSchedule = (data: SleepScheduleData): ScheduleRecommendation => {
@@ -187,17 +221,41 @@ const SleepSchedule = () => {
           </div>
         </div>
 
-        {!recommendation ? (
-          <SleepScheduleSetup onSubmit={handleScheduleSubmit} profile={profile} />
-        ) : (
-          <SleepScheduleDisplay 
-            recommendation={recommendation} 
-            onReset={() => {
-              setScheduleData(null);
-              setRecommendation(null);
-            }}
-          />
-        )}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="create" className="flex items-center space-x-2">
+              <Plus className="h-4 w-4" />
+              <span>Create Schedule</span>
+            </TabsTrigger>
+            <TabsTrigger value="saved" className="flex items-center space-x-2">
+              <Clock className="h-4 w-4" />
+              <span>Saved Schedules</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="create">
+            {!recommendation ? (
+              <SleepScheduleSetup onSubmit={handleScheduleSubmit} profile={profile} />
+            ) : (
+              <SleepScheduleDisplay 
+                recommendation={recommendation} 
+                onReset={() => {
+                  setScheduleData(null);
+                  setRecommendation(null);
+                  setViewingSchedule(null);
+                }}
+                savedSchedule={viewingSchedule}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="saved">
+            <SavedSchedules 
+              babyId={profile.id}
+              onViewSchedule={handleViewSavedSchedule}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

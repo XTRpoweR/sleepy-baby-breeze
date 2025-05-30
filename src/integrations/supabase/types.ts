@@ -107,6 +107,62 @@ export type Database = {
         }
         Relationships: []
       }
+      sleep_schedules: {
+        Row: {
+          baby_id: string
+          child_age: number
+          created_at: string
+          current_bedtime: string
+          current_wake_time: string
+          id: string
+          nap_frequency: string
+          recommended_bedtime: string
+          recommended_naps: Json
+          recommended_wake_time: string
+          sleep_challenges: string[] | null
+          total_sleep_hours: number
+          updated_at: string
+        }
+        Insert: {
+          baby_id: string
+          child_age: number
+          created_at?: string
+          current_bedtime: string
+          current_wake_time: string
+          id?: string
+          nap_frequency: string
+          recommended_bedtime: string
+          recommended_naps?: Json
+          recommended_wake_time: string
+          sleep_challenges?: string[] | null
+          total_sleep_hours: number
+          updated_at?: string
+        }
+        Update: {
+          baby_id?: string
+          child_age?: number
+          created_at?: string
+          current_bedtime?: string
+          current_wake_time?: string
+          id?: string
+          nap_frequency?: string
+          recommended_bedtime?: string
+          recommended_naps?: Json
+          recommended_wake_time?: string
+          sleep_challenges?: string[] | null
+          total_sleep_hours?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_schedules_baby_id_fkey"
+            columns: ["baby_id"]
+            isOneToOne: false
+            referencedRelation: "baby_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
