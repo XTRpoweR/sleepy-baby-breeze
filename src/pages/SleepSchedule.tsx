@@ -11,6 +11,7 @@ import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSleepSchedule } from '@/hooks/useSleepSchedule';
 import { Tables } from '@/integrations/supabase/types';
+import { ScheduleAdjustmentNotifications } from '@/components/sleep-schedule/ScheduleAdjustmentNotifications';
 
 export interface SleepScheduleData {
   childAge: number; // in months
@@ -35,11 +36,14 @@ const SleepSchedule = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { profile, loading: profileLoading } = useBabyProfile();
-  const { saveSleepSchedule } = useSleepSchedule(profile?.id || null);
+  const { saveSleepSchedule, schedules } = useSleepSchedule(profile?.id || null);
   const [scheduleData, setScheduleData] = useState<SleepScheduleData | null>(null);
   const [recommendation, setRecommendation] = useState<ScheduleRecommendation | null>(null);
   const [viewingSchedule, setViewingSchedule] = useState<Tables<'sleep_schedules'> | null>(null);
   const [activeTab, setActiveTab] = useState('create');
+
+  // Get the most recent schedule for adjustment checking
+  const latestSchedule = schedules.length > 0 ? schedules[0] : null;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -220,6 +224,16 @@ const SleepSchedule = () => {
             <span className="font-medium">Sleep Planning</span>
           </div>
         </div>
+
+        {/* Schedule Adjustment Notifications */}
+        {profile?.id && latestSchedule && (
+          <div className="mb-6">
+            <ScheduleAdjustmentNotifications 
+              babyId={profile.id}
+              currentSchedule={latestSchedule}
+            />
+          </div>
+        )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
