@@ -102,17 +102,17 @@ const Sounds = () => {
 
         {/* Tab Navigation */}
         <Tabs defaultValue="guides" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100 p-1 rounded-lg">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-blue-50 p-1 rounded-lg">
             <TabsTrigger 
               value="guides" 
-              className="flex items-center space-x-2 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-600 rounded-md py-3 px-6 font-medium transition-all"
+              className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-blue-600 rounded-md py-3 px-6 font-medium transition-all"
             >
               <BookOpen className="h-4 w-4" />
               <span>Guides & Articles</span>
             </TabsTrigger>
             <TabsTrigger 
               value="sounds" 
-              className="flex items-center space-x-2 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-600 rounded-md py-3 px-6 font-medium transition-all"
+              className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-blue-600 rounded-md py-3 px-6 font-medium transition-all"
             >
               <Music className="h-4 w-4" />
               <span>Sounds</span>
