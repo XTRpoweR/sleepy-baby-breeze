@@ -80,6 +80,56 @@ export type Database = {
         }
         Relationships: []
       }
+      family_invitations: {
+        Row: {
+          baby_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invitation_token: string
+          invited_by: string
+          permissions: Json | null
+          role: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          baby_id: string
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invitation_token?: string
+          invited_by: string
+          permissions?: Json | null
+          role?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          baby_id?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invitation_token?: string
+          invited_by?: string
+          permissions?: Json | null
+          role?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_invitations_baby_id_fkey"
+            columns: ["baby_id"]
+            isOneToOne: false
+            referencedRelation: "baby_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_members: {
         Row: {
           baby_id: string
@@ -212,7 +262,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_baby_owner: {
+        Args: { user_uuid: string; baby_uuid: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

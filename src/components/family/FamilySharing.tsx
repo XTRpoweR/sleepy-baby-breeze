@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useFamilyMembers } from '@/hooks/useFamilyMembers';
+import { InvitationLink } from './InvitationLink';
 import { 
   Users, 
   UserPlus, 
@@ -135,6 +136,9 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
           </form>
         </CardContent>
       </Card>
+
+      {/* Invitation Links */}
+      <InvitationLink invitations={invitations} />
 
       {/* Current Family Members */}
       <Card>

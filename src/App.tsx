@@ -14,6 +14,7 @@ import Sounds from "./pages/Sounds";
 import Reports from "./pages/Reports";
 import FamilySharing from "./pages/FamilySharing";
 import NotFound from "./pages/NotFound";
+import { InvitationAccept } from "./components/family/InvitationAccept";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/sounds" element={<Sounds />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/family" element={<FamilySharing />} />
+            <Route path="/invitation" element={<InvitationAccept />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

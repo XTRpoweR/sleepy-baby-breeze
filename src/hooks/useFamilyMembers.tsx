@@ -98,8 +98,20 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       setMembers(membersWithProfiles);
 
-      // Note: family_invitations table doesn't exist yet, so we'll set empty array
-      setInvitations([]);
+      // Fetch family invitations
+      const { data: familyInvitations, error: invitationsError } = await supabase
+        .from('family_invitations')
+        .select('*')
+        .eq('baby_id', babyId)
+        .eq('status', 'pending')
+        .gt('expires_at', new Date().toISOString());
+
+      if (invitationsError) {
+        console.error('Error fetching invitations:', invitationsError);
+        setInvitations([]);
+      } else {
+        setInvitations(familyInvitations || []);
+      }
     } catch (error) {
       console.error('Unexpected error in fetchFamilyMembers:', error);
       toast({
@@ -118,27 +130,73 @@ export const useFamilyMembers = (babyId: string | null) => {
     console.log('Inviting family member:', email, 'role:', role);
 
     try {
-      // For now, we'll create a family_member directly with pending status
-      // This is a simplified approach until family_invitations table is created
+      // Check if there's already a pending invitation for this email
+      const { data: existingInvitation, error: checkError } = await supabase
+        .from('family_invitations')
+        .select('id')
+        .eq('baby_id', babyId)
+        .eq('email', email)
+        .eq('status', 'pending')
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Error checking existing invitation:', checkError);
+        toast({
+          title: "Error",
+          description: `Failed to check existing invitations: ${checkError.message}`,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      if (existingInvitation) {
+        toast({
+          title: "Invitation already sent",
+          description: "There's already a pending invitation for this email address.",
+          variant: "default",
+        });
+        return false;
+      }
+
+      // Create the invitation
       const insertData = {
         baby_id: babyId,
-        user_id: user.id, // This will need to be updated when the invited user accepts
+        email: email.trim().toLowerCase(),
         role,
         status: 'pending',
         invited_by: user.id,
-        invited_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
         permissions: role === 'caregiver' 
           ? { can_edit: true, can_delete: false, can_invite: false }
           : { can_edit: false, can_delete: false, can_invite: false }
       };
 
+      const { data, error } = await supabase
+        .from('family_invitations')
+        .insert(insertData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating invitation:', error);
+        toast({
+          title: "Error",
+          description: `Failed to send invitation: ${error.message}`,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      console.log('Invitation created:', data);
+      
       toast({
-        title: "Feature Coming Soon",
-        description: `Family invitations will be available soon. For now, you can manually add family members.`,
-        variant: "default",
+        title: "Invitation sent!",
+        description: `Family invitation sent to ${email}. They have 7 days to accept.`,
       });
 
-      return false;
+      await fetchFamilyMembers();
+      return true;
     } catch (error) {
       console.error('Error inviting family member:', error);
       toast({
@@ -194,13 +252,38 @@ export const useFamilyMembers = (babyId: string | null) => {
 
     console.log('Canceling invitation:', invitationId);
 
-    toast({
-      title: "Feature Coming Soon",
-      description: "Invitation management will be available soon.",
-      variant: "default",
-    });
+    try {
+      const { error } = await supabase
+        .from('family_invitations')
+        .update({ status: 'cancelled' })
+        .eq('id', invitationId);
 
-    return false;
+      if (error) {
+        console.error('Error canceling invitation:', error);
+        toast({
+          title: "Error",
+          description: `Failed to cancel invitation: ${error.message}`,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      toast({
+        title: "Invitation cancelled",
+        description: "The invitation has been cancelled successfully",
+      });
+
+      await fetchFamilyMembers();
+      return true;
+    } catch (error) {
+      console.error('Error canceling invitation:', error);
+      toast({
+        title: "Error",
+        description: "Unexpected error canceling invitation",
+        variant: "destructive",
+      });
+      return false;
+    }
   };
 
   useEffect(() => {
