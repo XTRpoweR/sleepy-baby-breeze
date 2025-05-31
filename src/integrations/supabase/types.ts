@@ -9,7 +9,204 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      baby_activities: {
+        Row: {
+          activity_type: string
+          baby_id: string
+          created_at: string | null
+          duration_minutes: number | null
+          end_time: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          start_time: string
+        }
+        Insert: {
+          activity_type: string
+          baby_id: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          start_time: string
+        }
+        Update: {
+          activity_type?: string
+          baby_id?: string
+          created_at?: string | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "baby_activities_baby_id_fkey"
+            columns: ["baby_id"]
+            isOneToOne: false
+            referencedRelation: "baby_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      baby_profiles: {
+        Row: {
+          birth_date: string | null
+          created_at: string | null
+          id: string
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          birth_date?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          birth_date?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      family_members: {
+        Row: {
+          baby_id: string
+          created_at: string | null
+          id: string
+          invited_at: string | null
+          invited_by: string | null
+          joined_at: string | null
+          permissions: Json | null
+          role: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          baby_id: string
+          created_at?: string | null
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          permissions?: Json | null
+          role?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          baby_id?: string
+          created_at?: string | null
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          permissions?: Json | null
+          role?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_baby_id_fkey"
+            columns: ["baby_id"]
+            isOneToOne: false
+            referencedRelation: "baby_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sleep_schedules: {
+        Row: {
+          baby_id: string
+          child_age: number
+          created_at: string | null
+          current_bedtime: string
+          current_wake_time: string
+          id: string
+          nap_frequency: string
+          recommended_bedtime: string
+          recommended_naps: Json | null
+          recommended_wake_time: string
+          sleep_challenges: string[] | null
+          total_sleep_hours: number
+          updated_at: string | null
+        }
+        Insert: {
+          baby_id: string
+          child_age: number
+          created_at?: string | null
+          current_bedtime: string
+          current_wake_time: string
+          id?: string
+          nap_frequency: string
+          recommended_bedtime: string
+          recommended_naps?: Json | null
+          recommended_wake_time: string
+          sleep_challenges?: string[] | null
+          total_sleep_hours: number
+          updated_at?: string | null
+        }
+        Update: {
+          baby_id?: string
+          child_age?: number
+          created_at?: string | null
+          current_bedtime?: string
+          current_wake_time?: string
+          id?: string
+          nap_frequency?: string
+          recommended_bedtime?: string
+          recommended_naps?: Json | null
+          recommended_wake_time?: string
+          sleep_challenges?: string[] | null
+          total_sleep_hours?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sleep_schedules_baby_id_fkey"
+            columns: ["baby_id"]
+            isOneToOne: false
+            referencedRelation: "baby_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
