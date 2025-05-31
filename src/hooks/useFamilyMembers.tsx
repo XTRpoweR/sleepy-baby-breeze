@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -46,26 +47,6 @@ export const useFamilyMembers = (babyId: string | null) => {
     console.log('Fetching family members for baby:', babyId);
 
     try {
-      // First verify baby access
-      const { data: babyProfile, error: babyError } = await supabase
-        .from('baby_profiles')
-        .select('id, name, user_id')
-        .eq('id', babyId)
-        .single();
-
-      if (babyError) {
-        console.error('Error accessing baby profile:', babyError);
-        toast({
-          title: "Error",
-          description: "Cannot access baby profile",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      console.log('Baby profile verified:', babyProfile);
-
       // Fetch family members
       const { data: familyMembers, error: membersError } = await supabase
         .from('family_members')
@@ -74,13 +55,6 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       if (membersError) {
         console.error('Error fetching family members:', membersError);
-        console.error('Error details:', {
-          message: membersError.message,
-          details: membersError.details,
-          hint: membersError.hint,
-          code: membersError.code
-        });
-        
         toast({
           title: "Error",
           description: `Failed to load family members: ${membersError.message}`,

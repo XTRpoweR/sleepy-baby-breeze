@@ -29,27 +29,6 @@ export const useActivityLogs = (babyId: string) => {
     console.log('Fetching activity logs for baby:', babyId);
 
     try {
-      // First, let's check if we can access the baby profile
-      const { data: babyProfile, error: babyError } = await supabase
-        .from('baby_profiles')
-        .select('id, name, user_id')
-        .eq('id', babyId)
-        .single();
-
-      if (babyError) {
-        console.error('Error accessing baby profile:', babyError);
-        toast({
-          title: "Error",
-          description: "Cannot access baby profile",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      console.log('Baby profile found:', babyProfile);
-
-      // Now try to fetch activities
       const { data, error } = await supabase
         .from('baby_activities')
         .select('*')
@@ -58,13 +37,6 @@ export const useActivityLogs = (babyId: string) => {
 
       if (error) {
         console.error('Error fetching activity logs:', error);
-        console.error('Error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
-        
         toast({
           title: "Error",
           description: `Failed to load activity logs: ${error.message}`,
