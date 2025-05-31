@@ -26,6 +26,8 @@ export const useSleepSchedule = (babyId: string | null) => {
   const fetchSleepSchedules = async () => {
     if (!user || !babyId) return;
 
+    console.log('Fetching sleep schedules for baby:', babyId, 'user:', user.id);
+
     try {
       const { data, error } = await supabase
         .from('sleep_schedules')
@@ -37,14 +39,20 @@ export const useSleepSchedule = (babyId: string | null) => {
         console.error('Error fetching sleep schedules:', error);
         toast({
           title: "Error",
-          description: "Failed to load sleep schedules",
+          description: `Failed to load sleep schedules: ${error.message}`,
           variant: "destructive",
         });
       } else {
+        console.log('Successfully fetched sleep schedules:', data?.length || 0);
         setSchedules(data || []);
       }
     } catch (error) {
-      console.error('Error fetching sleep schedules:', error);
+      console.error('Unexpected error fetching sleep schedules:', error);
+      toast({
+        title: "Error",
+        description: "Unexpected error loading sleep schedules",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
