@@ -3,13 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Moon, Sun, Clock, RotateCcw, Download, Calendar, CheckCircle } from 'lucide-react';
-import { Tables } from '@/integrations/supabase/types';
+import { ScheduleRecommendation } from '@/pages/SleepSchedule';
 
 interface SleepScheduleDisplayProps {
-  schedule: Tables<'sleep_schedules'>;
+  recommendation: ScheduleRecommendation;
+  onReset: () => void;
+  savedSchedule?: any;
 }
 
-export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) => {
+export const SleepScheduleDisplay = ({ recommendation, onReset, savedSchedule }: SleepScheduleDisplayProps) => {
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
@@ -34,9 +36,6 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
     });
   };
 
-  // Parse naps from JSON
-  const naps = Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps : [];
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -46,13 +45,15 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
             <div className="flex items-center space-x-2">
               <Moon className="h-6 w-6 text-purple-600" />
               <span>Your Personalized Sleep Schedule</span>
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="text-sm text-green-700 font-medium">Saved</span>
-              </div>
+              {savedSchedule && (
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="text-sm text-green-700 font-medium">Saved</span>
+                </div>
+              )}
             </div>
             <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-              {schedule.total_sleep_hours}h total sleep
+              {recommendation.totalSleepHours}h total sleep
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -61,10 +62,12 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
             Based on your child's age and current habits, here's a biologically appropriate sleep schedule 
             designed to optimize their rest and development.
           </p>
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Calendar className="h-4 w-4" />
-            <span>Created on {formatDate(schedule.created_at)}</span>
-          </div>
+          {savedSchedule && (
+            <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <Calendar className="h-4 w-4" />
+              <span>Originally created on {formatDate(savedSchedule.created_at)}</span>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -79,7 +82,7 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-600 mb-2">
-              {formatTime(schedule.recommended_bedtime)}
+              {formatTime(recommendation.bedtime)}
             </div>
             <p className="text-sm text-gray-600">
               Recommended bedtime for optimal night sleep
@@ -96,7 +99,7 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-yellow-600 mb-2">
-              {formatTime(schedule.recommended_wake_time)}
+              {formatTime(recommendation.wakeTime)}
             </div>
             <p className="text-sm text-gray-600">
               Consistent wake time to maintain rhythm
@@ -106,7 +109,7 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
       </div>
 
       {/* Nap Schedule */}
-      {naps.length > 0 && (
+      {recommendation.naps.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -116,7 +119,7 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {naps.map((nap: any, index: number) => (
+              {recommendation.naps.map((nap, index) => (
                 <div key={index} className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
                   <div>
                     <h4 className="font-medium text-green-800">{nap.name}</h4>
@@ -141,10 +144,10 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
           <div className="space-y-3">
             <div className="flex justify-between items-center p-3 bg-yellow-50 rounded">
               <span className="font-medium">Wake Up</span>
-              <span className="text-yellow-700 font-bold">{formatTime(schedule.recommended_wake_time)}</span>
+              <span className="text-yellow-700 font-bold">{formatTime(recommendation.wakeTime)}</span>
             </div>
             
-            {naps.map((nap: any, index: number) => (
+            {recommendation.naps.map((nap, index) => (
               <div key={index} className="flex justify-between items-center p-3 bg-green-50 rounded">
                 <span className="font-medium">{nap.name}</span>
                 <span className="text-green-700 font-bold">
@@ -155,7 +158,7 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
             
             <div className="flex justify-between items-center p-3 bg-blue-50 rounded">
               <span className="font-medium">Bedtime</span>
-              <span className="text-blue-700 font-bold">{formatTime(schedule.recommended_bedtime)}</span>
+              <span className="text-blue-700 font-bold">{formatTime(recommendation.bedtime)}</span>
             </div>
           </div>
         </CardContent>
@@ -179,7 +182,7 @@ export const SleepScheduleDisplay = ({ schedule }: SleepScheduleDisplayProps) =>
 
       {/* Actions */}
       <div className="flex space-x-4">
-        <Button onClick={() => window.location.reload()} variant="outline" className="flex items-center space-x-2">
+        <Button onClick={onReset} variant="outline" className="flex items-center space-x-2">
           <RotateCcw className="h-4 w-4" />
           <span>Create New Schedule</span>
         </Button>

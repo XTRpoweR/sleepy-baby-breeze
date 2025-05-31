@@ -7,22 +7,35 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Moon, Baby, Clock } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { SleepScheduleData, ScheduleRecommendation } from '@/pages/SleepSchedule';
+import { SleepScheduleData } from '@/pages/SleepSchedule';
 
 interface SleepScheduleSetupProps {
-  babyId: string;
+  onSubmit: (data: SleepScheduleData) => void;
+  profile: { name: string; birth_date?: string };
 }
 
-export const SleepScheduleSetup = ({ babyId }: SleepScheduleSetupProps) => {
-  const { toast } = useToast();
+export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProps) => {
   const [childAge, setChildAge] = useState<number>(6);
   const [currentBedtime, setCurrentBedtime] = useState('19:30');
   const [currentWakeTime, setCurrentWakeTime] = useState('07:00');
   const [napFrequency, setNapFrequency] = useState<'none' | 'one' | 'two' | 'three-plus'>('two');
   const [sleepChallenges, setSleepChallenges] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Calculate age from birth_date if available
+  const calculateAge = () => {
+    if (profile.birth_date) {
+      const birthDate = new Date(profile.birth_date);
+      const today = new Date();
+      const ageInMonths = (today.getFullYear() - birthDate.getFullYear()) * 12 + 
+                         (today.getMonth() - birthDate.getMonth());
+      return Math.max(0, ageInMonths);
+    }
+    return 6; // default
+  };
+
+  useState(() => {
+    setChildAge(calculateAge());
+  });
 
   const handleChallengeChange = (challenge: string, checked: boolean) => {
     if (checked) {
@@ -32,112 +45,15 @@ export const SleepScheduleSetup = ({ babyId }: SleepScheduleSetupProps) => {
     }
   };
 
-  const generateRecommendation = (data: SleepScheduleData): ScheduleRecommendation => {
-    // Simple algorithm for generating sleep schedule recommendations based on age
-    let recommendedBedtime = '19:00';
-    let recommendedWakeTime = '07:00';
-    let naps: Array<{ name: string; startTime: string; duration: number }> = [];
-    let totalSleepHours = 12;
-
-    if (data.childAge < 3) {
-      // 0-3 months: frequent naps
-      recommendedBedtime = '20:00';
-      naps = [
-        { name: 'Morning Nap', startTime: '09:00', duration: 90 },
-        { name: 'Afternoon Nap', startTime: '13:00', duration: 120 },
-        { name: 'Evening Nap', startTime: '16:30', duration: 45 }
-      ];
-      totalSleepHours = 14;
-    } else if (data.childAge < 6) {
-      // 3-6 months: 3 naps
-      recommendedBedtime = '19:30';
-      naps = [
-        { name: 'Morning Nap', startTime: '09:30', duration: 60 },
-        { name: 'Afternoon Nap', startTime: '13:30', duration: 90 },
-        { name: 'Evening Nap', startTime: '17:00', duration: 30 }
-      ];
-      totalSleepHours = 13;
-    } else if (data.childAge < 12) {
-      // 6-12 months: 2 naps
-      recommendedBedtime = '19:00';
-      naps = [
-        { name: 'Morning Nap', startTime: '10:00', duration: 60 },
-        { name: 'Afternoon Nap', startTime: '14:00', duration: 90 }
-      ];
-      totalSleepHours = 12;
-    } else if (data.childAge < 18) {
-      // 12-18 months: transitioning to 1 nap
-      recommendedBedtime = '19:30';
-      naps = [
-        { name: 'Afternoon Nap', startTime: '13:00', duration: 120 }
-      ];
-      totalSleepHours = 11.5;
-    } else {
-      // 18+ months: 1 nap
-      recommendedBedtime = '20:00';
-      naps = [
-        { name: 'Afternoon Nap', startTime: '13:30', duration: 90 }
-      ];
-      totalSleepHours = 11;
-    }
-
-    return {
-      bedtime: recommendedBedtime,
-      wakeTime: recommendedWakeTime,
-      naps,
-      totalSleepHours
-    };
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    const scheduleData: SleepScheduleData = {
+    onSubmit({
       childAge,
       currentBedtime,
       currentWakeTime,
       napFrequency,
       sleepChallenges
-    };
-
-    const recommendation = generateRecommendation(scheduleData);
-
-    try {
-      const { error } = await supabase
-        .from('sleep_schedules')
-        .insert({
-          baby_id: babyId,
-          child_age: scheduleData.childAge,
-          current_bedtime: scheduleData.currentBedtime,
-          current_wake_time: scheduleData.currentWakeTime,
-          nap_frequency: scheduleData.napFrequency,
-          sleep_challenges: scheduleData.sleepChallenges,
-          recommended_bedtime: recommendation.bedtime,
-          recommended_wake_time: recommendation.wakeTime,
-          recommended_naps: recommendation.naps,
-          total_sleep_hours: recommendation.totalSleepHours
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Success!",
-        description: "Sleep schedule created successfully",
-      });
-
-      // Refresh the page to show the new schedule
-      window.location.reload();
-    } catch (error) {
-      console.error('Error creating sleep schedule:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create sleep schedule",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   const challengeOptions = [
@@ -170,6 +86,9 @@ export const SleepScheduleSetup = ({ babyId }: SleepScheduleSetupProps) => {
               onChange={(e) => setChildAge(parseInt(e.target.value) || 0)}
               required
             />
+            <p className="text-sm text-gray-500 mt-1">
+              {profile.birth_date ? 'Calculated from birth date (you can adjust if needed)' : 'Please enter your child\'s age in months'}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -257,9 +176,8 @@ export const SleepScheduleSetup = ({ babyId }: SleepScheduleSetupProps) => {
       <Button 
         type="submit" 
         className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-3"
-        disabled={isSubmitting}
       >
-        {isSubmitting ? 'Creating Schedule...' : 'Create Personalized Sleep Schedule'}
+        Create Personalized Sleep Schedule
       </Button>
     </form>
   );
