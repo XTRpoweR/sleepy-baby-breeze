@@ -64,7 +64,7 @@ export const useFamilyMembers = (babyId?: string) => {
         .from('family_members')
         .select(`
           *,
-          profiles:user_id (
+          profiles!inner(
             full_name,
             email
           )
@@ -87,7 +87,11 @@ export const useFamilyMembers = (babyId?: string) => {
           status: member.status as 'pending' | 'accepted' | 'declined',
           permissions: typeof member.permissions === 'object' && member.permissions !== null 
             ? member.permissions as { can_edit: boolean; can_invite: boolean; can_delete: boolean }
-            : { can_edit: false, can_invite: false, can_delete: false }
+            : { can_edit: false, can_invite: false, can_delete: false },
+          profiles: member.profiles ? {
+            full_name: member.profiles.full_name,
+            email: member.profiles.email
+          } : undefined
         }));
         setMembers(typedMembers);
       }
