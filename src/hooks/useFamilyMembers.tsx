@@ -32,6 +32,21 @@ interface FamilyInvitation {
   updated_at: string;
 }
 
+// Define the shape of the raw invitation data from the database
+interface RawInvitationData {
+  id: string;
+  baby_id: string;
+  email: string;
+  role: string;
+  status: string;
+  invited_by: string;
+  expires_at: string;
+  invitation_token: string;
+  permissions: any;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useFamilyMembers = (babyId: string | null) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -99,34 +114,28 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       setMembers(membersWithProfiles);
 
-      // Fetch pending invitations using raw query to bypass TypeScript issues
-      const { data: pendingInvitations, error: invitationsError } = await supabase
-        .rpc('get_family_invitations', { p_baby_id: babyId });
+      // Fetch pending invitations using direct query
+      try {
+        const invitationsQuery = supabase
+          .from('family_invitations' as any)
+          .select('*')
+          .eq('baby_id', babyId)
+          .eq('status', 'pending');
 
-      if (invitationsError) {
-        console.error('Error fetching invitations:', invitationsError);
-        // If the function doesn't exist, try direct query
-        try {
-          const response = await supabase
-            .from('family_invitations' as any)
-            .select('*')
-            .eq('baby_id', babyId)
-            .eq('status', 'pending');
+        const { data: pendingInvitations, error: invitationsError } = await invitationsQuery;
 
-          if (response.error) {
-            console.error('Direct query also failed:', response.error);
-            setInvitations([]);
-          } else {
-            console.log('Invitations found:', response.data?.length || 0);
-            setInvitations(response.data || []);
-          }
-        } catch (directError) {
-          console.error('Direct query failed:', directError);
+        if (invitationsError) {
+          console.error('Error fetching invitations:', invitationsError);
           setInvitations([]);
+        } else {
+          console.log('Invitations found:', pendingInvitations?.length || 0);
+          // Type assertion for the raw data
+          const typedInvitations = (pendingInvitations || []) as RawInvitationData[];
+          setInvitations(typedInvitations);
         }
-      } else {
-        console.log('Invitations found via RPC:', pendingInvitations?.length || 0);
-        setInvitations(pendingInvitations || []);
+      } catch (directError) {
+        console.error('Direct invitations query failed:', directError);
+        setInvitations([]);
       }
     } catch (error) {
       console.error('Unexpected error in fetchFamilyMembers:', error);
@@ -144,16 +153,17 @@ export const useFamilyMembers = (babyId: string | null) => {
     if (!user || !babyId) return false;
 
     try {
-      // Use raw query to bypass TypeScript issues
+      const insertData = {
+        baby_id: babyId,
+        email: email.toLowerCase(),
+        role,
+        invited_by: user.id,
+        status: 'pending'
+      };
+
       const { error } = await supabase
         .from('family_invitations' as any)
-        .insert({
-          baby_id: babyId,
-          email: email.toLowerCase(),
-          role,
-          invited_by: user.id,
-          status: 'pending'
-        });
+        .insert(insertData);
 
       if (error) {
         console.error('Error creating invitation:', error);
@@ -214,7 +224,6 @@ export const useFamilyMembers = (babyId: string | null) => {
     if (!user) return false;
 
     try {
-      // Use raw query to bypass TypeScript issues
       const { error } = await supabase
         .from('family_invitations' as any)
         .delete()
