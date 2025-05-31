@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -39,11 +38,34 @@ export const useFamilyMembers = (babyId: string | null) => {
 
   const fetchFamilyMembers = async () => {
     if (!user || !babyId) {
+      console.log('Missing user or babyId:', { user: !!user, babyId });
       setLoading(false);
       return;
     }
 
+    console.log('Fetching family members for baby:', babyId);
+
     try {
+      // First verify baby access
+      const { data: babyProfile, error: babyError } = await supabase
+        .from('baby_profiles')
+        .select('id, name, user_id')
+        .eq('id', babyId)
+        .single();
+
+      if (babyError) {
+        console.error('Error accessing baby profile:', babyError);
+        toast({
+          title: "Error",
+          description: "Cannot access baby profile",
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+
+      console.log('Baby profile verified:', babyProfile);
+
       // Fetch family members
       const { data: familyMembers, error: membersError } = await supabase
         .from('family_members')
@@ -52,19 +74,41 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       if (membersError) {
         console.error('Error fetching family members:', membersError);
-        throw membersError;
+        console.error('Error details:', {
+          message: membersError.message,
+          details: membersError.details,
+          hint: membersError.hint,
+          code: membersError.code
+        });
+        
+        toast({
+          title: "Error",
+          description: `Failed to load family members: ${membersError.message}`,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
       }
+
+      console.log('Family members found:', familyMembers?.length || 0);
 
       // Fetch profile data for each member
       const memberIds = familyMembers?.map(m => m.user_id) || [];
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, email, full_name')
-        .in('id', memberIds);
+      let profiles: any[] = [];
+      
+      if (memberIds.length > 0) {
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, email, full_name')
+          .in('id', memberIds);
 
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError);
-        throw profilesError;
+        if (profilesError) {
+          console.error('Error fetching profiles:', profilesError);
+          // Continue without profile data rather than failing completely
+          profiles = [];
+        } else {
+          profiles = profilesData || [];
+        }
       }
 
       // Merge the data
@@ -88,15 +132,17 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       if (invitationsError) {
         console.error('Error fetching invitations:', invitationsError);
-        throw invitationsError;
+        // Continue without invitations rather than failing completely
+        setInvitations([]);
+      } else {
+        console.log('Invitations found:', pendingInvitations?.length || 0);
+        setInvitations(pendingInvitations || []);
       }
-
-      setInvitations(pendingInvitations || []);
     } catch (error) {
-      console.error('Error in fetchFamilyMembers:', error);
+      console.error('Unexpected error in fetchFamilyMembers:', error);
       toast({
         title: "Error",
-        description: "Failed to load family members",
+        description: "Unexpected error loading family data",
         variant: "destructive",
       });
     } finally {
