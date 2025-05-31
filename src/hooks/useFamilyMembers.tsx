@@ -80,7 +80,16 @@ export const useFamilyMembers = (babyId?: string) => {
           variant: "destructive",
         });
       } else {
-        setMembers(data || []);
+        // Type-safe conversion of the data
+        const typedMembers: FamilyMember[] = (data || []).map(member => ({
+          ...member,
+          role: member.role as 'owner' | 'caregiver' | 'viewer',
+          status: member.status as 'pending' | 'accepted' | 'declined',
+          permissions: typeof member.permissions === 'object' && member.permissions !== null 
+            ? member.permissions as { can_edit: boolean; can_invite: boolean; can_delete: boolean }
+            : { can_edit: false, can_invite: false, can_delete: false }
+        }));
+        setMembers(typedMembers);
       }
     } catch (error) {
       console.error('Error fetching family members:', error);
@@ -103,7 +112,16 @@ export const useFamilyMembers = (babyId?: string) => {
       if (error) {
         console.error('Error fetching invitations:', error);
       } else {
-        setInvitations(data || []);
+        // Type-safe conversion of the data
+        const typedInvitations: FamilyInvitation[] = (data || []).map(invitation => ({
+          ...invitation,
+          role: invitation.role as 'caregiver' | 'viewer',
+          status: invitation.status as 'pending' | 'accepted' | 'declined' | 'expired',
+          permissions: typeof invitation.permissions === 'object' && invitation.permissions !== null 
+            ? invitation.permissions as { can_edit: boolean; can_invite: boolean; can_delete: boolean }
+            : { can_edit: false, can_invite: false, can_delete: false }
+        }));
+        setInvitations(typedInvitations);
       }
     } catch (error) {
       console.error('Error fetching invitations:', error);
