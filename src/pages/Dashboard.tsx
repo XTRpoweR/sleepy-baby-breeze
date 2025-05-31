@@ -41,6 +41,10 @@ const Dashboard = () => {
     navigate('/sleep-schedule');
   };
 
+  const handleViewReports = () => {
+    navigate('/reports');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
@@ -123,13 +127,27 @@ const Dashboard = () => {
 
           <QuickLogCard />
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleViewReports}>
             <CardContent className="p-6 text-center">
               <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="h-6 w-6 text-orange-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">View Reports</h3>
-              <p className="text-sm text-gray-600">Analyze sleep and activity patterns</p>
+              <p className="text-sm text-gray-600 mb-3">Analyze sleep and activity patterns</p>
+              <div className="space-y-2 text-xs text-gray-500">
+                <div className="flex justify-between">
+                  <span>Daily Sleep:</span>
+                  <span>Track patterns</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Feeding Data:</span>
+                  <span>Monitor frequency</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Weekly Trends:</span>
+                  <span>Visual charts</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
