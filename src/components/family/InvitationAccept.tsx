@@ -25,6 +25,8 @@ interface InvitationData {
   status: string;
   invited_by: string;
   expires_at: string;
+  created_at: string;
+  permissions: any;
   baby_name?: string;
   inviter_name?: string;
 }
@@ -53,20 +55,17 @@ export const InvitationAccept = () => {
     }
 
     try {
-      const { data: invitationData, error } = await supabase
+      // First fetch the invitation
+      const { data: invitationData, error: invitationError } = await supabase
         .from('family_invitations')
-        .select(`
-          *,
-          baby_profiles!inner(name),
-          profiles!family_invitations_invited_by_fkey(full_name)
-        `)
+        .select('*')
         .eq('invitation_token', token)
         .eq('status', 'pending')
         .gt('expires_at', new Date().toISOString())
         .single();
 
-      if (error) {
-        console.error('Error fetching invitation:', error);
+      if (invitationError) {
+        console.error('Error fetching invitation:', invitationError);
         toast({
           title: "Invalid Invitation",
           description: "This invitation link is invalid or has expired.",
@@ -76,10 +75,24 @@ export const InvitationAccept = () => {
         return;
       }
 
+      // Fetch baby profile
+      const { data: babyData, error: babyError } = await supabase
+        .from('baby_profiles')
+        .select('name')
+        .eq('id', invitationData.baby_id)
+        .single();
+
+      // Fetch inviter profile
+      const { data: inviterData, error: inviterError } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', invitationData.invited_by)
+        .single();
+
       setInvitation({
         ...invitationData,
-        baby_name: invitationData.baby_profiles.name,
-        inviter_name: invitationData.profiles.full_name
+        baby_name: babyData?.name || 'Baby',
+        inviter_name: inviterData?.full_name || 'Someone'
       });
     } catch (error) {
       console.error('Error fetching invitation:', error);
