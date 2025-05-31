@@ -12,6 +12,7 @@ import TrackActivity from "./pages/TrackActivity";
 import SleepSchedule from "./pages/SleepSchedule";
 import Sounds from "./pages/Sounds";
 import Reports from "./pages/Reports";
+import FamilySharing from "./pages/FamilySharing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

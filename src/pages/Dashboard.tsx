@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,8 @@ import {
   Baby,
   Plus,
   TrendingUp,
-  Activity
+  Activity,
+  Users
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
@@ -125,7 +125,29 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <QuickLogCard />
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/family')}>
+            <CardContent className="p-6 text-center">
+              <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                <Users className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Family Sharing</h3>
+              <p className="text-sm text-gray-600 mb-3">Invite family members to share baby data</p>
+              <div className="space-y-2 text-xs text-gray-500">
+                <div className="flex justify-between">
+                  <span>Real-time Sync:</span>
+                  <span>Instant updates</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Multi-device:</span>
+                  <span>Access anywhere</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Role Management:</span>
+                  <span>Control permissions</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleViewReports}>
             <CardContent className="p-6 text-center">
