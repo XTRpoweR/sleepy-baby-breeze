@@ -60,41 +60,51 @@ export const useFamilyMembers = (babyId?: string) => {
     if (!babyId) return;
 
     try {
-      const { data, error } = await supabase
+      // First, fetch family members
+      const { data: familyMembersData, error: membersError } = await supabase
         .from('family_members')
-        .select(`
-          *,
-          profiles!inner(
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .eq('baby_id', babyId)
         .order('created_at', { ascending: true });
 
-      if (error) {
-        console.error('Error fetching family members:', error);
+      if (membersError) {
+        console.error('Error fetching family members:', membersError);
         toast({
           title: "Error",
           description: "Failed to load family members",
           variant: "destructive",
         });
-      } else {
-        // Type-safe conversion of the data
-        const typedMembers: FamilyMember[] = (data || []).map(member => ({
+        return;
+      }
+
+      // Then, fetch profiles for all user_ids
+      const userIds = familyMembersData?.map(member => member.user_id) || [];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', userIds);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+      }
+
+      // Merge the data
+      const typedMembers: FamilyMember[] = (familyMembersData || []).map(member => {
+        const profile = profilesData?.find(p => p.id === member.user_id);
+        return {
           ...member,
           role: member.role as 'owner' | 'caregiver' | 'viewer',
           status: member.status as 'pending' | 'accepted' | 'declined',
           permissions: typeof member.permissions === 'object' && member.permissions !== null 
             ? member.permissions as { can_edit: boolean; can_invite: boolean; can_delete: boolean }
             : { can_edit: false, can_invite: false, can_delete: false },
-          profiles: member.profiles ? {
-            full_name: member.profiles.full_name,
-            email: member.profiles.email
+          profiles: profile ? {
+            full_name: profile.full_name,
+            email: profile.email
           } : undefined
-        }));
-        setMembers(typedMembers);
-      }
+        };
+      });
+      setMembers(typedMembers);
     } catch (error) {
       console.error('Error fetching family members:', error);
     } finally {
