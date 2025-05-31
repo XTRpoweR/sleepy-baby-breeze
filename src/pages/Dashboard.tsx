@@ -13,7 +13,8 @@ import {
   Baby,
   Plus,
   TrendingUp,
-  Activity
+  Activity,
+  Users
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
@@ -43,6 +44,10 @@ const Dashboard = () => {
 
   const handleViewReports = () => {
     navigate('/reports');
+  };
+
+  const handleFamilySharing = () => {
+    navigate('/family');
   };
 
   if (loading) {
@@ -104,7 +109,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleTrackActivity}>
             <CardContent className="p-6 text-center">
               <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
@@ -126,6 +131,16 @@ const Dashboard = () => {
           </Card>
 
           <QuickLogCard />
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleFamilySharing}>
+            <CardContent className="p-6 text-center">
+              <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
+                <Users className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Family Sharing</h3>
+              <p className="text-sm text-gray-600">Invite family members and caregivers</p>
+            </CardContent>
+          </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleViewReports}>
             <CardContent className="p-6 text-center">
