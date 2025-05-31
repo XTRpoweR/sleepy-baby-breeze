@@ -1,9 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Moon, Sun, Clock, RotateCcw, Download, Calendar, CheckCircle } from 'lucide-react';
-import { ScheduleRecommendation } from '@/pages/SleepSchedule';
+import { ScheduleRecommendation } from '@/types/sleepSchedule';
 
 interface SleepScheduleDisplayProps {
   recommendation: ScheduleRecommendation;

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { SleepScheduleData, ScheduleRecommendation } from '@/pages/SleepSchedule';
+import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 import { Tables } from '@/integrations/supabase/types';
 
 // Use the database type directly and extend it if needed

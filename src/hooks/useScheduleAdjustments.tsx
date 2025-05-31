@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Tables } from '@/integrations/supabase/types';
-import { SleepScheduleData, ScheduleRecommendation } from '@/pages/SleepSchedule';
+import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 
 interface ScheduleAdjustment {
   id: string;

@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
@@ -8,15 +9,23 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { useSleepSchedule } from '@/hooks/useSleepSchedule';
 import { SleepScheduleSetup } from '@/components/sleep-schedule/SleepScheduleSetup';
 import { SleepScheduleDisplay } from '@/components/sleep-schedule/SleepScheduleDisplay';
 import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { ScheduleAdjustmentNotifications } from '@/components/sleep-schedule/ScheduleAdjustmentNotifications';
 import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
+import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 
 const SleepSchedule = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { profile, loading: profileLoading } = useBabyProfile();
+  const { schedules, saveSleepSchedule } = useSleepSchedule(profile?.id || null);
+  
+  const [currentRecommendation, setCurrentRecommendation] = useState<ScheduleRecommendation | null>(null);
+  const [savedSchedule, setSavedSchedule] = useState<any>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -33,7 +42,91 @@ const SleepSchedule = () => {
     navigate('/dashboard');
   };
 
-  if (loading) {
+  const generateScheduleRecommendation = (data: SleepScheduleData): ScheduleRecommendation => {
+    // Age-based sleep recommendations
+    let totalSleepHours: number;
+    let napCount: number;
+    let napDuration: number;
+    let bedtimeAdjustment = 0;
+    
+    if (data.childAge <= 3) {
+      totalSleepHours = 16;
+      napCount = 4;
+      napDuration = 120;
+    } else if (data.childAge <= 6) {
+      totalSleepHours = 14;
+      napCount = 3;
+      napDuration = 90;
+    } else if (data.childAge <= 12) {
+      totalSleepHours = 13;
+      napCount = 2;
+      napDuration = 75;
+    } else if (data.childAge <= 18) {
+      totalSleepHours = 12.5;
+      napCount = 1;
+      napDuration = 90;
+    } else {
+      totalSleepHours = 12;
+      napCount = 1;
+      napDuration = 60;
+    }
+
+    // Generate nap schedule
+    const naps = [];
+    const wakeHour = parseInt(data.currentWakeTime.split(':')[0]);
+    
+    for (let i = 0; i < napCount; i++) {
+      const napTime = wakeHour + 2 + (i * 3);
+      const napName = napCount === 1 ? 'Afternoon Nap' : 
+                     i === 0 ? 'Morning Nap' :
+                     i === 1 ? 'Afternoon Nap' :
+                     i === 2 ? 'Late Afternoon Nap' : 'Evening Nap';
+      
+      if (napTime < 18) { // Don't schedule naps too late
+        naps.push({
+          name: napName,
+          startTime: `${napTime.toString().padStart(2, '0')}:00`,
+          duration: napDuration
+        });
+      }
+    }
+
+    return {
+      bedtime: data.currentBedtime,
+      wakeTime: data.currentWakeTime,
+      naps: naps.slice(0, napCount),
+      totalSleepHours
+    };
+  };
+
+  const handleScheduleSubmit = async (data: SleepScheduleData) => {
+    const recommendation = generateScheduleRecommendation(data);
+    setCurrentRecommendation(recommendation);
+    
+    // Save to database
+    const saved = await saveSleepSchedule(data, recommendation);
+    if (saved) {
+      setSavedSchedule(saved);
+    }
+  };
+
+  const handleReset = () => {
+    setCurrentRecommendation(null);
+    setSavedSchedule(null);
+  };
+
+  const handleViewSchedule = (schedule: any) => {
+    const recommendation: ScheduleRecommendation = {
+      bedtime: schedule.recommended_bedtime,
+      wakeTime: schedule.recommended_wake_time,
+      naps: Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps : [],
+      totalSleepHours: schedule.total_sleep_hours
+    };
+    setCurrentRecommendation(recommendation);
+    setSavedSchedule(schedule);
+  };
+
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
@@ -47,6 +140,8 @@ const SleepSchedule = () => {
   if (!user) {
     return null;
   }
+
+  const latestSchedule = schedules.length > 0 ? schedules[0] : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -100,24 +195,45 @@ const SleepSchedule = () => {
         </div>
 
         {/* Sleep Schedule Setup */}
-        <div className="mb-8">
-          <SleepScheduleSetup />
-        </div>
+        {!currentRecommendation && (
+          <div className="mb-8">
+            <SleepScheduleSetup 
+              onSubmit={handleScheduleSubmit}
+              profile={profile || { name: 'Your Baby' }}
+            />
+          </div>
+        )}
 
         {/* Sleep Schedule Display */}
-        <div className="mb-8">
-          <SleepScheduleDisplay />
-        </div>
+        {currentRecommendation && (
+          <div className="mb-8">
+            <SleepScheduleDisplay 
+              recommendation={currentRecommendation}
+              onReset={handleReset}
+              savedSchedule={savedSchedule}
+            />
+          </div>
+        )}
 
         {/* Saved Schedules */}
-        <div className="mb-8">
-          <SavedSchedules />
-        </div>
+        {profile && (
+          <div className="mb-8">
+            <SavedSchedules 
+              babyId={profile.id}
+              onViewSchedule={handleViewSchedule}
+            />
+          </div>
+        )}
 
         {/* Schedule Adjustment Notifications */}
-        <div className="mb-8">
-          <ScheduleAdjustmentNotifications />
-        </div>
+        {profile && latestSchedule && (
+          <div className="mb-8">
+            <ScheduleAdjustmentNotifications 
+              babyId={profile.id}
+              currentSchedule={latestSchedule}
+            />
+          </div>
+        )}
 
         {/* Sleep Articles & Tips */}
         <div className="mb-8">

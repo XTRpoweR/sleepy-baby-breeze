@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Moon, Baby, Clock } from 'lucide-react';
-import { SleepScheduleData } from '@/pages/SleepSchedule';
+import { SleepScheduleData } from '@/types/sleepSchedule';
 
 interface SleepScheduleSetupProps {
   onSubmit: (data: SleepScheduleData) => void;
