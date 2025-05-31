@@ -83,56 +83,6 @@ export type Database = {
         }
         Relationships: []
       }
-      family_invitations: {
-        Row: {
-          baby_id: string
-          created_at: string | null
-          email: string
-          expires_at: string
-          id: string
-          invitation_token: string
-          invited_by: string
-          permissions: Json | null
-          role: string
-          status: string
-          updated_at: string | null
-        }
-        Insert: {
-          baby_id: string
-          created_at?: string | null
-          email: string
-          expires_at?: string
-          id?: string
-          invitation_token?: string
-          invited_by: string
-          permissions?: Json | null
-          role?: string
-          status?: string
-          updated_at?: string | null
-        }
-        Update: {
-          baby_id?: string
-          created_at?: string | null
-          email?: string
-          expires_at?: string
-          id?: string
-          invitation_token?: string
-          invited_by?: string
-          permissions?: Json | null
-          role?: string
-          status?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "family_invitations_baby_id_fkey"
-            columns: ["baby_id"]
-            isOneToOne: false
-            referencedRelation: "baby_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       family_members: {
         Row: {
           baby_id: string
