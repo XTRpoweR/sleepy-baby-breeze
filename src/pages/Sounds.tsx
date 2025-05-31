@@ -1,7 +1,8 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Moon, 
   User,
@@ -69,7 +70,7 @@ const Sounds = () => {
                 variant="outline" 
                 size="sm" 
                 onClick={handleSignOut}
-                className="flex items-center space-x-1 border-blue-200 text-blue-600 hover:bg-blue-50"
+                className="flex items-center space-x-1"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Sign Out</span>
@@ -86,7 +87,7 @@ const Sounds = () => {
           <Button 
             variant="ghost" 
             onClick={handleBackToDashboard}
-            className="mb-4 flex items-center space-x-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Dashboard</span>
@@ -99,26 +100,33 @@ const Sounds = () => {
           </p>
         </div>
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Sounds */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 mb-6">
-              <Music className="h-6 w-6 text-purple-600" />
-              <h2 className="text-2xl font-bold text-gray-900">Sounds</h2>
-            </div>
-            <SoundsLibrary />
-          </div>
+        {/* Tab Navigation */}
+        <Tabs defaultValue="guides" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100 p-1 rounded-lg">
+            <TabsTrigger 
+              value="guides" 
+              className="flex items-center space-x-2 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-600 rounded-md py-3 px-6 font-medium transition-all"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span>Guides & Articles</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="sounds" 
+              className="flex items-center space-x-2 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-600 rounded-md py-3 px-6 font-medium transition-all"
+            >
+              <Music className="h-4 w-4" />
+              <span>Sounds</span>
+            </TabsTrigger>
+          </TabsList>
 
-          {/* Right Column - Guides & Articles */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2 mb-6">
-              <BookOpen className="h-6 w-6 text-blue-600" />
-              <h2 className="text-2xl font-bold text-gray-900">Guides & Articles</h2>
-            </div>
+          <TabsContent value="guides" className="mt-0">
             <SleepArticles />
-          </div>
-        </div>
+          </TabsContent>
+
+          <TabsContent value="sounds" className="mt-0">
+            <SoundsLibrary />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
