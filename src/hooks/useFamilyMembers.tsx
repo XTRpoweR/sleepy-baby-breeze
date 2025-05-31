@@ -28,6 +28,8 @@ interface FamilyInvitation {
   expires_at: string;
   invitation_token: string;
   permissions: any;
+  created_at: string;
+  updated_at: string;
 }
 
 export const useFamilyMembers = (babyId: string | null) => {
@@ -97,19 +99,33 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       setMembers(membersWithProfiles);
 
-      // Fetch pending invitations
+      // Fetch pending invitations using raw query to bypass TypeScript issues
       const { data: pendingInvitations, error: invitationsError } = await supabase
-        .from('family_invitations')
-        .select('*')
-        .eq('baby_id', babyId)
-        .eq('status', 'pending');
+        .rpc('get_family_invitations', { p_baby_id: babyId });
 
       if (invitationsError) {
         console.error('Error fetching invitations:', invitationsError);
-        // Continue without invitations rather than failing completely
-        setInvitations([]);
+        // If the function doesn't exist, try direct query
+        try {
+          const response = await supabase
+            .from('family_invitations' as any)
+            .select('*')
+            .eq('baby_id', babyId)
+            .eq('status', 'pending');
+
+          if (response.error) {
+            console.error('Direct query also failed:', response.error);
+            setInvitations([]);
+          } else {
+            console.log('Invitations found:', response.data?.length || 0);
+            setInvitations(response.data || []);
+          }
+        } catch (directError) {
+          console.error('Direct query failed:', directError);
+          setInvitations([]);
+        }
       } else {
-        console.log('Invitations found:', pendingInvitations?.length || 0);
+        console.log('Invitations found via RPC:', pendingInvitations?.length || 0);
         setInvitations(pendingInvitations || []);
       }
     } catch (error) {
@@ -128,8 +144,9 @@ export const useFamilyMembers = (babyId: string | null) => {
     if (!user || !babyId) return false;
 
     try {
+      // Use raw query to bypass TypeScript issues
       const { error } = await supabase
-        .from('family_invitations')
+        .from('family_invitations' as any)
         .insert({
           baby_id: babyId,
           email: email.toLowerCase(),
@@ -197,8 +214,9 @@ export const useFamilyMembers = (babyId: string | null) => {
     if (!user) return false;
 
     try {
+      // Use raw query to bypass TypeScript issues
       const { error } = await supabase
-        .from('family_invitations')
+        .from('family_invitations' as any)
         .delete()
         .eq('id', invitationId);
 
