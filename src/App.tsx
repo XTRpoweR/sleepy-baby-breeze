@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import TrackActivity from "./pages/TrackActivity";
 import SleepSchedule from "./pages/SleepSchedule";
 import Sounds from "./pages/Sounds";
+import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/track" element={<TrackActivity />} />
             <Route path="/sleep-schedule" element={<SleepSchedule />} />
             <Route path="/sounds" element={<Sounds />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
