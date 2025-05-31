@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,7 +14,6 @@ import { SleepScheduleSetup } from '@/components/sleep-schedule/SleepScheduleSet
 import { SleepScheduleDisplay } from '@/components/sleep-schedule/SleepScheduleDisplay';
 import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { ScheduleAdjustmentNotifications } from '@/components/sleep-schedule/ScheduleAdjustmentNotifications';
-import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 
 const SleepSchedule = () => {
@@ -234,11 +232,6 @@ const SleepSchedule = () => {
             />
           </div>
         )}
-
-        {/* Sleep Articles & Tips */}
-        <div className="mb-8">
-          <SleepArticles />
-        </div>
       </main>
     </div>
   );

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { SoundsLibrary } from '@/components/sounds/SoundsLibrary';
+import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
 
 const Sounds = () => {
   const { user, loading, signOut } = useAuth();
@@ -97,7 +98,14 @@ const Sounds = () => {
         </div>
 
         {/* Sounds Library */}
-        <SoundsLibrary />
+        <div className="mb-8">
+          <SoundsLibrary />
+        </div>
+
+        {/* Sleep Articles & Tips */}
+        <div className="mb-8">
+          <SleepArticles />
+        </div>
       </main>
     </div>
   );
