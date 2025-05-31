@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,12 +17,10 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
-import { SoundsDialog } from '@/components/sounds/SoundsDialog';
 
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [showSoundsDialog, setShowSoundsDialog] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -122,7 +121,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <QuickLogCard onOpenSounds={() => setShowSoundsDialog(true)} />
+          <QuickLogCard />
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-6 text-center">
@@ -190,11 +189,6 @@ const Dashboard = () => {
           </Card>
         </div>
       </main>
-
-      <SoundsDialog 
-        open={showSoundsDialog} 
-        onOpenChange={setShowSoundsDialog} 
-      />
     </div>
   );
 };

@@ -1,16 +1,19 @@
 
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock, Music } from 'lucide-react';
 
-interface QuickLogCardProps {
-  onOpenSounds: () => void;
-}
+export const QuickLogCard = () => {
+  const navigate = useNavigate();
 
-export const QuickLogCard = ({ onOpenSounds }: QuickLogCardProps) => {
+  const handleClick = () => {
+    navigate('/sounds');
+  };
+
   return (
     <Card 
       className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-green-50 to-blue-50 border-green-200"
-      onClick={onOpenSounds}
+      onClick={handleClick}
     >
       <CardContent className="p-6 text-center">
         <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">

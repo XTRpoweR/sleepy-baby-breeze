@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import TrackActivity from "./pages/TrackActivity";
 import SleepSchedule from "./pages/SleepSchedule";
+import Sounds from "./pages/Sounds";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/track" element={<TrackActivity />} />
             <Route path="/sleep-schedule" element={<SleepSchedule />} />
+            <Route path="/sounds" element={<Sounds />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
