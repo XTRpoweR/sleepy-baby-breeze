@@ -1,12 +1,15 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Moon, 
   User,
   LogOut,
-  ArrowLeft
+  ArrowLeft,
+  Music,
+  BookOpen
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { SoundsLibrary } from '@/components/sounds/SoundsLibrary';
@@ -93,19 +96,37 @@ const Sounds = () => {
             Soothing Sounds & Audio
           </h1>
           <p className="text-gray-600">
-            Choose from our library of calming sounds to help your baby sleep peacefully.
+            Choose from our library of calming sounds and helpful sleep guides for your baby.
           </p>
         </div>
 
-        {/* Sounds Library */}
-        <div className="mb-8">
-          <SoundsLibrary />
-        </div>
+        {/* Tab Navigation */}
+        <Tabs defaultValue="guides" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100 p-1 rounded-lg">
+            <TabsTrigger 
+              value="guides" 
+              className="flex items-center space-x-2 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-600 rounded-md py-3 px-6 font-medium transition-all"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span>Guides & Articles</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="sounds" 
+              className="flex items-center space-x-2 data-[state=active]:bg-gray-800 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-gray-600 rounded-md py-3 px-6 font-medium transition-all"
+            >
+              <Music className="h-4 w-4" />
+              <span>Sounds</span>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Sleep Articles & Tips */}
-        <div className="mb-8">
-          <SleepArticles />
-        </div>
+          <TabsContent value="guides" className="mt-0">
+            <SleepArticles />
+          </TabsContent>
+
+          <TabsContent value="sounds" className="mt-0">
+            <SoundsLibrary />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
