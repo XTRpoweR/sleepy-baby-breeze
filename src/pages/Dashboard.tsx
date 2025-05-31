@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,10 +15,13 @@ import {
   Activity
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
+import { SoundsDialog } from '@/components/sounds/SoundsDialog';
 
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [showSoundsDialog, setShowSoundsDialog] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -119,15 +122,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardContent className="p-6 text-center">
-              <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
-                <Clock className="h-6 w-6 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Quick Log</h3>
-              <p className="text-sm text-gray-600">Add a completed activity session</p>
-            </CardContent>
-          </Card>
+          <QuickLogCard onOpenSounds={() => setShowSoundsDialog(true)} />
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-6 text-center">
@@ -195,6 +190,11 @@ const Dashboard = () => {
           </Card>
         </div>
       </main>
+
+      <SoundsDialog 
+        open={showSoundsDialog} 
+        onOpenChange={setShowSoundsDialog} 
+      />
     </div>
   );
 };
