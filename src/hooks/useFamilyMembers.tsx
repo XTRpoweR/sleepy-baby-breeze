@@ -129,9 +129,9 @@ export const useFamilyMembers = (babyId: string | null) => {
           setInvitations([]);
         } else {
           console.log('Invitations found:', pendingInvitations?.length || 0);
-          // Type assertion for the raw data
-          const typedInvitations = (pendingInvitations || []) as RawInvitationData[];
-          setInvitations(typedInvitations);
+          // Safer type assertion using unknown first
+          const typedInvitations = (pendingInvitations as unknown) as RawInvitationData[];
+          setInvitations(typedInvitations || []);
         }
       } catch (directError) {
         console.error('Direct invitations query failed:', directError);
