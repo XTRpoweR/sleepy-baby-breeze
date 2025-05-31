@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -184,7 +185,7 @@ export const useScheduleAdjustments = (babyId: string | null, currentSchedule: T
           sleep_challenges: scheduleData.sleepChallenges,
           recommended_bedtime: adjustment.suggestedSchedule.bedtime,
           recommended_wake_time: adjustment.suggestedSchedule.wakeTime,
-          recommended_naps: adjustment.suggestedSchedule.naps,
+          recommended_naps: adjustment.suggestedSchedule.naps as any, // Cast to any for Json compatibility
           total_sleep_hours: adjustment.suggestedSchedule.totalSleepHours
         });
 

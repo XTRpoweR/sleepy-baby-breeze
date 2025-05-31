@@ -11,6 +11,7 @@ export interface Nap {
   name: string;
   startTime: string;
   duration: number; // duration in minutes
+  [key: string]: any; // Add index signature for Json compatibility
 }
 
 export interface ScheduleRecommendation {

@@ -68,7 +68,7 @@ export const useSleepSchedule = (babyId: string | null) => {
           sleep_challenges: scheduleData.sleepChallenges,
           recommended_bedtime: recommendation.bedtime,
           recommended_wake_time: recommendation.wakeTime,
-          recommended_naps: recommendation.naps,
+          recommended_naps: recommendation.naps as any, // Cast to any for Json compatibility
           total_sleep_hours: recommendation.totalSleepHours
         })
         .select()
