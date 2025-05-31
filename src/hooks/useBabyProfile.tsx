@@ -8,6 +8,8 @@ interface BabyProfile {
   id: string;
   name: string;
   birth_date: string | null;
+  photo_url: string | null;
+  is_active: boolean | null;
   created_at: string;
   updated_at: string;
 }
@@ -15,18 +17,19 @@ interface BabyProfile {
 export const useBabyProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [profile, setProfile] = useState<BabyProfile | null>(null);
+  const [profiles, setProfiles] = useState<BabyProfile[]>([]);
+  const [activeProfile, setActiveProfile] = useState<BabyProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
-      fetchProfile();
+      fetchProfiles();
     } else {
       setLoading(false);
     }
   }, [user]);
 
-  const fetchProfile = async () => {
+  const fetchProfiles = async () => {
     if (!user) return;
 
     try {
@@ -34,35 +37,42 @@ export const useBabyProfile = () => {
         .from('baby_profiles')
         .select('*')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .order('created_at', { ascending: true });
 
       if (error) {
-        console.error('Error fetching baby profile:', error);
+        console.error('Error fetching baby profiles:', error);
         toast({
           title: "Error",
-          description: "Failed to load baby profile",
+          description: "Failed to load baby profiles",
           variant: "destructive",
         });
       } else {
-        setProfile(data);
+        setProfiles(data || []);
+        const active = data?.find(profile => profile.is_active) || data?.[0] || null;
+        setActiveProfile(active);
       }
     } catch (error) {
-      console.error('Error fetching baby profile:', error);
+      console.error('Error fetching baby profiles:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const createProfile = async (profileData: { name: string; birth_date?: string }) => {
-    if (!user) return;
+  const createProfile = async (profileData: { name: string; birth_date?: string; photo_url?: string }) => {
+    if (!user) return false;
 
     try {
+      // If this is the first profile, make it active
+      const isFirstProfile = profiles.length === 0;
+
       const { data, error } = await supabase
         .from('baby_profiles')
         .insert({
           user_id: user.id,
           name: profileData.name,
-          birth_date: profileData.birth_date || null
+          birth_date: profileData.birth_date || null,
+          photo_url: profileData.photo_url || null,
+          is_active: isFirstProfile
         })
         .select()
         .single();
@@ -77,7 +87,12 @@ export const useBabyProfile = () => {
         return false;
       }
 
-      setProfile(data);
+      setProfiles(prev => [...prev, data]);
+      
+      if (isFirstProfile) {
+        setActiveProfile(data);
+      }
+
       toast({
         title: "Success!",
         description: `Baby profile for ${profileData.name} created successfully`,
@@ -89,10 +104,133 @@ export const useBabyProfile = () => {
     }
   };
 
+  const updateProfile = async (profileId: string, updates: Partial<BabyProfile>) => {
+    if (!user) return false;
+
+    try {
+      const { data, error } = await supabase
+        .from('baby_profiles')
+        .update(updates)
+        .eq('id', profileId)
+        .eq('user_id', user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating baby profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update baby profile",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      setProfiles(prev => prev.map(p => p.id === profileId ? data : p));
+      
+      if (activeProfile?.id === profileId) {
+        setActiveProfile(data);
+      }
+
+      toast({
+        title: "Success!",
+        description: "Baby profile updated successfully",
+      });
+      return true;
+    } catch (error) {
+      console.error('Error updating baby profile:', error);
+      return false;
+    }
+  };
+
+  const switchProfile = async (profileId: string) => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase.rpc('set_active_profile', {
+        profile_id: profileId,
+        user_id_param: user.id
+      });
+
+      if (error) {
+        console.error('Error switching profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to switch profile",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // Update local state
+      setProfiles(prev => prev.map(p => ({ ...p, is_active: p.id === profileId })));
+      const newActiveProfile = profiles.find(p => p.id === profileId);
+      if (newActiveProfile) {
+        setActiveProfile({ ...newActiveProfile, is_active: true });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error switching profile:', error);
+      return false;
+    }
+  };
+
+  const deleteProfile = async (profileId: string) => {
+    if (!user) return false;
+
+    try {
+      const { error } = await supabase
+        .from('baby_profiles')
+        .delete()
+        .eq('id', profileId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting baby profile:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete baby profile",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      const updatedProfiles = profiles.filter(p => p.id !== profileId);
+      setProfiles(updatedProfiles);
+
+      // If we deleted the active profile, switch to the first remaining one
+      if (activeProfile?.id === profileId) {
+        if (updatedProfiles.length > 0) {
+          await switchProfile(updatedProfiles[0].id);
+        } else {
+          setActiveProfile(null);
+        }
+      }
+
+      toast({
+        title: "Success!",
+        description: "Baby profile deleted successfully",
+      });
+      return true;
+    } catch (error) {
+      console.error('Error deleting baby profile:', error);
+      return false;
+    }
+  };
+
+  // Backwards compatibility - return single profile as before
+  const profile = activeProfile;
+
   return {
     profile,
+    profiles,
+    activeProfile,
     loading,
     createProfile,
-    refetch: fetchProfile
+    updateProfile,
+    switchProfile,
+    deleteProfile,
+    refetch: fetchProfiles
   };
 };

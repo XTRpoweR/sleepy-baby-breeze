@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,11 +17,16 @@ import {
   Users
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
+import { ProfileSelector } from '@/components/profiles/ProfileSelector';
+import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
+  const { activeProfile, profiles } = useBabyProfile();
   const navigate = useNavigate();
+  const [showProfileManagement, setShowProfileManagement] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -48,6 +53,14 @@ const Dashboard = () => {
 
   const handleFamilySharing = () => {
     navigate('/family');
+  };
+
+  const handleAddProfile = () => {
+    setShowProfileManagement(true);
+  };
+
+  const handleManageProfiles = () => {
+    setShowProfileManagement(true);
   };
 
   if (loading) {
@@ -103,9 +116,18 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Welcome back, {user.user_metadata?.full_name?.split(' ')[0] || 'there'}! 👋
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-6">
             Ready to track your baby's sleep patterns and activities today?
           </p>
+          
+          {/* Profile Selector */}
+          <div className="mb-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-3">Child Profiles</h2>
+            <ProfileSelector 
+              onAddProfile={handleAddProfile}
+              onManageProfiles={handleManageProfiles}
+            />
+          </div>
         </div>
 
         {/* Quick Actions */}
@@ -175,20 +197,39 @@ const Dashboard = () => {
               <CardTitle className="flex items-center space-x-2">
                 <Baby className="h-5 w-5 text-blue-600" />
                 <span>Today's Activity Summary</span>
+                {activeProfile && (
+                  <span className="text-sm font-normal text-gray-600">
+                    for {activeProfile.name}
+                  </span>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8">
-                <Moon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Start Tracking Activities</h3>
-                <p className="text-gray-600 mb-4">
-                  Begin logging your baby's activities to see insights and patterns here.
-                </p>
-                <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleTrackActivity}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Start Tracking
-                </Button>
-              </div>
+              {activeProfile ? (
+                <div className="text-center py-8">
+                  <Moon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Start Tracking Activities</h3>
+                  <p className="text-gray-600 mb-4">
+                    Begin logging {activeProfile.name}'s activities to see insights and patterns here.
+                  </p>
+                  <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleTrackActivity}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Start Tracking
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Baby className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Create a Child Profile</h3>
+                  <p className="text-gray-600 mb-4">
+                    Add your first child profile to start tracking activities.
+                  </p>
+                  <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddProfile}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Child Profile
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -215,13 +256,22 @@ const Dashboard = () => {
               </div>
               <div className="pt-4 border-t">
                 <p className="text-xs text-gray-500 text-center">
-                  Start tracking to see your personalized insights
+                  {activeProfile 
+                    ? `Start tracking ${activeProfile.name}'s activities to see insights`
+                    : 'Create a child profile to see personalized insights'
+                  }
                 </p>
               </div>
             </CardContent>
           </Card>
         </div>
       </main>
+
+      {/* Profile Management Dialog */}
+      <ProfileManagementDialog 
+        isOpen={showProfileManagement}
+        onClose={() => setShowProfileManagement(false)}
+      />
     </div>
   );
 };

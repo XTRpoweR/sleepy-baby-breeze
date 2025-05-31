@@ -13,7 +13,8 @@ import {
   Plus,
   ArrowLeft,
   Clock,
-  History
+  History,
+  Settings
 } from 'lucide-react';
 import { SleepTracker } from '@/components/tracking/SleepTracker';
 import { FeedingTracker } from '@/components/tracking/FeedingTracker';
@@ -21,19 +22,30 @@ import { DiaperTracker } from '@/components/tracking/DiaperTracker';
 import { CustomActivityTracker } from '@/components/tracking/CustomActivityTracker';
 import { ActivityLogsList } from '@/components/tracking/ActivityLogsList';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
+import { ProfileSelector } from '@/components/profiles/ProfileSelector';
+import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 
 const TrackActivity = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { profile, loading: profileLoading, createProfile } = useBabyProfile();
+  const { activeProfile, profiles, loading: profileLoading, createProfile } = useBabyProfile();
   const [activeTab, setActiveTab] = useState('sleep');
+  const [showProfileManagement, setShowProfileManagement] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  const handleAddProfile = () => {
+    setShowProfileManagement(true);
+  };
+
+  const handleManageProfiles = () => {
+    setShowProfileManagement(true);
+  };
 
   if (loading || profileLoading) {
     return (
@@ -48,7 +60,7 @@ const TrackActivity = () => {
 
   if (!user) return null;
 
-  if (!profile) {
+  if (profiles.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="max-w-2xl mx-auto px-4 py-8">
@@ -81,62 +93,90 @@ const TrackActivity = () => {
             </Button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Track Activities</h1>
-              <p className="text-gray-600">Recording for {profile.name}</p>
+              {activeProfile && (
+                <p className="text-gray-600">Recording for {activeProfile.name}</p>
+              )}
             </div>
           </div>
-          <div className="flex items-center space-x-2 text-blue-600">
-            <Baby className="h-6 w-6" />
-            <span className="font-medium">{profile.name}</span>
+          
+          {/* Profile Selector */}
+          <div className="flex items-center space-x-4">
+            <ProfileSelector 
+              onAddProfile={handleAddProfile}
+              onManageProfiles={handleManageProfiles}
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Activity Tracking */}
-          <div className="lg:col-span-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-4 mb-8">
-                <TabsTrigger value="sleep" className="flex items-center space-x-2">
-                  <Moon className="h-4 w-4" />
-                  <span>Sleep</span>
-                </TabsTrigger>
-                <TabsTrigger value="feeding" className="flex items-center space-x-2">
-                  <Bottle className="h-4 w-4" />
-                  <span>Feeding</span>
-                </TabsTrigger>
-                <TabsTrigger value="diaper" className="flex items-center space-x-2">
-                  <Heart className="h-4 w-4" />
-                  <span>Diaper</span>
-                </TabsTrigger>
-                <TabsTrigger value="custom" className="flex items-center space-x-2">
-                  <Plus className="h-4 w-4" />
-                  <span>Custom</span>
-                </TabsTrigger>
-              </TabsList>
+        {activeProfile ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Activity Tracking */}
+            <div className="lg:col-span-2">
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <TabsList className="grid w-full grid-cols-4 mb-8">
+                  <TabsTrigger value="sleep" className="flex items-center space-x-2">
+                    <Moon className="h-4 w-4" />
+                    <span>Sleep</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="feeding" className="flex items-center space-x-2">
+                    <Bottle className="h-4 w-4" />
+                    <span>Feeding</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="diaper" className="flex items-center space-x-2">
+                    <Heart className="h-4 w-4" />
+                    <span>Diaper</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="custom" className="flex items-center space-x-2">
+                    <Plus className="h-4 w-4" />
+                    <span>Custom</span>
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="sleep">
-                <SleepTracker babyId={profile.id} />
-              </TabsContent>
+                <TabsContent value="sleep">
+                  <SleepTracker babyId={activeProfile.id} />
+                </TabsContent>
 
-              <TabsContent value="feeding">
-                <FeedingTracker babyId={profile.id} />
-              </TabsContent>
+                <TabsContent value="feeding">
+                  <FeedingTracker babyId={activeProfile.id} />
+                </TabsContent>
 
-              <TabsContent value="diaper">
-                <DiaperTracker babyId={profile.id} />
-              </TabsContent>
+                <TabsContent value="diaper">
+                  <DiaperTracker babyId={activeProfile.id} />
+                </TabsContent>
 
-              <TabsContent value="custom">
-                <CustomActivityTracker babyId={profile.id} />
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="custom">
+                  <CustomActivityTracker babyId={activeProfile.id} />
+                </TabsContent>
+              </Tabs>
+            </div>
+
+            {/* Activity Logs */}
+            <div className="lg:col-span-1">
+              <ActivityLogsList babyId={activeProfile.id} />
+            </div>
           </div>
-
-          {/* Activity Logs */}
-          <div className="lg:col-span-1">
-            <ActivityLogsList babyId={profile.id} />
-          </div>
-        </div>
+        ) : (
+          <Card className="max-w-md mx-auto">
+            <CardContent className="p-8 text-center">
+              <Baby className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Profile</h3>
+              <p className="text-gray-600 mb-4">
+                Please select a child profile to start tracking activities.
+              </p>
+              <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Child Profile
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      {/* Profile Management Dialog */}
+      <ProfileManagementDialog 
+        isOpen={showProfileManagement}
+        onClose={() => setShowProfileManagement(false)}
+      />
     </div>
   );
 };

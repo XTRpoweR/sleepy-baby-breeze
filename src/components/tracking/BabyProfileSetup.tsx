@@ -4,15 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Baby, Calendar } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Baby, Calendar, Camera } from 'lucide-react';
 
 interface BabyProfileSetupProps {
-  onProfileCreated: (profileData: { name: string; birth_date?: string }) => Promise<boolean>;
+  onProfileCreated: (profileData: { name: string; birth_date?: string; photo_url?: string }) => Promise<boolean>;
 }
 
 export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) => {
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,12 +24,14 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
     setIsSubmitting(true);
     const success = await onProfileCreated({
       name: name.trim(),
-      birth_date: birthDate || undefined
+      birth_date: birthDate || undefined,
+      photo_url: photoUrl || undefined
     });
     
     if (success) {
       setName('');
       setBirthDate('');
+      setPhotoUrl('');
     }
     setIsSubmitting(false);
   };
@@ -66,6 +70,30 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
               value={birthDate}
               onChange={(e) => setBirthDate(e.target.value)}
             />
+          </div>
+
+          <div>
+            <Label htmlFor="photoUrl" className="flex items-center space-x-2">
+              <Camera className="h-4 w-4" />
+              <span>Photo URL (Optional)</span>
+            </Label>
+            <Input
+              id="photoUrl"
+              type="url"
+              value={photoUrl}
+              onChange={(e) => setPhotoUrl(e.target.value)}
+              placeholder="https://example.com/baby-photo.jpg"
+            />
+            {photoUrl && (
+              <div className="mt-3 flex justify-center">
+                <Avatar className="h-20 w-20">
+                  <AvatarImage src={photoUrl} />
+                  <AvatarFallback className="bg-blue-100 text-blue-600">
+                    {name.charAt(0).toUpperCase() || 'B'}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            )}
           </div>
 
           <Button 

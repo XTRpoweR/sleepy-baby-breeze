@@ -58,7 +58,9 @@ export type Database = {
           birth_date: string | null
           created_at: string | null
           id: string
+          is_active: boolean | null
           name: string
+          photo_url: string | null
           updated_at: string | null
           user_id: string
         }
@@ -66,7 +68,9 @@ export type Database = {
           birth_date?: string | null
           created_at?: string | null
           id?: string
+          is_active?: boolean | null
           name: string
+          photo_url?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -74,7 +78,9 @@ export type Database = {
           birth_date?: string | null
           created_at?: string | null
           id?: string
+          is_active?: boolean | null
           name?: string
+          photo_url?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -265,6 +271,10 @@ export type Database = {
       is_baby_owner: {
         Args: { user_uuid: string; baby_uuid: string }
         Returns: boolean
+      }
+      set_active_profile: {
+        Args: { profile_id: string; user_id_param: string }
+        Returns: undefined
       }
     }
     Enums: {

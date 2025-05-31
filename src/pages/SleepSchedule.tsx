@@ -1,11 +1,15 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { 
   Moon, 
   User,
   LogOut,
-  ArrowLeft
+  ArrowLeft,
+  Baby,
+  Plus
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
@@ -14,13 +18,16 @@ import { SleepScheduleSetup } from '@/components/sleep-schedule/SleepScheduleSet
 import { SleepScheduleDisplay } from '@/components/sleep-schedule/SleepScheduleDisplay';
 import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { ScheduleAdjustmentNotifications } from '@/components/sleep-schedule/ScheduleAdjustmentNotifications';
+import { ProfileSelector } from '@/components/profiles/ProfileSelector';
+import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 
 const SleepSchedule = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const { profile, loading: profileLoading } = useBabyProfile();
-  const { schedules, saveSleepSchedule } = useSleepSchedule(profile?.id || null);
+  const { activeProfile, profiles, loading: profileLoading } = useBabyProfile();
+  const { schedules, saveSleepSchedule } = useSleepSchedule(activeProfile?.id || null);
+  const [showProfileManagement, setShowProfileManagement] = useState(false);
   
   const [currentRecommendation, setCurrentRecommendation] = useState<ScheduleRecommendation | null>(null);
   const [savedSchedule, setSavedSchedule] = useState<any>(null);
@@ -38,6 +45,14 @@ const SleepSchedule = () => {
 
   const handleBackToDashboard = () => {
     navigate('/dashboard');
+  };
+
+  const handleAddProfile = () => {
+    setShowProfileManagement(true);
+  };
+
+  const handleManageProfiles = () => {
+    setShowProfileManagement(true);
   };
 
   const generateScheduleRecommendation = (data: SleepScheduleData): ScheduleRecommendation => {
@@ -184,55 +199,90 @@ const SleepSchedule = () => {
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Dashboard</span>
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Personalized Sleep Schedule
-          </h1>
-          <p className="text-gray-600">
-            Create and manage sleep schedules tailored to your baby's needs.
-          </p>
+          
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Personalized Sleep Schedule
+              </h1>
+              <p className="text-gray-600">
+                Create and manage sleep schedules tailored to your baby's needs.
+              </p>
+            </div>
+            
+            {/* Profile Selector */}
+            <div className="flex items-center space-x-4">
+              <ProfileSelector 
+                onAddProfile={handleAddProfile}
+                onManageProfiles={handleManageProfiles}
+              />
+            </div>
+          </div>
         </div>
 
-        {/* Sleep Schedule Setup */}
-        {!currentRecommendation && (
-          <div className="mb-8">
-            <SleepScheduleSetup 
-              onSubmit={handleScheduleSubmit}
-              profile={profile || { name: 'Your Baby' }}
-            />
-          </div>
-        )}
+        {activeProfile ? (
+          <>
+            {/* Sleep Schedule Setup */}
+            {!currentRecommendation && (
+              <div className="mb-8">
+                <SleepScheduleSetup 
+                  onSubmit={handleScheduleSubmit}
+                  profile={activeProfile}
+                />
+              </div>
+            )}
 
-        {/* Sleep Schedule Display */}
-        {currentRecommendation && (
-          <div className="mb-8">
-            <SleepScheduleDisplay 
-              recommendation={currentRecommendation}
-              onReset={handleReset}
-              savedSchedule={savedSchedule}
-            />
-          </div>
-        )}
+            {/* Sleep Schedule Display */}
+            {currentRecommendation && (
+              <div className="mb-8">
+                <SleepScheduleDisplay 
+                  recommendation={currentRecommendation}
+                  onReset={handleReset}
+                  savedSchedule={savedSchedule}
+                />
+              </div>
+            )}
 
-        {/* Saved Schedules */}
-        {profile && (
-          <div className="mb-8">
-            <SavedSchedules 
-              babyId={profile.id}
-              onViewSchedule={handleViewSchedule}
-            />
-          </div>
-        )}
+            {/* Saved Schedules */}
+            <div className="mb-8">
+              <SavedSchedules 
+                babyId={activeProfile.id}
+                onViewSchedule={handleViewSchedule}
+              />
+            </div>
 
-        {/* Schedule Adjustment Notifications */}
-        {profile && latestSchedule && (
-          <div className="mb-8">
-            <ScheduleAdjustmentNotifications 
-              babyId={profile.id}
-              currentSchedule={latestSchedule}
-            />
-          </div>
+            {/* Schedule Adjustment Notifications */}
+            {latestSchedule && (
+              <div className="mb-8">
+                <ScheduleAdjustmentNotifications 
+                  babyId={activeProfile.id}
+                  currentSchedule={latestSchedule}
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          <Card className="max-w-md mx-auto">
+            <CardContent className="p-8 text-center">
+              <Baby className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Child Profile Selected</h3>
+              <p className="text-gray-600 mb-4">
+                Please select or create a child profile to access sleep schedule features.
+              </p>
+              <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Child Profile
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </main>
+
+      {/* Profile Management Dialog */}
+      <ProfileManagementDialog 
+        isOpen={showProfileManagement}
+        onClose={() => setShowProfileManagement(false)}
+      />
     </div>
   );
 };
