@@ -32,21 +32,6 @@ interface FamilyInvitation {
   updated_at: string;
 }
 
-// Define the shape of the raw invitation data from the database
-interface RawInvitationData {
-  id: string;
-  baby_id: string;
-  email: string;
-  role: string;
-  status: string;
-  invited_by: string;
-  expires_at: string;
-  invitation_token: string;
-  permissions: any;
-  created_at: string;
-  updated_at: string;
-}
-
 export const useFamilyMembers = (babyId: string | null) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -61,7 +46,7 @@ export const useFamilyMembers = (babyId: string | null) => {
       return;
     }
 
-    console.log('Fetching family members for baby:', babyId);
+    console.log('Fetching family members for baby:', babyId, 'user:', user.id);
 
     try {
       // Fetch family members
@@ -95,7 +80,6 @@ export const useFamilyMembers = (babyId: string | null) => {
 
         if (profilesError) {
           console.error('Error fetching profiles:', profilesError);
-          // Continue without profile data rather than failing completely
           profiles = [];
         } else {
           profiles = profilesData || [];
@@ -114,24 +98,20 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       setMembers(membersWithProfiles);
 
-      // Fetch pending invitations using direct query
+      // Fetch pending invitations
       try {
-        const invitationsQuery = supabase
+        const { data: pendingInvitations, error: invitationsError } = await supabase
           .from('family_invitations' as any)
           .select('*')
           .eq('baby_id', babyId)
           .eq('status', 'pending');
-
-        const { data: pendingInvitations, error: invitationsError } = await invitationsQuery;
 
         if (invitationsError) {
           console.error('Error fetching invitations:', invitationsError);
           setInvitations([]);
         } else {
           console.log('Invitations found:', pendingInvitations?.length || 0);
-          // Safer type assertion using unknown first
-          const typedInvitations = (pendingInvitations as unknown) as RawInvitationData[];
-          setInvitations(typedInvitations || []);
+          setInvitations(pendingInvitations || []);
         }
       } catch (directError) {
         console.error('Direct invitations query failed:', directError);
@@ -152,6 +132,8 @@ export const useFamilyMembers = (babyId: string | null) => {
   const inviteFamilyMember = async (email: string, role: string = 'caregiver') => {
     if (!user || !babyId) return false;
 
+    console.log('Inviting family member:', email, 'role:', role);
+
     try {
       const insertData = {
         baby_id: babyId,
@@ -169,7 +151,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         console.error('Error creating invitation:', error);
         toast({
           title: "Error",
-          description: "Failed to send invitation",
+          description: `Failed to send invitation: ${error.message}`,
           variant: "destructive",
         });
         return false;
@@ -184,12 +166,19 @@ export const useFamilyMembers = (babyId: string | null) => {
       return true;
     } catch (error) {
       console.error('Error inviting family member:', error);
+      toast({
+        title: "Error",
+        description: "Unexpected error sending invitation",
+        variant: "destructive",
+      });
       return false;
     }
   };
 
   const removeFamilyMember = async (memberId: string) => {
     if (!user) return false;
+
+    console.log('Removing family member:', memberId);
 
     try {
       const { error } = await supabase
@@ -201,7 +190,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         console.error('Error removing family member:', error);
         toast({
           title: "Error",
-          description: "Failed to remove family member",
+          description: `Failed to remove family member: ${error.message}`,
           variant: "destructive",
         });
         return false;
@@ -216,12 +205,19 @@ export const useFamilyMembers = (babyId: string | null) => {
       return true;
     } catch (error) {
       console.error('Error removing family member:', error);
+      toast({
+        title: "Error",
+        description: "Unexpected error removing family member",
+        variant: "destructive",
+      });
       return false;
     }
   };
 
   const cancelInvitation = async (invitationId: string) => {
     if (!user) return false;
+
+    console.log('Canceling invitation:', invitationId);
 
     try {
       const { error } = await supabase
@@ -233,7 +229,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         console.error('Error canceling invitation:', error);
         toast({
           title: "Error",
-          description: "Failed to cancel invitation",
+          description: `Failed to cancel invitation: ${error.message}`,
           variant: "destructive",
         });
         return false;
@@ -248,6 +244,11 @@ export const useFamilyMembers = (babyId: string | null) => {
       return true;
     } catch (error) {
       console.error('Error canceling invitation:', error);
+      toast({
+        title: "Error",
+        description: "Unexpected error canceling invitation",
+        variant: "destructive",
+      });
       return false;
     }
   };

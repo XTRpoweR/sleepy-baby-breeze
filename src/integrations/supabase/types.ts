@@ -218,6 +218,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_family_member: {
+        Args: { check_user_id: string; check_baby_id: string }
+        Returns: boolean
+      }
       get_user_baby_access: {
         Args: { check_user_id: string; check_baby_id: string }
         Returns: boolean

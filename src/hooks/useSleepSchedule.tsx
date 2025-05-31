@@ -6,7 +6,6 @@ import { useToast } from '@/hooks/use-toast';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 import { Tables } from '@/integrations/supabase/types';
 
-// Use the database type directly and extend it if needed
 type SavedSleepSchedule = Tables<'sleep_schedules'>;
 
 export const useSleepSchedule = (babyId: string | null) => {
@@ -64,6 +63,8 @@ export const useSleepSchedule = (babyId: string | null) => {
   ) => {
     if (!user || !babyId) return null;
 
+    console.log('Saving sleep schedule for baby:', babyId);
+
     try {
       const { data, error } = await supabase
         .from('sleep_schedules')
@@ -76,7 +77,7 @@ export const useSleepSchedule = (babyId: string | null) => {
           sleep_challenges: scheduleData.sleepChallenges,
           recommended_bedtime: recommendation.bedtime,
           recommended_wake_time: recommendation.wakeTime,
-          recommended_naps: recommendation.naps as any, // Cast to any for Json compatibility
+          recommended_naps: recommendation.naps as any,
           total_sleep_hours: recommendation.totalSleepHours
         })
         .select()
@@ -86,28 +87,35 @@ export const useSleepSchedule = (babyId: string | null) => {
         console.error('Error saving sleep schedule:', error);
         toast({
           title: "Error",
-          description: "Failed to save sleep schedule",
+          description: `Failed to save sleep schedule: ${error.message}`,
           variant: "destructive",
         });
         return null;
       }
 
+      console.log('Successfully saved sleep schedule:', data.id);
       toast({
         title: "Success!",
         description: "Sleep schedule saved successfully",
       });
 
-      // Refresh the schedules list
       fetchSleepSchedules();
       return data;
     } catch (error) {
-      console.error('Error saving sleep schedule:', error);
+      console.error('Unexpected error saving sleep schedule:', error);
+      toast({
+        title: "Error",
+        description: "Unexpected error saving sleep schedule",
+        variant: "destructive",
+      });
       return null;
     }
   };
 
   const deleteSleepSchedule = async (scheduleId: string) => {
     if (!user) return false;
+
+    console.log('Deleting sleep schedule:', scheduleId);
 
     try {
       const { error } = await supabase
@@ -119,22 +127,27 @@ export const useSleepSchedule = (babyId: string | null) => {
         console.error('Error deleting sleep schedule:', error);
         toast({
           title: "Error",
-          description: "Failed to delete sleep schedule",
+          description: `Failed to delete sleep schedule: ${error.message}`,
           variant: "destructive",
         });
         return false;
       }
 
+      console.log('Successfully deleted sleep schedule:', scheduleId);
       toast({
         title: "Success!",
         description: "Sleep schedule deleted successfully",
       });
 
-      // Refresh the schedules list
       fetchSleepSchedules();
       return true;
     } catch (error) {
-      console.error('Error deleting sleep schedule:', error);
+      console.error('Unexpected error deleting sleep schedule:', error);
+      toast({
+        title: "Error",
+        description: "Unexpected error deleting sleep schedule",
+        variant: "destructive",
+      });
       return false;
     }
   };
