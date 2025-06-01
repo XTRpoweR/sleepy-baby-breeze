@@ -58,15 +58,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product_data: { 
-              name: "SleepyBaby Premium",
-              description: "Unlimited baby profiles, extended history, family sharing, and premium reports"
-            },
-            unit_amount: 999, // $9.99/month
-            recurring: { interval: "month" },
-          },
+          price: "price_1RVGzJ4J1PbkBkiPiOLDS1mS", // Your Stripe Price ID
           quantity: 1,
         },
       ],
