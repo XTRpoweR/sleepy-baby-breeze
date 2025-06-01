@@ -23,6 +23,7 @@ serve(async (req) => {
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    logStep("Stripe key verified");
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -32,7 +33,7 @@ serve(async (req) => {
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header provided");
-
+    
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
@@ -41,14 +42,19 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id, email: user.email });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+    
+    // Find the customer in Stripe
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     if (customers.data.length === 0) {
-      throw new Error("No Stripe customer found for this user");
+      throw new Error("No Stripe customer found for this user. Please make sure you have an active subscription first.");
     }
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
+    // Get the origin for the return URL
     const origin = req.headers.get("origin") || "http://localhost:3000";
+    
+    // Create the portal session following Stripe's best practices
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: `${origin}/dashboard`,
@@ -66,7 +72,21 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    
+    // Provide specific error messages based on common issues
+    let userFriendlyMessage = errorMessage;
+    
+    if (errorMessage.includes('No configuration provided') || 
+        errorMessage.includes('default configuration has not been created')) {
+      userFriendlyMessage = "Customer portal not configured. Please set up the portal in your Stripe Dashboard at https://dashboard.stripe.com/test/settings/billing/portal";
+    } else if (errorMessage.includes('No Stripe customer found')) {
+      userFriendlyMessage = "No subscription found. Please subscribe to a plan first before accessing the customer portal.";
+    }
+    
+    return new Response(JSON.stringify({ 
+      error: userFriendlyMessage,
+      details: errorMessage 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
