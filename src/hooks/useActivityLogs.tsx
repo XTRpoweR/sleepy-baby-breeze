@@ -22,11 +22,13 @@ export const useActivityLogs = (babyId: string) => {
   const fetchLogs = async () => {
     if (!babyId) {
       console.log('No babyId provided to fetchLogs');
+      setLogs([]);
       setLoading(false);
       return;
     }
 
     console.log('Fetching activity logs for baby:', babyId);
+    setLoading(true);
 
     try {
       const { data, error } = await supabase

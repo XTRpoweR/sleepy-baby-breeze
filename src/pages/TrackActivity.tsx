@@ -36,6 +36,7 @@ const TrackActivity = () => {
   const { logs, loading: logsLoading, deleteLog, updateLog, refetchLogs } = useActivityLogs(activeProfile?.id || '');
   const [activeTab, setActiveTab] = useState('sleep');
   const [showProfileManagement, setShowProfileManagement] = useState(false);
+  const [profileSwitching, setProfileSwitching] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -43,6 +44,17 @@ const TrackActivity = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Add explicit refetch trigger when active profile changes
+  useEffect(() => {
+    if (activeProfile?.id) {
+      console.log('Active profile changed to:', activeProfile.id, 'refetching logs...');
+      setProfileSwitching(true);
+      refetchLogs().finally(() => {
+        setProfileSwitching(false);
+      });
+    }
+  }, [activeProfile?.id, refetchLogs]);
 
   const handleAddProfile = () => {
     setShowProfileManagement(true);
@@ -166,7 +178,7 @@ const TrackActivity = () => {
               <ActivityLogsList 
                 babyId={activeProfile.id}
                 logs={logs}
-                loading={logsLoading}
+                loading={logsLoading || profileSwitching}
                 deleteLog={deleteLog}
                 updateLog={updateLog}
                 onActivityUpdated={handleActivityAdded}

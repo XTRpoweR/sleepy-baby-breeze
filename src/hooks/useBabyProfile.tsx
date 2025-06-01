@@ -146,6 +146,8 @@ export const useBabyProfile = () => {
   const switchProfile = async (profileId: string) => {
     if (!user) return false;
 
+    console.log('Switching profile to:', profileId);
+
     try {
       const { error } = await supabase.rpc('set_active_profile', {
         profile_id: profileId,
@@ -162,13 +164,18 @@ export const useBabyProfile = () => {
         return false;
       }
 
-      // Update local state
-      setProfiles(prev => prev.map(p => ({ ...p, is_active: p.id === profileId })));
-      const newActiveProfile = profiles.find(p => p.id === profileId);
+      // Update local state immediately and synchronously
+      const updatedProfiles = profiles.map(p => ({ ...p, is_active: p.id === profileId }));
+      const newActiveProfile = updatedProfiles.find(p => p.id === profileId);
+      
+      setProfiles(updatedProfiles);
+      
       if (newActiveProfile) {
+        console.log('Setting new active profile:', newActiveProfile.id);
         setActiveProfile({ ...newActiveProfile, is_active: true });
       }
 
+      console.log('Profile switch completed successfully');
       return true;
     } catch (error) {
       console.error('Error switching profile:', error);
