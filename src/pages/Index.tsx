@@ -300,9 +300,7 @@ const Index = () => {
             <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6" onClick={handleGetStarted}>
               Start Tracking Now
             </Button>
-            <Button size="lg" variant="outline" className="border-white hover:bg-white text-lg px-8 py-6 text-indigo-600">
-              Explore All Features
-            </Button>
+            
           </div>
           
           <p className="text-blue-100 text-sm mt-6">
