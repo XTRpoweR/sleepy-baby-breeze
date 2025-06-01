@@ -10,17 +10,27 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
+
+interface ActivityLog {
+  id: string;
+  activity_type: 'sleep' | 'feeding' | 'diaper' | 'custom';
+  start_time: string;
+  end_time: string | null;
+  duration_minutes: number | null;
+  notes: string | null;
+  metadata: any;
+  created_at: string;
+}
 
 interface EditActivityDialogProps {
   log: any;
   open: boolean;
   onClose: () => void;
   babyId: string;
+  updateLog: (logId: string, updates: Partial<ActivityLog>) => Promise<boolean>;
 }
 
-export const EditActivityDialog = ({ log, open, onClose, babyId }: EditActivityDialogProps) => {
-  const { updateLog } = useActivityLogs(babyId);
+export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: EditActivityDialogProps) => {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [notes, setNotes] = useState('');

@@ -22,7 +22,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { EditActivityDialog } from './EditActivityDialog';
 import { 
   Moon, 
@@ -36,8 +35,24 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
+interface ActivityLog {
+  id: string;
+  activity_type: 'sleep' | 'feeding' | 'diaper' | 'custom';
+  start_time: string;
+  end_time: string | null;
+  duration_minutes: number | null;
+  notes: string | null;
+  metadata: any;
+  created_at: string;
+}
+
 interface ActivityLogsListProps {
   babyId: string;
+  logs: ActivityLog[];
+  loading: boolean;
+  deleteLog: (logId: string) => Promise<boolean>;
+  updateLog: (logId: string, updates: Partial<ActivityLog>) => Promise<boolean>;
+  onActivityUpdated?: () => void;
 }
 
 const ACTIVITY_ICONS = {
@@ -54,8 +69,14 @@ const ACTIVITY_COLORS = {
   custom: 'bg-orange-100 text-orange-800'
 };
 
-export const ActivityLogsList = ({ babyId }: ActivityLogsListProps) => {
-  const { logs, loading, deleteLog } = useActivityLogs(babyId);
+export const ActivityLogsList = ({ 
+  babyId, 
+  logs, 
+  loading, 
+  deleteLog, 
+  updateLog, 
+  onActivityUpdated 
+}: ActivityLogsListProps) => {
   const [editingLog, setEditingLog] = useState<any>(null);
 
   const formatDuration = (minutes: number | null) => {
@@ -86,6 +107,21 @@ export const ActivityLogsList = ({ babyId }: ActivityLogsListProps) => {
       default:
         return '';
     }
+  };
+
+  const handleDeleteLog = async (logId: string) => {
+    const success = await deleteLog(logId);
+    if (success && onActivityUpdated) {
+      onActivityUpdated();
+    }
+  };
+
+  const handleUpdateLog = async (logId: string, updates: Partial<ActivityLog>) => {
+    const success = await updateLog(logId, updates);
+    if (success && onActivityUpdated) {
+      onActivityUpdated();
+    }
+    return success;
   };
 
   if (loading) {
@@ -206,7 +242,7 @@ export const ActivityLogsList = ({ babyId }: ActivityLogsListProps) => {
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => deleteLog(log.id)}
+                                onClick={() => handleDeleteLog(log.id)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
                                 Delete
@@ -230,6 +266,7 @@ export const ActivityLogsList = ({ babyId }: ActivityLogsListProps) => {
           open={!!editingLog}
           onClose={() => setEditingLog(null)}
           babyId={babyId}
+          updateLog={handleUpdateLog}
         />
       )}
     </Card>

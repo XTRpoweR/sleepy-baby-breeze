@@ -33,7 +33,7 @@ const TrackActivity = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { activeProfile, profiles, loading: profileLoading, createProfile } = useBabyProfile();
-  const { refetchLogs } = useActivityLogs(activeProfile?.id || '');
+  const { logs, loading: logsLoading, deleteLog, updateLog, refetchLogs } = useActivityLogs(activeProfile?.id || '');
   const [activeTab, setActiveTab] = useState('sleep');
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   const { t } = useTranslation();
@@ -163,7 +163,14 @@ const TrackActivity = () => {
 
             {/* Activity Logs */}
             <div className="lg:col-span-1">
-              <ActivityLogsList babyId={activeProfile.id} />
+              <ActivityLogsList 
+                babyId={activeProfile.id}
+                logs={logs}
+                loading={logsLoading}
+                deleteLog={deleteLog}
+                updateLog={updateLog}
+                onActivityUpdated={handleActivityAdded}
+              />
             </div>
           </div>
         ) : (
