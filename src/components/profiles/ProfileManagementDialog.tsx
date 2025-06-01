@@ -18,8 +18,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Baby, Calendar, Camera, Edit, Plus, Trash2 } from 'lucide-react';
+import { Baby, Calendar, Edit, Plus, Trash2 } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { PhotoUpload } from '@/components/ui/photo-upload';
 
 interface BabyProfile {
   id: string;
@@ -44,7 +45,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
   const [formData, setFormData] = useState({
     name: '',
     birth_date: '',
-    photo_url: ''
+    photo_url: null as string | null
   });
 
   const calculateAge = (birthDate: string | null) => {
@@ -65,7 +66,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
 
   const handleAddProfile = () => {
     setEditingProfile(null);
-    setFormData({ name: '', birth_date: '', photo_url: '' });
+    setFormData({ name: '', birth_date: '', photo_url: null });
     setActiveTab('add');
   };
 
@@ -74,7 +75,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
     setFormData({
       name: profile.name,
       birth_date: profile.birth_date || '',
-      photo_url: profile.photo_url || ''
+      photo_url: profile.photo_url
     });
     setActiveTab('add');
   };
@@ -88,7 +89,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
       success = await updateProfile(editingProfile.id, {
         name: formData.name.trim(),
         birth_date: formData.birth_date || null,
-        photo_url: formData.photo_url || null
+        photo_url: formData.photo_url
       });
     } else {
       success = await createProfile({
@@ -99,7 +100,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
     }
 
     if (success) {
-      setFormData({ name: '', birth_date: '', photo_url: '' });
+      setFormData({ name: '', birth_date: '', photo_url: null });
       setEditingProfile(null);
       setActiveTab('profiles');
     }
@@ -243,16 +244,11 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
                     </div>
 
                     <div>
-                      <Label htmlFor="photoUrl" className="flex items-center space-x-2">
-                        <Camera className="h-4 w-4" />
-                        <span>Photo URL (Optional)</span>
-                      </Label>
-                      <Input
-                        id="photoUrl"
-                        type="url"
-                        value={formData.photo_url}
-                        onChange={(e) => setFormData(prev => ({ ...prev, photo_url: e.target.value }))}
-                        placeholder="https://example.com/photo.jpg"
+                      <Label className="mb-3 block">Photo (Optional)</Label>
+                      <PhotoUpload
+                        value={formData.photo_url || undefined}
+                        onChange={(url) => setFormData(prev => ({ ...prev, photo_url: url }))}
+                        fallbackText={formData.name.charAt(0).toUpperCase() || 'B'}
                       />
                     </div>
 
@@ -266,7 +262,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
                         onClick={() => {
                           setActiveTab('profiles');
                           setEditingProfile(null);
-                          setFormData({ name: '', birth_date: '', photo_url: '' });
+                          setFormData({ name: '', birth_date: '', photo_url: null });
                         }}
                       >
                         Cancel
@@ -300,7 +296,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </Dialog>
     </>
   );
 };

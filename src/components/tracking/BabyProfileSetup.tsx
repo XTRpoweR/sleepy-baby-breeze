@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Baby, Calendar, Camera } from 'lucide-react';
+import { Baby, Calendar } from 'lucide-react';
+import { PhotoUpload } from '@/components/ui/photo-upload';
 
 interface BabyProfileSetupProps {
   onProfileCreated: (profileData: { name: string; birth_date?: string; photo_url?: string }) => Promise<boolean>;
@@ -14,7 +14,7 @@ interface BabyProfileSetupProps {
 export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) => {
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('');
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +31,7 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
     if (success) {
       setName('');
       setBirthDate('');
-      setPhotoUrl('');
+      setPhotoUrl(null);
     }
     setIsSubmitting(false);
   };
@@ -73,27 +73,12 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
           </div>
 
           <div>
-            <Label htmlFor="photoUrl" className="flex items-center space-x-2">
-              <Camera className="h-4 w-4" />
-              <span>Photo URL (Optional)</span>
-            </Label>
-            <Input
-              id="photoUrl"
-              type="url"
-              value={photoUrl}
-              onChange={(e) => setPhotoUrl(e.target.value)}
-              placeholder="https://example.com/baby-photo.jpg"
+            <Label className="mb-3 block">Photo (Optional)</Label>
+            <PhotoUpload
+              value={photoUrl || undefined}
+              onChange={setPhotoUrl}
+              fallbackText={name.charAt(0).toUpperCase() || 'B'}
             />
-            {photoUrl && (
-              <div className="mt-3 flex justify-center">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={photoUrl} />
-                  <AvatarFallback className="bg-blue-100 text-blue-600">
-                    {name.charAt(0).toUpperCase() || 'B'}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
-            )}
           </div>
 
           <Button 
