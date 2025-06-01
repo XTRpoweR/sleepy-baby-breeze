@@ -54,11 +54,10 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
       if (error) {
         console.error('Error checking subscription:', error);
-        toast({
-          title: "Error",
-          description: "Failed to check subscription status",
-          variant: "destructive",
-        });
+        // Don't show error toast for authentication issues, just default to basic
+        setSubscriptionTier('basic');
+        setStatus('active');
+        setCurrentPeriodEnd(null);
         return;
       }
 
@@ -68,6 +67,10 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setCurrentPeriodEnd(data.current_period_end);
     } catch (error) {
       console.error('Error checking subscription:', error);
+      // Default to basic subscription on any error
+      setSubscriptionTier('basic');
+      setStatus('active');
+      setCurrentPeriodEnd(null);
     } finally {
       setLoading(false);
     }
