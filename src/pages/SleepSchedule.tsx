@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -26,7 +25,7 @@ const SleepSchedule = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { activeProfile, profiles, loading: profileLoading } = useBabyProfile();
-  const { schedules, saveSleepSchedule } = useSleepSchedule(activeProfile?.id || null);
+  const { schedules, loading: schedulesLoading, saveSleepSchedule, deleteSleepSchedule, refetch } = useSleepSchedule(activeProfile?.id || null);
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   
   const [currentRecommendation, setCurrentRecommendation] = useState<ScheduleRecommendation | null>(null);
@@ -120,7 +119,14 @@ const SleepSchedule = () => {
     const saved = await saveSleepSchedule(data, recommendation);
     if (saved) {
       setSavedSchedule(saved);
+      // Refresh the schedules list immediately
+      refetch();
     }
+  };
+
+  const handleScheduleDeleted = () => {
+    // Refresh the schedules list after deletion
+    refetch();
   };
 
   const handleReset = () => {
@@ -247,7 +253,11 @@ const SleepSchedule = () => {
             <div className="mb-8">
               <SavedSchedules 
                 babyId={activeProfile.id}
+                schedules={schedules}
+                loading={schedulesLoading}
+                deleteSleepSchedule={deleteSleepSchedule}
                 onViewSchedule={handleViewSchedule}
+                onScheduleDeleted={handleScheduleDeleted}
               />
             </div>
 

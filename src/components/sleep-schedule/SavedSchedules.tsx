@@ -4,16 +4,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { History, Trash2, Eye, Calendar } from 'lucide-react';
-import { useSleepSchedule } from '@/hooks/useSleepSchedule';
 import { Tables } from '@/integrations/supabase/types';
 
 interface SavedSchedulesProps {
   babyId: string;
+  schedules: Tables<'sleep_schedules'>[];
+  loading: boolean;
+  deleteSleepSchedule: (scheduleId: string) => Promise<boolean>;
   onViewSchedule: (schedule: Tables<'sleep_schedules'>) => void;
+  onScheduleDeleted: () => void;
 }
 
-export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) => {
-  const { schedules, loading, deleteSleepSchedule } = useSleepSchedule(babyId);
+export const SavedSchedules = ({ 
+  babyId, 
+  schedules, 
+  loading, 
+  deleteSleepSchedule, 
+  onViewSchedule, 
+  onScheduleDeleted 
+}: SavedSchedulesProps) => {
   const { t } = useTranslation();
 
   const formatTime = (time: string) => {
@@ -30,6 +39,13 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleDeleteSchedule = async (scheduleId: string) => {
+    const success = await deleteSleepSchedule(scheduleId);
+    if (success) {
+      onScheduleDeleted();
+    }
   };
 
   if (loading) {
@@ -105,7 +121,7 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => deleteSleepSchedule(schedule.id)}
+                    onClick={() => handleDeleteSchedule(schedule.id)}
                     className="flex items-center space-x-1 text-red-600 hover:text-red-700"
                   >
                     <Trash2 className="h-4 w-4" />
