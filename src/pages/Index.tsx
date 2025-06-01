@@ -2,24 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { 
-  Moon, 
-  Clock, 
-  Calendar, 
-  Volume2, 
-  Users, 
-  BarChart3, 
-  Star,
-  Baby,
-  Heart,
-  CheckCircle,
-  Play
-} from "lucide-react";
-
+import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play } from "lucide-react";
 const Index = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-
+  const {
+    user
+  } = useAuth();
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -27,63 +15,49 @@ const Index = () => {
       navigate('/auth');
     }
   };
-
-  const features = [
-    {
-      icon: Clock,
-      title: "Track Everything",
-      description: "Log sleep times, wake-ups, and patterns effortlessly. Get a complete picture of your baby's sleep journey with just a few taps.",
-      color: "text-blue-500"
-    },
-    {
-      icon: Calendar,
-      title: "Custom Sleep Schedules",
-      description: "Create flexible, age-appropriate schedules that adapt to your baby's natural rhythms. No rigid rules - just gentle guidance.",
-      color: "text-purple-500"
-    },
-    {
-      icon: Volume2,
-      title: "Soothing Sounds & Guidance",
-      description: "Access our library of calming sounds and expert-backed sleep tips. Help your little one drift off peacefully, every time.",
-      color: "text-green-500"
-    },
-    {
-      icon: Users,
-      title: "Multi-Caregiver Support",
-      description: "Share access with partners, grandparents, or caregivers. Everyone stays updated, and no sleep detail gets missed.",
-      color: "text-orange-500"
-    },
-    {
-      icon: BarChart3,
-      title: "Sleep Insights & Analytics",
-      description: "Discover patterns with beautiful charts and trends. Make informed decisions about your baby's sleep with data-driven insights.",
-      color: "text-indigo-500"
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah M.",
-      role: "New Mom",
-      content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
-      rating: 5
-    },
-    {
-      name: "Mike & Jessica",
-      role: "First-time Parents",
-      content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
-      rating: 5
-    },
-    {
-      name: "Dr. Emily Chen",
-      role: "Pediatric Sleep Specialist",
-      content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
-      rating: 5
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  const features = [{
+    icon: Clock,
+    title: "Track Everything",
+    description: "Log sleep times, wake-ups, and patterns effortlessly. Get a complete picture of your baby's sleep journey with just a few taps.",
+    color: "text-blue-500"
+  }, {
+    icon: Calendar,
+    title: "Custom Sleep Schedules",
+    description: "Create flexible, age-appropriate schedules that adapt to your baby's natural rhythms. No rigid rules - just gentle guidance.",
+    color: "text-purple-500"
+  }, {
+    icon: Volume2,
+    title: "Soothing Sounds & Guidance",
+    description: "Access our library of calming sounds and expert-backed sleep tips. Help your little one drift off peacefully, every time.",
+    color: "text-green-500"
+  }, {
+    icon: Users,
+    title: "Multi-Caregiver Support",
+    description: "Share access with partners, grandparents, or caregivers. Everyone stays updated, and no sleep detail gets missed.",
+    color: "text-orange-500"
+  }, {
+    icon: BarChart3,
+    title: "Sleep Insights & Analytics",
+    description: "Discover patterns with beautiful charts and trends. Make informed decisions about your baby's sleep with data-driven insights.",
+    color: "text-indigo-500"
+  }];
+  const testimonials = [{
+    name: "Sarah M.",
+    role: "New Mom",
+    content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
+    rating: 5
+  }, {
+    name: "Mike & Jessica",
+    role: "First-time Parents",
+    content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
+    rating: 5
+  }, {
+    name: "Dr. Emily Chen",
+    role: "Pediatric Sleep Specialist",
+    content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
+    rating: 5
+  }];
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,15 +70,11 @@ const Index = () => {
               <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">Features</a>
               <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-colors">Insights</a>
               <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-colors">Reviews</a>
-              {user ? (
-                <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700">
+              {user ? <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700">
                   Go to Dashboard
-                </Button>
-              ) : (
-                <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700">
+                </Button> : <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700">
                   Get Started
-                </Button>
-              )}
+                </Button>}
             </div>
           </div>
         </div>
@@ -127,11 +97,7 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  size="lg" 
-                  className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6"
-                  onClick={handleGetStarted}
-                >
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6" onClick={handleGetStarted}>
                   <Play className="h-5 w-5 mr-2" />
                   Start Tracking Now
                 </Button>
@@ -204,9 +170,8 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            const IconComponent = feature.icon;
+            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <CardContent className="p-8">
                     <div className={`inline-flex p-3 rounded-2xl bg-gray-50 mb-6`}>
                       <IconComponent className={`h-8 w-8 ${feature.color}`} />
@@ -214,9 +179,8 @@ const Index = () => {
                     <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
                     <p className="text-gray-600 leading-relaxed">{feature.description}</p>
                   </CardContent>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
         </div>
       </section>
@@ -252,11 +216,7 @@ const Index = () => {
                   <span className="text-gray-700">Progress tracking and milestones</span>
                 </div>
               </div>
-              <Button 
-                size="lg" 
-                className="bg-blue-600 hover:bg-blue-700"
-                onClick={handleGetStarted}
-              >
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700" onClick={handleGetStarted}>
                 See Your Sleep Insights
               </Button>
             </div>
@@ -280,9 +240,7 @@ const Index = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Sleep Quality</span>
                     <div className="flex space-x-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      ))}
+                      {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                     </div>
                   </div>
                   
@@ -311,13 +269,10 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-0 shadow-lg">
+            {testimonials.map((testimonial, index) => <Card key={index} className="border-0 shadow-lg">
                 <CardContent className="p-8">
                   <div className="flex space-x-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
+                    {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                   </div>
                   <p className="text-gray-600 mb-6 italic">"{testimonial.content}"</p>
                   <div>
@@ -325,8 +280,7 @@ const Index = () => {
                     <div className="text-sm text-gray-500">{testimonial.role}</div>
                   </div>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -343,14 +297,10 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6"
-              onClick={handleGetStarted}
-            >
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6" onClick={handleGetStarted}>
               Start Tracking Now
             </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600 text-lg px-8 py-6">
+            <Button size="lg" variant="outline" className="border-white hover:bg-white text-lg px-8 py-6 text-indigo-600">
               Explore All Features
             </Button>
           </div>
@@ -408,8 +358,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
