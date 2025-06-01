@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe } from "lucide-react";
+import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -15,6 +15,14 @@ const Index = () => {
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleViewPricing = () => {
+    if (user) {
+      navigate('/subscription');
     } else {
       navigate('/auth');
     }
@@ -322,8 +330,95 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-            <SubscriptionPlans />
+          <div className="animate-fade-in-up text-center" style={{ animationDelay: '200ms' }}>
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-8">
+              {/* Basic Plan Preview */}
+              <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-8 text-center">
+                  <div className="flex items-center justify-center space-x-2 mb-4">
+                    <Baby className="h-6 w-6 text-blue-600" />
+                    <h3 className="text-2xl font-bold">SleepyBaby Basic</h3>
+                  </div>
+                  <div className="text-4xl font-bold text-gray-900 mb-2">Free</div>
+                  <p className="text-gray-600 mb-6">Perfect for getting started</p>
+                  <ul className="space-y-3 text-left mb-8">
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <span>1 baby profile</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <span>Current day tracking</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <span>Basic sleep reports</span>
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={handleGetStarted}
+                  >
+                    Get Started Free
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Premium Plan Preview */}
+              <Card className="border-2 border-orange-500 hover:shadow-xl transition-all duration-300 relative">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-orange-500 text-white">
+                    <Crown className="h-3 w-3 mr-1" />
+                    Most Popular
+                  </Badge>
+                </div>
+                <CardContent className="p-8 text-center">
+                  <div className="flex items-center justify-center space-x-2 mb-4">
+                    <Crown className="h-6 w-6 text-orange-600" />
+                    <h3 className="text-2xl font-bold">SleepyBaby Premium</h3>
+                  </div>
+                  <div className="flex items-center justify-center space-x-1 mb-2">
+                    <span className="text-4xl font-bold text-gray-900">$9.99</span>
+                    <span className="text-gray-600">/month</span>
+                  </div>
+                  <p className="text-gray-600 mb-6">Complete baby tracking solution</p>
+                  <ul className="space-y-3 text-left mb-8">
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <span>Unlimited baby profiles</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <span>Extended activity history</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <span>Family sharing & collaboration</span>
+                    </li>
+                    <li className="flex items-center">
+                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <span>Advanced analytics & trends</span>
+                    </li>
+                  </ul>
+                  <Button 
+                    className="w-full bg-orange-600 hover:bg-orange-700" 
+                    onClick={handleViewPricing}
+                  >
+                    {user ? 'View All Features' : 'Start Premium Trial'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Button 
+              size="lg"
+              variant="outline"
+              onClick={handleViewPricing}
+              className="text-lg px-8 py-6"
+            >
+              View Detailed Pricing & Features
+            </Button>
           </div>
         </div>
       </section>
@@ -388,7 +483,7 @@ const Index = () => {
               size="lg" 
               variant="outline" 
               className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-blue-600 transition-all duration-300 hover:scale-105 font-medium"
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={handleViewPricing}
             >
               View Pricing
             </Button>

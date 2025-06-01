@@ -14,6 +14,7 @@ import Reports from "./pages/Reports";
 import SleepSchedule from "./pages/SleepSchedule";
 import FamilySharing from "./pages/FamilySharing";
 import Sounds from "./pages/Sounds";
+import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
                 <Route path="/sleep-schedule" element={<SleepSchedule />} />
                 <Route path="/family" element={<FamilySharing />} />
                 <Route path="/sounds" element={<Sounds />} />
+                <Route path="/subscription" element={<Subscription />} />
                 <Route path="/404" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/404" replace />} />
               </Routes>

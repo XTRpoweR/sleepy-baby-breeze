@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +17,9 @@ import {
   Activity,
   Users,
   Crown,
-  Settings
+  Settings,
+  ArrowRight,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
@@ -25,7 +28,6 @@ import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 
 const Dashboard = () => {
@@ -99,7 +101,11 @@ const Dashboard = () => {
   };
 
   const handleManageSubscription = () => {
-    openCustomerPortal();
+    if (isPremium) {
+      openCustomerPortal();
+    } else {
+      navigate('/subscription');
+    }
   };
 
   if (loading) {
@@ -146,13 +152,22 @@ const Dashboard = () => {
                   </div>
                 )}
                 <Button 
-                  variant="outline" 
+                  variant={isPremium ? "outline" : "default"} 
                   size="sm" 
                   onClick={handleManageSubscription}
-                  className="flex items-center space-x-1"
+                  className={`flex items-center space-x-1 ${!isPremium ? 'bg-orange-600 hover:bg-orange-700' : ''}`}
                 >
-                  <Settings className="h-4 w-4" />
-                  <span>Manage</span>
+                  {isPremium ? (
+                    <>
+                      <Settings className="h-4 w-4" />
+                      <span>Manage</span>
+                    </>
+                  ) : (
+                    <>
+                      <Crown className="h-4 w-4" />
+                      <span>Upgrade</span>
+                    </>
+                  )}
                 </Button>
               </div>
 
@@ -203,12 +218,35 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Subscription Plans */}
+        {/* Upgrade Banner for Basic Users */}
         {!isPremium && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Choose Your Plan</h2>
-            <SubscriptionPlans />
-          </div>
+          <Card className="mb-8 border-2 border-dashed border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-orange-100 rounded-full p-3">
+                    <Sparkles className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      Unlock Premium Features
+                    </h3>
+                    <p className="text-gray-600">
+                      Get unlimited profiles, extended history, family sharing, and more for just $9.99/month
+                    </p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => navigate('/subscription')}
+                  className="bg-orange-600 hover:bg-orange-700 flex items-center space-x-2"
+                >
+                  <Crown className="h-4 w-4" />
+                  <span>View Plans</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Quick Actions */}
