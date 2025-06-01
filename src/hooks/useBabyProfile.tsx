@@ -145,19 +145,36 @@ export const useBabyProfile = () => {
   };
 
   const switchProfile = async (profileId: string) => {
-    if (!user) return false;
+    if (!user || switching) return false;
 
-    console.log('Switching profile to:', profileId);
+    console.log('Starting profile switch to:', profileId);
     setSwitching(true);
 
     try {
+      // Immediately update local state for instant UI feedback
+      const targetProfile = profiles.find(p => p.id === profileId);
+      if (targetProfile) {
+        console.log('Setting active profile immediately:', targetProfile.name);
+        setActiveProfile({ ...targetProfile, is_active: true });
+        
+        // Update profiles list to reflect new active state
+        const updatedProfiles = profiles.map(p => ({ 
+          ...p, 
+          is_active: p.id === profileId 
+        }));
+        setProfiles(updatedProfiles);
+      }
+
+      // Update database in background
       const { error } = await supabase.rpc('set_active_profile', {
         profile_id: profileId,
         user_id_param: user.id
       });
 
       if (error) {
-        console.error('Error switching profile:', error);
+        console.error('Error switching profile in database:', error);
+        // Revert local state on database error
+        await fetchProfiles();
         toast({
           title: "Error",
           description: "Failed to switch profile",
@@ -166,21 +183,12 @@ export const useBabyProfile = () => {
         return false;
       }
 
-      // Update local state immediately and synchronously
-      const updatedProfiles = profiles.map(p => ({ ...p, is_active: p.id === profileId }));
-      const newActiveProfile = updatedProfiles.find(p => p.id === profileId);
-      
-      setProfiles(updatedProfiles);
-      
-      if (newActiveProfile) {
-        console.log('Setting new active profile:', newActiveProfile.id);
-        setActiveProfile({ ...newActiveProfile, is_active: true });
-      }
-
       console.log('Profile switch completed successfully');
       return true;
     } catch (error) {
       console.error('Error switching profile:', error);
+      // Revert local state on error
+      await fetchProfiles();
       return false;
     } finally {
       setSwitching(false);

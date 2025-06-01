@@ -44,6 +44,11 @@ const TrackActivity = () => {
     }
   }, [user, loading, navigate]);
 
+  // Debug logging for profile changes
+  useEffect(() => {
+    console.log('TrackActivity: activeProfile changed to:', activeProfile?.id, activeProfile?.name);
+  }, [activeProfile]);
+
   const handleAddProfile = () => {
     setShowProfileManagement(true);
   };
@@ -53,7 +58,7 @@ const TrackActivity = () => {
   };
 
   const handleActivityAdded = () => {
-    // Refresh the activity logs immediately after adding an activity
+    console.log('Activity added, refreshing logs...');
     refetchLogs();
   };
 

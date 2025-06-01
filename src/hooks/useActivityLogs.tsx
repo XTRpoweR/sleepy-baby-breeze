@@ -44,6 +44,7 @@ export const useActivityLogs = (babyId: string) => {
           description: `Failed to load activity logs: ${error.message}`,
           variant: "destructive",
         });
+        setLogs([]);
       } else {
         console.log('Successfully fetched activity logs:', data?.length || 0, 'records');
         // Type assertion to ensure activity_type matches our interface
@@ -60,22 +61,24 @@ export const useActivityLogs = (babyId: string) => {
         description: "Unexpected error loading activity logs",
         variant: "destructive",
       });
+      setLogs([]);
     } finally {
       setLoading(false);
     }
   }, [babyId, toast]);
 
-  // Clear logs immediately when babyId changes, then fetch new ones
+  // Immediate effect when babyId changes
   useEffect(() => {
-    console.log('babyId changed to:', babyId);
+    console.log('useActivityLogs: babyId changed to:', babyId);
+    
+    // Clear logs immediately for visual feedback
+    setLogs([]);
+    setLoading(true);
+    
+    // Fetch new logs immediately
     if (babyId) {
-      // Clear existing logs immediately for visual feedback
-      setLogs([]);
-      setLoading(true);
-      // Fetch new logs
       fetchLogs();
     } else {
-      setLogs([]);
       setLoading(false);
     }
   }, [babyId, fetchLogs]);
