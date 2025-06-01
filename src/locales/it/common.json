@@ -1,0 +1,108 @@
+
+{
+  "app": {
+    "name": "SleepyBaby",
+    "tagline": "Sonno migliore per bambino e te",
+    "description": "Traccia, comprendi e migliora i pattern di sonno del tuo bambino con una guida gentile progettata per veri genitori."
+  },
+  "navigation": {
+    "features": "Caratteristiche",
+    "insights": "Approfondimenti",
+    "reviews": "Recensioni",
+    "getStarted": "Inizia",
+    "dashboard": "Vai alla Dashboard",
+    "signOut": "Esci"
+  },
+  "hero": {
+    "title": "Sonno migliore per",
+    "titleHighlight": "bambino e te",
+    "subtitle": "Traccia, comprendi e migliora i pattern di sonno del tuo bambino con una guida gentile progettata per veri genitori.",
+    "subtitleExtra": "Ce la puoi fare, e noi ti sosteniamo.",
+    "startTracking": "Inizia a tracciare ora",
+    "exploreFeatures": "Esplora tutte le caratteristiche",
+    "freeTrial": "Gratis per 14 giorni",
+    "noCreditCard": "Nessuna carta di credito richiesta",
+    "madeByParents": "Fatto da genitori"
+  },
+  "features": {
+    "title": "Tutto quello che serve per un sonno migliore",
+    "subtitle": "Progettato da esperti del sonno e genitori che capiscono le sfide delle notti insonni.",
+    "trackEverything": {
+      "title": "Traccia tutto",
+      "description": "Registra orari del sonno, risvegli e pattern senza sforzo. Ottieni un quadro completo del viaggio del sonno del tuo bambino con solo alcuni tocchi."
+    },
+    "customSchedules": {
+      "title": "Orari del sonno personalizzati",
+      "description": "Crea orari flessibili e appropriati per l'età che si adattano ai ritmi naturali del tuo bambino. Nessuna regola rigida - solo guida gentile."
+    },
+    "soothingSounds": {
+      "title": "Suoni rilassanti e guida",
+      "description": "Accedi alla nostra libreria di suoni calmanti e consigli per il sonno supportati da esperti. Aiuta il tuo piccolo ad addormentarsi serenamente, ogni volta."
+    },
+    "multiCaregiver": {
+      "title": "Supporto per più assistenti",
+      "description": "Condividi l'accesso con partner, nonni o assistenti. Tutti rimangono aggiornati e nessun dettaglio del sonno viene perso."
+    },
+    "insights": {
+      "title": "Approfondimenti e analisi del sonno",
+      "description": "Scopri pattern con grafici e tendenze bellissimi. Prendi decisioni informate sul sonno del tuo bambino con approfondimenti basati sui dati."
+    },
+    "multilingual": {
+      "title": "Disponibile in 8 lingue",
+      "description": "Usa SleepyBaby in italiano, inglese, tedesco, svedese, spagnolo, francese, greco e finlandese per un'esperienza confortevole nella tua lingua madre."
+    }
+  },
+  "dashboard": {
+    "welcome": "Bentornato, {{name}}! 👋",
+    "welcomeFallback": "Bentornato! 👋",
+    "subtitle": "Pronto a tracciare i pattern di sonno e le attività del tuo bambino oggi?",
+    "childProfiles": "Profili bambini",
+    "trackActivities": "Traccia attività",
+    "trackActivitiesDesc": "Registra sonno, alimentazione, cambi pannolino",
+    "sleepSchedule": "Orario del sonno",
+    "sleepScheduleDesc": "Ottieni raccomandazioni personalizzate per il sonno",
+    "familySharing": "Condivisione familiare",
+    "familySharingDesc": "Invita membri della famiglia e assistenti",
+    "viewReports": "Visualizza rapporti",
+    "viewReportsDesc": "Analizza pattern di sonno e attività",
+    "todaysActivity": "Riepilogo attività di oggi",
+    "weekOverview": "Panoramica settimanale",
+    "averageSleep": "Sonno medio",
+    "feedings": "Alimentazioni",
+    "diaperChanges": "Cambi pannolino",
+    "createProfile": "Crea profilo bambino",
+    "addProfile": "Aggiungi profilo bambino",
+    "startTracking": "Inizia a tracciare",
+    "noDataMessage": "Inizia a tracciare le attività di {{name}} per vedere approfondimenti e pattern qui.",
+    "noProfileMessage": "Crea un profilo bambino per vedere approfondimenti personalizzati"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "previous": "Precedente",
+    "confirm": "Conferma",
+    "yes": "Sì",
+    "no": "No"
+  },
+  "footer": {
+    "tagline": "Aiutare le famiglie a ottenere il riposo che meritano, una notte alla volta.",
+    "product": "Prodotto",
+    "pricing": "Prezzi",
+    "download": "Scarica",
+    "support": "Supporto",
+    "helpCenter": "Centro assistenza",
+    "contactUs": "Contattaci",
+    "privacyPolicy": "Privacy Policy",
+    "company": "Azienda",
+    "about": "Chi siamo",
+    "blog": "Blog",
+    "careers": "Carriere",
+    "copyright": "© 2024 SleepyBaby. Fatto con ❤️ da genitori, per genitori."
+  }
+}

@@ -1,6 +1,6 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -21,11 +21,13 @@ import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const { activeProfile, profiles } = useBabyProfile();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">Loading your dashboard...</p>
+          <p className="text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -78,6 +80,8 @@ const Dashboard = () => {
     return null;
   }
 
+  const userName = user.user_metadata?.full_name?.split(' ')[0];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
@@ -86,9 +90,10 @@ const Dashboard = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <Moon className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">SleepyBaby</span>
+              <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
             </div>
             <div className="flex items-center space-x-4">
+              <LanguageSelector />
               <div className="flex items-center space-x-2 text-gray-700">
                 <User className="h-4 w-4" />
                 <span className="text-sm">
@@ -102,7 +107,7 @@ const Dashboard = () => {
                 className="flex items-center space-x-1"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
+                <span>{t('navigation.signOut')}</span>
               </Button>
             </div>
           </div>
@@ -114,15 +119,15 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome back, {user.user_metadata?.full_name?.split(' ')[0] || 'there'}! 👋
+            {userName ? t('dashboard.welcome', { name: userName }) : t('dashboard.welcomeFallback')}
           </h1>
           <p className="text-gray-600 mb-6">
-            Ready to track your baby's sleep patterns and activities today?
+            {t('dashboard.subtitle')}
           </p>
           
           {/* Profile Selector */}
           <div className="mb-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-3">Child Profiles</h2>
+            <h2 className="text-lg font-medium text-gray-900 mb-3">{t('dashboard.childProfiles')}</h2>
             <ProfileSelector 
               onAddProfile={handleAddProfile}
               onManageProfiles={handleManageProfiles}
@@ -137,8 +142,8 @@ const Dashboard = () => {
               <div className="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
                 <Activity className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Track Activities</h3>
-              <p className="text-sm text-gray-600">Log sleep, feeding, diaper changes</p>
+              <h3 className="font-semibold text-gray-900 mb-2">{t('dashboard.trackActivities')}</h3>
+              <p className="text-sm text-gray-600">{t('dashboard.trackActivitiesDesc')}</p>
             </CardContent>
           </Card>
 
@@ -147,8 +152,8 @@ const Dashboard = () => {
               <div className="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
                 <Moon className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Sleep Schedule</h3>
-              <p className="text-sm text-gray-600">Get personalized sleep recommendations</p>
+              <h3 className="font-semibold text-gray-900 mb-2">{t('dashboard.sleepSchedule')}</h3>
+              <p className="text-sm text-gray-600">{t('dashboard.sleepScheduleDesc')}</p>
             </CardContent>
           </Card>
 
@@ -159,8 +164,8 @@ const Dashboard = () => {
               <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
                 <Users className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Family Sharing</h3>
-              <p className="text-sm text-gray-600">Invite family members and caregivers</p>
+              <h3 className="font-semibold text-gray-900 mb-2">{t('dashboard.familySharing')}</h3>
+              <p className="text-sm text-gray-600">{t('dashboard.familySharingDesc')}</p>
             </CardContent>
           </Card>
 
@@ -169,20 +174,20 @@ const Dashboard = () => {
               <div className="bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="h-6 w-6 text-orange-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">View Reports</h3>
-              <p className="text-sm text-gray-600 mb-3">Analyze sleep and activity patterns</p>
+              <h3 className="font-semibold text-gray-900 mb-2">{t('dashboard.viewReports')}</h3>
+              <p className="text-sm text-gray-600 mb-3">{t('dashboard.viewReportsDesc')}</p>
               <div className="space-y-2 text-xs text-gray-500">
                 <div className="flex justify-between">
-                  <span>Daily Sleep:</span>
-                  <span>Track patterns</span>
+                  <span>{t('dashboard.dailySleep')}</span>
+                  <span>{t('dashboard.trackPatterns')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Feeding Data:</span>
-                  <span>Monitor frequency</span>
+                  <span>{t('dashboard.feedingData')}</span>
+                  <span>{t('dashboard.monitorFrequency')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Weekly Trends:</span>
-                  <span>Visual charts</span>
+                  <span>{t('dashboard.weeklyTrends')}</span>
+                  <span>{t('dashboard.visualCharts')}</span>
                 </div>
               </div>
             </CardContent>
@@ -196,7 +201,7 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Baby className="h-5 w-5 text-blue-600" />
-                <span>Today's Activity Summary</span>
+                <span>{t('dashboard.todaysActivity')}</span>
                 {activeProfile && (
                   <span className="text-sm font-normal text-gray-600">
                     for {activeProfile.name}
@@ -208,25 +213,25 @@ const Dashboard = () => {
               {activeProfile ? (
                 <div className="text-center py-8">
                   <Moon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Start Tracking Activities</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('dashboard.startTracking')}</h3>
                   <p className="text-gray-600 mb-4">
-                    Begin logging {activeProfile.name}'s activities to see insights and patterns here.
+                    {t('dashboard.noDataMessage', { name: activeProfile.name })}
                   </p>
                   <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleTrackActivity}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Start Tracking
+                    {t('dashboard.startTracking')}
                   </Button>
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <Baby className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Create a Child Profile</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('dashboard.createProfile')}</h3>
                   <p className="text-gray-600 mb-4">
-                    Add your first child profile to start tracking activities.
+                    {t('dashboard.noProfileMessage')}
                   </p>
                   <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleAddProfile}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Child Profile
+                    {t('dashboard.addProfile')}
                   </Button>
                 </div>
               )}
@@ -238,27 +243,27 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
-                <span>Week Overview</span>
+                <span>{t('dashboard.weekOverview')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">0h 0m</div>
-                <div className="text-sm text-gray-600">Average Sleep</div>
+                <div className="text-sm text-gray-600">{t('dashboard.averageSleep')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">0</div>
-                <div className="text-sm text-gray-600">Feedings</div>
+                <div className="text-sm text-gray-600">{t('dashboard.feedings')}</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900">0</div>
-                <div className="text-sm text-gray-600">Diaper Changes</div>
+                <div className="text-sm text-gray-600">{t('dashboard.diaperChanges')}</div>
               </div>
               <div className="pt-4 border-t">
                 <p className="text-xs text-gray-500 text-center">
                   {activeProfile 
-                    ? `Start tracking ${activeProfile.name}'s activities to see insights`
-                    : 'Create a child profile to see personalized insights'
+                    ? t('dashboard.noDataMessage', { name: activeProfile.name })
+                    : t('dashboard.noProfileMessage')
                   }
                 </p>
               </div>

@@ -1,0 +1,108 @@
+
+{
+  "app": {
+    "name": "SleepyBaby",
+    "tagline": "Mejor sueño para bebé y ti",
+    "description": "Rastrea, comprende y mejora los patrones de sueño de tu bebé con orientación suave diseñada para padres reales."
+  },
+  "navigation": {
+    "features": "Características",
+    "insights": "Perspectivas",
+    "reviews": "Reseñas",
+    "getStarted": "Comenzar",
+    "dashboard": "Ir al Panel",
+    "signOut": "Cerrar sesión"
+  },
+  "hero": {
+    "title": "Mejor sueño para",
+    "titleHighlight": "bebé y ti",
+    "subtitle": "Rastrea, comprende y mejora los patrones de sueño de tu bebé con orientación suave diseñada para padres reales.",
+    "subtitleExtra": "Puedes hacerlo, y nosotros te apoyamos.",
+    "startTracking": "Comenzar a rastrear ahora",
+    "exploreFeatures": "Explorar todas las características",
+    "freeTrial": "Gratis por 14 días",
+    "noCreditCard": "No se requiere tarjeta de crédito",
+    "madeByParents": "Hecho por padres"
+  },
+  "features": {
+    "title": "Todo lo que necesitas para un mejor sueño",
+    "subtitle": "Diseñado por expertos en sueño y padres que entienden los desafíos de las noches sin dormir.",
+    "trackEverything": {
+      "title": "Rastrea todo",
+      "description": "Registra horarios de sueño, despertares y patrones sin esfuerzo. Obtén una imagen completa del viaje de sueño de tu bebé con solo unos toques."
+    },
+    "customSchedules": {
+      "title": "Horarios de sueño personalizados",
+      "description": "Crea horarios flexibles y apropiados para la edad que se adapten a los ritmos naturales de tu bebé. Sin reglas rígidas, solo orientación suave."
+    },
+    "soothingSounds": {
+      "title": "Sonidos relajantes y orientación",
+      "description": "Accede a nuestra biblioteca de sonidos calmantes y consejos de sueño respaldados por expertos. Ayuda a tu pequeño a dormirse pacíficamente, cada vez."
+    },
+    "multiCaregiver": {
+      "title": "Soporte para múltiples cuidadores",
+      "description": "Comparte acceso con parejas, abuelos o cuidadores. Todos se mantienen actualizados y no se pierde ningún detalle del sueño."
+    },
+    "insights": {
+      "title": "Perspectivas y análisis del sueño",
+      "description": "Descubre patrones con hermosos gráficos y tendencias. Toma decisiones informadas sobre el sueño de tu bebé con perspectivas basadas en datos."
+    },
+    "multilingual": {
+      "title": "Disponible en 8 idiomas",
+      "description": "Usa SleepyBaby en español, inglés, alemán, sueco, francés, italiano, griego y finlandés para una experiencia cómoda en tu idioma nativo."
+    }
+  },
+  "dashboard": {
+    "welcome": "¡Bienvenido de vuelta, {{name}}! 👋",
+    "welcomeFallback": "¡Bienvenido de vuelta! 👋",
+    "subtitle": "¿Listo para rastrear los patrones de sueño y actividades de tu bebé hoy?",
+    "childProfiles": "Perfiles de niños",
+    "trackActivities": "Rastrear actividades",
+    "trackActivitiesDesc": "Registrar sueño, alimentación, cambios de pañal",
+    "sleepSchedule": "Horario de sueño",
+    "sleepScheduleDesc": "Obtener recomendaciones personalizadas de sueño",
+    "familySharing": "Compartir en familia",
+    "familySharingDesc": "Invitar a miembros de la familia y cuidadores",
+    "viewReports": "Ver informes",
+    "viewReportsDesc": "Analizar patrones de sueño y actividad",
+    "todaysActivity": "Resumen de actividades de hoy",
+    "weekOverview": "Resumen semanal",
+    "averageSleep": "Sueño promedio",
+    "feedings": "Alimentaciones",
+    "diaperChanges": "Cambios de pañal",
+    "createProfile": "Crear perfil de niño",
+    "addProfile": "Agregar perfil de niño",
+    "startTracking": "Comenzar a rastrear",
+    "noDataMessage": "Comienza a rastrear las actividades de {{name}} para ver perspectivas y patrones aquí.",
+    "noProfileMessage": "Crea un perfil de niño para ver perspectivas personalizadas"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "footer": {
+    "tagline": "Ayudando a las familias a obtener el descanso que merecen, una noche a la vez.",
+    "product": "Producto",
+    "pricing": "Precios",
+    "download": "Descargar",
+    "support": "Soporte",
+    "helpCenter": "Centro de ayuda",
+    "contactUs": "Contáctanos",
+    "privacyPolicy": "Política de privacidad",
+    "company": "Empresa",
+    "about": "Acerca de",
+    "blog": "Blog",
+    "careers": "Carreras",
+    "copyright": "© 2024 SleepyBaby. Hecho con ❤️ por padres, para padres."
+  }
+}

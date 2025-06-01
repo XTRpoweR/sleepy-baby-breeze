@@ -1,0 +1,108 @@
+
+{
+  "app": {
+    "name": "SleepyBaby",
+    "tagline": "Parempi uni vauvalle ja sinulle",
+    "description": "Seuraa, ymmärrä ja paranna vauvasi unimalleja lempeällä ohjauksella, joka on suunniteltu oikeille vanhemmille."
+  },
+  "navigation": {
+    "features": "Ominaisuudet",
+    "insights": "Näkemykset",
+    "reviews": "Arvostelut",
+    "getStarted": "Aloita",
+    "dashboard": "Siirry hallintapaneeliin",
+    "signOut": "Kirjaudu ulos"
+  },
+  "hero": {
+    "title": "Parempi uni",
+    "titleHighlight": "vauvalle ja sinulle",
+    "subtitle": "Seuraa, ymmärrä ja paranna vauvasi unimalleja lempeällä ohjauksella, joka on suunniteltu oikeille vanhemmille.",
+    "subtitleExtra": "Sinä pystyt tähän, ja me tuemme sinua.",
+    "startTracking": "Aloita seuranta nyt",
+    "exploreFeatures": "Tutustu kaikkiin ominaisuuksiin",
+    "freeTrial": "Ilmainen 14 päivää",
+    "noCreditCard": "Luottokorttia ei tarvita",
+    "madeByParents": "Vanhempien tekemä"
+  },
+  "features": {
+    "title": "Kaikki mitä tarvitset parempaan uneen",
+    "subtitle": "Suunniteltu uniasiantuntijoiden ja vanhempien toimesta, jotka ymmärtävät valvottujen öiden haasteet.",
+    "trackEverything": {
+      "title": "Seuraa kaikkea",
+      "description": "Kirjaa uniajat, heräilyt ja mallit vaivattomasti. Saa täydellinen kuva vauvasi unimatkan kulusta vain muutamalla napautuksella."
+    },
+    "customSchedules": {
+      "title": "Mukautetut uniaikataulut",
+      "description": "Luo joustavia, ikäryhmälle sopivia aikatauluja, jotka mukautuvat vauvasi luonnollisiin rytmeihin. Ei jäykkiä sääntöjä - vain lempeää ohjausta."
+    },
+    "soothingSounds": {
+      "title": "Rauhoittavat äänet ja ohjaus",
+      "description": "Käytä kirjastomme rauhoittavia ääniä ja asiantuntijoiden tukemia univinkkejä. Auta pientäsi nukahtamaan rauhallisesti joka kerta."
+    },
+    "multiCaregiver": {
+      "title": "Usean hoitajan tuki",
+      "description": "Jaa pääsy kumppanien, isovanhempien tai hoitajien kanssa. Kaikki pysyvät ajan tasalla eikä yhtään unitietoa jää huomiotta."
+    },
+    "insights": {
+      "title": "Uninäkemykset ja analytiikka",
+      "description": "Löydä malleja kauniilla kaavioilla ja trendeillä. Tee perusteltuja päätöksiä vauvasi unesta tietopohjaisilla näkemyksillä."
+    },
+    "multilingual": {
+      "title": "Saatavilla 8 kielellä",
+      "description": "Käytä SleepyBabyä suomeksi, englanniksi, saksaksi, ruotsiksi, espanjaksi, ranskaksi, italiaksi ja kreikaksi mukavaa kokemusta varten äidinkielelläsi."
+    }
+  },
+  "dashboard": {
+    "welcome": "Tervetuloa takaisin, {{name}}! 👋",
+    "welcomeFallback": "Tervetuloa takaisin! 👋",
+    "subtitle": "Oletko valmis seuraamaan vauvasi unimalleja ja toimintoja tänään?",
+    "childProfiles": "Lapsiprofiilit",
+    "trackActivities": "Seuraa toimintoja",
+    "trackActivitiesDesc": "Kirjaa uni, syöttö, vaipanvaihdot",
+    "sleepSchedule": "Uniaikataulu",
+    "sleepScheduleDesc": "Saa henkilökohtaisia unisuosituksia",
+    "familySharing": "Perhejako",
+    "familySharingDesc": "Kutsu perheenjäseniä ja hoitajia",
+    "viewReports": "Näytä raportit",
+    "viewReportsDesc": "Analysoi uni- ja toimintamalleja",
+    "todaysActivity": "Tämän päivän toimintojen yhteenveto",
+    "weekOverview": "Viikon yleiskatsaus",
+    "averageSleep": "Keskimääräinen uni",
+    "feedings": "Syötöt",
+    "diaperChanges": "Vaipanvaihdot",
+    "createProfile": "Luo lapsiprofiili",
+    "addProfile": "Lisää lapsiprofiili",
+    "startTracking": "Aloita seuranta",
+    "noDataMessage": "Aloita {{name}}n toimintojen seuranta nähdäksesi näkemyksiä ja malleja tässä.",
+    "noProfileMessage": "Luo lapsiprofiili nähdäksesi henkilökohtaisia näkemyksiä"
+  },
+  "common": {
+    "loading": "Ladataan...",
+    "save": "Tallenna",
+    "cancel": "Peruuta",
+    "delete": "Poista",
+    "edit": "Muokkaa",
+    "close": "Sulje",
+    "back": "Takaisin",
+    "next": "Seuraava",
+    "previous": "Edellinen",
+    "confirm": "Vahvista",
+    "yes": "Kyllä",
+    "no": "Ei"
+  },
+  "footer": {
+    "tagline": "Auttamassa perheitä saamaan ansaitsemansa levon, yksi yö kerrallaan.",
+    "product": "Tuote",
+    "pricing": "Hinnoittelu",
+    "download": "Lataa",
+    "support": "Tuki",
+    "helpCenter": "Ohje keskus",
+    "contactUs": "Ota yhteyttä",
+    "privacyPolicy": "Tietosuojakäytäntö",
+    "company": "Yritys",
+    "about": "Tietoja",
+    "blog": "Blogi",
+    "careers": "Urat",
+    "copyright": "© 2024 SleepyBaby. Tehty ❤️:lla vanhempien toimesta, vanhemmille."
+  }
+}

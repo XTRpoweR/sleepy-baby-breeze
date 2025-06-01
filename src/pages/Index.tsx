@@ -1,12 +1,16 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const handleGetStarted = () => {
     if (user) {
@@ -19,33 +23,39 @@ const Index = () => {
   const features = [
     {
       icon: Clock,
-      title: "Track Everything",
-      description: "Log sleep times, wake-ups, and patterns effortlessly. Get a complete picture of your baby's sleep journey with just a few taps.",
+      title: t('features.trackEverything.title'),
+      description: t('features.trackEverything.description'),
       color: "text-blue-500"
     },
     {
       icon: Calendar,
-      title: "Custom Sleep Schedules",
-      description: "Create flexible, age-appropriate schedules that adapt to your baby's natural rhythms. No rigid rules - just gentle guidance.",
+      title: t('features.customSchedules.title'),
+      description: t('features.customSchedules.description'),
       color: "text-purple-500"
     },
     {
       icon: Volume2,
-      title: "Soothing Sounds & Guidance",
-      description: "Access our library of calming sounds and expert-backed sleep tips. Help your little one drift off peacefully, every time.",
+      title: t('features.soothingSounds.title'),
+      description: t('features.soothingSounds.description'),
       color: "text-green-500"
     },
     {
       icon: Users,
-      title: "Multi-Caregiver Support",
-      description: "Share access with partners, grandparents, or caregivers. Everyone stays updated, and no sleep detail gets missed.",
+      title: t('features.multiCaregiver.title'),
+      description: t('features.multiCaregiver.description'),
       color: "text-orange-500"
     },
     {
       icon: BarChart3,
-      title: "Sleep Insights & Analytics",
-      description: "Discover patterns with beautiful charts and trends. Make informed decisions about your baby's sleep with data-driven insights.",
+      title: t('features.insights.title'),
+      description: t('features.insights.description'),
       color: "text-indigo-500"
+    },
+    {
+      icon: Globe,
+      title: t('features.multilingual.title'),
+      description: t('features.multilingual.description'),
+      color: "text-pink-500"
     }
   ];
 
@@ -78,25 +88,26 @@ const Index = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
               <Moon className="h-8 w-8 text-blue-600 transition-transform duration-300 group-hover:rotate-12" />
-              <span className="text-xl font-semibold text-gray-900 tracking-tight">SleepyBaby</span>
+              <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Features</a>
-              <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Insights</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Reviews</a>
+              <a href="#features" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.features')}</a>
+              <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.insights')}</a>
+              <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
+              <LanguageSelector />
               {user ? (
                 <Button 
                   onClick={() => navigate('/dashboard')} 
                   className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium"
                 >
-                  Go to Dashboard
+                  {t('navigation.dashboard')}
                 </Button>
               ) : (
                 <Button 
                   onClick={handleGetStarted} 
                   className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium"
                 >
-                  Get Started
+                  {t('navigation.getStarted')}
                 </Button>
               )}
             </div>
@@ -111,12 +122,12 @@ const Index = () => {
             <div className="space-y-8 animate-fade-in-up">
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-                  Better Sleep for
-                  <span className="text-blue-600 block">Baby & You</span>
+                  {t('hero.title')}
+                  <span className="text-blue-600 block">{t('hero.titleHighlight')}</span>
                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed font-light">
-                  Track, understand, and improve your baby's sleep patterns with gentle guidance designed for real parents. 
-                  <span className="block mt-2 font-medium text-gray-700">You've got this, and we've got you.</span>
+                  {t('hero.subtitle')}
+                  <span className="block mt-2 font-medium text-gray-700">{t('hero.subtitleExtra')}</span>
                 </p>
               </div>
               
@@ -127,29 +138,29 @@ const Index = () => {
                   onClick={handleGetStarted}
                 >
                   <Play className="h-5 w-5 mr-2" />
-                  Start Tracking Now
+                  {t('hero.startTracking')}
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline" 
                   className="text-lg px-8 py-6 border-blue-200 hover:bg-blue-50 transition-all duration-300 hover:scale-105 font-medium"
                 >
-                  Explore All Features
+                  {t('hero.exploreFeatures')}
                 </Button>
               </div>
 
               <div className="flex items-center space-x-6 text-sm text-gray-600">
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
                   <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span className="font-medium">Free for 14 days</span>
+                  <span className="font-medium">{t('hero.freeTrial')}</span>
                 </div>
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
                   <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span className="font-medium">No credit card required</span>
+                  <span className="font-medium">{t('hero.noCreditCard')}</span>
                 </div>
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
                   <Heart className="h-4 w-4 text-red-500" />
-                  <span className="font-medium">Made by parents</span>
+                  <span className="font-medium">{t('hero.madeByParents')}</span>
                 </div>
               </div>
             </div>
@@ -193,10 +204,10 @@ const Index = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in-up">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
-              Everything You Need for Better Sleep
+              {t('features.title')}
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light">
-              Designed by sleep experts and parents who understand the challenges of those sleepless nights.
+              {t('features.subtitle')}
             </p>
           </div>
 
@@ -368,43 +379,43 @@ const Index = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-2 group">
                 <Moon className="h-6 w-6 text-blue-400 transition-transform duration-300 group-hover:rotate-12" />
-                <span className="text-lg font-semibold tracking-tight">SleepyBaby</span>
+                <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>
               <p className="text-gray-400 font-light">
-                Helping families get the rest they deserve, one night at a time.
+                {t('footer.tagline')}
               </p>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Product</h3>
+              <h3 className="font-semibold mb-4">{t('footer.product')}</h3>
               <div className="space-y-2 text-gray-400">
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Features</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Pricing</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Download</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('navigation.features')}</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.download')}</div>
               </div>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
+              <h3 className="font-semibold mb-4">{t('footer.support')}</h3>
               <div className="space-y-2 text-gray-400">
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Help Center</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Contact Us</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Privacy Policy</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.helpCenter')}</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.contactUs')}</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.privacyPolicy')}</div>
               </div>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
+              <h3 className="font-semibold mb-4">{t('footer.company')}</h3>
               <div className="space-y-2 text-gray-400">
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">About</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Blog</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">Careers</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.about')}</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.blog')}</div>
+                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.careers')}</div>
               </div>
             </div>
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 SleepyBaby. Made with ❤️ by parents, for parents.</p>
+            <p>{t('footer.copyright')}</p>
           </div>
         </div>
       </footer>

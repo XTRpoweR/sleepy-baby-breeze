@@ -1,0 +1,108 @@
+
+{
+  "app": {
+    "name": "SleepyBaby",
+    "tagline": "Bättre sömn för baby & dig",
+    "description": "Spåra, förstå och förbättra ditt barns sömnmönster med mild vägledning utformad för riktiga föräldrar."
+  },
+  "navigation": {
+    "features": "Funktioner",
+    "insights": "Insikter",
+    "reviews": "Recensioner",
+    "getStarted": "Kom igång",
+    "dashboard": "Till instrumentpanel",
+    "signOut": "Logga ut"
+  },
+  "hero": {
+    "title": "Bättre sömn för",
+    "titleHighlight": "baby & dig",
+    "subtitle": "Spåra, förstå och förbättra ditt barns sömnmönster med mild vägledning utformad för riktiga föräldrar.",
+    "subtitleExtra": "Du klarar detta, och vi stöttar dig.",
+    "startTracking": "Börja spåra nu",
+    "exploreFeatures": "Utforska alla funktioner",
+    "freeTrial": "Gratis i 14 dagar",
+    "noCreditCard": "Inget kreditkort krävs",
+    "madeByParents": "Gjort av föräldrar"
+  },
+  "features": {
+    "title": "Allt du behöver för bättre sömn",
+    "subtitle": "Designat av sömnexperter och föräldrar som förstår utmaningarna med sömnlösa nätter.",
+    "trackEverything": {
+      "title": "Spåra allt",
+      "description": "Logga sömnstider, uppvaknanden och mönster utan ansträngning. Få en komplett bild av ditt barns sömnresa med bara några tryck."
+    },
+    "customSchedules": {
+      "title": "Anpassade sömnscheman",
+      "description": "Skapa flexibla, åldersanpassade scheman som anpassar sig till ditt barns naturliga rytmer. Inga stela regler - bara mild vägledning."
+    },
+    "soothingSounds": {
+      "title": "Lugnande ljud & vägledning",
+      "description": "Få tillgång till vårt bibliotek med lugnande ljud och expertbackade sömnrips. Hjälp din lilla att somna fridfullt, varje gång."
+    },
+    "multiCaregiver": {
+      "title": "Stöd för flera vårdgivare",
+      "description": "Dela åtkomst med partners, mor- och farföräldrar eller vårdgivare. Alla håller sig uppdaterade och ingen sömndetalj missas."
+    },
+    "insights": {
+      "title": "Sömninsikter & analys",
+      "description": "Upptäck mönster med vackra diagram och trender. Fatta välgrundade beslut om ditt barns sömn med datadrivna insikter."
+    },
+    "multilingual": {
+      "title": "Tillgänglig på 8 språk",
+      "description": "Använd SleepyBaby på svenska, engelska, tyska, spanska, franska, italienska, grekiska och finska för en bekväm upplevelse på ditt modersmål."
+    }
+  },
+  "dashboard": {
+    "welcome": "Välkommen tillbaka, {{name}}! 👋",
+    "welcomeFallback": "Välkommen tillbaka! 👋",
+    "subtitle": "Redo att spåra ditt barns sömnmönster och aktiviteter idag?",
+    "childProfiles": "Barnprofiler",
+    "trackActivities": "Spåra aktiviteter",
+    "trackActivitiesDesc": "Logga sömn, matning, blöjbyten",
+    "sleepSchedule": "Sömnschema",
+    "sleepScheduleDesc": "Få personliga sömnrekommendationer",
+    "familySharing": "Familjeindelning",
+    "familySharingDesc": "Bjud in familjemedlemmar och vårdgivare",
+    "viewReports": "Visa rapporter",
+    "viewReportsDesc": "Analysera sömn- och aktivitetsmönster",
+    "todaysActivity": "Dagens aktivitetssammanfattning",
+    "weekOverview": "Veckoöversikt",
+    "averageSleep": "Genomsnittlig sömn",
+    "feedings": "Matningar",
+    "diaperChanges": "Blöjbyten",
+    "createProfile": "Skapa barnprofil",
+    "addProfile": "Lägg till barnprofil",
+    "startTracking": "Börja spåra",
+    "noDataMessage": "Börja spåra {{name}}s aktiviteter för att se insikter och mönster här.",
+    "noProfileMessage": "Skapa en barnprofil för att se personliga insikter"
+  },
+  "common": {
+    "loading": "Laddar...",
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "delete": "Ta bort",
+    "edit": "Redigera",
+    "close": "Stäng",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "previous": "Föregående",
+    "confirm": "Bekräfta",
+    "yes": "Ja",
+    "no": "Nej"
+  },
+  "footer": {
+    "tagline": "Hjälpa familjer att få den vila de förtjänar, en natt i taget.",
+    "product": "Produkt",
+    "pricing": "Priser",
+    "download": "Ladda ner",
+    "support": "Support",
+    "helpCenter": "Hjälpcenter",
+    "contactUs": "Kontakta oss",
+    "privacyPolicy": "Integritetspolicy",
+    "company": "Företag",
+    "about": "Om oss",
+    "blog": "Blogg",
+    "careers": "Karriär",
+    "copyright": "© 2024 SleepyBaby. Gjort med ❤️ av föräldrar, för föräldrar."
+  }
+}

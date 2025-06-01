@@ -1,0 +1,108 @@
+
+{
+  "app": {
+    "name": "SleepyBaby",
+    "tagline": "Better Sleep for Baby & You",
+    "description": "Track, understand, and improve your baby's sleep patterns with gentle guidance designed for real parents."
+  },
+  "navigation": {
+    "features": "Features",
+    "insights": "Insights",
+    "reviews": "Reviews",
+    "getStarted": "Get Started",
+    "dashboard": "Go to Dashboard",
+    "signOut": "Sign Out"
+  },
+  "hero": {
+    "title": "Better Sleep for",
+    "titleHighlight": "Baby & You",
+    "subtitle": "Track, understand, and improve your baby's sleep patterns with gentle guidance designed for real parents.",
+    "subtitleExtra": "You've got this, and we've got you.",
+    "startTracking": "Start Tracking Now",
+    "exploreFeatures": "Explore All Features",
+    "freeTrial": "Free for 14 days",
+    "noCreditCard": "No credit card required",
+    "madeByParents": "Made by parents"
+  },
+  "features": {
+    "title": "Everything You Need for Better Sleep",
+    "subtitle": "Designed by sleep experts and parents who understand the challenges of those sleepless nights.",
+    "trackEverything": {
+      "title": "Track Everything",
+      "description": "Log sleep times, wake-ups, and patterns effortlessly. Get a complete picture of your baby's sleep journey with just a few taps."
+    },
+    "customSchedules": {
+      "title": "Custom Sleep Schedules",
+      "description": "Create flexible, age-appropriate schedules that adapt to your baby's natural rhythms. No rigid rules - just gentle guidance."
+    },
+    "soothingSounds": {
+      "title": "Soothing Sounds & Guidance",
+      "description": "Access our library of calming sounds and expert-backed sleep tips. Help your little one drift off peacefully, every time."
+    },
+    "multiCaregiver": {
+      "title": "Multi-Caregiver Support",
+      "description": "Share access with partners, grandparents, or caregivers. Everyone stays updated, and no sleep detail gets missed."
+    },
+    "insights": {
+      "title": "Sleep Insights & Analytics",
+      "description": "Discover patterns with beautiful charts and trends. Make informed decisions about your baby's sleep with data-driven insights."
+    },
+    "multilingual": {
+      "title": "Available in 8 Languages",
+      "description": "Use SleepyBaby in English, German, Swedish, Spanish, French, Italian, Greek, and Finnish for a comfortable experience in your native language."
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}! 👋",
+    "welcomeFallback": "Welcome back, there! 👋",
+    "subtitle": "Ready to track your baby's sleep patterns and activities today?",
+    "childProfiles": "Child Profiles",
+    "trackActivities": "Track Activities",
+    "trackActivitiesDesc": "Log sleep, feeding, diaper changes",
+    "sleepSchedule": "Sleep Schedule",
+    "sleepScheduleDesc": "Get personalized sleep recommendations",
+    "familySharing": "Family Sharing",
+    "familySharingDesc": "Invite family members and caregivers",
+    "viewReports": "View Reports",
+    "viewReportsDesc": "Analyze sleep and activity patterns",
+    "todaysActivity": "Today's Activity Summary",
+    "weekOverview": "Week Overview",
+    "averageSleep": "Average Sleep",
+    "feedings": "Feedings",
+    "diaperChanges": "Diaper Changes",
+    "createProfile": "Create a Child Profile",
+    "addProfile": "Add Child Profile",
+    "startTracking": "Start Tracking",
+    "noDataMessage": "Start tracking {{name}}'s activities to see insights and patterns here.",
+    "noProfileMessage": "Create a child profile to see personalized insights"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "footer": {
+    "tagline": "Helping families get the rest they deserve, one night at a time.",
+    "product": "Product",
+    "pricing": "Pricing",
+    "download": "Download",
+    "support": "Support",
+    "helpCenter": "Help Center",
+    "contactUs": "Contact Us",
+    "privacyPolicy": "Privacy Policy",
+    "company": "Company",
+    "about": "About",
+    "blog": "Blog",
+    "careers": "Careers",
+    "copyright": "© 2024 SleepyBaby. Made with ❤️ by parents, for parents."
+  }
+}
