@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -156,9 +155,31 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
       if (error) {
         console.error('Error opening customer portal:', error);
+        
+        // Check for specific Stripe configuration error
+        if (error.message?.includes('No configuration provided') || 
+            error.message?.includes('default configuration has not been created')) {
+          toast({
+            title: "Customer Portal Not Configured",
+            description: "The subscription management portal needs to be set up. Please contact support to manage your subscription.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Generic error handling
         toast({
-          title: "Error",
-          description: "Failed to open customer portal",
+          title: "Portal Access Error",
+          description: error.message || "Unable to access customer portal. Please try again or contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!data?.url) {
+        toast({
+          title: "Portal Error",
+          description: "Unable to generate portal access. Please contact support.",
           variant: "destructive",
         });
         return;
@@ -186,11 +207,23 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       }
     } catch (error) {
       console.error('Error opening customer portal:', error);
-      toast({
-        title: "Error",
-        description: "Failed to open customer portal",
-        variant: "destructive",
-      });
+      
+      // More specific error handling
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      if (errorMessage.includes('configuration') || errorMessage.includes('portal')) {
+        toast({
+          title: "Service Configuration Issue",
+          description: "The customer portal is not properly configured. Please contact support for assistance with managing your subscription.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Connection Error",
+          description: "Unable to connect to the subscription management service. Please check your internet connection and try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
