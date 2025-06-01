@@ -14,27 +14,50 @@ import {
   Plus,
   TrendingUp,
   Activity,
-  Users
+  Users,
+  Crown,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { useSubscription } from '@/hooks/useSubscription';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { LanguageSelector } from '@/components/LanguageSelector';
+import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
+import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 
 const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const { activeProfile, profiles } = useBabyProfile();
+  const { subscriptionTier, isPremium, openCustomerPortal, checkSubscription } = useSubscription();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds'>('profiles');
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Check for success/canceled URL params and refresh subscription
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+      console.log('Payment successful, checking subscription...');
+      checkSubscription();
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get('canceled') === 'true') {
+      console.log('Payment canceled');
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [checkSubscription]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -54,15 +77,29 @@ const Dashboard = () => {
   };
 
   const handleFamilySharing = () => {
+    if (!isPremium) {
+      setUpgradeFeature('sharing');
+      setShowUpgradePrompt(true);
+      return;
+    }
     navigate('/family');
   };
 
   const handleAddProfile = () => {
+    if (!isPremium && profiles.length >= 1) {
+      setUpgradeFeature('profiles');
+      setShowUpgradePrompt(true);
+      return;
+    }
     setShowProfileManagement(true);
   };
 
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
+  };
+
+  const handleManageSubscription = () => {
+    openCustomerPortal();
   };
 
   if (loading) {
@@ -94,6 +131,31 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <LanguageSelector />
+              
+              {/* Subscription Status */}
+              <div className="flex items-center space-x-2">
+                {isPremium ? (
+                  <div className="flex items-center space-x-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+                    <Crown className="h-4 w-4" />
+                    <span>Premium</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                    <Baby className="h-4 w-4" />
+                    <span>Basic</span>
+                  </div>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleManageSubscription}
+                  className="flex items-center space-x-1"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Manage</span>
+                </Button>
+              </div>
+
               <div className="flex items-center space-x-2 text-gray-700">
                 <User className="h-4 w-4" />
                 <span className="text-sm">
@@ -132,8 +194,22 @@ const Dashboard = () => {
               onAddProfile={handleAddProfile}
               onManageProfiles={handleManageProfiles}
             />
+            {!isPremium && profiles.length >= 1 && (
+              <p className="text-sm text-orange-600 mt-2 flex items-center">
+                <Crown className="h-4 w-4 mr-1" />
+                Upgrade to Premium for unlimited baby profiles
+              </p>
+            )}
           </div>
         </div>
+
+        {/* Subscription Plans */}
+        {!isPremium && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Choose Your Plan</h2>
+            <SubscriptionPlans />
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -159,13 +235,21 @@ const Dashboard = () => {
 
           <QuickLogCard />
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleFamilySharing}>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer relative" 
+            onClick={handleFamilySharing}
+          >
             <CardContent className="p-6 text-center">
               <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
                 <Users className="h-6 w-6 text-green-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">{t('dashboard.familySharing')}</h3>
               <p className="text-sm text-gray-600">{t('dashboard.familySharingDesc')}</p>
+              {!isPremium && (
+                <div className="absolute top-2 right-2">
+                  <Crown className="h-4 w-4 text-orange-500" />
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -276,6 +360,13 @@ const Dashboard = () => {
       <ProfileManagementDialog 
         isOpen={showProfileManagement}
         onClose={() => setShowProfileManagement(false)}
+      />
+
+      {/* Upgrade Prompt */}
+      <UpgradePrompt
+        isOpen={showUpgradePrompt}
+        onClose={() => setShowUpgradePrompt(false)}
+        feature={upgradeFeature}
       />
     </div>
   );

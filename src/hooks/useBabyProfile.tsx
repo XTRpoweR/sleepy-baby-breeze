@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -63,6 +62,25 @@ export const useBabyProfile = () => {
     if (!user) return false;
 
     try {
+      // Check subscription tier to enforce limits
+      const { data: subscriptionData } = await supabase
+        .from('subscriptions')
+        .select('subscription_tier')
+        .eq('user_id', user.id)
+        .single();
+
+      const isBasicUser = !subscriptionData || subscriptionData.subscription_tier === 'basic';
+      
+      // Enforce profile limit for basic users
+      if (isBasicUser && profiles.length >= 1) {
+        toast({
+          title: "Profile Limit Reached",
+          description: "Basic plan allows only 1 baby profile. Upgrade to Premium for unlimited profiles.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
       // If this is the first profile, make it active
       const isFirstProfile = profiles.length === 0;
 
