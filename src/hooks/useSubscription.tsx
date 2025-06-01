@@ -3,6 +3,7 @@ import { useState, useEffect, createContext, useContext } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SubscriptionContextType {
   subscriptionTier: 'basic' | 'premium';
@@ -30,6 +31,7 @@ export const useSubscription = () => {
 export const SubscriptionProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [subscriptionTier, setSubscriptionTier] = useState<'basic' | 'premium'>('basic');
   const [status, setStatus] = useState('active');
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
@@ -99,9 +101,35 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         return;
       }
 
-      console.log('Opening checkout URL:', data.url);
-      // Open Stripe checkout in a new tab
-      window.open(data.url, '_blank');
+      console.log('Checkout URL received:', data.url);
+      
+      // Handle mobile vs desktop differently
+      if (isMobile) {
+        // On mobile, redirect in the same window to avoid popup blockers
+        console.log('Mobile device detected, redirecting in same window');
+        window.location.href = data.url;
+      } else {
+        // On desktop, open in new tab
+        console.log('Desktop device detected, opening in new tab');
+        const newWindow = window.open(data.url, '_blank');
+        
+        // Fallback if popup was blocked
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+          console.log('Popup blocked, showing fallback');
+          toast({
+            title: "Popup Blocked",
+            description: "Please allow popups or click the link to continue to checkout",
+            variant: "default",
+          });
+          
+          // Provide manual link as fallback
+          setTimeout(() => {
+            if (confirm('Click OK to redirect to checkout page')) {
+              window.location.href = data.url;
+            }
+          }, 1000);
+        }
+      }
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast({
@@ -136,9 +164,26 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         return;
       }
 
-      console.log('Opening portal URL:', data.url);
-      // Open customer portal in a new tab
-      window.open(data.url, '_blank');
+      console.log('Portal URL received:', data.url);
+      
+      // Handle mobile vs desktop differently for customer portal too
+      if (isMobile) {
+        window.location.href = data.url;
+      } else {
+        const newWindow = window.open(data.url, '_blank');
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+          toast({
+            title: "Popup Blocked",
+            description: "Please allow popups or click OK to continue to customer portal",
+            variant: "default",
+          });
+          setTimeout(() => {
+            if (confirm('Click OK to redirect to customer portal')) {
+              window.location.href = data.url;
+            }
+          }, 1000);
+        }
+      }
     } catch (error) {
       console.error('Error opening customer portal:', error);
       toast({
