@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +32,7 @@ import { useActivityLogs } from '@/hooks/useActivityLogs';
 const TrackActivity = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const { activeProfile, profiles, loading: profileLoading, createProfile } = useBabyProfile();
+  const { activeProfile, profiles, loading: profileLoading, switching, createProfile } = useBabyProfile();
   const { logs, loading: logsLoading, deleteLog, updateLog, refetchLogs } = useActivityLogs(activeProfile?.id || '');
   const [activeTab, setActiveTab] = useState('sleep');
   const [showProfileManagement, setShowProfileManagement] = useState(false);
@@ -165,7 +166,7 @@ const TrackActivity = () => {
               <ActivityLogsList 
                 babyId={activeProfile.id}
                 logs={logs}
-                loading={logsLoading}
+                loading={logsLoading || switching}
                 deleteLog={deleteLog}
                 updateLog={updateLog}
                 onActivityUpdated={handleActivityAdded}

@@ -20,6 +20,7 @@ export const useBabyProfile = () => {
   const [profiles, setProfiles] = useState<BabyProfile[]>([]);
   const [activeProfile, setActiveProfile] = useState<BabyProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [switching, setSwitching] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -147,6 +148,7 @@ export const useBabyProfile = () => {
     if (!user) return false;
 
     console.log('Switching profile to:', profileId);
+    setSwitching(true);
 
     try {
       const { error } = await supabase.rpc('set_active_profile', {
@@ -180,6 +182,8 @@ export const useBabyProfile = () => {
     } catch (error) {
       console.error('Error switching profile:', error);
       return false;
+    } finally {
+      setSwitching(false);
     }
   };
 
@@ -234,6 +238,7 @@ export const useBabyProfile = () => {
     profiles,
     activeProfile,
     loading,
+    switching,
     createProfile,
     updateProfile,
     switchProfile,

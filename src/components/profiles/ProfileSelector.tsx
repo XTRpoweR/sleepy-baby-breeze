@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Baby, ChevronDown, Plus, Settings } from 'lucide-react';
+import { Baby, ChevronDown, Plus, Settings, Loader2 } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 
 interface BabyProfile {
@@ -30,7 +30,7 @@ interface ProfileSelectorProps {
 }
 
 export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelectorProps) => {
-  const { activeProfile, profiles, switchProfile } = useBabyProfile();
+  const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
 
   const calculateAge = (birthDate: string | null) => {
     if (!birthDate) return null;
@@ -49,6 +49,7 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
   };
 
   const handleProfileSwitch = async (profileId: string) => {
+    console.log('Profile switch requested for:', profileId);
     await switchProfile(profileId);
   };
 
@@ -71,14 +72,18 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-auto p-3 justify-between min-w-[200px]">
+        <Button variant="outline" className="h-auto p-3 justify-between min-w-[200px]" disabled={switching}>
           <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={activeProfile.photo_url || undefined} />
-              <AvatarFallback className="bg-blue-100 text-blue-600">
-                {activeProfile.name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            {switching ? (
+              <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+            ) : (
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={activeProfile.photo_url || undefined} />
+                <AvatarFallback className="bg-blue-100 text-blue-600">
+                  {activeProfile.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            )}
             <div className="text-left">
               <div className="font-medium">{activeProfile.name}</div>
               {activeProfile.birth_date && (
@@ -100,6 +105,7 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
               key={profile.id}
               className="p-3 cursor-pointer"
               onClick={() => handleProfileSwitch(profile.id)}
+              disabled={switching}
             >
               <div className="flex items-center space-x-3 w-full">
                 <Avatar className="h-8 w-8">
@@ -128,12 +134,12 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
         
         <DropdownMenuSeparator />
         
-        <DropdownMenuItem onClick={onAddProfile} className="p-3 cursor-pointer">
+        <DropdownMenuItem onClick={onAddProfile} className="p-3 cursor-pointer" disabled={switching}>
           <Plus className="h-4 w-4 mr-3" />
           Add New Profile
         </DropdownMenuItem>
         
-        <DropdownMenuItem onClick={onManageProfiles} className="p-3 cursor-pointer">
+        <DropdownMenuItem onClick={onManageProfiles} className="p-3 cursor-pointer" disabled={switching}>
           <Settings className="h-4 w-4 mr-3" />
           Manage Profiles
         </DropdownMenuItem>

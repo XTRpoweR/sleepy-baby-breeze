@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -63,6 +64,21 @@ export const useActivityLogs = (babyId: string) => {
       setLoading(false);
     }
   }, [babyId, toast]);
+
+  // Clear logs immediately when babyId changes, then fetch new ones
+  useEffect(() => {
+    console.log('babyId changed to:', babyId);
+    if (babyId) {
+      // Clear existing logs immediately for visual feedback
+      setLogs([]);
+      setLoading(true);
+      // Fetch new logs
+      fetchLogs();
+    } else {
+      setLogs([]);
+      setLoading(false);
+    }
+  }, [babyId, fetchLogs]);
 
   const deleteLog = async (logId: string): Promise<boolean> => {
     console.log('Attempting to delete log:', logId);
@@ -131,10 +147,6 @@ export const useActivityLogs = (babyId: string) => {
       return false;
     }
   };
-
-  useEffect(() => {
-    fetchLogs();
-  }, [fetchLogs]);
 
   return {
     logs,
