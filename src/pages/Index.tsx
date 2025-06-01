@@ -1,10 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe } from "lucide-react";
 
 const Index = () => {
@@ -93,6 +93,7 @@ const Index = () => {
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.features')}</a>
               <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.insights')}</a>
+              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Pricing</a>
               <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
               <LanguageSelector />
               {user ? (
@@ -308,6 +309,25 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light">
+              Start for free with our Basic plan, or unlock premium features with our affordable Premium plan. 
+              <span className="block mt-2">Perfect for families of any size.</span>
+            </p>
+          </div>
+          
+          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+            <SubscriptionPlans />
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
@@ -362,12 +382,20 @@ const Index = () => {
               className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" 
               onClick={handleGetStarted}
             >
-              Start Tracking Now
+              Start Free Trial
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-blue-600 transition-all duration-300 hover:scale-105 font-medium"
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              View Pricing
             </Button>
           </div>
           
           <p className="text-blue-100 text-sm mt-6 font-medium">
-            Free 14-day trial • No credit card required • Available on iOS & Android
+            Free 7-day trial • No credit card required • Available on iOS & Android
           </p>
         </div>
       </section>

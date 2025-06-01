@@ -14,9 +14,21 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export const SubscriptionPlans = () => {
   const { subscriptionTier, createCheckout, upgrading, isPremium } = useSubscription();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleUpgrade = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    createCheckout();
+  };
 
   const basicFeatures = [
     { icon: Baby, text: "1 baby profile", available: true },
@@ -36,84 +48,89 @@ export const SubscriptionPlans = () => {
   ];
 
   return (
-    <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
       {/* Basic Plan */}
-      <Card className={`relative ${subscriptionTier === 'basic' ? 'ring-2 ring-blue-500' : ''}`}>
-        <CardHeader className="text-center">
+      <Card className={`relative transition-all duration-300 hover:shadow-xl ${user && subscriptionTier === 'basic' ? 'ring-2 ring-blue-500' : 'hover:-translate-y-1'}`}>
+        <CardHeader className="text-center pb-8">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Baby className="h-6 w-6 text-blue-600" />
             <CardTitle className="text-xl">SleepyBaby Basic</CardTitle>
-            {subscriptionTier === 'basic' && (
+            {user && subscriptionTier === 'basic' && (
               <Badge variant="default" className="bg-blue-100 text-blue-800">
                 Current Plan
               </Badge>
             )}
           </div>
-          <div className="text-3xl font-bold text-gray-900">Free</div>
+          <div className="text-4xl font-bold text-gray-900">Free</div>
           <p className="text-gray-600">Perfect for getting started</p>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
             {basicFeatures.map((feature, index) => (
               <div key={index} className="flex items-center space-x-3">
-                <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <div className="bg-green-100 rounded-full p-1">
+                  <Check className="h-3 w-3 text-green-600 flex-shrink-0" />
+                </div>
                 <feature.icon className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                <span className="text-sm text-gray-700">{feature.text}</span>
+                <span className="text-sm text-gray-700 font-medium">{feature.text}</span>
               </div>
             ))}
           </div>
           <Button 
             className="w-full" 
-            variant={subscriptionTier === 'basic' ? 'default' : 'outline'}
-            disabled={subscriptionTier === 'basic'}
+            variant={user && subscriptionTier === 'basic' ? 'default' : 'outline'}
+            disabled={user && subscriptionTier === 'basic'}
+            onClick={() => !user && navigate('/auth')}
           >
-            {subscriptionTier === 'basic' ? 'Current Plan' : 'Downgrade'}
+            {user ? (subscriptionTier === 'basic' ? 'Current Plan' : 'Downgrade') : 'Get Started Free'}
           </Button>
         </CardContent>
       </Card>
 
       {/* Premium Plan */}
-      <Card className={`relative ${subscriptionTier === 'premium' ? 'ring-2 ring-orange-500' : 'ring-2 ring-orange-200'}`}>
+      <Card className={`relative transition-all duration-300 hover:shadow-xl ${user && subscriptionTier === 'premium' ? 'ring-2 ring-orange-500' : 'ring-2 ring-orange-200 hover:-translate-y-1'}`}>
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <Badge className="bg-orange-500 text-white">
+          <Badge className="bg-orange-500 text-white shadow-lg">
             <Crown className="h-3 w-3 mr-1" />
             Most Popular
           </Badge>
         </div>
-        <CardHeader className="text-center">
+        <CardHeader className="text-center pb-8">
           <div className="flex items-center justify-center space-x-2 mb-2">
             <Crown className="h-6 w-6 text-orange-600" />
             <CardTitle className="text-xl">SleepyBaby Premium</CardTitle>
-            {subscriptionTier === 'premium' && (
+            {user && subscriptionTier === 'premium' && (
               <Badge variant="default" className="bg-orange-100 text-orange-800">
                 Current Plan
               </Badge>
             )}
           </div>
           <div className="flex items-center justify-center space-x-1">
-            <span className="text-3xl font-bold text-gray-900">$9.99</span>
-            <span className="text-gray-600">/month</span>
+            <span className="text-4xl font-bold text-gray-900">$9.99</span>
+            <span className="text-gray-600 font-medium">/month</span>
           </div>
           <p className="text-gray-600">Complete baby tracking solution</p>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
             {premiumFeatures.map((feature, index) => (
               <div key={index} className="flex items-center space-x-3">
-                <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <div className="bg-green-100 rounded-full p-1">
+                  <Check className="h-3 w-3 text-green-600 flex-shrink-0" />
+                </div>
                 <feature.icon className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                <span className="text-sm text-gray-700">{feature.text}</span>
+                <span className="text-sm text-gray-700 font-medium">{feature.text}</span>
               </div>
             ))}
           </div>
           <Button 
-            className="w-full bg-orange-600 hover:bg-orange-700" 
-            onClick={createCheckout}
-            disabled={upgrading || isPremium}
+            className="w-full bg-orange-600 hover:bg-orange-700 transition-all duration-300 hover:scale-105" 
+            onClick={handleUpgrade}
+            disabled={upgrading || (user && isPremium)}
           >
-            {upgrading ? 'Processing...' : isPremium ? 'Current Plan' : 'Upgrade to Premium'}
+            {upgrading ? 'Processing...' : (user && isPremium) ? 'Current Plan' : user ? 'Upgrade to Premium' : 'Start Premium Trial'}
           </Button>
-          {!isPremium && (
+          {(!user || !isPremium) && (
             <p className="text-xs text-center text-gray-500">
               7-day free trial • Cancel anytime
             </p>
