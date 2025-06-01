@@ -1,20 +1,22 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
-import { format, startOfWeek, endOfWeek } from 'date-fns';
+import { useFilteredActivityLogs } from '@/hooks/useFilteredActivityLogs';
+import { format } from 'date-fns';
 import { 
   Moon, 
   Baby, 
   Heart, 
   Clock 
 } from 'lucide-react';
+import { DateRange } from '@/utils/dateRangeUtils';
 
 interface ActivitySummaryProps {
   babyId: string;
+  dateRange: DateRange;
 }
 
-interface WeeklySummary {
+interface PeriodSummary {
   totalActivities: number;
   sleepHours: number;
   feedingSessions: number;
@@ -23,9 +25,9 @@ interface WeeklySummary {
   mostActiveDay: string;
 }
 
-export const ActivitySummary = ({ babyId }: ActivitySummaryProps) => {
-  const { logs, loading } = useActivityLogs(babyId);
-  const [weeklySummary, setWeeklySummary] = useState<WeeklySummary>({
+export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => {
+  const { logs, loading } = useFilteredActivityLogs(babyId, dateRange);
+  const [periodSummary, setPeriodSummary] = useState<PeriodSummary>({
     totalActivities: 0,
     sleepHours: 0,
     feedingSessions: 0,
@@ -36,32 +38,31 @@ export const ActivitySummary = ({ babyId }: ActivitySummaryProps) => {
 
   useEffect(() => {
     if (logs.length > 0) {
-      calculateWeeklySummary();
+      calculatePeriodSummary();
+    } else {
+      setPeriodSummary({
+        totalActivities: 0,
+        sleepHours: 0,
+        feedingSessions: 0,
+        diaperChanges: 0,
+        avgSleepDuration: 0,
+        mostActiveDay: 'No data'
+      });
     }
-  }, [logs]);
+  }, [logs, dateRange]);
 
-  const calculateWeeklySummary = () => {
-    const now = new Date();
-    const weekStart = startOfWeek(now);
-    const weekEnd = endOfWeek(now);
-
-    // Filter logs for this week
-    const weekLogs = logs.filter(log => {
-      const logDate = new Date(log.start_time);
-      return logDate >= weekStart && logDate <= weekEnd;
-    });
-
-    // Calculate totals
-    const sleepLogs = weekLogs.filter(log => log.activity_type === 'sleep');
-    const feedingLogs = weekLogs.filter(log => log.activity_type === 'feeding');
-    const diaperLogs = weekLogs.filter(log => log.activity_type === 'diaper');
+  const calculatePeriodSummary = () => {
+    // Calculate totals for the selected period
+    const sleepLogs = logs.filter(log => log.activity_type === 'sleep');
+    const feedingLogs = logs.filter(log => log.activity_type === 'feeding');
+    const diaperLogs = logs.filter(log => log.activity_type === 'diaper');
 
     const totalSleepMinutes = sleepLogs.reduce((total, log) => total + (log.duration_minutes || 0), 0);
     const avgSleepDuration = sleepLogs.length > 0 ? totalSleepMinutes / sleepLogs.length : 0;
 
     // Find most active day
     const dailyActivity: Record<string, number> = {};
-    weekLogs.forEach(log => {
+    logs.forEach(log => {
       const day = format(new Date(log.start_time), 'EEEE');
       dailyActivity[day] = (dailyActivity[day] || 0) + 1;
     });
@@ -71,8 +72,8 @@ export const ActivitySummary = ({ babyId }: ActivitySummaryProps) => {
       { day: 'No data', count: 0 }
     ).day;
 
-    setWeeklySummary({
-      totalActivities: weekLogs.length,
+    setPeriodSummary({
+      totalActivities: logs.length,
       sleepHours: Math.round(totalSleepMinutes / 60 * 10) / 10,
       feedingSessions: feedingLogs.length,
       diaperChanges: diaperLogs.length,
@@ -100,26 +101,26 @@ export const ActivitySummary = ({ babyId }: ActivitySummaryProps) => {
 
   const summaryItems = [
     {
-      label: 'Total Activities This Week',
-      value: weeklySummary.totalActivities.toString(),
+      label: 'Total Activities',
+      value: periodSummary.totalActivities.toString(),
       icon: Clock,
       color: 'text-blue-600'
     },
     {
       label: 'Total Sleep Hours',
-      value: `${weeklySummary.sleepHours}h`,
+      value: `${periodSummary.sleepHours}h`,
       icon: Moon,
       color: 'text-purple-600'
     },
     {
       label: 'Feeding Sessions',
-      value: weeklySummary.feedingSessions.toString(),
+      value: periodSummary.feedingSessions.toString(),
       icon: Baby,
       color: 'text-green-600'
     },
     {
       label: 'Diaper Changes',
-      value: weeklySummary.diaperChanges.toString(),
+      value: periodSummary.diaperChanges.toString(),
       icon: Heart,
       color: 'text-orange-600'
     }
@@ -129,10 +130,10 @@ export const ActivitySummary = ({ babyId }: ActivitySummaryProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-gray-900">
-          Weekly Activity Summary
+          Period Activity Summary
         </CardTitle>
         <p className="text-sm text-gray-600">
-          Overview of activities from {format(startOfWeek(new Date()), 'MMM dd')} to {format(endOfWeek(new Date()), 'MMM dd')}
+          Overview of activities from {format(dateRange.start, 'MMM dd')} to {format(dateRange.end, 'MMM dd')}
         </p>
       </CardHeader>
       <CardContent>
@@ -154,14 +155,14 @@ export const ActivitySummary = ({ babyId }: ActivitySummaryProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 bg-blue-50 rounded-lg">
             <h4 className="font-medium text-gray-900 mb-2">Average Sleep Duration</h4>
-            <p className="text-2xl font-bold text-blue-600">{weeklySummary.avgSleepDuration} min</p>
+            <p className="text-2xl font-bold text-blue-600">{periodSummary.avgSleepDuration} min</p>
             <p className="text-sm text-gray-600">Per sleep session</p>
           </div>
           
           <div className="p-4 bg-green-50 rounded-lg">
             <h4 className="font-medium text-gray-900 mb-2">Most Active Day</h4>
-            <p className="text-2xl font-bold text-green-600">{weeklySummary.mostActiveDay}</p>
-            <p className="text-sm text-gray-600">This week</p>
+            <p className="text-2xl font-bold text-green-600">{periodSummary.mostActiveDay}</p>
+            <p className="text-sm text-gray-600">In selected period</p>
           </div>
         </div>
       </CardContent>

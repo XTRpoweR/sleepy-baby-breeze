@@ -1,13 +1,14 @@
-
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
-import { format, subDays, startOfDay } from 'date-fns';
+import { useFilteredActivityLogs } from '@/hooks/useFilteredActivityLogs';
+import { format, startOfDay, eachDayOfInterval } from 'date-fns';
+import { DateRange } from '@/utils/dateRangeUtils';
 
 interface SleepAnalyticsProps {
   babyId: string;
+  dateRange: DateRange;
 }
 
 interface SleepData {
@@ -32,45 +33,45 @@ const chartConfig = {
   },
 };
 
-export const SleepAnalytics = ({ babyId }: SleepAnalyticsProps) => {
-  const { logs, loading } = useActivityLogs(babyId);
+export const SleepAnalytics = ({ babyId, dateRange }: SleepAnalyticsProps) => {
+  const { logs, loading } = useFilteredActivityLogs(babyId, dateRange);
   const [sleepData, setSleepData] = useState<SleepData[]>([]);
 
   useEffect(() => {
     if (logs.length > 0) {
       processSleepData();
+    } else {
+      setSleepData([]);
     }
-  }, [logs]);
+  }, [logs, dateRange]);
 
   const processSleepData = () => {
     const sleepLogs = logs.filter(log => log.activity_type === 'sleep');
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = startOfDay(subDays(new Date(), i));
-      return {
-        date: format(date, 'MMM dd'),
-        fullDate: date,
-        totalSleep: 0,
-        sleepSessions: 0,
-        avgDuration: 0
-      };
-    }).reverse();
-
-    // Process sleep data for each day
-    last7Days.forEach(day => {
+    
+    // Get all days in the date range
+    const days = eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
+    
+    const processedData = days.map(day => {
+      const dayStart = startOfDay(day);
+      const dayEnd = new Date(day);
+      dayEnd.setHours(23, 59, 59, 999);
+      
       const daySleepLogs = sleepLogs.filter(log => {
-        const logDate = startOfDay(new Date(log.start_time));
-        return logDate.getTime() === day.fullDate.getTime();
+        const logDate = new Date(log.start_time);
+        return logDate >= dayStart && logDate <= dayEnd;
       });
 
-      if (daySleepLogs.length > 0) {
-        const totalMinutes = daySleepLogs.reduce((sum, log) => sum + (log.duration_minutes || 0), 0);
-        day.totalSleep = Math.round(totalMinutes / 60 * 10) / 10; // Convert to hours
-        day.sleepSessions = daySleepLogs.length;
-        day.avgDuration = Math.round(totalMinutes / daySleepLogs.length);
-      }
+      const totalMinutes = daySleepLogs.reduce((sum, log) => sum + (log.duration_minutes || 0), 0);
+      
+      return {
+        date: format(day, 'MMM dd'),
+        totalSleep: Math.round(totalMinutes / 60 * 10) / 10,
+        sleepSessions: daySleepLogs.length,
+        avgDuration: daySleepLogs.length > 0 ? Math.round(totalMinutes / daySleepLogs.length) : 0
+      };
     });
 
-    setSleepData(last7Days.map(({ fullDate, ...rest }) => rest));
+    setSleepData(processedData);
   };
 
   if (loading) {

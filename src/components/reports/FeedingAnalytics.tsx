@@ -1,13 +1,14 @@
-
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
-import { format, subDays, startOfDay } from 'date-fns';
+import { useFilteredActivityLogs } from '@/hooks/useFilteredActivityLogs';
+import { format, startOfDay, eachDayOfInterval } from 'date-fns';
+import { DateRange } from '@/utils/dateRangeUtils';
 
 interface FeedingAnalyticsProps {
   babyId: string;
+  dateRange: DateRange;
 }
 
 interface FeedingData {
@@ -35,42 +36,44 @@ const chartConfig = {
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
 
-export const FeedingAnalytics = ({ babyId }: FeedingAnalyticsProps) => {
-  const { logs, loading } = useActivityLogs(babyId);
+export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) => {
+  const { logs, loading } = useFilteredActivityLogs(babyId, dateRange);
   const [feedingData, setFeedingData] = useState<FeedingData[]>([]);
   const [feedingTypes, setFeedingTypes] = useState<FeedingTypeData[]>([]);
 
   useEffect(() => {
     if (logs.length > 0) {
       processFeedingData();
+    } else {
+      setFeedingData([]);
+      setFeedingTypes([]);
     }
-  }, [logs]);
+  }, [logs, dateRange]);
 
   const processFeedingData = () => {
     const feedingLogs = logs.filter(log => log.activity_type === 'feeding');
     
     // Process daily feeding data
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = startOfDay(subDays(new Date(), i));
-      return {
-        date: format(date, 'MMM dd'),
-        fullDate: date,
-        feedings: 0,
-        totalDuration: 0
-      };
-    }).reverse();
-
-    last7Days.forEach(day => {
+    const days = eachDayOfInterval({ start: dateRange.start, end: dateRange.end });
+    
+    const processedData = days.map(day => {
+      const dayStart = startOfDay(day);
+      const dayEnd = new Date(day);
+      dayEnd.setHours(23, 59, 59, 999);
+      
       const dayFeedingLogs = feedingLogs.filter(log => {
-        const logDate = startOfDay(new Date(log.start_time));
-        return logDate.getTime() === day.fullDate.getTime();
+        const logDate = new Date(log.start_time);
+        return logDate >= dayStart && logDate <= dayEnd;
       });
 
-      day.feedings = dayFeedingLogs.length;
-      day.totalDuration = dayFeedingLogs.reduce((sum, log) => sum + (log.duration_minutes || 0), 0);
+      return {
+        date: format(day, 'MMM dd'),
+        feedings: dayFeedingLogs.length,
+        totalDuration: dayFeedingLogs.reduce((sum, log) => sum + (log.duration_minutes || 0), 0)
+      };
     });
 
-    setFeedingData(last7Days.map(({ fullDate, ...rest }) => rest));
+    setFeedingData(processedData);
 
     // Process feeding types
     const typeCount: Record<string, number> = {};

@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
@@ -15,11 +15,14 @@ import { ReportsOverview } from '@/components/reports/ReportsOverview';
 import { SleepAnalytics } from '@/components/reports/SleepAnalytics';
 import { FeedingAnalytics } from '@/components/reports/FeedingAnalytics';
 import { ActivitySummary } from '@/components/reports/ActivitySummary';
+import { DateRangeSelector } from '@/components/reports/DateRangeSelector';
+import { DateRangeOption, getDateRange } from '@/utils/dateRangeUtils';
 
 const Reports = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { profile, loading: profileLoading } = useBabyProfile();
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption>('today');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -50,6 +53,8 @@ const Reports = () => {
   if (!user) {
     return null;
   }
+
+  const currentDateRange = getDateRange(selectedDateRange);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -84,7 +89,7 @@ const Reports = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header with Back Button */}
+        {/* Page Header with Back Button and Date Range Selector */}
         <div className="mb-8">
           <Button 
             variant="ghost" 
@@ -94,28 +99,42 @@ const Reports = () => {
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Dashboard</span>
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            View Reports
-          </h1>
-          <p className="text-gray-600">
-            Analyze sleep and activity patterns to understand your baby's routines.
-          </p>
+          
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                View Reports
+              </h1>
+              <p className="text-gray-600">
+                Analyze sleep and activity patterns to understand your baby's routines.
+              </p>
+            </div>
+            
+            <DateRangeSelector 
+              selectedRange={selectedDateRange}
+              onRangeChange={setSelectedDateRange}
+            />
+          </div>
+          
+          <div className="text-sm text-gray-500">
+            Showing data for: <span className="font-medium">{currentDateRange.label}</span>
+          </div>
         </div>
 
         {/* Reports Content */}
         {profile ? (
           <div className="space-y-8">
             {/* Overview Cards */}
-            <ReportsOverview babyId={profile.id} />
+            <ReportsOverview babyId={profile.id} dateRange={currentDateRange} />
             
             {/* Sleep Analytics */}
-            <SleepAnalytics babyId={profile.id} />
+            <SleepAnalytics babyId={profile.id} dateRange={currentDateRange} />
             
             {/* Feeding Analytics */}
-            <FeedingAnalytics babyId={profile.id} />
+            <FeedingAnalytics babyId={profile.id} dateRange={currentDateRange} />
             
             {/* Activity Summary */}
-            <ActivitySummary babyId={profile.id} />
+            <ActivitySummary babyId={profile.id} dateRange={currentDateRange} />
           </div>
         ) : (
           <div className="text-center py-12">

@@ -1,78 +1,64 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useActivityLogs } from '@/hooks/useActivityLogs';
+import { useFilteredActivityLogs } from '@/hooks/useFilteredActivityLogs';
 import { 
   Moon, 
   Baby, 
   Clock, 
   TrendingUp 
 } from 'lucide-react';
+import { DateRange } from '@/utils/dateRangeUtils';
 
 interface ReportsOverviewProps {
   babyId: string;
+  dateRange: DateRange;
 }
 
 interface OverviewStats {
-  totalSleepToday: number;
+  totalSleep: number;
   avgSleepDuration: number;
   totalFeedings: number;
-  nightWakeups: number;
+  totalActivities: number;
 }
 
-export const ReportsOverview = ({ babyId }: ReportsOverviewProps) => {
-  const { logs, loading } = useActivityLogs(babyId);
+export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => {
+  const { logs, loading } = useFilteredActivityLogs(babyId, dateRange);
   const [stats, setStats] = useState<OverviewStats>({
-    totalSleepToday: 0,
+    totalSleep: 0,
     avgSleepDuration: 0,
     totalFeedings: 0,
-    nightWakeups: 0
+    totalActivities: 0
   });
 
   useEffect(() => {
     if (logs.length > 0) {
       calculateStats();
+    } else {
+      // Reset stats when no logs
+      setStats({
+        totalSleep: 0,
+        avgSleepDuration: 0,
+        totalFeedings: 0,
+        totalActivities: 0
+      });
     }
   }, [logs]);
 
   const calculateStats = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Filter today's activities
-    const todayLogs = logs.filter(log => {
-      const logDate = new Date(log.start_time);
-      return logDate >= today;
-    });
-
     // Calculate sleep stats
-    const sleepLogs = todayLogs.filter(log => log.activity_type === 'sleep');
+    const sleepLogs = logs.filter(log => log.activity_type === 'sleep');
     const totalSleepMinutes = sleepLogs.reduce((total, log) => total + (log.duration_minutes || 0), 0);
-    
-    // Calculate average sleep duration over last 7 days
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const weekSleepLogs = logs.filter(log => 
-      log.activity_type === 'sleep' && new Date(log.start_time) >= weekAgo
-    );
-    const avgSleepMinutes = weekSleepLogs.length > 0 
-      ? weekSleepLogs.reduce((total, log) => total + (log.duration_minutes || 0), 0) / weekSleepLogs.length
-      : 0;
+    const avgSleepMinutes = sleepLogs.length > 0 ? totalSleepMinutes / sleepLogs.length : 0;
 
-    // Count feedings today
-    const feedingLogs = todayLogs.filter(log => log.activity_type === 'feeding');
+    // Count feedings
+    const feedingLogs = logs.filter(log => log.activity_type === 'feeding');
     
-    // Count night wakeups (sleep sessions between 10PM and 6AM)
-    const nightWakeups = sleepLogs.filter(log => {
-      const hour = new Date(log.start_time).getHours();
-      return hour >= 22 || hour <= 6;
-    }).length;
-
     setStats({
-      totalSleepToday: Math.round(totalSleepMinutes / 60 * 10) / 10, // hours with 1 decimal
+      totalSleep: Math.round(totalSleepMinutes / 60 * 10) / 10, // hours with 1 decimal
       avgSleepDuration: Math.round(avgSleepMinutes),
       totalFeedings: feedingLogs.length,
-      nightWakeups: nightWakeups
+      totalActivities: logs.length
     });
   };
 
@@ -97,8 +83,8 @@ export const ReportsOverview = ({ babyId }: ReportsOverviewProps) => {
 
   const overviewCards = [
     {
-      title: "Total Sleep Today",
-      value: `${stats.totalSleepToday}h`,
+      title: "Total Sleep",
+      value: `${stats.totalSleep}h`,
       description: "Hours of sleep",
       icon: Moon,
       color: "text-blue-600"
@@ -111,16 +97,16 @@ export const ReportsOverview = ({ babyId }: ReportsOverviewProps) => {
       color: "text-green-600"
     },
     {
-      title: "Feedings Today",
+      title: "Total Feedings",
       value: stats.totalFeedings.toString(),
-      description: "Total feedings",
+      description: "Feeding sessions",
       icon: Baby,
       color: "text-purple-600"
     },
     {
-      title: "Night Wakeups",
-      value: stats.nightWakeups.toString(),
-      description: "Sleep sessions",
+      title: "Total Activities",
+      value: stats.totalActivities.toString(),
+      description: "All activities",
       icon: TrendingUp,
       color: "text-orange-600"
     }
