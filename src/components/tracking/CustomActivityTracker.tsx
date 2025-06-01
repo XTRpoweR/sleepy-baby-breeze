@@ -11,6 +11,7 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 
 interface CustomActivityTrackerProps {
   babyId: string;
+  onActivityAdded?: () => void;
 }
 
 const PRESET_ACTIVITIES = [
@@ -21,8 +22,8 @@ const PRESET_ACTIVITIES = [
   { id: 'custom', name: 'Custom Activity', icon: Plus }
 ];
 
-export const CustomActivityTracker = ({ babyId }: CustomActivityTrackerProps) => {
-  const { addActivity, isSubmitting } = useActivityTracker();
+export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivityTrackerProps) => {
+  const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
   const [activityType, setActivityType] = useState('');
   const [customName, setCustomName] = useState('');
   const [startTime, setStartTime] = useState('');

@@ -25,12 +25,15 @@ import { ActivityLogsList } from '@/components/tracking/ActivityLogsList';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
+import { LanguageSelector } from '@/components/LanguageSelector';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { useActivityLogs } from '@/hooks/useActivityLogs';
 
 const TrackActivity = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { activeProfile, profiles, loading: profileLoading, createProfile } = useBabyProfile();
+  const { refetchLogs } = useActivityLogs(activeProfile?.id || '');
   const [activeTab, setActiveTab] = useState('sleep');
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   const { t } = useTranslation();
@@ -47,6 +50,11 @@ const TrackActivity = () => {
 
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
+  };
+
+  const handleActivityAdded = () => {
+    // Refresh the activity logs immediately after adding an activity
+    refetchLogs();
   };
 
   if (loading || profileLoading) {
@@ -101,8 +109,9 @@ const TrackActivity = () => {
             </div>
           </div>
           
-          {/* Profile Selector */}
+          {/* Profile Selector and Language Selector */}
           <div className="flex items-center space-x-4">
+            <LanguageSelector />
             <ProfileSelector 
               onAddProfile={handleAddProfile}
               onManageProfiles={handleManageProfiles}
@@ -135,19 +144,19 @@ const TrackActivity = () => {
                 </TabsList>
 
                 <TabsContent value="sleep">
-                  <SleepTracker babyId={activeProfile.id} />
+                  <SleepTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                 </TabsContent>
 
                 <TabsContent value="feeding">
-                  <FeedingTracker babyId={activeProfile.id} />
+                  <FeedingTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                 </TabsContent>
 
                 <TabsContent value="diaper">
-                  <DiaperTracker babyId={activeProfile.id} />
+                  <DiaperTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                 </TabsContent>
 
                 <TabsContent value="custom">
-                  <CustomActivityTracker babyId={activeProfile.id} />
+                  <CustomActivityTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                 </TabsContent>
               </Tabs>
             </div>

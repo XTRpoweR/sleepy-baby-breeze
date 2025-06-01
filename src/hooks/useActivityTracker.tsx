@@ -13,7 +13,7 @@ interface ActivityData {
   metadata: any;
 }
 
-export const useActivityTracker = () => {
+export const useActivityTracker = (onActivityAdded?: () => void) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,6 +39,12 @@ export const useActivityTracker = () => {
         title: "Success!",
         description: "Activity logged successfully",
       });
+      
+      // Call the callback to refresh data immediately
+      if (onActivityAdded) {
+        onActivityAdded();
+      }
+      
       return true;
     } catch (error) {
       console.error('Error adding activity:', error);

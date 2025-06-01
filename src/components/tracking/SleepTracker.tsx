@@ -11,10 +11,11 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 
 interface SleepTrackerProps {
   babyId: string;
+  onActivityAdded?: () => void;
 }
 
-export const SleepTracker = ({ babyId }: SleepTrackerProps) => {
-  const { addActivity, isSubmitting } = useActivityTracker();
+export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => {
+  const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
   const [sleepType, setSleepType] = useState<'nap' | 'night'>('nap');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');

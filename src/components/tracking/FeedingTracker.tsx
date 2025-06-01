@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,10 +10,11 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 
 interface FeedingTrackerProps {
   babyId: string;
+  onActivityAdded?: () => void;
 }
 
-export const FeedingTracker = ({ babyId }: FeedingTrackerProps) => {
-  const { addActivity, isSubmitting } = useActivityTracker();
+export const FeedingTracker = ({ babyId, onActivityAdded }: FeedingTrackerProps) => {
+  const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
   const [feedingType, setFeedingType] = useState<'breastfeeding' | 'formula' | 'both'>('breastfeeding');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');

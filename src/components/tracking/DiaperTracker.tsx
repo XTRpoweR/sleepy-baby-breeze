@@ -11,10 +11,11 @@ import { useActivityTracker } from '@/hooks/useActivityTracker';
 
 interface DiaperTrackerProps {
   babyId: string;
+  onActivityAdded?: () => void;
 }
 
-export const DiaperTracker = ({ babyId }: DiaperTrackerProps) => {
-  const { addActivity, isSubmitting } = useActivityTracker();
+export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) => {
+  const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
   const [changeTime, setChangeTime] = useState('');
   const [isWet, setIsWet] = useState(false);
   const [isSoiled, setIsSoiled] = useState(false);
