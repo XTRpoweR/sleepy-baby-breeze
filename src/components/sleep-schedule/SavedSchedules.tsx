@@ -1,4 +1,5 @@
 
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ interface SavedSchedulesProps {
 
 export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) => {
   const { schedules, loading, deleteSleepSchedule } = useSleepSchedule(babyId);
+  const { t } = useTranslation();
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
@@ -34,7 +36,7 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="text-center text-gray-500">Loading saved schedules...</div>
+          <div className="text-center text-gray-500">{t('common.loading')}</div>
         </CardContent>
       </Card>
     );
@@ -46,14 +48,14 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <History className="h-5 w-5 text-purple-600" />
-            <span>Saved Sleep Schedules</span>
+            <span>{t('components.sleepSchedule.savedSchedules')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center text-gray-500 py-8">
             <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p>No saved sleep schedules yet.</p>
-            <p className="text-sm">Create your first personalized schedule above!</p>
+            <p>{t('components.sleepSchedule.noSavedSchedules')}</p>
+            <p className="text-sm">{t('components.sleepSchedule.createFirstSchedule')}</p>
           </div>
         </CardContent>
       </Card>
@@ -65,7 +67,7 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <History className="h-5 w-5 text-purple-600" />
-          <span>Saved Sleep Schedules</span>
+          <span>{t('components.sleepSchedule.savedSchedules')}</span>
           <Badge variant="secondary">{schedules.length}</Badge>
         </CardTitle>
       </CardHeader>
@@ -83,11 +85,11 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
                       Age: {schedule.child_age} months
                     </div>
                     <div className="text-sm text-gray-600">
-                      Created on {formatDate(schedule.created_at)}
+                      {t('components.sleepSchedule.createdOn')} {formatDate(schedule.created_at)}
                     </div>
                   </div>
                   <Badge variant="outline" className="bg-purple-100 text-purple-800">
-                    {schedule.total_sleep_hours}h total
+                    {schedule.total_sleep_hours}h {t('components.sleepSchedule.totalSleep').toLowerCase()}
                   </Badge>
                 </div>
                 <div className="flex space-x-2">
@@ -98,7 +100,7 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
                     className="flex items-center space-x-1"
                   >
                     <Eye className="h-4 w-4" />
-                    <span>View</span>
+                    <span>{t('common.view')}</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -113,17 +115,17 @@ export const SavedSchedules = ({ babyId, onViewSchedule }: SavedSchedulesProps) 
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <div className="font-medium text-gray-700">Bedtime</div>
+                  <div className="font-medium text-gray-700">{t('components.sleepSchedule.bedtime')}</div>
                   <div className="text-blue-600">{formatTime(schedule.recommended_bedtime)}</div>
                 </div>
                 <div>
-                  <div className="font-medium text-gray-700">Wake Time</div>
+                  <div className="font-medium text-gray-700">{t('components.sleepSchedule.wakeTime')}</div>
                   <div className="text-yellow-600">{formatTime(schedule.recommended_wake_time)}</div>
                 </div>
                 <div>
-                  <div className="font-medium text-gray-700">Naps</div>
+                  <div className="font-medium text-gray-700">{t('components.sleepSchedule.naps')}</div>
                   <div className="text-green-600">
-                    {Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps.length : 0} naps
+                    {Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps.length : 0} {t('components.sleepSchedule.naps').toLowerCase()}
                   </div>
                 </div>
                 <div>

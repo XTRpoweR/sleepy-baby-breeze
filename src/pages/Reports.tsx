@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { 
   Moon, 
@@ -17,12 +18,14 @@ import { FeedingAnalytics } from '@/components/reports/FeedingAnalytics';
 import { ActivitySummary } from '@/components/reports/ActivitySummary';
 import { DateRangeSelector } from '@/components/reports/DateRangeSelector';
 import { DateRangeOption, getDateRange } from '@/utils/dateRangeUtils';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 const Reports = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { profile, loading: profileLoading } = useBabyProfile();
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption>('today');
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -44,7 +47,7 @@ const Reports = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <BarChart3 className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">Loading reports...</p>
+          <p className="text-gray-600">{t('pages.reports.loading')}</p>
         </div>
       </div>
     );
@@ -64,9 +67,10 @@ const Reports = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <Moon className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">SleepyBaby</span>
+              <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
             </div>
             <div className="flex items-center space-x-4">
+              <LanguageSelector />
               <div className="flex items-center space-x-2 text-gray-700">
                 <User className="h-4 w-4" />
                 <span className="text-sm">
@@ -80,7 +84,7 @@ const Reports = () => {
                 className="flex items-center space-x-1"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
+                <span>{t('navigation.signOut')}</span>
               </Button>
             </div>
           </div>
@@ -97,16 +101,16 @@ const Reports = () => {
             className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to Dashboard</span>
+            <span>{t('navigation.backToDashboard')}</span>
           </Button>
           
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                View Reports
+                {t('pages.reports.title')}
               </h1>
               <p className="text-gray-600">
-                Analyze sleep and activity patterns to understand your baby's routines.
+                {t('pages.reports.subtitle')}
               </p>
             </div>
             
@@ -117,7 +121,7 @@ const Reports = () => {
           </div>
           
           <div className="text-sm text-gray-500">
-            Showing data for: <span className="font-medium">{currentDateRange.label}</span>
+            {t('pages.reports.showingData')} <span className="font-medium">{currentDateRange.label}</span>
           </div>
         </div>
 
@@ -139,10 +143,10 @@ const Reports = () => {
         ) : (
           <div className="text-center py-12">
             <BarChart3 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Baby Profile Found</h3>
-            <p className="text-gray-600 mb-4">Create a baby profile to start tracking and viewing reports.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('pages.reports.noBabyProfile')}</h3>
+            <p className="text-gray-600 mb-4">{t('pages.reports.createProfileMessage')}</p>
             <Button onClick={() => navigate('/dashboard')}>
-              Go to Dashboard
+              {t('navigation.dashboard')}
             </Button>
           </div>
         )}

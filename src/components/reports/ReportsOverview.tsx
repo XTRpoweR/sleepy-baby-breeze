@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFilteredActivityLogs } from '@/hooks/useFilteredActivityLogs';
 import { 
@@ -30,6 +31,7 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
     totalFeedings: 0,
     totalActivities: 0
   });
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (logs.length > 0) {
@@ -83,30 +85,30 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
 
   const overviewCards = [
     {
-      title: "Total Sleep",
+      title: t('components.reports.totalSleep'),
       value: `${stats.totalSleep}h`,
-      description: "Hours of sleep",
+      description: t('components.reports.hoursOfSleep'),
       icon: Moon,
       color: "text-blue-600"
     },
     {
-      title: "Avg Sleep Duration",
+      title: t('components.reports.avgSleepDuration'),
       value: `${stats.avgSleepDuration}m`,
-      description: "Per sleep session",
+      description: t('components.reports.perSleepSession'),
       icon: Clock,
       color: "text-green-600"
     },
     {
-      title: "Total Feedings",
+      title: t('components.reports.totalFeedings'),
       value: stats.totalFeedings.toString(),
-      description: "Feeding sessions",
+      description: t('components.reports.feedingSessions'),
       icon: Baby,
       color: "text-purple-600"
     },
     {
-      title: "Total Activities",
+      title: t('components.reports.totalActivities'),
       value: stats.totalActivities.toString(),
-      description: "All activities",
+      description: t('components.reports.allActivities'),
       icon: TrendingUp,
       color: "text-orange-600"
     }

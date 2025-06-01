@@ -1,4 +1,5 @@
 
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ export const ScheduleAdjustmentNotifications = ({
   currentSchedule 
 }: ScheduleAdjustmentNotificationsProps) => {
   const { pendingAdjustments, approveAdjustment, dismissAdjustment } = useScheduleAdjustments(babyId, currentSchedule);
+  const { t } = useTranslation();
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
@@ -40,11 +42,11 @@ export const ScheduleAdjustmentNotifications = ({
               <div>
                 <div className="flex items-center space-x-2 mb-2">
                   <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                    Age Update: {adjustment.currentAge} → {adjustment.newAge} months
+                    {t('components.sleepSchedule.ageUpdate', { current: adjustment.currentAge, new: adjustment.newAge })}
                   </Badge>
                 </div>
                 <p className="text-sm font-medium text-blue-900 mb-1">
-                  Sleep Schedule Adjustment Recommended
+                  {t('components.sleepSchedule.scheduleAdjustmentRecommended')}
                 </p>
                 <p className="text-sm text-blue-700">
                   {adjustment.reason}
@@ -56,18 +58,18 @@ export const ScheduleAdjustmentNotifications = ({
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2 flex items-center">
                     <Clock className="h-4 w-4 mr-1" />
-                    Current Schedule
+                    {t('components.sleepSchedule.currentSchedule')}
                   </h4>
                   {currentSchedule && (
                     <div className="space-y-1 text-sm">
-                      <div>Bedtime: {formatTime(currentSchedule.recommended_bedtime)}</div>
-                      <div>Wake: {formatTime(currentSchedule.recommended_wake_time)}</div>
+                      <div>{t('components.sleepSchedule.bedtime')}: {formatTime(currentSchedule.recommended_bedtime)}</div>
+                      <div>{t('components.sleepSchedule.wakeTime')}: {formatTime(currentSchedule.recommended_wake_time)}</div>
                       <div>
-                        Naps: {Array.isArray(currentSchedule.recommended_naps) 
+                        {t('components.sleepSchedule.naps')}: {Array.isArray(currentSchedule.recommended_naps) 
                           ? currentSchedule.recommended_naps.length 
-                          : 0} per day
+                          : 0} {t('components.sleepSchedule.napsPerDay')}
                       </div>
-                      <div>Total Sleep: {currentSchedule.total_sleep_hours}h</div>
+                      <div>{t('components.sleepSchedule.totalSleep')}: {currentSchedule.total_sleep_hours}h</div>
                     </div>
                   )}
                 </div>
@@ -75,13 +77,13 @@ export const ScheduleAdjustmentNotifications = ({
                 <div>
                   <h4 className="font-medium text-gray-900 mb-2 flex items-center">
                     <ArrowRight className="h-4 w-4 mr-1 text-green-600" />
-                    Suggested Schedule
+                    {t('components.sleepSchedule.suggestedSchedule')}
                   </h4>
                   <div className="space-y-1 text-sm">
-                    <div>Bedtime: {formatTime(adjustment.suggestedSchedule.bedtime)}</div>
-                    <div>Wake: {formatTime(adjustment.suggestedSchedule.wakeTime)}</div>
-                    <div>Naps: {adjustment.suggestedSchedule.naps.length} per day</div>
-                    <div>Total Sleep: {adjustment.suggestedSchedule.totalSleepHours}h</div>
+                    <div>{t('components.sleepSchedule.bedtime')}: {formatTime(adjustment.suggestedSchedule.bedtime)}</div>
+                    <div>{t('components.sleepSchedule.wakeTime')}: {formatTime(adjustment.suggestedSchedule.wakeTime)}</div>
+                    <div>{t('components.sleepSchedule.naps')}: {adjustment.suggestedSchedule.naps.length} {t('components.sleepSchedule.napsPerDay')}</div>
+                    <div>{t('components.sleepSchedule.totalSleep')}: {adjustment.suggestedSchedule.totalSleepHours}h</div>
                   </div>
                 </div>
               </div>
@@ -89,7 +91,7 @@ export const ScheduleAdjustmentNotifications = ({
               {/* Nap Schedule Details */}
               {adjustment.suggestedSchedule.naps.length > 0 && (
                 <div className="p-3 bg-green-50 rounded-lg">
-                  <h5 className="font-medium text-green-900 mb-2">Suggested Nap Schedule:</h5>
+                  <h5 className="font-medium text-green-900 mb-2">{t('components.sleepSchedule.suggestedNapSchedule')}</h5>
                   <div className="grid gap-2">
                     {adjustment.suggestedSchedule.naps.map((nap, index) => (
                       <div key={index} className="flex justify-between text-sm">
@@ -110,7 +112,7 @@ export const ScheduleAdjustmentNotifications = ({
                   className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  <span>Apply New Schedule</span>
+                  <span>{t('components.sleepSchedule.applyNewSchedule')}</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -118,7 +120,7 @@ export const ScheduleAdjustmentNotifications = ({
                   className="flex items-center space-x-2"
                 >
                   <X className="h-4 w-4" />
-                  <span>Not Now</span>
+                  <span>{t('components.sleepSchedule.notNow')}</span>
                 </Button>
               </div>
             </div>

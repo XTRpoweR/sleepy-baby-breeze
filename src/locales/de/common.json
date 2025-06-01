@@ -11,7 +11,9 @@
     "reviews": "Bewertungen",
     "getStarted": "Loslegen",
     "dashboard": "Zum Dashboard",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "backToDashboard": "Zurück zum Dashboard",
+    "back": "Zurück"
   },
   "hero": {
     "title": "Besserer Schlaf für",
@@ -74,7 +76,160 @@
     "addProfile": "Kinderprofil hinzufügen",
     "startTracking": "Tracking starten",
     "noDataMessage": "Beginnen Sie mit der Verfolgung von {{name}}s Aktivitäten, um hier Einblicke und Muster zu sehen.",
-    "noProfileMessage": "Erstellen Sie ein Kinderprofil, um personalisierte Einblicke zu sehen"
+    "noProfileMessage": "Erstellen Sie ein Kinderprofil, um personalisierte Einblicke zu sehen",
+    "dailySleep": "Täglicher Schlaf",
+    "trackPatterns": "Muster verfolgen",
+    "feedingData": "Fütterungsdaten",
+    "monitorFrequency": "Häufigkeit überwachen",
+    "weeklyTrends": "Wöchentliche Trends",
+    "visualCharts": "Visuelle Diagramme"
+  },
+  "pages": {
+    "sleepSchedule": {
+      "title": "Schlafplan",
+      "subtitle": "Erstellen Sie personalisierte Schlafpläne und erhalten Sie Empfehlungen basierend auf dem Alter und den Mustern Ihres Babys",
+      "loading": "Schlafpläne werden geladen..."
+    },
+    "familySharing": {
+      "title": "Familien-Sharing",
+      "subtitle": "Laden Sie Familienmitglieder und Betreuer ein, um beim Verfolgen von Aktivitäten und Anzeigen von Berichten zu helfen",
+      "setupFirst": "Babyprofil zuerst einrichten",
+      "setupMessage": "Sie müssen ein Babyprofil erstellen, bevor Sie den Zugang mit Familienmitgliedern teilen können.",
+      "sharingFor": "Familien-Sharing für {{name}}",
+      "inviteMessage": "Laden Sie Familienmitglieder und Betreuer ein, um {{name}}s Aktivitäten zu verfolgen und Berichte anzuzeigen."
+    },
+    "sounds": {
+      "title": "Beruhigende Klänge & Audio",
+      "subtitle": "Wählen Sie aus unserer Bibliothek beruhigender Klänge und hilfreicher Schlafanleitungen für Ihr Baby.",
+      "loading": "Klänge werden geladen...",
+      "guidesTab": "Anleitungen & Artikel",
+      "soundsTab": "Klänge"
+    },
+    "reports": {
+      "title": "Berichte anzeigen",
+      "subtitle": "Analysieren Sie Schlaf- und Aktivitätsmuster, um die Routinen Ihres Babys zu verstehen.",
+      "loading": "Berichte werden geladen...",
+      "showingData": "Daten angezeigt für:",
+      "noBabyProfile": "Kein Babyprofil gefunden",
+      "createProfileMessage": "Erstellen Sie ein Babyprofil, um mit dem Verfolgen und Anzeigen von Berichten zu beginnen."
+    },
+    "trackActivity": {
+      "title": "Aktivitäten verfolgen",
+      "subtitle": "Aufzeichnung für {{name}}",
+      "loading": "Laden...",
+      "noActiveProfile": "Kein aktives Profil",
+      "selectProfileMessage": "Bitte wählen Sie ein Kinderprofil aus, um mit der Verfolgung von Aktivitäten zu beginnen."
+    }
+  },
+  "components": {
+    "profileSelector": {
+      "selectChild": "Kind auswählen",
+      "addNewProfile": "Neues Profil hinzufügen",
+      "manageProfiles": "Profile verwalten"
+    },
+    "sleepSchedule": {
+      "childInformation": "Kinderinformationen",
+      "childAge": "Alter des Kindes (in Monaten)",
+      "childAgeHelper": "Bitte geben Sie das Alter Ihres Kindes in Monaten ein",
+      "childAgeCalculated": "Berechnet aus dem Geburtsdatum (Sie können es bei Bedarf anpassen)",
+      "currentSleepHabits": "Aktuelle Schlafgewohnheiten",
+      "currentBedtime": "Aktuelle Schlafenszeit",
+      "currentWakeTime": "Aktuelle Aufwachzeit",
+      "napFrequency": "Wie viele Nickerchen macht Ihr Kind derzeit?",
+      "noNaps": "Keine Nickerchen",
+      "oneNap": "1 Nickerchen pro Tag",
+      "twoNaps": "2 Nickerchen pro Tag",
+      "threePlusNaps": "3+ Nickerchen pro Tag",
+      "sleepChallenges": "Schlafherausforderungen (Optional)",
+      "createSchedule": "Personalisierten Schlafplan erstellen",
+      "savedSchedules": "Gespeicherte Schlafpläne",
+      "noSavedSchedules": "Noch keine gespeicherten Schlafpläne.",
+      "createFirstSchedule": "Erstellen Sie Ihren ersten personalisierten Plan oben!",
+      "ageUpdate": "Altersupdate: {{current}} → {{new}} Monate",
+      "scheduleAdjustmentRecommended": "Schlafplan-Anpassung empfohlen",
+      "currentSchedule": "Aktueller Plan",
+      "suggestedSchedule": "Vorgeschlagener Plan",
+      "bedtime": "Schlafenszeit",
+      "wakeTime": "Aufwachzeit",
+      "naps": "Nickerchen",
+      "totalSleep": "Gesamtschlaf",
+      "napsPerDay": "pro Tag",
+      "suggestedNapSchedule": "Vorgeschlagener Nickerchen-Plan:",
+      "applyNewSchedule": "Neuen Plan anwenden",
+      "notNow": "Nicht jetzt",
+      "createdOn": "Erstellt am"
+    },
+    "sounds": {
+      "soothingSounds": "Beruhigende Klänge & Audio",
+      "setSleepTimer": "Schlaf-Timer einstellen",
+      "chooseTimer": "Wählen Sie, wie lange das Audio abgespielt werden soll, bevor es automatisch stoppt.",
+      "currentTimer": "Aktueller Timer",
+      "clearTimer": "Timer löschen",
+      "setTimer": "Timer einstellen",
+      "minutes": "Minuten",
+      "hour": "Stunde",
+      "hours": "Stunden"
+    },
+    "reports": {
+      "overview": "Übersicht",
+      "totalSleep": "Gesamtschlaf",
+      "avgSleepDuration": "Durchschnittliche Schlafdauer",
+      "totalFeedings": "Gesamte Fütterungen",
+      "totalActivities": "Gesamte Aktivitäten",
+      "hoursOfSleep": "Stunden Schlaf",
+      "perSleepSession": "Pro Schlafphase",
+      "feedingSessions": "Fütterungsphasen",
+      "allActivities": "Alle Aktivitäten",
+      "sleepDurationTrend": "Schlafdauer-Trend",
+      "dailySleepSessions": "Tägliche Schlafphasen"
+    },
+    "familySharing": {
+      "inviteMembers": "Familienmitglieder einladen",
+      "pendingInvitations": "Ausstehende Einladungen",
+      "activeMembers": "Aktive Familienmitglieder",
+      "sendInvitation": "Einladung senden",
+      "emailAddress": "E-Mail-Adresse",
+      "inviteRole": "Rolle",
+      "admin": "Administrator",
+      "viewer": "Betrachter",
+      "invitationSent": "Einladung erfolgreich gesendet",
+      "removeAccess": "Zugang entfernen",
+      "resendInvitation": "Einladung erneut senden"
+    }
+  },
+  "activities": {
+    "sleep": "Schlaf",
+    "feeding": "Fütterung",
+    "diaper": "Windel",
+    "custom": "Benutzerdefiniert",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "duration": "Dauer",
+    "notes": "Notizen",
+    "logActivity": "Aktivität protokollieren",
+    "editActivity": "Aktivität bearbeiten",
+    "deleteActivity": "Aktivität löschen"
+  },
+  "forms": {
+    "required": "Erforderlich",
+    "optional": "Optional",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "update": "Aktualisieren"
+  },
+  "dates": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "thisWeek": "Diese Woche",
+    "lastWeek": "Letzte Woche",
+    "thisMonth": "Diesen Monat",
+    "lastMonth": "Letzten Monat",
+    "last7Days": "Letzten 7 Tage",
+    "last30Days": "Letzten 30 Tage",
+    "custom": "Benutzerdefinierter Bereich"
   },
   "common": {
     "loading": "Laden...",
@@ -88,7 +243,10 @@
     "previous": "Vorherige",
     "confirm": "Bestätigen",
     "yes": "Ja",
-    "no": "Nein"
+    "no": "Nein",
+    "view": "Anzeigen",
+    "add": "Hinzufügen",
+    "remove": "Entfernen"
   },
   "footer": {
     "tagline": "Familien dabei zu helfen, die Ruhe zu bekommen, die sie verdienen, eine Nacht nach der anderen.",

@@ -1,4 +1,6 @@
+
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -36,6 +38,7 @@ const chartConfig = {
 export const SleepAnalytics = ({ babyId, dateRange }: SleepAnalyticsProps) => {
   const { logs, loading } = useFilteredActivityLogs(babyId, dateRange);
   const [sleepData, setSleepData] = useState<SleepData[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (logs.length > 0) {
@@ -93,7 +96,7 @@ export const SleepAnalytics = ({ babyId, dateRange }: SleepAnalyticsProps) => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold text-gray-900">
-            Sleep Duration Trend
+            {t('components.reports.sleepDurationTrend')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -127,7 +130,7 @@ export const SleepAnalytics = ({ babyId, dateRange }: SleepAnalyticsProps) => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold text-gray-900">
-            Daily Sleep Sessions
+            {t('components.reports.dailySleepSessions')}
           </CardTitle>
         </CardHeader>
         <CardContent>

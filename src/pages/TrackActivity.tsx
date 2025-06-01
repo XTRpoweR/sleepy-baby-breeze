@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,6 +33,7 @@ const TrackActivity = () => {
   const { activeProfile, profiles, loading: profileLoading, createProfile } = useBabyProfile();
   const [activeTab, setActiveTab] = useState('sleep');
   const [showProfileManagement, setShowProfileManagement] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -52,7 +54,7 @@ const TrackActivity = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Baby className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t('pages.trackActivity.loading')}</p>
         </div>
       </div>
     );
@@ -70,7 +72,7 @@ const TrackActivity = () => {
             className="mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            {t('navigation.backToDashboard')}
           </Button>
           <BabyProfileSetup onProfileCreated={createProfile} />
         </div>
@@ -89,12 +91,12 @@ const TrackActivity = () => {
               onClick={() => navigate('/dashboard')}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
+              {t('navigation.back')}
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Track Activities</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t('pages.trackActivity.title')}</h1>
               {activeProfile && (
-                <p className="text-gray-600">Recording for {activeProfile.name}</p>
+                <p className="text-gray-600">{t('pages.trackActivity.subtitle', { name: activeProfile.name })}</p>
               )}
             </div>
           </div>
@@ -116,19 +118,19 @@ const TrackActivity = () => {
                 <TabsList className="grid w-full grid-cols-4 mb-8">
                   <TabsTrigger value="sleep" className="flex items-center space-x-2">
                     <Moon className="h-4 w-4" />
-                    <span>Sleep</span>
+                    <span>{t('activities.sleep')}</span>
                   </TabsTrigger>
                   <TabsTrigger value="feeding" className="flex items-center space-x-2">
                     <Bottle className="h-4 w-4" />
-                    <span>Feeding</span>
+                    <span>{t('activities.feeding')}</span>
                   </TabsTrigger>
                   <TabsTrigger value="diaper" className="flex items-center space-x-2">
                     <Heart className="h-4 w-4" />
-                    <span>Diaper</span>
+                    <span>{t('activities.diaper')}</span>
                   </TabsTrigger>
                   <TabsTrigger value="custom" className="flex items-center space-x-2">
                     <Plus className="h-4 w-4" />
-                    <span>Custom</span>
+                    <span>{t('activities.custom')}</span>
                   </TabsTrigger>
                 </TabsList>
 
@@ -159,13 +161,13 @@ const TrackActivity = () => {
           <Card className="max-w-md mx-auto">
             <CardContent className="p-8 text-center">
               <Baby className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Active Profile</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('pages.trackActivity.noActiveProfile')}</h3>
               <p className="text-gray-600 mb-4">
-                Please select a child profile to start tracking activities.
+                {t('pages.trackActivity.selectProfileMessage')}
               </p>
               <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Child Profile
+                {t('dashboard.addProfile')}
               </Button>
             </CardContent>
           </Card>

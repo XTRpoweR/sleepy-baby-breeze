@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
@@ -14,10 +15,12 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { SoundsLibrary } from '@/components/sounds/SoundsLibrary';
 import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 const Sounds = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -39,7 +42,7 @@ const Sounds = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">Loading sounds...</p>
+          <p className="text-gray-600">{t('pages.sounds.loading')}</p>
         </div>
       </div>
     );
@@ -57,9 +60,10 @@ const Sounds = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <Moon className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">SleepyBaby</span>
+              <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
             </div>
             <div className="flex items-center space-x-4">
+              <LanguageSelector />
               <div className="flex items-center space-x-2 text-gray-700">
                 <User className="h-4 w-4" />
                 <span className="text-sm">
@@ -73,7 +77,7 @@ const Sounds = () => {
                 className="flex items-center space-x-1"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
+                <span>{t('navigation.signOut')}</span>
               </Button>
             </div>
           </div>
@@ -90,13 +94,13 @@ const Sounds = () => {
             className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to Dashboard</span>
+            <span>{t('navigation.backToDashboard')}</span>
           </Button>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Soothing Sounds & Audio
+            {t('pages.sounds.title')}
           </h1>
           <p className="text-gray-600">
-            Choose from our library of calming sounds and helpful sleep guides for your baby.
+            {t('pages.sounds.subtitle')}
           </p>
         </div>
 
@@ -108,14 +112,14 @@ const Sounds = () => {
               className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-blue-600 rounded-md py-3 px-6 font-medium transition-all"
             >
               <BookOpen className="h-4 w-4" />
-              <span>Guides & Articles</span>
+              <span>{t('pages.sounds.guidesTab')}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="sounds" 
               className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-blue-600 rounded-md py-3 px-6 font-medium transition-all"
             >
               <Music className="h-4 w-4" />
-              <span>Sounds</span>
+              <span>{t('pages.sounds.soundsTab')}</span>
             </TabsTrigger>
           </TabsList>
 

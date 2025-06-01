@@ -11,7 +11,9 @@
     "reviews": "Reviews",
     "getStarted": "Get Started",
     "dashboard": "Go to Dashboard",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "backToDashboard": "Back to Dashboard",
+    "back": "Back"
   },
   "hero": {
     "title": "Better Sleep for",
@@ -74,7 +76,160 @@
     "addProfile": "Add Child Profile",
     "startTracking": "Start Tracking",
     "noDataMessage": "Start tracking {{name}}'s activities to see insights and patterns here.",
-    "noProfileMessage": "Create a child profile to see personalized insights"
+    "noProfileMessage": "Create a child profile to see personalized insights",
+    "dailySleep": "Daily Sleep",
+    "trackPatterns": "Track Patterns",
+    "feedingData": "Feeding Data",
+    "monitorFrequency": "Monitor Frequency",
+    "weeklyTrends": "Weekly Trends",
+    "visualCharts": "Visual Charts"
+  },
+  "pages": {
+    "sleepSchedule": {
+      "title": "Sleep Schedule",
+      "subtitle": "Create personalized sleep schedules and get recommendations based on your baby's age and patterns",
+      "loading": "Loading sleep schedules..."
+    },
+    "familySharing": {
+      "title": "Family Sharing",
+      "subtitle": "Invite family members and caregivers to help track activities and view reports",
+      "setupFirst": "Set Up Baby Profile First",
+      "setupMessage": "You need to create a baby profile before you can share access with family members.",
+      "sharingFor": "Family Sharing for {{name}}",
+      "inviteMessage": "Invite family members and caregivers to help track {{name}}'s activities and view reports."
+    },
+    "sounds": {
+      "title": "Soothing Sounds & Audio",
+      "subtitle": "Choose from our library of calming sounds and helpful sleep guides for your baby.",
+      "loading": "Loading sounds...",
+      "guidesTab": "Guides & Articles",
+      "soundsTab": "Sounds"
+    },
+    "reports": {
+      "title": "View Reports",
+      "subtitle": "Analyze sleep and activity patterns to understand your baby's routines.",
+      "loading": "Loading reports...",
+      "showingData": "Showing data for:",
+      "noBabyProfile": "No Baby Profile Found",
+      "createProfileMessage": "Create a baby profile to start tracking and viewing reports."
+    },
+    "trackActivity": {
+      "title": "Track Activities",
+      "subtitle": "Recording for {{name}}",
+      "loading": "Loading...",
+      "noActiveProfile": "No Active Profile",
+      "selectProfileMessage": "Please select a child profile to start tracking activities."
+    }
+  },
+  "components": {
+    "profileSelector": {
+      "selectChild": "Select Child",
+      "addNewProfile": "Add New Profile",
+      "manageProfiles": "Manage Profiles"
+    },
+    "sleepSchedule": {
+      "childInformation": "Child Information",
+      "childAge": "Child's Age (in months)",
+      "childAgeHelper": "Please enter your child's age in months",
+      "childAgeCalculated": "Calculated from birth date (you can adjust if needed)",
+      "currentSleepHabits": "Current Sleep Habits",
+      "currentBedtime": "Current Bedtime",
+      "currentWakeTime": "Current Wake Time",
+      "napFrequency": "How many naps does your child currently take?",
+      "noNaps": "No naps",
+      "oneNap": "1 nap per day",
+      "twoNaps": "2 naps per day",
+      "threePlusNaps": "3+ naps per day",
+      "sleepChallenges": "Sleep Challenges (Optional)",
+      "createSchedule": "Create Personalized Sleep Schedule",
+      "savedSchedules": "Saved Sleep Schedules",
+      "noSavedSchedules": "No saved sleep schedules yet.",
+      "createFirstSchedule": "Create your first personalized schedule above!",
+      "ageUpdate": "Age Update: {{current}} → {{new}} months",
+      "scheduleAdjustmentRecommended": "Sleep Schedule Adjustment Recommended",
+      "currentSchedule": "Current Schedule",
+      "suggestedSchedule": "Suggested Schedule",
+      "bedtime": "Bedtime",
+      "wakeTime": "Wake Time",
+      "naps": "Naps",
+      "totalSleep": "Total Sleep",
+      "napsPerDay": "per day",
+      "suggestedNapSchedule": "Suggested Nap Schedule:",
+      "applyNewSchedule": "Apply New Schedule",
+      "notNow": "Not Now",
+      "createdOn": "Created on"
+    },
+    "sounds": {
+      "soothingSounds": "Soothing Sounds & Audio",
+      "setSleepTimer": "Set Sleep Timer",
+      "chooseTimer": "Choose how long you want the audio to play before automatically stopping.",
+      "currentTimer": "Current timer",
+      "clearTimer": "Clear Timer",
+      "setTimer": "Set Timer",
+      "minutes": "minutes",
+      "hour": "hour",
+      "hours": "hours"
+    },
+    "reports": {
+      "overview": "Overview",
+      "totalSleep": "Total Sleep",
+      "avgSleepDuration": "Avg Sleep Duration",
+      "totalFeedings": "Total Feedings",
+      "totalActivities": "Total Activities",
+      "hoursOfSleep": "Hours of sleep",
+      "perSleepSession": "Per sleep session",
+      "feedingSessions": "Feeding sessions",
+      "allActivities": "All activities",
+      "sleepDurationTrend": "Sleep Duration Trend",
+      "dailySleepSessions": "Daily Sleep Sessions"
+    },
+    "familySharing": {
+      "inviteMembers": "Invite Family Members",
+      "pendingInvitations": "Pending Invitations",
+      "activeMembers": "Active Family Members",
+      "sendInvitation": "Send Invitation",
+      "emailAddress": "Email Address",
+      "inviteRole": "Role",
+      "admin": "Admin",
+      "viewer": "Viewer",
+      "invitationSent": "Invitation sent successfully",
+      "removeAccess": "Remove Access",
+      "resendInvitation": "Resend Invitation"
+    }
+  },
+  "activities": {
+    "sleep": "Sleep",
+    "feeding": "Feeding",
+    "diaper": "Diaper",
+    "custom": "Custom",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "duration": "Duration",
+    "notes": "Notes",
+    "logActivity": "Log Activity",
+    "editActivity": "Edit Activity",
+    "deleteActivity": "Delete Activity"
+  },
+  "forms": {
+    "required": "Required",
+    "optional": "Optional",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update"
+  },
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "custom": "Custom Range"
   },
   "common": {
     "loading": "Loading...",
@@ -88,7 +243,10 @@
     "previous": "Previous",
     "confirm": "Confirm",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "view": "View",
+    "add": "Add",
+    "remove": "Remove"
   },
   "footer": {
     "tagline": "Helping families get the rest they deserve, one night at a time.",

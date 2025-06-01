@@ -1,4 +1,6 @@
+
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +21,7 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
   const [currentWakeTime, setCurrentWakeTime] = useState('07:00');
   const [napFrequency, setNapFrequency] = useState<'none' | 'one' | 'two' | 'three-plus'>('two');
   const [sleepChallenges, setSleepChallenges] = useState<string[]>([]);
+  const { t } = useTranslation();
 
   // Calculate age from birth_date if available
   const calculateAge = () => {
@@ -70,12 +73,12 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Baby className="h-5 w-5 text-blue-600" />
-            <span>Child Information</span>
+            <span>{t('components.sleepSchedule.childInformation')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="childAge">Child's Age (in months) *</Label>
+            <Label htmlFor="childAge">{t('components.sleepSchedule.childAge')} *</Label>
             <Input
               id="childAge"
               type="number"
@@ -86,7 +89,7 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
               required
             />
             <p className="text-sm text-gray-500 mt-1">
-              {profile.birth_date ? 'Calculated from birth date (you can adjust if needed)' : 'Please enter your child\'s age in months'}
+              {profile.birth_date ? t('components.sleepSchedule.childAgeCalculated') : t('components.sleepSchedule.childAgeHelper')}
             </p>
           </div>
         </CardContent>
@@ -96,13 +99,13 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Clock className="h-5 w-5 text-purple-600" />
-            <span>Current Sleep Habits</span>
+            <span>{t('components.sleepSchedule.currentSleepHabits')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="currentBedtime">Current Bedtime *</Label>
+              <Label htmlFor="currentBedtime">{t('components.sleepSchedule.currentBedtime')} *</Label>
               <Input
                 id="currentBedtime"
                 type="time"
@@ -112,7 +115,7 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
               />
             </div>
             <div>
-              <Label htmlFor="currentWakeTime">Current Wake Time *</Label>
+              <Label htmlFor="currentWakeTime">{t('components.sleepSchedule.currentWakeTime')} *</Label>
               <Input
                 id="currentWakeTime"
                 type="time"
@@ -124,23 +127,23 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
           </div>
 
           <div>
-            <Label>How many naps does your child currently take?</Label>
+            <Label>{t('components.sleepSchedule.napFrequency')}</Label>
             <RadioGroup value={napFrequency} onValueChange={(value: 'none' | 'one' | 'two' | 'three-plus') => setNapFrequency(value)}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="none" id="nap-none" />
-                <Label htmlFor="nap-none">No naps</Label>
+                <Label htmlFor="nap-none">{t('components.sleepSchedule.noNaps')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="one" id="nap-one" />
-                <Label htmlFor="nap-one">1 nap per day</Label>
+                <Label htmlFor="nap-one">{t('components.sleepSchedule.oneNap')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="two" id="nap-two" />
-                <Label htmlFor="nap-two">2 naps per day</Label>
+                <Label htmlFor="nap-two">{t('components.sleepSchedule.twoNaps')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="three-plus" id="nap-three" />
-                <Label htmlFor="nap-three">3+ naps per day</Label>
+                <Label htmlFor="nap-three">{t('components.sleepSchedule.threePlusNaps')}</Label>
               </div>
             </RadioGroup>
           </div>
@@ -151,7 +154,7 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Moon className="h-5 w-5 text-indigo-600" />
-            <span>Sleep Challenges (Optional)</span>
+            <span>{t('components.sleepSchedule.sleepChallenges')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -176,7 +179,7 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
         type="submit" 
         className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-3"
       >
-        Create Personalized Sleep Schedule
+        {t('components.sleepSchedule.createSchedule')}
       </Button>
     </form>
   );
