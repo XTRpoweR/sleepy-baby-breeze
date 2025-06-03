@@ -68,6 +68,18 @@ const Sounds = () => {
     setShowAudioTimer(true);
   };
 
+  const handleSetTimer = (minutes: number) => {
+    console.log(`Setting timer for ${minutes} minutes for sound:`, selectedSound);
+    setShowAudioTimer(false);
+    setSelectedSound(null);
+  };
+
+  const handleClearTimer = () => {
+    console.log('Clearing timer');
+    setShowAudioTimer(false);
+    setSelectedSound(null);
+  };
+
   if (loading || profileLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -201,13 +213,16 @@ const Sounds = () => {
       {/* Audio Timer Dialog */}
       {selectedSound && (
         <AudioTimerDialog
-          isOpen={showAudioTimer}
-          onClose={() => {
-            setShowAudioTimer(false);
-            setSelectedSound(null);
+          open={showAudioTimer}
+          onOpenChange={(open) => {
+            setShowAudioTimer(open);
+            if (!open) {
+              setSelectedSound(null);
+            }
           }}
-          sound={selectedSound}
-          babyId={activeProfile?.id}
+          onSetTimer={handleSetTimer}
+          onClearTimer={handleClearTimer}
+          currentTimer={null}
         />
       )}
     </div>

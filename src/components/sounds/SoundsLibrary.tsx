@@ -18,7 +18,11 @@ import {
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { AudioTimerDialog } from './AudioTimerDialog';
 
-export const SoundsLibrary = () => {
+interface SoundsLibraryProps {
+  onSoundSelect?: (sound: any) => void;
+}
+
+export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
   const {
     audioTracks,
     isPlaying,
@@ -69,6 +73,14 @@ export const SoundsLibrary = () => {
     }
   };
 
+  const handleTrackClick = (track: any) => {
+    if (onSoundSelect) {
+      onSoundSelect(track);
+    } else {
+      playAudio(track);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -96,7 +108,7 @@ export const SoundsLibrary = () => {
           </div>
 
           {/* Current Playing Track */}
-          {currentTrack && (
+          {currentTrack && !onSoundSelect && (
             <Card className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
@@ -172,7 +184,7 @@ export const SoundsLibrary = () => {
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   currentTrack?.id === track.id ? 'ring-2 ring-purple-200 bg-purple-50' : ''
                 }`}
-                onClick={() => playAudio(track)}
+                onClick={() => handleTrackClick(track)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
@@ -186,7 +198,7 @@ export const SoundsLibrary = () => {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {currentTrack?.id === track.id && isPlaying && (
+                      {currentTrack?.id === track.id && isPlaying && !onSoundSelect && (
                         <div className="flex space-x-1">
                           <div className="w-1 h-4 bg-purple-600 animate-pulse rounded-full"></div>
                           <div className="w-1 h-4 bg-purple-600 animate-pulse rounded-full" style={{ animationDelay: '0.2s' }}></div>
@@ -205,13 +217,15 @@ export const SoundsLibrary = () => {
         </CardContent>
       </Card>
 
-      <AudioTimerDialog
-        open={showTimerDialog}
-        onOpenChange={setShowTimerDialog}
-        onSetTimer={setAudioTimer}
-        onClearTimer={clearTimer}
-        currentTimer={timer}
-      />
+      {!onSoundSelect && (
+        <AudioTimerDialog
+          open={showTimerDialog}
+          onOpenChange={setShowTimerDialog}
+          onSetTimer={setAudioTimer}
+          onClearTimer={clearTimer}
+          currentTimer={timer}
+        />
+      )}
     </div>
   );
 };
