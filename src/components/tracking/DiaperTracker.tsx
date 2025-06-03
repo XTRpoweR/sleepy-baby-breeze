@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropletIcon, Circle, Heart } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DiaperTrackerProps {
   babyId: string;
@@ -20,6 +21,7 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
   const [isWet, setIsWet] = useState(false);
   const [isSoiled, setIsSoiled] = useState(false);
   const [notes, setNotes] = useState('');
+  const isMobile = useIsMobile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,47 +53,48 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Heart className="h-5 w-5 text-pink-600" />
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
+          <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-pink-600" />
           <span>Diaper Change</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="changeTime">Change Time *</Label>
+            <Label htmlFor="changeTime" className="text-sm sm:text-base">Change Time *</Label>
             <Input
               id="changeTime"
               type="datetime-local"
               value={changeTime}
               onChange={(e) => setChangeTime(e.target.value)}
               required
+              className="mt-1"
             />
           </div>
 
           <div>
-            <Label>Diaper Contents *</Label>
-            <div className="space-y-3 mt-2">
-              <div className="flex items-center space-x-2">
+            <Label className="text-sm sm:text-base">Diaper Contents *</Label>
+            <div className="space-y-3 mt-3">
+              <div className="flex items-center space-x-3">
                 <Checkbox 
                   id="wet" 
                   checked={isWet}
                   onCheckedChange={(checked) => setIsWet(!!checked)}
                 />
-                <Label htmlFor="wet" className="flex items-center space-x-2">
-                  <DropletIcon className="h-4 w-4 text-blue-500" />
+                <Label htmlFor="wet" className="flex items-center space-x-2 text-sm sm:text-base">
+                  <DropletIcon className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
                   <span>Wet</span>
                 </Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 <Checkbox 
                   id="soiled" 
                   checked={isSoiled}
                   onCheckedChange={(checked) => setIsSoiled(!!checked)}
                 />
-                <Label htmlFor="soiled" className="flex items-center space-x-2">
-                  <Circle className="h-4 w-4 text-yellow-600" />
+                <Label htmlFor="soiled" className="flex items-center space-x-2 text-sm sm:text-base">
+                  <Circle className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-600" />
                   <span>Soiled</span>
                 </Label>
               </div>
@@ -99,19 +102,20 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
           </div>
 
           <div>
-            <Label htmlFor="notes">Notes (Optional)</Label>
+            <Label htmlFor="notes" className="text-sm sm:text-base">Notes (Optional)</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Any observations about the diaper change..."
               rows={3}
+              className="mt-1"
             />
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-pink-600 hover:bg-pink-700"
+            className="w-full bg-pink-600 hover:bg-pink-700 py-2 sm:py-3"
             disabled={!changeTime || (!isWet && !isSoiled) || isSubmitting}
           >
             {isSubmitting ? 'Saving...' : 'Log Diaper Change'}
