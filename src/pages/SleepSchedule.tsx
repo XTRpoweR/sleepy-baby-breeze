@@ -18,7 +18,10 @@ import { SleepScheduleDisplay } from '@/components/sleep-schedule/SleepScheduleD
 import { SavedSchedules } from '@/components/sleep-schedule/SavedSchedules';
 import { ScheduleAdjustmentNotifications } from '@/components/sleep-schedule/ScheduleAdjustmentNotifications';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
+import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
+import { DesktopHeader } from '@/components/layout/DesktopHeader';
+import { MobileHeader } from '@/components/layout/MobileHeader';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 
 const SleepSchedule = () => {
@@ -147,10 +150,10 @@ const SleepSchedule = () => {
 
   if (loading || profileLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <Moon className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">Loading sleep schedule...</p>
+          <Moon className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600 text-sm sm:text-base">Loading sleep schedule...</p>
         </div>
       </div>
     );
@@ -164,73 +167,59 @@ const SleepSchedule = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Moon className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">SleepyBaby</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-gray-700">
-                <User className="h-4 w-4" />
-                <span className="text-sm">
-                  {user.user_metadata?.full_name || user.email}
-                </span>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleSignOut}
-                className="flex items-center space-x-1"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Headers */}
+      <DesktopHeader />
+      <MobileHeader />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
         {/* Page Header with Back Button */}
-        <div className="mb-8">
+        <div className="mb-6 lg:mb-8">
           <Button 
             variant="ghost" 
             onClick={handleBackToDashboard}
-            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>Back to Dashboard</span>
           </Button>
           
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                 Personalized Sleep Schedule
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm sm:text-base">
                 Create and manage sleep schedules tailored to your baby's needs.
               </p>
             </div>
             
             {/* Profile Selector */}
             <div className="flex items-center space-x-4">
-              <ProfileSelector 
-                onAddProfile={handleAddProfile}
-                onManageProfiles={handleManageProfiles}
-              />
+              {/* Desktop Profile Selector */}
+              <div className="hidden lg:block">
+                <ProfileSelector 
+                  onAddProfile={handleAddProfile}
+                  onManageProfiles={handleManageProfiles}
+                />
+              </div>
+              
+              {/* Mobile Profile Selector */}
+              <div className="lg:hidden w-full">
+                <MobileProfileSelector 
+                  onAddProfile={handleAddProfile}
+                  onManageProfiles={handleManageProfiles}
+                />
+              </div>
             </div>
           </div>
         </div>
 
         {activeProfile ? (
-          <>
+          <div className="space-y-6 lg:space-y-8">
             {/* Sleep Schedule Setup */}
             {!currentRecommendation && (
-              <div className="mb-8">
+              <div>
                 <SleepScheduleSetup 
                   onSubmit={handleScheduleSubmit}
                   profile={activeProfile}
@@ -240,7 +229,7 @@ const SleepSchedule = () => {
 
             {/* Sleep Schedule Display */}
             {currentRecommendation && (
-              <div className="mb-8">
+              <div>
                 <SleepScheduleDisplay 
                   recommendation={currentRecommendation}
                   onReset={handleReset}
@@ -250,7 +239,7 @@ const SleepSchedule = () => {
             )}
 
             {/* Saved Schedules */}
-            <div className="mb-8">
+            <div>
               <SavedSchedules 
                 babyId={activeProfile.id}
                 schedules={schedules}
@@ -263,23 +252,23 @@ const SleepSchedule = () => {
 
             {/* Schedule Adjustment Notifications */}
             {latestSchedule && (
-              <div className="mb-8">
+              <div>
                 <ScheduleAdjustmentNotifications 
                   babyId={activeProfile.id}
                   currentSchedule={latestSchedule}
                 />
               </div>
             )}
-          </>
+          </div>
         ) : (
           <Card className="max-w-md mx-auto">
-            <CardContent className="p-8 text-center">
-              <Baby className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Child Profile Selected</h3>
-              <p className="text-gray-600 mb-4">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <Baby className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No Child Profile Selected</h3>
+              <p className="text-gray-600 mb-4 text-sm sm:text-base">
                 Please select or create a child profile to access sleep schedule features.
               </p>
-              <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Child Profile
               </Button>

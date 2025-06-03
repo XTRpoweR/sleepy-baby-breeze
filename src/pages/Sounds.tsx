@@ -3,24 +3,42 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Moon, 
   User,
   LogOut,
   ArrowLeft,
+  Volume2,
+  Clock,
   Music,
-  BookOpen
+  Baby,
+  Plus
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { SoundsLibrary } from '@/components/sounds/SoundsLibrary';
-import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
+import { AudioTimerDialog } from '@/components/sounds/AudioTimerDialog';
+import { SleepTracker } from '@/components/tracking/SleepTracker';
+import { FeedingTracker } from '@/components/tracking/FeedingTracker';
+import { DiaperTracker } from '@/components/tracking/DiaperTracker';
+import { CustomActivityTracker } from '@/components/tracking/CustomActivityTracker';
+import { ProfileSelector } from '@/components/profiles/ProfileSelector';
+import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
+import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { LanguageSelector } from '@/components/LanguageSelector';
+import { DesktopHeader } from '@/components/layout/DesktopHeader';
+import { MobileHeader } from '@/components/layout/MobileHeader';
 
 const Sounds = () => {
   const { user, loading, signOut } = useAuth();
+  const { activeProfile, profiles, loading: profileLoading } = useBabyProfile();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [showProfileManagement, setShowProfileManagement] = useState(false);
+  const [showAudioTimer, setShowAudioTimer] = useState(false);
+  const [selectedSound, setSelectedSound] = useState<any>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -37,12 +55,25 @@ const Sounds = () => {
     navigate('/dashboard');
   };
 
-  if (loading) {
+  const handleAddProfile = () => {
+    setShowProfileManagement(true);
+  };
+
+  const handleManageProfiles = () => {
+    setShowProfileManagement(true);
+  };
+
+  const handleSoundSelect = (sound: any) => {
+    setSelectedSound(sound);
+    setShowAudioTimer(true);
+  };
+
+  if (loading || profileLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <Moon className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">{t('pages.sounds.loading')}</p>
+          <Volume2 className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600 text-sm sm:text-base">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -54,84 +85,131 @@ const Sounds = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Moon className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <LanguageSelector />
-              <div className="flex items-center space-x-2 text-gray-700">
-                <User className="h-4 w-4" />
-                <span className="text-sm">
-                  {user.user_metadata?.full_name || user.email}
-                </span>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleSignOut}
-                className="flex items-center space-x-1"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>{t('navigation.signOut')}</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Headers */}
+      <DesktopHeader />
+      <MobileHeader />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header with Back Button */}
-        <div className="mb-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
+        {/* Page Header */}
+        <div className="mb-6 lg:mb-8">
           <Button 
             variant="ghost" 
             onClick={handleBackToDashboard}
-            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>{t('navigation.backToDashboard')}</span>
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {t('pages.sounds.title')}
-          </h1>
-          <p className="text-gray-600">
-            {t('pages.sounds.subtitle')}
-          </p>
+          
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                {t('pages.sounds.title')}
+              </h1>
+              <p className="text-gray-600 text-sm sm:text-base">
+                {t('pages.sounds.subtitle')}
+              </p>
+            </div>
+            
+            {/* Profile Selector */}
+            <div className="flex items-center space-x-4">
+              {/* Desktop Profile Selector */}
+              <div className="hidden lg:block">
+                <ProfileSelector 
+                  onAddProfile={handleAddProfile}
+                  onManageProfiles={handleManageProfiles}
+                />
+              </div>
+              
+              {/* Mobile Profile Selector */}
+              <div className="lg:hidden w-full">
+                <MobileProfileSelector 
+                  onAddProfile={handleAddProfile}
+                  onManageProfiles={handleManageProfiles}
+                />
+              </div>
+              
+              {/* Mobile Language Selector */}
+              <div className="sm:hidden">
+                <LanguageSelector />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Tab Navigation */}
-        <Tabs defaultValue="guides" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 bg-blue-50 p-1 rounded-lg">
-            <TabsTrigger 
-              value="guides" 
-              className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-blue-600 rounded-md py-3 px-6 font-medium transition-all"
-            >
-              <BookOpen className="h-4 w-4" />
-              <span>{t('pages.sounds.guidesTab')}</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="sounds" 
-              className="flex items-center space-x-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:bg-transparent data-[state=inactive]:text-blue-600 rounded-md py-3 px-6 font-medium transition-all"
-            >
-              <Music className="h-4 w-4" />
-              <span>{t('pages.sounds.soundsTab')}</span>
-            </TabsTrigger>
-          </TabsList>
+        {activeProfile ? (
+          <Tabs defaultValue="sounds" className="space-y-6">
+            {/* Mobile-friendly tabs */}
+            <TabsList className="grid w-full grid-cols-2 h-auto p-1">
+              <TabsTrigger value="sounds" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
+                <Volume2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>{t('pages.sounds.soundsTab')}</span>
+              </TabsTrigger>
+              <TabsTrigger value="quick-log" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
+                <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>{t('pages.sounds.quickLogTab')}</span>
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="guides" className="mt-0">
-            <SleepArticles />
-          </TabsContent>
+            <TabsContent value="sounds" className="space-y-6">
+              <Card>
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
+                    <Music className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    <span>{t('pages.sounds.soothingSounds')}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <SoundsLibrary onSoundSelect={handleSoundSelect} />
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          <TabsContent value="sounds" className="mt-0">
-            <SoundsLibrary />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="quick-log" className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                <SleepTracker babyId={activeProfile.id} />
+                <FeedingTracker babyId={activeProfile.id} />
+                <DiaperTracker babyId={activeProfile.id} />
+                <CustomActivityTracker babyId={activeProfile.id} />
+              </div>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          <Card className="max-w-md mx-auto">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <Baby className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">{t('dashboard.createProfile')}</h3>
+              <p className="text-gray-600 mb-4 text-sm sm:text-base">
+                {t('dashboard.noProfileMessage')}
+              </p>
+              <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <Plus className="h-4 w-4 mr-2" />
+                {t('dashboard.addProfile')}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </main>
+
+      {/* Profile Management Dialog */}
+      <ProfileManagementDialog 
+        isOpen={showProfileManagement}
+        onClose={() => setShowProfileManagement(false)}
+      />
+
+      {/* Audio Timer Dialog */}
+      {selectedSound && (
+        <AudioTimerDialog
+          isOpen={showAudioTimer}
+          onClose={() => {
+            setShowAudioTimer(false);
+            setSelectedSound(null);
+          }}
+          sound={selectedSound}
+          babyId={activeProfile?.id}
+        />
+      )}
     </div>
   );
 };
