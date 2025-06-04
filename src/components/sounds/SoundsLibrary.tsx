@@ -13,7 +13,8 @@ import {
   Timer,
   Music,
   Waves,
-  Wind
+  Wind,
+  Loader2
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { AudioTimerDialog } from './AudioTimerDialog';
@@ -31,6 +32,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     isLooping,
     timer,
     timeRemaining,
+    isLoading,
     playAudio,
     pauseAudio,
     stopAudio,
@@ -73,11 +75,15 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     }
   };
 
-  const handleTrackClick = (track: any) => {
+  const handleTrackClick = async (track: any) => {
     if (onSoundSelect) {
       onSoundSelect(track);
     } else {
-      playAudio(track);
+      if (currentTrack?.id === track.id && isPlaying) {
+        pauseAudio();
+      } else {
+        await playAudio(track);
+      }
     }
   };
 
@@ -88,6 +94,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
           <CardTitle className="flex items-center space-x-2">
             <Music className="h-5 w-5 text-purple-600" />
             <span>Sounds & Audio</span>
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin text-purple-600" />}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -135,8 +142,15 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                       size="sm"
                       onClick={() => isPlaying ? pauseAudio() : playAudio(currentTrack)}
                       className="bg-purple-600 hover:bg-purple-700"
+                      disabled={isLoading}
                     >
-                      {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : isPlaying ? (
+                        <Pause className="h-4 w-4" />
+                      ) : (
+                        <Play className="h-4 w-4" />
+                      )}
                     </Button>
                     <Button size="sm" variant="outline" onClick={stopAudio}>
                       <Square className="h-4 w-4" />
@@ -205,8 +219,14 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                           <div className="w-1 h-4 bg-purple-600 animate-pulse rounded-full" style={{ animationDelay: '0.4s' }}></div>
                         </div>
                       )}
-                      <Button size="sm" variant="ghost">
-                        <Play className="h-4 w-4" />
+                      <Button size="sm" variant="ghost" disabled={isLoading && currentTrack?.id === track.id}>
+                        {isLoading && currentTrack?.id === track.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : currentTrack?.id === track.id && isPlaying ? (
+                          <Pause className="h-4 w-4" />
+                        ) : (
+                          <Play className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                   </div>
