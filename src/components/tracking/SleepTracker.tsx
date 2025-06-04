@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Moon, Sun, Clock, Play, Square } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 interface SleepTrackerProps {
   babyId: string;
@@ -23,13 +24,37 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
   const [notes, setNotes] = useState('');
   const [isActive, setIsActive] = useState(false);
   const [activeStartTime, setActiveStartTime] = useState<Date | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+
+  // Real-time timer updates
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (isActive && activeStartTime) {
+      interval = setInterval(() => {
+        setCurrentTime(new Date());
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isActive, activeStartTime]);
 
   const handleStartSleep = () => {
     const now = new Date();
     setActiveStartTime(now);
     setStartTime(now.toISOString().slice(0, 16));
     setIsActive(true);
+    
+    toast({
+      title: "Sleep session started",
+      description: "Timer is now running...",
+    });
   };
 
   const handleStopSleep = () => {
@@ -37,6 +62,12 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       const now = new Date();
       setEndTime(now.toISOString().slice(0, 16));
       setIsActive(false);
+      
+      const duration = Math.round((now.getTime() - activeStartTime.getTime()) / (1000 * 60));
+      toast({
+        title: "Sleep session ended",
+        description: `Duration: ${Math.floor(duration / 60)}h ${duration % 60}m`,
+      });
     }
   };
 
@@ -69,11 +100,16 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
 
   const formatDuration = () => {
     if (!activeStartTime) return '';
-    const now = new Date();
-    const minutes = Math.floor((now.getTime() - activeStartTime.getTime()) / (1000 * 60));
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
+    const totalSeconds = Math.floor((currentTime.getTime() - activeStartTime.getTime()) / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    } else {
+      return `${minutes}m ${seconds}s`;
+    }
   };
 
   return (
@@ -90,7 +126,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
           <div className="text-center space-y-3 sm:space-y-4">
             {isActive ? (
               <div>
-                <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-2">
+                <div className={`text-xl sm:text-2xl font-bold text-blue-600 mb-2 ${isActive ? 'animate-pulse' : ''}`}>
                   {formatDuration()}
                 </div>
                 <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">Sleep session in progress...</p>
