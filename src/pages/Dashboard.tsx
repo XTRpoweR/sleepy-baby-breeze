@@ -24,6 +24,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
@@ -37,6 +38,7 @@ const Dashboard = () => {
   const { user, loading, signOut } = useAuth();
   const { activeProfile, profiles } = useBabyProfile();
   const { subscriptionTier, isPremium, openCustomerPortal, checkSubscription } = useSubscription();
+  const { stats, loading: statsLoading, hasActiveProfile } = useDashboardStats();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
@@ -328,26 +330,62 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="text-center">
-                <div className="text-xl lg:text-2xl font-bold text-gray-900">0h 0m</div>
-                <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.averageSleep')}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl lg:text-2xl font-bold text-gray-900">0</div>
-                <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.feedings')}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl lg:text-2xl font-bold text-gray-900">0</div>
-                <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.diaperChanges')}</div>
-              </div>
-              <div className="pt-4 border-t">
-                <p className="text-xs text-gray-500 text-center">
-                  {activeProfile 
-                    ? t('dashboard.noDataMessage', { name: activeProfile.name })
-                    : t('dashboard.noProfileMessage')
-                  }
-                </p>
-              </div>
+              {statsLoading ? (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="h-6 bg-gray-200 rounded w-16 mx-auto mb-2 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-20 mx-auto animate-pulse"></div>
+                  </div>
+                  <div className="text-center">
+                    <div className="h-6 bg-gray-200 rounded w-8 mx-auto mb-2 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
+                  </div>
+                  <div className="text-center">
+                    <div className="h-6 bg-gray-200 rounded w-8 mx-auto mb-2 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-20 mx-auto animate-pulse"></div>
+                  </div>
+                </div>
+              ) : hasActiveProfile ? (
+                <>
+                  <div className="text-center">
+                    <div className="text-xl lg:text-2xl font-bold text-gray-900">{stats.weeklyAverageSleep}</div>
+                    <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.averageSleep')}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl lg:text-2xl font-bold text-gray-900">{stats.weeklyFeedings}</div>
+                    <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.feedings')}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl lg:text-2xl font-bold text-gray-900">{stats.weeklyDiaperChanges}</div>
+                    <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.diaperChanges')}</div>
+                  </div>
+                  <div className="pt-4 border-t">
+                    <p className="text-xs text-gray-500 text-center">
+                      Data from this week (Monday-Sunday)
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="text-center">
+                    <div className="text-xl lg:text-2xl font-bold text-gray-900">0h 0m</div>
+                    <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.averageSleep')}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl lg:text-2xl font-bold text-gray-900">0</div>
+                    <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.feedings')}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl lg:text-2xl font-bold text-gray-900">0</div>
+                    <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.diaperChanges')}</div>
+                  </div>
+                  <div className="pt-4 border-t">
+                    <p className="text-xs text-gray-500 text-center">
+                      {t('dashboard.noProfileMessage')}
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
