@@ -75,6 +75,40 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     }
   };
 
+  const getCategoryColors = (category: string, isActive = false, isPlaying = false) => {
+    const colorMap = {
+      'white-noise': {
+        primary: isActive && isPlaying ? 'bg-gray-600' : 'bg-gray-500',
+        secondary: isActive && isPlaying ? 'bg-gray-50' : 'bg-gray-50',
+        accent: 'text-gray-600',
+        ring: 'ring-gray-200',
+        badge: 'bg-gray-100 text-gray-800',
+        gradient: 'from-gray-50 to-gray-100',
+        button: 'bg-gray-600 hover:bg-gray-700'
+      },
+      'lullaby': {
+        primary: isActive && isPlaying ? 'bg-purple-600' : 'bg-purple-500',
+        secondary: isActive && isPlaying ? 'bg-purple-50' : 'bg-purple-50',
+        accent: 'text-purple-600',
+        ring: 'ring-purple-200',
+        badge: 'bg-purple-100 text-purple-800',
+        gradient: 'from-purple-50 to-purple-100',
+        button: 'bg-purple-600 hover:bg-purple-700'
+      },
+      'nature': {
+        primary: isActive && isPlaying ? 'bg-green-600' : 'bg-green-500',
+        secondary: isActive && isPlaying ? 'bg-green-50' : 'bg-green-50',
+        accent: 'text-green-600',
+        ring: 'ring-green-200',
+        badge: 'bg-green-100 text-green-800',
+        gradient: 'from-green-50 to-green-100',
+        button: 'bg-green-600 hover:bg-green-700'
+      }
+    };
+    
+    return colorMap[category as keyof typeof colorMap] || colorMap['lullaby'];
+  };
+
   const handleTrackClick = async (track: any) => {
     if (onSoundSelect) {
       onSoundSelect(track);
@@ -116,20 +150,22 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
 
           {/* Current Playing Track */}
           {currentTrack && !onSoundSelect && (
-            <Card className="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+            <Card className={`mb-6 bg-gradient-to-r ${getCategoryColors(currentTrack.category, true, isPlaying).gradient} border-2 ${getCategoryColors(currentTrack.category, true, isPlaying).ring.replace('ring-', 'border-')}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    {getCategoryIcon(currentTrack.category)}
+                    <div className={getCategoryColors(currentTrack.category, true, isPlaying).accent}>
+                      {getCategoryIcon(currentTrack.category)}
+                    </div>
                     <div>
                       <h3 className="font-medium">{currentTrack.name}</h3>
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge className={getCategoryColors(currentTrack.category).badge}>
                         {currentTrack.category.replace('-', ' ')}
                       </Badge>
                     </div>
                   </div>
                   {timeRemaining && (
-                    <div className="text-sm text-purple-600 font-medium">
+                    <div className={`text-sm font-medium ${getCategoryColors(currentTrack.category, true, isPlaying).accent}`}>
                       Timer: {formatTime(timeRemaining)}
                     </div>
                   )}
@@ -141,7 +177,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                     <Button
                       size="sm"
                       onClick={() => isPlaying ? pauseAudio() : playAudio(currentTrack)}
-                      className="bg-purple-600 hover:bg-purple-700"
+                      className={getCategoryColors(currentTrack.category).button}
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -159,6 +195,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                       size="sm"
                       variant={isLooping ? "default" : "outline"}
                       onClick={() => setIsLooping(!isLooping)}
+                      className={isLooping ? getCategoryColors(currentTrack.category).button : ''}
                     >
                       <Repeat className="h-4 w-4" />
                     </Button>
@@ -192,47 +229,54 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
 
           {/* Track List */}
           <div className="grid gap-3">
-            {filteredTracks.map((track) => (
-              <Card 
-                key={track.id} 
-                className={`cursor-pointer transition-all hover:shadow-md ${
-                  currentTrack?.id === track.id ? 'ring-2 ring-purple-200 bg-purple-50' : ''
-                }`}
-                onClick={() => handleTrackClick(track)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      {getCategoryIcon(track.category)}
-                      <div>
-                        <h4 className="font-medium">{track.name}</h4>
-                        <Badge variant="outline" className="text-xs">
-                          {track.category.replace('-', ' ')}
-                        </Badge>
+            {filteredTracks.map((track) => {
+              const isCurrentTrack = currentTrack?.id === track.id;
+              const colors = getCategoryColors(track.category, isCurrentTrack, isPlaying);
+              
+              return (
+                <Card 
+                  key={track.id} 
+                  className={`cursor-pointer transition-all hover:shadow-md ${
+                    isCurrentTrack ? `ring-2 ${colors.ring} ${colors.secondary}` : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleTrackClick(track)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className={colors.accent}>
+                          {getCategoryIcon(track.category)}
+                        </div>
+                        <div>
+                          <h4 className="font-medium">{track.name}</h4>
+                          <Badge variant="outline" className={`text-xs ${colors.badge}`}>
+                            {track.category.replace('-', ' ')}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {isCurrentTrack && isPlaying && !onSoundSelect && (
+                          <div className="flex space-x-1">
+                            <div className={`w-1 h-4 ${colors.primary} animate-pulse rounded-full`}></div>
+                            <div className={`w-1 h-4 ${colors.primary} animate-pulse rounded-full`} style={{ animationDelay: '0.2s' }}></div>
+                            <div className={`w-1 h-4 ${colors.primary} animate-pulse rounded-full`} style={{ animationDelay: '0.4s' }}></div>
+                          </div>
+                        )}
+                        <Button size="sm" variant="ghost" disabled={isLoading && isCurrentTrack}>
+                          {isLoading && isCurrentTrack ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : isCurrentTrack && isPlaying ? (
+                            <Pause className="h-4 w-4" />
+                          ) : (
+                            <Play className="h-4 w-4" />
+                          )}
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      {currentTrack?.id === track.id && isPlaying && !onSoundSelect && (
-                        <div className="flex space-x-1">
-                          <div className="w-1 h-4 bg-purple-600 animate-pulse rounded-full"></div>
-                          <div className="w-1 h-4 bg-purple-600 animate-pulse rounded-full" style={{ animationDelay: '0.2s' }}></div>
-                          <div className="w-1 h-4 bg-purple-600 animate-pulse rounded-full" style={{ animationDelay: '0.4s' }}></div>
-                        </div>
-                      )}
-                      <Button size="sm" variant="ghost" disabled={isLoading && currentTrack?.id === track.id}>
-                        {isLoading && currentTrack?.id === track.id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : currentTrack?.id === track.id && isPlaying ? (
-                          <Pause className="h-4 w-4" />
-                        ) : (
-                          <Play className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
