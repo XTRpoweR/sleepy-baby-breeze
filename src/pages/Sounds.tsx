@@ -19,7 +19,6 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { SoundsLibrary } from '@/components/sounds/SoundsLibrary';
-import { AudioTimerDialog } from '@/components/sounds/AudioTimerDialog';
 import { SleepTracker } from '@/components/tracking/SleepTracker';
 import { FeedingTracker } from '@/components/tracking/FeedingTracker';
 import { DiaperTracker } from '@/components/tracking/DiaperTracker';
@@ -37,8 +36,6 @@ const Sounds = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
-  const [showAudioTimer, setShowAudioTimer] = useState(false);
-  const [selectedSound, setSelectedSound] = useState<any>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -61,23 +58,6 @@ const Sounds = () => {
 
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
-  };
-
-  const handleSoundSelect = (sound: any) => {
-    setSelectedSound(sound);
-    setShowAudioTimer(true);
-  };
-
-  const handleSetTimer = (minutes: number) => {
-    console.log(`Setting timer for ${minutes} minutes for sound:`, selectedSound);
-    setShowAudioTimer(false);
-    setSelectedSound(null);
-  };
-
-  const handleClearTimer = () => {
-    console.log('Clearing timer');
-    setShowAudioTimer(false);
-    setSelectedSound(null);
   };
 
   if (loading || profileLoading) {
@@ -173,7 +153,7 @@ const Sounds = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <SoundsLibrary onSoundSelect={handleSoundSelect} />
+                  <SoundsLibrary />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -209,22 +189,6 @@ const Sounds = () => {
         isOpen={showProfileManagement}
         onClose={() => setShowProfileManagement(false)}
       />
-
-      {/* Audio Timer Dialog */}
-      {selectedSound && (
-        <AudioTimerDialog
-          open={showAudioTimer}
-          onOpenChange={(open) => {
-            setShowAudioTimer(open);
-            if (!open) {
-              setSelectedSound(null);
-            }
-          }}
-          onSetTimer={handleSetTimer}
-          onClearTimer={handleClearTimer}
-          currentTimer={null}
-        />
-      )}
     </div>
   );
 };
