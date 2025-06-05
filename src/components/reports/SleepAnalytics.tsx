@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } fro
 import { useFilteredActivityLogs } from '@/hooks/useFilteredActivityLogs';
 import { format, startOfDay, eachDayOfInterval } from 'date-fns';
 import { DateRange } from '@/utils/dateRangeUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SleepAnalyticsProps {
   babyId: string;
@@ -39,6 +39,7 @@ export const SleepAnalytics = ({ babyId, dateRange }: SleepAnalyticsProps) => {
   const { logs, loading } = useFilteredActivityLogs(babyId, dateRange);
   const [sleepData, setSleepData] = useState<SleepData[]>([]);
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (logs.length > 0) {
@@ -91,34 +92,36 @@ export const SleepAnalytics = ({ babyId, dateRange }: SleepAnalyticsProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       {/* Sleep Duration Trend */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-gray-900">
+      <Card className="touch-manipulation">
+        <CardHeader className="px-3 sm:px-6 pt-3 sm:pt-6 pb-2 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
             {t('components.reports.sleepDurationTrend')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig} className="h-64">
+        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+          <ChartContainer config={chartConfig} className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sleepData}>
+              <LineChart data={sleepData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <XAxis 
                   dataKey="date" 
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                   tickLine={false}
+                  axisLine={false}
                 />
                 <YAxis 
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                   tickLine={false}
+                  axisLine={false}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Line 
                   type="monotone" 
                   dataKey="totalSleep" 
                   stroke={chartConfig.totalSleep.color}
-                  strokeWidth={2}
-                  dot={{ fill: chartConfig.totalSleep.color, strokeWidth: 2, r: 4 }}
+                  strokeWidth={isMobile ? 2 : 3}
+                  dot={{ fill: chartConfig.totalSleep.color, strokeWidth: 2, r: isMobile ? 3 : 4 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -127,24 +130,26 @@ export const SleepAnalytics = ({ babyId, dateRange }: SleepAnalyticsProps) => {
       </Card>
 
       {/* Sleep Sessions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-gray-900">
+      <Card className="touch-manipulation">
+        <CardHeader className="px-3 sm:px-6 pt-3 sm:pt-6 pb-2 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
             {t('components.reports.dailySleepSessions')}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig} className="h-64">
+        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+          <ChartContainer config={chartConfig} className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={sleepData}>
+              <BarChart data={sleepData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <XAxis 
                   dataKey="date" 
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                   tickLine={false}
+                  axisLine={false}
                 />
                 <YAxis 
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: isMobile ? 10 : 12 }}
                   tickLine={false}
+                  axisLine={false}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar 

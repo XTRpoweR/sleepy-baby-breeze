@@ -9,6 +9,7 @@ import {
   TrendingUp 
 } from 'lucide-react';
 import { DateRange } from '@/utils/dateRangeUtils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ReportsOverviewProps {
   babyId: string;
@@ -31,6 +32,7 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
     totalActivities: 0
   });
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (logs.length > 0) {
@@ -62,7 +64,7 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {[...Array(4)].map((_, i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -111,20 +113,27 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       {overviewCards.map((card, index) => {
         const IconComponent = card.icon;
         return (
-          <Card key={index} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
+          <Card 
+            key={index} 
+            className="hover:shadow-lg transition-shadow duration-200 touch-manipulation"
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 leading-tight">
                 {card.title}
               </CardTitle>
-              <IconComponent className={`h-3 w-3 sm:h-4 sm:w-4 ${card.color}`} />
+              <IconComponent className={`h-4 w-4 sm:h-5 sm:w-5 ${card.color} flex-shrink-0`} />
             </CardHeader>
-            <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-gray-900">{card.value}</div>
-              <p className="text-xs text-gray-500">{card.description}</p>
+            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+                {card.value}
+              </div>
+              <p className="text-xs sm:text-sm text-gray-500 leading-tight">
+                {card.description}
+              </p>
             </CardContent>
           </Card>
         );
