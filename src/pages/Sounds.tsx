@@ -23,6 +23,7 @@ import { SleepTracker } from '@/components/tracking/SleepTracker';
 import { FeedingTracker } from '@/components/tracking/FeedingTracker';
 import { DiaperTracker } from '@/components/tracking/DiaperTracker';
 import { CustomActivityTracker } from '@/components/tracking/CustomActivityTracker';
+import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
@@ -159,6 +160,12 @@ const Sounds = () => {
             </TabsContent>
 
             <TabsContent value="quick-log" className="space-y-6">
+              {/* Sleep Articles Section */}
+              <div className="mb-8">
+                <SleepArticles />
+              </div>
+
+              {/* Activity Trackers Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 <SleepTracker babyId={activeProfile.id} />
                 <FeedingTracker babyId={activeProfile.id} />
