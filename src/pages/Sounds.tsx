@@ -1,21 +1,10 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Moon, 
-  User,
-  LogOut,
-  ArrowLeft,
-  Volume2,
-  Clock,
-  Music,
-  Baby,
-  Plus
-} from 'lucide-react';
+import { Moon, User, LogOut, ArrowLeft, Volume2, Clock, Music, Baby, Plus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { SoundsLibrary } from '@/components/sounds/SoundsLibrary';
@@ -30,54 +19,52 @@ import { ProfileManagementDialog } from '@/components/profiles/ProfileManagement
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
-
 const Sounds = () => {
-  const { user, loading, signOut } = useAuth();
-  const { activeProfile, profiles, loading: profileLoading } = useBabyProfile();
+  const {
+    user,
+    loading,
+    signOut
+  } = useAuth();
+  const {
+    activeProfile,
+    profiles,
+    loading: profileLoading
+  } = useBabyProfile();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
-
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
-
   const handleBackToDashboard = () => {
     navigate('/dashboard');
   };
-
   const handleAddProfile = () => {
     setShowProfileManagement(true);
   };
-
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
   };
-
   if (loading || profileLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+    return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="text-center">
           <Volume2 className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 mx-auto mb-4 animate-spin" />
           <p className="text-gray-600 text-sm sm:text-base">{t('common.loading')}</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!user) {
     return null;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Headers */}
       <DesktopHeader />
       <MobileHeader />
@@ -86,11 +73,7 @@ const Sounds = () => {
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
         {/* Page Header */}
         <div className="mb-6 lg:mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={handleBackToDashboard}
-            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
-          >
+          <Button variant="ghost" onClick={handleBackToDashboard} className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base">
             <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>{t('navigation.backToDashboard')}</span>
           </Button>
@@ -109,18 +92,12 @@ const Sounds = () => {
             <div className="flex items-center space-x-4">
               {/* Desktop Profile Selector */}
               <div className="hidden lg:block">
-                <ProfileSelector 
-                  onAddProfile={handleAddProfile}
-                  onManageProfiles={handleManageProfiles}
-                />
+                <ProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
               </div>
               
               {/* Mobile Profile Selector */}
               <div className="lg:hidden w-full">
-                <MobileProfileSelector 
-                  onAddProfile={handleAddProfile}
-                  onManageProfiles={handleManageProfiles}
-                />
+                <MobileProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
               </div>
               
               {/* Mobile Language Selector */}
@@ -131,8 +108,7 @@ const Sounds = () => {
           </div>
         </div>
 
-        {activeProfile ? (
-          <Tabs defaultValue="sounds" className="space-y-6">
+        {activeProfile ? <Tabs defaultValue="sounds" className="space-y-6">
             {/* Mobile-friendly tabs */}
             <TabsList className="grid w-full grid-cols-2 h-auto p-1">
               <TabsTrigger value="sounds" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
@@ -141,7 +117,7 @@ const Sounds = () => {
               </TabsTrigger>
               <TabsTrigger value="quick-log" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
                 <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>{t('pages.sounds.quickLogTab')}</span>
+                <span className="Sleep Articles & Advice">{t('pages.sounds.quickLogTab')}</span>
               </TabsTrigger>
             </TabsList>
 
@@ -173,9 +149,7 @@ const Sounds = () => {
                 <CustomActivityTracker babyId={activeProfile.id} />
               </div>
             </TabsContent>
-          </Tabs>
-        ) : (
-          <Card className="max-w-md mx-auto">
+          </Tabs> : <Card className="max-w-md mx-auto">
             <CardContent className="p-6 sm:p-8 text-center">
               <Baby className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">{t('dashboard.createProfile')}</h3>
@@ -187,17 +161,11 @@ const Sounds = () => {
                 {t('dashboard.addProfile')}
               </Button>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
       </main>
 
       {/* Profile Management Dialog */}
-      <ProfileManagementDialog 
-        isOpen={showProfileManagement}
-        onClose={() => setShowProfileManagement(false)}
-      />
-    </div>
-  );
+      <ProfileManagementDialog isOpen={showProfileManagement} onClose={() => setShowProfileManagement(false)} />
+    </div>;
 };
-
 export default Sounds;
