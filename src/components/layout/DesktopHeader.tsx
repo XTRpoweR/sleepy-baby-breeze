@@ -12,11 +12,13 @@ import {
   Baby
 } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
+import { useNavigate } from 'react-router-dom';
 
 export const DesktopHeader = () => {
   const { user, signOut } = useAuth();
-  const { isPremium, openCustomerPortal } = useSubscription();
+  const { isPremium } = useSubscription();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
@@ -24,11 +26,7 @@ export const DesktopHeader = () => {
   };
 
   const handleManageSubscription = () => {
-    if (isPremium) {
-      openCustomerPortal();
-    } else {
-      window.location.href = '/subscription';
-    }
+    navigate('/account');
   };
 
   return (
@@ -56,22 +54,13 @@ export const DesktopHeader = () => {
                 </div>
               )}
               <Button 
-                variant={isPremium ? "outline" : "default"} 
+                variant="outline"
                 size="sm" 
                 onClick={handleManageSubscription}
-                className={`flex items-center space-x-1 ${!isPremium ? 'bg-orange-600 hover:bg-orange-700' : ''}`}
+                className="flex items-center space-x-1"
               >
-                {isPremium ? (
-                  <>
-                    <Settings className="h-4 w-4" />
-                    <span>Manage</span>
-                  </>
-                ) : (
-                  <>
-                    <Crown className="h-4 w-4" />
-                    <span>Upgrade</span>
-                  </>
-                )}
+                <Settings className="h-4 w-4" />
+                <span>Account</span>
               </Button>
             </div>
 
