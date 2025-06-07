@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +15,8 @@ import {
   CreditCard,
   Calendar,
   AlertTriangle,
-  Check
+  Check,
+  RefreshCcw
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -34,7 +34,8 @@ const Account = () => {
     currentPeriodEnd, 
     createCheckout, 
     upgrading,
-    checkSubscription 
+    checkSubscription,
+    openCustomerPortal
   } = useSubscription();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -45,6 +46,7 @@ const Account = () => {
     email: ''
   });
   const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -102,11 +104,28 @@ const Account = () => {
     createCheckout();
   };
 
-  const handleCancelSubscription = () => {
-    toast({
-      title: "Cancel Subscription",
-      description: "To cancel your subscription, please contact our support team or use the Stripe customer portal.",
-    });
+  const handleRefreshStatus = async () => {
+    try {
+      setRefreshing(true);
+      await checkSubscription();
+      toast({
+        title: "Status Refreshed",
+        description: "Your subscription status has been updated.",
+      });
+    } catch (error) {
+      console.error('Error refreshing status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to refresh subscription status.",
+        variant: "destructive",
+      });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleManageSubscription = () => {
+    openCustomerPortal();
   };
 
   const formatDate = (dateString: string | null) => {
@@ -268,7 +287,7 @@ const Account = () => {
                   {isPremium && (
                     <Button 
                       variant="outline"
-                      onClick={handleCancelSubscription}
+                      onClick={handleManageSubscription}
                       className="flex items-center space-x-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                     >
                       <AlertTriangle className="h-4 w-4" />
@@ -278,11 +297,12 @@ const Account = () => {
 
                   <Button 
                     variant="outline"
-                    onClick={checkSubscription}
+                    onClick={handleRefreshStatus}
+                    disabled={refreshing}
                     className="flex items-center space-x-2"
                   >
-                    <Settings className="h-4 w-4" />
-                    <span>Refresh Status</span>
+                    <RefreshCcw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                    <span>{refreshing ? 'Refreshing...' : 'Refresh Status'}</span>
                   </Button>
                 </div>
               </CardContent>
