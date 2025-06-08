@@ -310,6 +310,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_baby: {
+        Args: { user_uuid: string; baby_uuid: string }
+        Returns: boolean
+      }
       get_user_subscription_tier: {
         Args: { user_uuid: string }
         Returns: string
