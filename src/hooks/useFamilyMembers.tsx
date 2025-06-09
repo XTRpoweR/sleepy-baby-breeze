@@ -130,16 +130,16 @@ export const useFamilyMembers = (babyId: string | null) => {
 
     try {
       // Check if there's already a pending invitation for this email
-      const { data: existingInvitation, error: checkError } = await supabase
+      // Use a simpler query that doesn't involve restricted tables
+      const { data: existingInvitations, error: checkError } = await supabase
         .from('family_invitations')
-        .select('id')
+        .select('id, email')
         .eq('baby_id', babyId)
-        .eq('email', email)
+        .eq('email', email.trim().toLowerCase())
         .eq('status', 'pending')
-        .gt('expires_at', new Date().toISOString())
-        .single();
+        .gt('expires_at', new Date().toISOString());
 
-      if (checkError && checkError.code !== 'PGRST116') {
+      if (checkError) {
         console.error('Error checking existing invitation:', checkError);
         toast({
           title: "Error",
@@ -149,13 +149,40 @@ export const useFamilyMembers = (babyId: string | null) => {
         return false;
       }
 
-      if (existingInvitation) {
+      if (existingInvitations && existingInvitations.length > 0) {
         toast({
           title: "Invitation already sent",
           description: "There's already a pending invitation for this email address.",
           variant: "default",
         });
         return false;
+      }
+
+      // Check if the email already belongs to a family member
+      const { data: existingMembers, error: memberCheckError } = await supabase
+        .from('family_members')
+        .select('id, user_id')
+        .eq('baby_id', babyId)
+        .eq('status', 'active');
+
+      if (memberCheckError) {
+        console.error('Error checking existing members:', memberCheckError);
+      } else if (existingMembers && existingMembers.length > 0) {
+        // Get profiles for existing members to check emails
+        const memberUserIds = existingMembers.map(m => m.user_id);
+        const { data: memberProfiles } = await supabase
+          .from('profiles')
+          .select('id, email')
+          .in('id', memberUserIds);
+
+        if (memberProfiles && memberProfiles.some(p => p.email === email.trim().toLowerCase())) {
+          toast({
+            title: "User already a member",
+            description: "This email address is already a family member.",
+            variant: "default",
+          });
+          return false;
+        }
       }
 
       // Get baby and user details for email

@@ -13,6 +13,7 @@ import TrackActivity from "./pages/TrackActivity";
 import Reports from "./pages/Reports";
 import SleepSchedule from "./pages/SleepSchedule";
 import FamilySharing from "./pages/FamilySharing";
+import InvitationAcceptPage from "./pages/InvitationAccept";
 import Sounds from "./pages/Sounds";
 import Subscription from "./pages/Subscription";
 import Account from "./pages/Account";
@@ -35,6 +36,7 @@ const App = () => (
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/sleep-schedule" element={<SleepSchedule />} />
                 <Route path="/family" element={<FamilySharing />} />
+                <Route path="/invitation" element={<InvitationAcceptPage />} />
                 <Route path="/sounds" element={<Sounds />} />
                 <Route path="/subscription" element={<Subscription />} />
                 <Route path="/account" element={<Account />} />
