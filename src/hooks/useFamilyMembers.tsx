@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -159,6 +158,29 @@ export const useFamilyMembers = (babyId: string | null) => {
         return false;
       }
 
+      // Get baby and user details for email
+      const { data: babyProfile, error: babyError } = await supabase
+        .from('baby_profiles')
+        .select('name')
+        .eq('id', babyId)
+        .single();
+
+      const { data: userProfile, error: userError } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      if (babyError || userError) {
+        console.error('Error fetching profile data:', babyError || userError);
+        toast({
+          title: "Error",
+          description: "Failed to get profile information",
+          variant: "destructive",
+        });
+        return false;
+      }
+
       // Create the invitation
       const insertData = {
         baby_id: babyId,
@@ -166,7 +188,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         role,
         status: 'pending',
         invited_by: user.id,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         permissions: role === 'caregiver' 
           ? { can_edit: true, can_delete: false, can_invite: false }
           : { can_edit: false, can_delete: false, can_invite: false }
@@ -189,11 +211,41 @@ export const useFamilyMembers = (babyId: string | null) => {
       }
 
       console.log('Invitation created:', data);
-      
-      toast({
-        title: "Invitation sent!",
-        description: `Family invitation sent to ${email}. They have 7 days to accept.`,
-      });
+
+      // Send invitation email via edge function
+      try {
+        const { error: emailError } = await supabase.functions.invoke('send-invitation-email', {
+          body: {
+            invitationId: data.id,
+            email: email.trim().toLowerCase(),
+            babyName: babyProfile?.name || 'Baby',
+            inviterName: userProfile?.full_name || 'Someone',
+            role: role,
+            invitationToken: data.invitation_token
+          }
+        });
+
+        if (emailError) {
+          console.error('Error sending email:', emailError);
+          toast({
+            title: "Invitation created but email failed",
+            description: "The invitation was created but the email could not be sent. You can share the invitation link manually.",
+            variant: "default",
+          });
+        } else {
+          toast({
+            title: "Invitation sent!",
+            description: `Family invitation sent to ${email}. They have 7 days to accept.`,
+          });
+        }
+      } catch (emailError) {
+        console.error('Error calling email function:', emailError);
+        toast({
+          title: "Invitation created",
+          description: "The invitation was created. You can share the invitation link manually.",
+          variant: "default",
+        });
+      }
 
       await fetchFamilyMembers();
       return true;
