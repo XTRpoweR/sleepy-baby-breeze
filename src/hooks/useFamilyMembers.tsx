@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -130,7 +131,6 @@ export const useFamilyMembers = (babyId: string | null) => {
 
     try {
       // Check if there's already a pending invitation for this email
-      // Use a simpler query that doesn't involve restricted tables
       const { data: existingInvitations, error: checkError } = await supabase
         .from('family_invitations')
         .select('id, email')
@@ -156,33 +156,6 @@ export const useFamilyMembers = (babyId: string | null) => {
           variant: "default",
         });
         return false;
-      }
-
-      // Check if the email already belongs to a family member
-      const { data: existingMembers, error: memberCheckError } = await supabase
-        .from('family_members')
-        .select('id, user_id')
-        .eq('baby_id', babyId)
-        .eq('status', 'active');
-
-      if (memberCheckError) {
-        console.error('Error checking existing members:', memberCheckError);
-      } else if (existingMembers && existingMembers.length > 0) {
-        // Get profiles for existing members to check emails
-        const memberUserIds = existingMembers.map(m => m.user_id);
-        const { data: memberProfiles } = await supabase
-          .from('profiles')
-          .select('id, email')
-          .in('id', memberUserIds);
-
-        if (memberProfiles && memberProfiles.some(p => p.email === email.trim().toLowerCase())) {
-          toast({
-            title: "User already a member",
-            description: "This email address is already a family member.",
-            variant: "default",
-          });
-          return false;
-        }
       }
 
       // Get baby and user details for email
