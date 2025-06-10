@@ -158,28 +158,42 @@ export const useFamilyMembers = (babyId: string | null) => {
         return false;
       }
 
-      // Get baby and user details for email
+      // Get baby and user details for email - use maybeSingle to handle missing data
       const { data: babyProfile, error: babyError } = await supabase
         .from('baby_profiles')
         .select('name')
         .eq('id', babyId)
-        .single();
+        .maybeSingle();
 
       const { data: userProfile, error: userError } = await supabase
         .from('profiles')
         .select('full_name')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (babyError || userError) {
-        console.error('Error fetching profile data:', babyError || userError);
+      if (babyError) {
+        console.error('Error fetching baby profile:', babyError);
         toast({
           title: "Error",
-          description: "Failed to get profile information",
+          description: "Failed to get baby information",
           variant: "destructive",
         });
         return false;
       }
+
+      if (userError) {
+        console.error('Error fetching user profile:', userError);
+        toast({
+          title: "Error",
+          description: "Failed to get user information",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // Use fallback values if profile data is missing
+      const babyName = babyProfile?.name || 'Baby';
+      const inviterName = userProfile?.full_name || user.email || 'Someone';
 
       // Create the invitation
       const insertData = {
@@ -218,8 +232,8 @@ export const useFamilyMembers = (babyId: string | null) => {
           body: {
             invitationId: data.id,
             email: email.trim().toLowerCase(),
-            babyName: babyProfile?.name || 'Baby',
-            inviterName: userProfile?.full_name || 'Someone',
+            babyName: babyName,
+            inviterName: inviterName,
             role: role,
             invitationToken: data.invitation_token
           }
