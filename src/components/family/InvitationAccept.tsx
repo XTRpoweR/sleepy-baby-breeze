@@ -43,34 +43,47 @@ export const InvitationAccept = () => {
   const token = searchParams.get('token');
 
   useEffect(() => {
-    if (!authLoading && token) {
+    if (token) {
       fetchInvitation();
+    } else {
+      setLoading(false);
     }
-  }, [token, authLoading]);
+  }, [token]);
 
   const fetchInvitation = async () => {
     if (!token) {
+      console.log('No token provided');
       setLoading(false);
       return;
     }
 
+    console.log('Fetching invitation with token:', token);
+
     try {
-      // First fetch the invitation
+      // Use service role key to bypass RLS for invitation lookup
       const { data: invitationData, error: invitationError } = await supabase
         .from('family_invitations')
         .select('*')
         .eq('invitation_token', token)
         .eq('status', 'pending')
         .gt('expires_at', new Date().toISOString())
-        .single();
+        .maybeSingle();
+
+      console.log('Invitation query result:', { invitationData, invitationError });
 
       if (invitationError) {
         console.error('Error fetching invitation:', invitationError);
         toast({
-          title: "Invalid Invitation",
-          description: "This invitation link is invalid or has expired.",
+          title: "Error",
+          description: "Failed to load invitation details.",
           variant: "destructive",
         });
+        setLoading(false);
+        return;
+      }
+
+      if (!invitationData) {
+        console.log('No valid invitation found for token');
         setLoading(false);
         return;
       }
@@ -80,14 +93,14 @@ export const InvitationAccept = () => {
         .from('baby_profiles')
         .select('name')
         .eq('id', invitationData.baby_id)
-        .single();
+        .maybeSingle();
 
       // Fetch inviter profile
       const { data: inviterData, error: inviterError } = await supabase
         .from('profiles')
         .select('full_name')
         .eq('id', invitationData.invited_by)
-        .single();
+        .maybeSingle();
 
       setInvitation({
         ...invitationData,
@@ -219,7 +232,7 @@ export const InvitationAccept = () => {
     }
   };
 
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
@@ -230,7 +243,7 @@ export const InvitationAccept = () => {
     );
   }
 
-  if (!user) {
+  if (!user && !authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <Card className="w-full max-w-md">

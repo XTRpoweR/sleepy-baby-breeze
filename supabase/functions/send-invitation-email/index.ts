@@ -27,7 +27,10 @@ serve(async (req) => {
       )
     }
 
-    const invitationLink = `https://wjxxgccfazpkdfzbcgen.supabase.co/invitation?token=${invitationToken}`
+    // Use the correct domain for the invitation link
+    const invitationLink = `https://sleepy-baby-breeze.lovable.app/invitation?token=${invitationToken}`
+
+    console.log('Sending invitation email with link:', invitationLink)
 
     // Send email using Supabase Auth email
     const { error } = await supabaseClient.auth.admin.inviteUserByEmail(email, {
