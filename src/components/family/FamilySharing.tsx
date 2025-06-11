@@ -33,7 +33,8 @@ import {
   Clock,
   Crown,
   Heart,
-  Shield
+  Shield,
+  Eye
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -44,7 +45,7 @@ interface FamilySharingProps {
 const ROLE_ICONS = {
   owner: Crown,
   caregiver: Heart,
-  viewer: Shield
+  viewer: Eye
 };
 
 const ROLE_COLORS = {
@@ -240,7 +241,7 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Badge className="bg-yellow-100 text-yellow-800">
+                    <Badge className={invitation.role === 'caregiver' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}>
                       {invitation.role}
                     </Badge>
                     <AlertDialog>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +14,9 @@ import {
   XCircle, 
   Clock,
   Heart,
-  Shield
+  Shield,
+  Eye,
+  AlertTriangle
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -31,6 +34,25 @@ interface InvitationData {
   inviter_name?: string;
 }
 
+const ROLE_ICONS = {
+  owner: Shield,
+  caregiver: Heart,
+  viewer: Eye
+};
+
+const ROLE_PERMISSIONS = {
+  caregiver: [
+    'Track baby activities and add new entries',
+    'View reports and analytics',
+    'Edit existing activity logs'
+  ],
+  viewer: [
+    'View baby activities and reports',
+    'See analytics and insights',
+    'Access read-only dashboard'
+  ]
+};
+
 export const InvitationAccept = () => {
   const { user, loading: authLoading } = useAuth();
   const { setSharedBabyAsActive, refetch: refetchProfiles } = useBabyProfile();
@@ -40,6 +62,7 @@ export const InvitationAccept = () => {
   const [invitation, setInvitation] = useState<InvitationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [emailMismatch, setEmailMismatch] = useState(false);
 
   const token = searchParams.get('token');
 
@@ -50,6 +73,10 @@ export const InvitationAccept = () => {
       setLoading(false);
     }
   }, [token]);
+
+  const normalizeEmail = (email: string) => {
+    return email.trim().toLowerCase();
+  };
 
   const fetchInvitation = async () => {
     if (!token) {
@@ -108,6 +135,17 @@ export const InvitationAccept = () => {
         baby_name: babyData?.name || 'Baby',
         inviter_name: inviterData?.full_name || 'Someone'
       });
+
+      // Check for email mismatch early if user is logged in
+      if (user) {
+        const invitedEmail = normalizeEmail(invitationData.email);
+        const userEmail = normalizeEmail(user.email || '');
+        console.log('Email comparison:', { invitedEmail, userEmail, match: invitedEmail === userEmail });
+        
+        if (invitedEmail !== userEmail) {
+          setEmailMismatch(true);
+        }
+      }
     } catch (error) {
       console.error('Error fetching invitation:', error);
       toast({
@@ -126,11 +164,22 @@ export const InvitationAccept = () => {
     setProcessing(true);
 
     try {
-      // Check if user's email matches the invitation
-      if (user.email !== invitation.email) {
+      // Check if user's email matches the invitation with improved comparison
+      const invitedEmail = normalizeEmail(invitation.email);
+      const userEmail = normalizeEmail(user.email || '');
+      
+      console.log('Final email verification:', { 
+        invitedEmail, 
+        userEmail, 
+        originalInvited: invitation.email,
+        originalUser: user.email,
+        match: invitedEmail === userEmail 
+      });
+
+      if (invitedEmail !== userEmail) {
         toast({
           title: "Email Mismatch",
-          description: "This invitation was sent to a different email address. Please sign in with the correct account.",
+          description: `This invitation was sent to ${invitation.email} but you're signed in as ${user.email}. Please sign in with the correct account or contact the person who invited you.`,
           variant: "destructive",
         });
         setProcessing(false);
@@ -295,7 +344,8 @@ export const InvitationAccept = () => {
     );
   }
 
-  const RoleIcon = invitation.role === 'caregiver' ? Heart : Shield;
+  const RoleIcon = ROLE_ICONS[invitation.role as keyof typeof ROLE_ICONS] || Shield;
+  const permissions = ROLE_PERMISSIONS[invitation.role as keyof typeof ROLE_PERMISSIONS] || [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -319,10 +369,27 @@ export const InvitationAccept = () => {
             </p>
           </div>
 
+          {emailMismatch && user && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="flex items-start space-x-2">
+                <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
+                <div>
+                  <h4 className="font-medium text-amber-800">Email Mismatch Warning</h4>
+                  <p className="text-sm text-amber-700 mt-1">
+                    This invitation was sent to <strong>{invitation.email}</strong> but you're signed in as <strong>{user.email}</strong>.
+                  </p>
+                  <p className="text-sm text-amber-700 mt-2">
+                    You may need to sign in with the correct account or contact the person who invited you.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-600">Role:</span>
-              <Badge className={invitation.role === 'caregiver' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}>
+              <Badge className={invitation.role === 'caregiver' ? 'bg-blue-100 text-blue-800' : invitation.role === 'viewer' ? 'bg-gray-100 text-gray-800' : 'bg-yellow-100 text-yellow-800'}>
                 {invitation.role}
               </Badge>
             </div>
@@ -336,23 +403,16 @@ export const InvitationAccept = () => {
             </div>
           </div>
 
-          <div className="text-sm text-gray-600">
-            <h4 className="font-medium mb-2">As a {invitation.role}, you'll be able to:</h4>
-            <ul className="space-y-1">
-              {invitation.role === 'caregiver' ? (
-                <>
-                  <li>• Track baby activities and add new entries</li>
-                  <li>• View reports and analytics</li>
-                  <li>• Edit existing activity logs</li>
-                </>
-              ) : (
-                <>
-                  <li>• View baby activities and reports</li>
-                  <li>• See analytics and insights</li>
-                </>
-              )}
-            </ul>
-          </div>
+          {permissions.length > 0 && (
+            <div className="text-sm text-gray-600">
+              <h4 className="font-medium mb-2">As a {invitation.role}, you'll be able to:</h4>
+              <ul className="space-y-1">
+                {permissions.map((permission, index) => (
+                  <li key={index}>• {permission}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="flex space-x-3">
             <Button
