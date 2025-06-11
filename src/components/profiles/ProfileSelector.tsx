@@ -11,23 +11,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Baby, ChevronDown, Plus, Settings, Loader2 } from 'lucide-react';
+import { Baby, ChevronDown, Plus, Settings, Loader2, Users, Crown, Heart, Shield } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
-
-interface BabyProfile {
-  id: string;
-  name: string;
-  birth_date: string | null;
-  photo_url: string | null;
-  is_active: boolean | null;
-  created_at: string;
-  updated_at: string;
-}
 
 interface ProfileSelectorProps {
   onAddProfile: () => void;
   onManageProfiles: () => void;
 }
+
+const getRoleIcon = (role: string) => {
+  switch (role) {
+    case 'owner': return Crown;
+    case 'caregiver': return Heart;
+    case 'viewer': return Shield;
+    default: return Users;
+  }
+};
+
+const getRoleColor = (role: string) => {
+  switch (role) {
+    case 'owner': return 'bg-yellow-100 text-yellow-800';
+    case 'caregiver': return 'bg-blue-100 text-blue-800';
+    case 'viewer': return 'bg-gray-100 text-gray-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+};
 
 export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelectorProps) => {
   const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
@@ -69,6 +77,8 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
     );
   }
 
+  const RoleIcon = getRoleIcon(activeProfile.user_role || 'owner');
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -85,12 +95,21 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
               </Avatar>
             )}
             <div className="text-left">
-              <div className="font-medium">{activeProfile.name}</div>
-              {activeProfile.birth_date && (
-                <div className="text-sm text-gray-500">
-                  {calculateAge(activeProfile.birth_date)}
-                </div>
-              )}
+              <div className="flex items-center space-x-2">
+                <span className="font-medium">{activeProfile.name}</span>
+                {activeProfile.is_shared && <Users className="h-3 w-3 text-blue-600" />}
+              </div>
+              <div className="flex items-center space-x-2">
+                {activeProfile.birth_date && (
+                  <span className="text-sm text-gray-500">
+                    {calculateAge(activeProfile.birth_date)}
+                  </span>
+                )}
+                <Badge className={`text-xs ${getRoleColor(activeProfile.user_role || 'owner')}`}>
+                  <RoleIcon className="h-3 w-3 mr-1" />
+                  {activeProfile.user_role || 'owner'}
+                </Badge>
+              </div>
             </div>
           </div>
           <ChevronDown className="h-4 w-4 text-gray-500" />
@@ -100,36 +119,46 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
       <DropdownMenuContent className="w-64" align="start">
         <div className="p-2">
           <div className="text-sm font-medium text-gray-700 mb-2">Child Profiles</div>
-          {profiles.map((profile) => (
-            <DropdownMenuItem
-              key={profile.id}
-              className="p-3 cursor-pointer"
-              onClick={() => handleProfileSwitch(profile.id)}
-              disabled={switching}
-            >
-              <div className="flex items-center space-x-3 w-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={profile.photo_url || undefined} />
-                  <AvatarFallback className="bg-blue-100 text-blue-600">
-                    {profile.name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium">{profile.name}</span>
-                    {profile.is_active && (
-                      <Badge variant="secondary" className="text-xs">Active</Badge>
-                    )}
-                  </div>
-                  {profile.birth_date && (
-                    <div className="text-sm text-gray-500">
-                      {calculateAge(profile.birth_date)}
+          {profiles.map((profile) => {
+            const ProfileRoleIcon = getRoleIcon(profile.user_role || 'owner');
+            return (
+              <DropdownMenuItem
+                key={profile.id}
+                className="p-3 cursor-pointer"
+                onClick={() => handleProfileSwitch(profile.id)}
+                disabled={switching}
+              >
+                <div className="flex items-center space-x-3 w-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={profile.photo_url || undefined} />
+                    <AvatarFallback className="bg-blue-100 text-blue-600">
+                      {profile.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium">{profile.name}</span>
+                      {profile.is_shared && <Users className="h-3 w-3 text-blue-600" />}
+                      {profile.is_active && !profile.is_shared && (
+                        <Badge variant="secondary" className="text-xs">Active</Badge>
+                      )}
                     </div>
-                  )}
+                    <div className="flex items-center space-x-2">
+                      {profile.birth_date && (
+                        <span className="text-sm text-gray-500">
+                          {calculateAge(profile.birth_date)}
+                        </span>
+                      )}
+                      <Badge className={`text-xs ${getRoleColor(profile.user_role || 'owner')}`}>
+                        <ProfileRoleIcon className="h-3 w-3 mr-1" />
+                        {profile.user_role || 'owner'}
+                      </Badge>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </DropdownMenuItem>
-          ))}
+              </DropdownMenuItem>
+            );
+          })}
         </div>
         
         <DropdownMenuSeparator />

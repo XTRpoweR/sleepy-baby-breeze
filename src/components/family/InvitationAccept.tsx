@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Users, 
@@ -33,6 +33,7 @@ interface InvitationData {
 
 export const InvitationAccept = () => {
   const { user, loading: authLoading } = useAuth();
+  const { setSharedBabyAsActive, refetch: refetchProfiles } = useBabyProfile();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -173,13 +174,21 @@ export const InvitationAccept = () => {
         console.error('Error updating invitation:', updateError);
       }
 
+      // Refresh profiles to include the new shared baby
+      await refetchProfiles();
+
+      // Set the shared baby as active
+      setSharedBabyAsActive(invitation.baby_id);
+
       toast({
         title: "Welcome to the family!",
-        description: `You've successfully joined ${invitation.baby_name}'s family sharing.`,
+        description: `You've successfully joined ${invitation.baby_name}'s family sharing as a ${invitation.role}.`,
       });
 
-      // Redirect to dashboard
-      navigate('/dashboard');
+      // Redirect to dashboard with a slight delay to ensure state updates
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } catch (error) {
       console.error('Error accepting invitation:', error);
       toast({

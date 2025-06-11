@@ -314,6 +314,14 @@ export type Database = {
         Args: { user_uuid: string; baby_uuid: string }
         Returns: boolean
       }
+      can_edit_baby_activities: {
+        Args: { user_uuid: string; baby_uuid: string }
+        Returns: boolean
+      }
+      get_family_member_role: {
+        Args: { user_uuid: string; baby_uuid: string }
+        Returns: string
+      }
       get_user_subscription_tier: {
         Args: { user_uuid: string }
         Returns: string

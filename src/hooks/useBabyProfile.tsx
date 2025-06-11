@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,6 +12,9 @@ interface BabyProfile {
   is_active: boolean | null;
   created_at: string;
   updated_at: string;
+  user_id?: string;
+  is_shared?: boolean;
+  user_role?: string;
 }
 
 export const useBabyProfile = () => {
@@ -33,23 +37,70 @@ export const useBabyProfile = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
+      // Fetch owned profiles
+      const { data: ownedProfiles, error: ownedError } = await supabase
         .from('baby_profiles')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: true });
 
-      if (error) {
-        console.error('Error fetching baby profiles:', error);
+      if (ownedError) {
+        console.error('Error fetching owned profiles:', ownedError);
         toast({
           title: "Error",
           description: "Failed to load baby profiles",
           variant: "destructive",
         });
+        setLoading(false);
+        return;
+      }
+
+      // Fetch shared profiles through family_members
+      const { data: familyMembers, error: familyError } = await supabase
+        .from('family_members')
+        .select(`
+          baby_id,
+          role,
+          baby_profiles!inner(*)
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+
+      if (familyError) {
+        console.error('Error fetching shared profiles:', familyError);
+        // Don't fail completely, just continue with owned profiles
+      }
+
+      // Combine owned and shared profiles
+      const allProfiles: BabyProfile[] = [
+        ...(ownedProfiles || []).map(profile => ({
+          ...profile,
+          is_shared: false,
+          user_role: 'owner'
+        })),
+        ...(familyMembers || []).map(member => ({
+          ...member.baby_profiles,
+          is_shared: true,
+          user_role: member.role,
+          is_active: false // Shared profiles are not active by default
+        }))
+      ];
+
+      setProfiles(allProfiles);
+
+      // Find the active profile (prioritize owned profiles)
+      const ownedActive = ownedProfiles?.find(profile => profile.is_active);
+      if (ownedActive) {
+        setActiveProfile({
+          ...ownedActive,
+          is_shared: false,
+          user_role: 'owner'
+        });
+      } else if (allProfiles.length > 0) {
+        // If no owned active profile, use the first profile
+        setActiveProfile(allProfiles[0]);
       } else {
-        setProfiles(data || []);
-        const active = data?.find(profile => profile.is_active) || data?.[0] || null;
-        setActiveProfile(active);
+        setActiveProfile(null);
       }
     } catch (error) {
       console.error('Error fetching baby profiles:', error);
@@ -70,9 +121,10 @@ export const useBabyProfile = () => {
         .single();
 
       const isBasicUser = !subscriptionData || subscriptionData.subscription_tier === 'basic';
+      const ownedProfiles = profiles.filter(p => !p.is_shared);
       
       // Enforce profile limit for basic users
-      if (isBasicUser && profiles.length >= 1) {
+      if (isBasicUser && ownedProfiles.length >= 1) {
         toast({
           title: "Profile Limit Reached",
           description: "Basic plan allows only 1 baby profile. Upgrade to Premium for unlimited profiles.",
@@ -82,7 +134,7 @@ export const useBabyProfile = () => {
       }
 
       // If this is the first profile, make it active
-      const isFirstProfile = profiles.length === 0;
+      const isFirstProfile = ownedProfiles.length === 0;
 
       const { data, error } = await supabase
         .from('baby_profiles')
@@ -106,10 +158,16 @@ export const useBabyProfile = () => {
         return false;
       }
 
-      setProfiles(prev => [...prev, data]);
+      const newProfile = {
+        ...data,
+        is_shared: false,
+        user_role: 'owner'
+      };
+
+      setProfiles(prev => [...prev, newProfile]);
       
       if (isFirstProfile) {
-        setActiveProfile(data);
+        setActiveProfile(newProfile);
       }
 
       toast({
@@ -145,10 +203,10 @@ export const useBabyProfile = () => {
         return false;
       }
 
-      setProfiles(prev => prev.map(p => p.id === profileId ? data : p));
+      setProfiles(prev => prev.map(p => p.id === profileId ? { ...data, is_shared: p.is_shared, user_role: p.user_role } : p));
       
       if (activeProfile?.id === profileId) {
-        setActiveProfile(data);
+        setActiveProfile({ ...data, is_shared: activeProfile.is_shared, user_role: activeProfile.user_role });
       }
 
       toast({
@@ -169,36 +227,43 @@ export const useBabyProfile = () => {
     setSwitching(true);
 
     try {
-      // Immediately update local state for instant UI feedback
+      // Find the target profile
       const targetProfile = profiles.find(p => p.id === profileId);
-      if (targetProfile) {
-        console.log('Setting active profile immediately:', targetProfile.name);
-        setActiveProfile({ ...targetProfile, is_active: true });
-        
-        // Update profiles list to reflect new active state
-        const updatedProfiles = profiles.map(p => ({ 
-          ...p, 
-          is_active: p.id === profileId 
-        }));
-        setProfiles(updatedProfiles);
+      if (!targetProfile) {
+        console.error('Target profile not found');
+        setSwitching(false);
+        return false;
       }
 
-      // Update database in background
-      const { error } = await supabase.rpc('set_active_profile', {
-        profile_id: profileId,
-        user_id_param: user.id
-      });
+      // Immediately update local state for instant UI feedback
+      console.log('Setting active profile immediately:', targetProfile.name);
+      setActiveProfile(targetProfile);
 
-      if (error) {
-        console.error('Error switching profile in database:', error);
-        // Revert local state on database error
-        await fetchProfiles();
-        toast({
-          title: "Error",
-          description: "Failed to switch profile",
-          variant: "destructive",
+      // If it's an owned profile, update the database
+      if (!targetProfile.is_shared) {
+        const { error } = await supabase.rpc('set_active_profile', {
+          profile_id: profileId,
+          user_id_param: user.id
         });
-        return false;
+
+        if (error) {
+          console.error('Error switching profile in database:', error);
+          // Revert local state on database error
+          await fetchProfiles();
+          toast({
+            title: "Error",
+            description: "Failed to switch profile",
+            variant: "destructive",
+          });
+          return false;
+        }
+
+        // Update profiles list to reflect new active state for owned profiles
+        const updatedProfiles = profiles.map(p => ({ 
+          ...p, 
+          is_active: !p.is_shared && p.id === profileId 
+        }));
+        setProfiles(updatedProfiles);
       }
 
       console.log('Profile switch completed successfully');
@@ -238,8 +303,11 @@ export const useBabyProfile = () => {
 
       // If we deleted the active profile, switch to the first remaining one
       if (activeProfile?.id === profileId) {
-        if (updatedProfiles.length > 0) {
-          await switchProfile(updatedProfiles[0].id);
+        const ownedProfiles = updatedProfiles.filter(p => !p.is_shared);
+        if (ownedProfiles.length > 0) {
+          await switchProfile(ownedProfiles[0].id);
+        } else if (updatedProfiles.length > 0) {
+          setActiveProfile(updatedProfiles[0]);
         } else {
           setActiveProfile(null);
         }
@@ -256,6 +324,14 @@ export const useBabyProfile = () => {
     }
   };
 
+  // Set shared baby as active after accepting invitation
+  const setSharedBabyAsActive = (babyId: string) => {
+    const sharedProfile = profiles.find(p => p.id === babyId && p.is_shared);
+    if (sharedProfile) {
+      setActiveProfile(sharedProfile);
+    }
+  };
+
   // Backwards compatibility - return single profile as before
   const profile = activeProfile;
 
@@ -269,6 +345,7 @@ export const useBabyProfile = () => {
     updateProfile,
     switchProfile,
     deleteProfile,
+    setSharedBabyAsActive,
     refetch: fetchProfiles
   };
 };

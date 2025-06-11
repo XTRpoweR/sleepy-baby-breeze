@@ -11,13 +11,31 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Baby, ChevronDown, Plus, Settings, Loader2 } from 'lucide-react';
+import { Baby, ChevronDown, Plus, Settings, Loader2, Users, Crown, Heart, Shield } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 
 interface MobileProfileSelectorProps {
   onAddProfile: () => void;
   onManageProfiles: () => void;
 }
+
+const getRoleIcon = (role: string) => {
+  switch (role) {
+    case 'owner': return Crown;
+    case 'caregiver': return Heart;
+    case 'viewer': return Shield;
+    default: return Users;
+  }
+};
+
+const getRoleColor = (role: string) => {
+  switch (role) {
+    case 'owner': return 'bg-yellow-100 text-yellow-800';
+    case 'caregiver': return 'bg-blue-100 text-blue-800';
+    case 'viewer': return 'bg-gray-100 text-gray-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+};
 
 export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: MobileProfileSelectorProps) => {
   const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
@@ -70,6 +88,8 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
     );
   }
 
+  const RoleIcon = getRoleIcon(activeProfile.user_role || 'owner');
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -86,12 +106,21 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
               </Avatar>
             )}
             <div className="text-left min-w-0 flex-1">
-              <div className="font-medium text-sm truncate">{activeProfile.name}</div>
-              {activeProfile.birth_date && (
-                <div className="text-xs text-gray-500">
-                  {calculateAge(activeProfile.birth_date)}
-                </div>
-              )}
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-sm truncate">{activeProfile.name}</span>
+                {activeProfile.is_shared && <Users className="h-3 w-3 text-blue-600 flex-shrink-0" />}
+              </div>
+              <div className="flex items-center space-x-2">
+                {activeProfile.birth_date && (
+                  <span className="text-xs text-gray-500">
+                    {calculateAge(activeProfile.birth_date)}
+                  </span>
+                )}
+                <Badge className={`text-xs ${getRoleColor(activeProfile.user_role || 'owner')}`}>
+                  <RoleIcon className="h-3 w-3 mr-1" />
+                  {activeProfile.user_role || 'owner'}
+                </Badge>
+              </div>
             </div>
           </div>
           <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
@@ -104,37 +133,47 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
         </SheetHeader>
         
         <div className="mt-6 space-y-3">
-          {profiles.map((profile) => (
-            <Button
-              key={profile.id}
-              variant="ghost"
-              className="w-full h-auto p-4 justify-start"
-              onClick={() => handleProfileSwitch(profile.id)}
-              disabled={switching}
-            >
-              <div className="flex items-center space-x-3 w-full">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile.photo_url || undefined} />
-                  <AvatarFallback className="bg-blue-100 text-blue-600">
-                    {profile.name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 text-left">
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium">{profile.name}</span>
-                    {profile.is_active && (
-                      <Badge variant="secondary" className="text-xs">Active</Badge>
-                    )}
-                  </div>
-                  {profile.birth_date && (
-                    <div className="text-sm text-gray-500">
-                      {calculateAge(profile.birth_date)}
+          {profiles.map((profile) => {
+            const ProfileRoleIcon = getRoleIcon(profile.user_role || 'owner');
+            return (
+              <Button
+                key={profile.id}
+                variant="ghost"
+                className="w-full h-auto p-4 justify-start"
+                onClick={() => handleProfileSwitch(profile.id)}
+                disabled={switching}
+              >
+                <div className="flex items-center space-x-3 w-full">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={profile.photo_url || undefined} />
+                    <AvatarFallback className="bg-blue-100 text-blue-600">
+                      {profile.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 text-left">
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium">{profile.name}</span>
+                      {profile.is_shared && <Users className="h-3 w-3 text-blue-600" />}
+                      {profile.is_active && !profile.is_shared && (
+                        <Badge variant="secondary" className="text-xs">Active</Badge>
+                      )}
                     </div>
-                  )}
+                    <div className="flex items-center space-x-2">
+                      {profile.birth_date && (
+                        <span className="text-sm text-gray-500">
+                          {calculateAge(profile.birth_date)}
+                        </span>
+                      )}
+                      <Badge className={`text-xs ${getRoleColor(profile.user_role || 'owner')}`}>
+                        <ProfileRoleIcon className="h-3 w-3 mr-1" />
+                        {profile.user_role || 'owner'}
+                      </Badge>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Button>
-          ))}
+              </Button>
+            );
+          })}
           
           <div className="pt-4 border-t space-y-2">
             <Button onClick={handleAddProfile} className="w-full" disabled={switching}>
