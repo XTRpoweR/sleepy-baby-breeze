@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -226,9 +225,9 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       console.log('Invitation created:', data);
 
-      // Send invitation email via edge function
+      // Send invitation email via the correct edge function
       try {
-        const { error: emailError } = await supabase.functions.invoke('send-invitation-email', {
+        const { error: emailError } = await supabase.functions.invoke('send-family-invitation', {
           body: {
             invitationId: data.id,
             email: email.trim().toLowerCase(),
