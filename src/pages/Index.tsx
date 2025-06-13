@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -512,27 +512,27 @@ const Index = () => {
             <div>
               <h3 className="font-semibold mb-4">{t('footer.product')}</h3>
               <div className="space-y-2 text-gray-400">
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('navigation.features')}</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.download')}</div>
+                <Link to="/features" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('navigation.features')}</Link>
+                <Link to="/pricing" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</Link>
+                <Link to="/download" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.download')}</Link>
               </div>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">{t('footer.support')}</h3>
               <div className="space-y-2 text-gray-400">
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.helpCenter')}</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.contactUs')}</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.privacyPolicy')}</div>
+                <Link to="/help" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.helpCenter')}</Link>
+                <Link to="/contact" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.contactUs')}</Link>
+                <Link to="/privacy" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.privacyPolicy')}</Link>
               </div>
             </div>
             
             <div>
               <h3 className="font-semibold mb-4">{t('footer.company')}</h3>
               <div className="space-y-2 text-gray-400">
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.about')}</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.blog')}</div>
-                <div className="hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.careers')}</div>
+                <Link to="/about" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.about')}</Link>
+                <Link to="/blog" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.blog')}</Link>
+                <Link to="/careers" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.careers')}</Link>
               </div>
             </div>
           </div>
