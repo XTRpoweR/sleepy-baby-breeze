@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 
 interface AudioTrack {
@@ -399,468 +398,331 @@ export const useAudioPlayer = () => {
     return filter;
   };
 
-  // Enhanced audio generators with much better quality and longer duration
+  // Helper: simple linear fade-in/out
+  const envelope = (i: number, bufferSize: number, duration: number = 0.05) => {
+    // 0 < i < duration in seconds
+    const fadeSamp = Math.floor(duration * 44100);
+    if (i < fadeSamp) return i / fadeSamp;
+    if (i > bufferSize - fadeSamp) return (bufferSize - i) / fadeSamp;
+    return 1;
+  };
+
+  // Improved Light Rain: filtered noise + sporadic "drops" with stereo position
   const generateLightRain = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
-    const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate); // Stereo
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
-    // Create multiple layers for realistic rain
+    const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
       const t = i / audioContext.sampleRate;
-      let leftSample = 0;
-      let rightSample = 0;
-      
-      // Base rain texture with filtered noise
-      const baseNoise = (Math.random() * 2 - 1) * 0.15;
-      const filteredNoise = baseNoise * Math.exp(-Math.abs(baseNoise) * 3);
-      
-      // Individual droplets with spatial positioning
-      if (Math.random() < 0.015) {
-        const dropletIntensity = 0.1 + Math.random() * 0.3;
-        const pan = Math.random() * 2 - 1; // -1 to 1 for stereo positioning
-        const decay = Math.exp(-((i % 2000) / 2000) * 8);
-        
-        leftSample += dropletIntensity * decay * Math.max(0, 1 - pan);
-        rightSample += dropletIntensity * decay * Math.max(0, 1 + pan);
+
+      // Base gentle noise
+      let base = (Math.random() * 2 - 1) * 0.07;
+
+      // Simulate occasional drops (as very short, higher amplitude blips at random pan)
+      let drop = 0;
+      if (Math.random() < 0.002) {
+        let pan = Math.random(); // 0 = left, 1 = right
+        let env = Math.exp(-((i % 200) / 200) * 5);
+        drop = env * (0.3 + Math.random() * 0.07) * envelope(i, bufferSize, 0.01);
+        L[i] += drop * (1 - pan);
+        R[i] += drop * pan;
       }
-      
-      // Distant rain ambiance
-      const ambiance = Math.sin(t * 0.1) * filteredNoise * 0.8;
-      
-      leftChannel[i] = leftSample + ambiance + filteredNoise;
-      rightChannel[i] = rightSample + ambiance + filteredNoise;
+
+      // Stereo gentle variation
+      L[i] += base + Math.sin(t * 0.2) * 0.04;
+      R[i] += base + Math.sin(t * 0.23 + 1) * 0.04;
     }
-    
     return buffer;
   };
 
+  // Improved Heavy Rain: louder filtered noise and more "splash" events
   const generateHeavyRain = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
       const t = i / audioContext.sampleRate;
-      let leftSample = 0;
-      let rightSample = 0;
-      
-      // Intense base rain
-      const heavyNoise = (Math.random() * 2 - 1) * 0.35;
-      
-      // Frequent heavy droplets
-      if (Math.random() < 0.05) {
-        const dropletIntensity = 0.2 + Math.random() * 0.6;
-        const pan = Math.random() * 2 - 1;
-        const decay = Math.exp(-((i % 1000) / 1000) * 6);
-        
-        leftSample += dropletIntensity * decay * Math.max(0, 1 - pan);
-        rightSample += dropletIntensity * decay * Math.max(0, 1 + pan);
+      let heavy = (Math.random() * 2 - 1) * 0.19;
+      let splash = 0;
+      if (Math.random() < 0.008) {
+        let pan = Math.random();
+        let env = Math.exp(-((i % 100) / 100) * 4);
+        splash = env * (0.22 + Math.random() * 0.18) * envelope(i, bufferSize, 0.008);
+        L[i] += splash * (1 - pan);
+        R[i] += splash * pan;
       }
-      
-      // Heavy rain background with multiple frequency layers
-      const layer1 = Math.sin(t * 0.2) * heavyNoise * 0.6;
-      const layer2 = Math.sin(t * 0.15) * heavyNoise * 0.4;
-      
-      leftChannel[i] = leftSample + layer1 + layer2 + heavyNoise;
-      rightChannel[i] = rightSample + layer1 + layer2 + heavyNoise;
+      // Louder, denser
+      L[i] += heavy + Math.sin(t * 0.1) * 0.09;
+      R[i] += heavy + Math.sin(t * 0.13 + 0.7) * 0.09;
     }
-    
     return buffer;
   };
 
+  // Improved Rain On Roof: sharper droplet impacts & soft background
   const generateRainOnRoof = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      let leftSample = 0;
-      let rightSample = 0;
-      
-      // Roof impact sounds - sharper and more defined
-      if (Math.random() < 0.025) {
-        const impactFreq = 800 + Math.random() * 1200;
-        const impactLength = 0.05;
-        const impactT = (i % (audioContext.sampleRate * impactLength)) / audioContext.sampleRate;
-        const envelope = Math.exp(-impactT * 20);
-        const impact = Math.sin(2 * Math.PI * impactFreq * impactT) * envelope * 0.4;
-        
-        const pan = Math.random() * 2 - 1;
-        leftSample += impact * Math.max(0, 1 - pan);
-        rightSample += impact * Math.max(0, 1 + pan);
+      let roof = (Math.random() * 2 - 1) * 0.06; // Soft base
+      if (Math.random() < 0.0025) {
+        // Roof hit: high-freq burst
+        for (let j = 0; j < 30; j++) {
+          if (i + j < bufferSize) {
+            let env = Math.exp(-j / 12);
+            let pan = Math.random();
+            L[i + j] += env * 0.36 * (1 - pan);
+            R[i + j] += env * 0.36 * pan;
+          }
+        }
       }
-      
-      // Roof resonance - lower frequency rumble
-      const resonance = Math.sin(t * 50 + Math.sin(t * 0.3) * 2) * 0.1;
-      
-      // Base rain texture
-      const baseNoise = (Math.random() * 2 - 1) * 0.2;
-      
-      leftChannel[i] = leftSample + resonance + baseNoise;
-      rightChannel[i] = rightSample + resonance + baseNoise;
+      L[i] += roof;
+      R[i] += roof;
     }
-    
     return buffer;
   };
 
+  // Improved Thunderstorm: occasional deep rumbles, more heavy rain
   const generateThunderstorm = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+    let thunderAt = Math.floor(Math.random() * (bufferSize - audioContext.sampleRate * 4)); // place 1 thunder
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      let leftSample = 0;
-      let rightSample = 0;
-      
-      // Heavy rain base
-      const rainNoise = (Math.random() * 2 - 1) * 0.3;
-      if (Math.random() < 0.06) {
-        const droplet = Math.random() * 0.5;
-        const pan = Math.random() * 2 - 1;
-        leftSample += droplet * Math.max(0, 1 - pan);
-        rightSample += droplet * Math.max(0, 1 + pan);
+      let t = i / audioContext.sampleRate;
+      let rain = (Math.random() * 2 - 1) * 0.16;
+      // thunder: a burst somewhere randomly in the buffer
+      if (i > thunderAt && i < thunderAt + audioContext.sampleRate * 4) {
+        let n = i - thunderAt;
+        let env = Math.exp(-n / (audioContext.sampleRate * 1.7));
+        let freq = 23 + Math.random() * 18;
+        let th = Math.sin(2 * Math.PI * freq * n / audioContext.sampleRate) * env * 0.41;
+        L[i] += th;
+        R[i] += th * 0.94;
       }
-      
-      // Distant thunder every 8-15 seconds
-      const thunderInterval = 10 + Math.sin(t * 0.1) * 3;
-      if (Math.random() < (1 / (thunderInterval * audioContext.sampleRate))) {
-        const thunderFreq = 15 + Math.random() * 40;
-        const thunderDuration = 2 + Math.random() * 3;
-        const thunderT = (t % thunderDuration) / thunderDuration;
-        const envelope = Math.exp(-thunderT * 1.5) * (1 - thunderT);
-        const thunder = Math.sin(2 * Math.PI * thunderFreq * t) * envelope * 0.7;
-        
-        leftSample += thunder;
-        rightSample += thunder * 0.8; // Slightly different in right channel
-      }
-      
-      leftChannel[i] = leftSample + rainNoise;
-      rightChannel[i] = rightSample + rainNoise;
+      L[i] += rain;
+      R[i] += rain;
     }
-    
     return buffer;
   };
 
+  // Improved Ocean Gentle: low frequency undulating, with foamy texture
   const generateOceanGentle = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      
-      // Multiple wave layers with different frequencies
-      const wave1 = Math.sin(2 * Math.PI * 0.08 * t) * 0.4;
-      const wave2 = Math.sin(2 * Math.PI * 0.12 * t) * 0.3;
-      const wave3 = Math.sin(2 * Math.PI * 0.05 * t) * 0.2;
-      
-      // Foam and bubbles
-      const foam = (Math.random() * 2 - 1) * 0.15 * Math.abs(wave1);
-      
-      // Distant seagulls occasionally
-      let seagull = 0;
-      if (Math.random() < 0.0001) {
-        const seagullFreq = 800 + Math.random() * 600;
-        const seagullLength = 0.3;
-        const seagullT = (t % seagullLength) / seagullLength;
-        const envelope = Math.sin(Math.PI * seagullT) * Math.exp(-seagullT * 2);
-        seagull = Math.sin(2 * Math.PI * seagullFreq * t) * envelope * 0.1;
-      }
-      
-      const sample = wave1 + wave2 + wave3 + foam + seagull;
-      leftChannel[i] = sample;
-      rightChannel[i] = sample * 0.95; // Slight stereo difference
+      let t = i / audioContext.sampleRate;
+      // Waves are low-freq oscillator plus some filtered noise
+      let wave = Math.sin(2 * Math.PI * 0.13 * t) * 0.26 + Math.sin(2 * Math.PI * 0.09 * t) * 0.18;
+      let foam = (Math.random() * 2 - 1) * 0.055 * (0.6 + 0.4 * Math.abs(Math.sin(2 * Math.PI * 0.11 * t)));
+      // Soft stereo drift
+      L[i] += wave + foam + Math.sin(t * 0.6) * 0.012;
+      R[i] += wave + foam + Math.sin(t * 0.62 + 1) * 0.012;
     }
-    
     return buffer;
   };
 
+  // Improved Ocean Strong: higher waves and more pronounced crash bursts
   const generateOceanStrong = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      
-      // Powerful wave layers
-      const wave1 = Math.sin(2 * Math.PI * 0.06 * t) * 0.6;
-      const wave2 = Math.sin(2 * Math.PI * 0.1 * t) * 0.5;
-      const wave3 = Math.sin(2 * Math.PI * 0.15 * t) * 0.4;
-      
-      // Crash and foam
-      const crash = (Math.random() * 2 - 1) * 0.3 * Math.abs(wave1 + wave2);
-      
-      // Underwater rumble
-      const rumble = Math.sin(2 * Math.PI * 0.02 * t) * 0.2;
-      
-      const sample = wave1 + wave2 + wave3 + crash + rumble;
-      leftChannel[i] = sample;
-      rightChannel[i] = sample * 0.9;
+      let t = i / audioContext.sampleRate;
+      let wave = Math.sin(2 * Math.PI * 0.07 * t) * 0.31 + Math.sin(2 * Math.PI * 0.095 * t) * 0.24;
+      let foam = (Math.random() * 2 - 1) * 0.13;
+      // Occasional strong crash
+      if (Math.random() < 0.0007) {
+        let crashLen = 600 + Math.random() * 500;
+        for (let j = 0; j < crashLen; j++) {
+          if (i + j < bufferSize) {
+            let env = Math.exp(-j / 250);
+            let pan = Math.random();
+            L[i + j] += env * 0.22 * (1 - pan);
+            R[i + j] += env * 0.22 * pan;
+          }
+        }
+      }
+      L[i] += wave + foam;
+      R[i] += wave + foam;
     }
-    
     return buffer;
   };
 
+  // Improved Fire: short crackle bursts + low rumble
   const generateFireplace = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      let leftSample = 0;
-      let rightSample = 0;
-      
-      // Base fire hum with multiple harmonics
-      const baseHum = Math.sin(2 * Math.PI * 60 * t) * 0.08 +
-                     Math.sin(2 * Math.PI * 120 * t) * 0.05 +
-                     Math.sin(2 * Math.PI * 180 * t) * 0.03;
-      
-      // Random crackling sounds
-      if (Math.random() < 0.008) {
-        const crackleFreq = 300 + Math.random() * 1000;
-        const crackleLength = 0.1 + Math.random() * 0.2;
-        const crackleT = (i % (audioContext.sampleRate * crackleLength)) / audioContext.sampleRate;
-        const envelope = Math.exp(-crackleT * 8) * (1 - Math.pow(crackleT / crackleLength, 2));
-        const crackle = Math.sin(2 * Math.PI * crackleFreq * crackleT) * envelope * 0.4;
-        
-        const pan = Math.random() * 2 - 1;
-        leftSample += crackle * Math.max(0, 1 - pan);
-        rightSample += crackle * Math.max(0, 1 + pan);
+      let t = i / audioContext.sampleRate;
+      let hum = Math.sin(2 * Math.PI * 48 * t) * 0.017;
+      let crackle = 0;
+
+      if (Math.random() < 0.003) {
+        // quick crackle as short envelope burst
+        let len = 30 + Math.floor(Math.random() * 60);
+        let pan = Math.random();
+        for (let j = 0; j < len; j++) {
+          if (i + j < bufferSize) {
+            let env = Math.exp(-j / 10);
+            let c = (Math.random() * 2 - 1) * 0.19 * env;
+            L[i + j] += c * (1 - pan);
+            R[i + j] += c * pan;
+          }
+        }
       }
-      
-      // Wood popping sounds
-      if (Math.random() < 0.0015) {
-        const popIntensity = 0.3 + Math.random() * 0.4;
-        const popLength = 0.05;
-        const popT = (i % (audioContext.sampleRate * popLength)) / audioContext.sampleRate;
-        const popEnvelope = Math.exp(-popT * 15);
-        const pop = (Math.random() * 2 - 1) * popIntensity * popEnvelope;
-        
-        const pan = Math.random() * 2 - 1;
-        leftSample += pop * Math.max(0, 1 - pan);
-        rightSample += pop * Math.max(0, 1 + pan);
-      }
-      
-      // Ember settling
-      const emberNoise = (Math.random() * 2 - 1) * 0.08;
-      
-      leftChannel[i] = leftSample + baseHum + emberNoise;
-      rightChannel[i] = rightSample + baseHum + emberNoise;
+      // Background ember noise
+      let ember = (Math.random() * 2 - 1) * 0.012;
+      L[i] += hum + ember + crackle;
+      R[i] += hum + ember + crackle;
     }
-    
     return buffer;
   };
 
+  // Improved Campfire: slightly windier, more crackle
   const generateCampfire = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      let leftSample = 0;
-      let rightSample = 0;
-      
-      // Outdoor fire characteristics - more wind influence
-      const windInfluence = Math.sin(t * 0.3) * 0.1;
-      const baseHum = Math.sin(2 * Math.PI * (80 + windInfluence * 20) * t) * 0.1;
-      
-      // More frequent crackling due to outdoor conditions
-      if (Math.random() < 0.012) {
-        const crackleFreq = 200 + Math.random() * 800;
-        const crackleLength = 0.08 + Math.random() * 0.15;
-        const crackleT = (i % (audioContext.sampleRate * crackleLength)) / audioContext.sampleRate;
-        const envelope = Math.exp(-crackleT * 10);
-        const crackle = Math.sin(2 * Math.PI * crackleFreq * crackleT) * envelope * 0.5;
-        
-        const pan = Math.random() * 2 - 1;
-        leftSample += crackle * Math.max(0, 1 - pan);
-        rightSample += crackle * Math.max(0, 1 + pan);
+      let t = i / audioContext.sampleRate;
+      let windy = Math.sin(t * 0.3) * 0.039;
+      let crackle = 0;
+
+      if (Math.random() < 0.006) { // more frequent
+        let len = 14 + Math.floor(Math.random() * 30);
+        let pan = Math.random();
+        for (let j = 0; j < len; j++) {
+          if (i + j < bufferSize) {
+            let env = Math.exp(-j / 9);
+            let c = (Math.random() * 2 - 1) * 0.16 * env;
+            L[i + j] += c * (1 - pan);
+            R[i + j] += c * pan;
+          }
+        }
       }
-      
-      // Wood burning and settling
-      const burningNoise = (Math.random() * 2 - 1) * 0.12;
-      
-      leftChannel[i] = leftSample + baseHum + burningNoise + windInfluence;
-      rightChannel[i] = rightSample + baseHum + burningNoise + windInfluence * 0.8;
+      let ember = (Math.random() * 2 - 1) * 0.013;
+      L[i] += windy + ember + crackle;
+      R[i] += windy + ember + crackle;
     }
-    
     return buffer;
   };
 
+  // Improved Forest Wind: smooth filter-swept noise
   const generateForestWind = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      
-      // Wind through trees with varying intensity
-      const windBase = Math.sin(2 * Math.PI * 0.1 * t) * 0.4;
-      const windVariation = Math.sin(2 * Math.PI * 0.05 * t) * 0.3;
-      const windGust = Math.sin(2 * Math.PI * 0.02 * t) * 0.2;
-      
-      // Leaves rustling
-      const rustling = (Math.random() * 2 - 1) * 0.15 * Math.abs(windBase);
-      
-      // Branch movement
-      let branchCreak = 0;
-      if (Math.random() < 0.0005) {
-        const creakFreq = 100 + Math.random() * 200;
-        const creakLength = 0.5;
-        const creakT = (t % creakLength) / creakLength;
-        const envelope = Math.sin(Math.PI * creakT) * 0.1;
-        branchCreak = Math.sin(2 * Math.PI * creakFreq * t) * envelope;
-      }
-      
-      const sample = windBase + windVariation + windGust + rustling + branchCreak;
-      leftChannel[i] = sample;
-      rightChannel[i] = sample * 0.85 + rustling * 0.3; // Different rustling in each channel
+      let t = i / audioContext.sampleRate;
+      let wind = (Math.random() * 2 - 1) * (0.14 + 0.09 * Math.sin(0.025 * i));
+      let sway = Math.sin(t * 0.09) * 0.09;
+      let rustle = (Math.random() * 2 - 1) * 0.06 * Math.abs(sway);
+      L[i] += wind + sway + rustle;
+      R[i] += wind + sway * 0.7 + rustle * 0.8;
     }
-    
     return buffer;
   };
 
+  // Improved Forest Birds: chirp FM bursts
   const generateForestBirds = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
-    // Define different bird types with their characteristics
-    const birdTypes = [
-      { baseFreq: 1200, range: 400, chirpLength: 0.15, probability: 0.003 },
-      { baseFreq: 800, range: 300, chirpLength: 0.3, probability: 0.002 },
-      { baseFreq: 2000, range: 600, chirpLength: 0.1, probability: 0.0025 },
-      { baseFreq: 600, range: 200, chirpLength: 0.4, probability: 0.0015 }
-    ];
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+
     for (let i = 0; i < bufferSize; i++) {
-      const t = i / audioContext.sampleRate;
-      let leftSample = 0;
-      let rightSample = 0;
-      
-      // Generate different bird chirps
-      birdTypes.forEach(bird => {
-        if (Math.random() < bird.probability) {
-          const frequency = bird.baseFreq + (Math.random() - 0.5) * bird.range;
-          const chirpT = (t % bird.chirpLength) / bird.chirpLength;
-          const envelope = Math.sin(Math.PI * chirpT) * Math.exp(-chirpT * 3);
-          const vibrato = 1 + Math.sin(2 * Math.PI * 8 * t) * 0.1; // Natural vibrato
-          const chirp = Math.sin(2 * Math.PI * frequency * vibrato * t) * envelope * 0.3;
-          
-          // Spatial positioning
-          const pan = Math.random() * 2 - 1;
-          const distance = 0.3 + Math.random() * 0.7; // Distance affects volume
-          
-          leftSample += chirp * Math.max(0, 1 - pan) * distance;
-          rightSample += chirp * Math.max(0, 1 + pan) * distance;
+      let t = i / audioContext.sampleRate;
+      // Many random short chirps (FM burst hooked to random panning & freq)
+      if (Math.random() < 0.0012) {
+        let chirpFreq = 900 + Math.random() * 1400;
+        let chirpLen = 130 + Math.floor(Math.random() * 170);
+        let pan = Math.random();
+        for (let j = 0; j < chirpLen; j++) {
+          if (i + j < bufferSize) {
+            let env = Math.exp(-j / 24);
+            let chirp = Math.sin(2 * Math.PI * chirpFreq * (j / audioContext.sampleRate) + 4 * Math.sin(2 * Math.PI * 17 * (j / audioContext.sampleRate)));
+            chirp *= env * 0.16;
+            L[i + j] += chirp * (1 - pan);
+            R[i + j] += chirp * pan;
+          }
         }
-      });
-      
-      // Forest ambiance
-      const ambiance = (Math.random() * 2 - 1) * 0.05;
-      
-      leftChannel[i] = leftSample + ambiance;
-      rightChannel[i] = rightSample + ambiance;
+      }
+      // Distant trees/ambiance
+      let bg = (Math.random() * 2 - 1) * 0.01;
+      L[i] += bg;
+      R[i] += bg;
     }
-    
     return buffer;
   };
 
-  // Generate white noise with better quality
+  // --- HIGHER QUALITY NOISE GENERATORS ---
+
+  // White noise, normalize to avoid blowing out ears
   const generateWhiteNoise = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
     for (let i = 0; i < bufferSize; i++) {
-      // Generate uncorrelated noise for each channel
-      leftChannel[i] = (Math.random() * 2 - 1) * 0.7;
-      rightChannel[i] = (Math.random() * 2 - 1) * 0.7;
+      L[i] = (Math.random() * 2 - 1) * 0.23;
+      R[i] = (Math.random() * 2 - 1) * 0.23;
     }
-    
     return buffer;
   };
 
-  // Generate pink noise with proper filtering
+  // Pink noise with better filtering and kept low
   const generatePinkNoise = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
-    // Pink noise filter coefficients
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
     let b0L = 0, b1L = 0, b2L = 0, b3L = 0, b4L = 0, b5L = 0, b6L = 0;
     let b0R = 0, b1R = 0, b2R = 0, b3R = 0, b4R = 0, b5R = 0, b6R = 0;
-    
     for (let i = 0; i < bufferSize; i++) {
-      const whiteL = Math.random() * 2 - 1;
-      const whiteR = Math.random() * 2 - 1;
-      
-      // Apply pink noise filter to left channel
+      const whiteL = Math.random() * 2 - 1, whiteR = Math.random() * 2 - 1;
       b0L = 0.99886 * b0L + whiteL * 0.0555179;
       b1L = 0.99332 * b1L + whiteL * 0.0750759;
       b2L = 0.96900 * b2L + whiteL * 0.1538520;
       b3L = 0.86650 * b3L + whiteL * 0.3104856;
       b4L = 0.55000 * b4L + whiteL * 0.5329522;
       b5L = -0.7616 * b5L - whiteL * 0.0168980;
-      leftChannel[i] = (b0L + b1L + b2L + b3L + b4L + b5L + b6L + whiteL * 0.5362) * 0.11;
+      L[i] = (b0L + b1L + b2L + b3L + b4L + b5L + b6L + whiteL * 0.5362) * 0.035;
       b6L = whiteL * 0.115926;
-      
-      // Apply pink noise filter to right channel
       b0R = 0.99886 * b0R + whiteR * 0.0555179;
       b1R = 0.99332 * b1R + whiteR * 0.0750759;
       b2R = 0.96900 * b2R + whiteR * 0.1538520;
       b3R = 0.86650 * b3R + whiteR * 0.3104856;
       b4R = 0.55000 * b4R + whiteR * 0.5329522;
       b5R = -0.7616 * b5R - whiteR * 0.0168980;
-      rightChannel[i] = (b0R + b1R + b2R + b3R + b4R + b5R + b6R + whiteR * 0.5362) * 0.11;
+      R[i] = (b0R + b1R + b2R + b3R + b4R + b5R + b6R + whiteR * 0.5362) * 0.035;
       b6R = whiteR * 0.115926;
     }
-    
     return buffer;
   };
 
-  // Generate brown noise
+  // Brown noise, very mellow, not too loud
   const generateBrownNoise = (audioContext: AudioContext, duration: number = 20) => {
     const bufferSize = audioContext.sampleRate * duration;
     const buffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-    const leftChannel = buffer.getChannelData(0);
-    const rightChannel = buffer.getChannelData(1);
-    
-    let lastOutL = 0;
-    let lastOutR = 0;
-    
+    const L = buffer.getChannelData(0), R = buffer.getChannelData(1);
+    let lastOutL = 0, lastOutR = 0;
     for (let i = 0; i < bufferSize; i++) {
       const whiteL = Math.random() * 2 - 1;
       const whiteR = Math.random() * 2 - 1;
-      
-      leftChannel[i] = (lastOutL + (0.02 * whiteL)) / 1.02;
-      lastOutL = leftChannel[i];
-      leftChannel[i] *= 3.5;
-      
-      rightChannel[i] = (lastOutR + (0.02 * whiteR)) / 1.02;
-      lastOutR = rightChannel[i];
-      rightChannel[i] *= 3.5;
+      L[i] = (lastOutL + 0.02 * whiteL) / 1.02;
+      lastOutL = L[i]; L[i] *= 0.21;
+      R[i] = (lastOutR + 0.02 * whiteR) / 1.02;
+      lastOutR = R[i]; R[i] *= 0.21;
     }
-    
     return buffer;
   };
 
@@ -918,12 +780,16 @@ export const useAudioPlayer = () => {
 
     const source = audioContext.createBufferSource();
     source.buffer = buffer;
-    source.loop = true; // Enable seamless looping
-    
-    // Apply low-pass filter for warmer sound
-    const filter = applyLowPassFilter(audioContext, source, 8000);
+    source.loop = true;
+
+    // Slight lowpass filter for warmth (works for all)
+    const filter = audioContext.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 7000;
+    filter.Q.value = 0.8;
+    source.connect(filter);
     filter.connect(gainNodeRef.current);
-    
+
     return source;
   };
 
