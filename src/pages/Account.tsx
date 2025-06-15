@@ -28,7 +28,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 
 const Account = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, session, loading, signOut } = useAuth();
   const { 
     subscriptionTier, 
     isPremium, 
@@ -137,16 +137,19 @@ const Account = () => {
     if (!user) return;
     setDeleting(true);
     try {
-      // Use the user's session access token for authentication
-      const session = localStorage.getItem("sb-wjxxgccfazpkdfzbcgen-auth-token");
-      const parsed = session ? JSON.parse(session) : null;
-      const accessToken = parsed?.currentSession?.access_token;
-      // Fallback to try | supabase.auth.getSession().data.session?.access_token etc. if needed in your project context
+      // Prefer session from useAuth, fallback to supabase.auth.getSession()
+      let accessToken: string | undefined = session?.access_token;
+
+      if (!accessToken) {
+        // Try to get session from supabase as a fallback
+        const { data } = await supabase.auth.getSession();
+        accessToken = data.session?.access_token;
+      }
 
       if (!accessToken) {
         toast({
           title: "Not Authenticated",
-          description: "Could not find session token. Please login again.",
+          description: "Could not find your session. Please login again.",
           variant: "destructive",
         });
         setDeleting(false);
@@ -164,12 +167,11 @@ const Account = () => {
         const err = await res.json();
         throw new Error(err.error || "Failed to delete account");
       }
-      // Success!
+
       toast({
         title: "Account Deleted",
         description: "Your account and all data were deleted.",
       });
-      // Log out and redirect
       setTimeout(() => {
         signOut();
         window.location.href = "/";
