@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -35,9 +34,7 @@ export const useBabyProfile = () => {
 
   const fetchProfiles = async () => {
     if (!user) return;
-
     try {
-      // Fetch owned profiles
       const { data: ownedProfiles, error: ownedError } = await supabase
         .from('baby_profiles')
         .select('*')
@@ -55,12 +52,13 @@ export const useBabyProfile = () => {
         return;
       }
 
-      // Fetch shared profiles through family_members
+      // Fetch shared profiles
       const { data: familyMembers, error: familyError } = await supabase
         .from('family_members')
         .select(`
           baby_id,
           role,
+          status,
           baby_profiles!inner(*)
         `)
         .eq('user_id', user.id)
@@ -71,19 +69,21 @@ export const useBabyProfile = () => {
         // Don't fail completely, just continue with owned profiles
       }
 
-      // Combine owned and shared profiles
-      const allProfiles: BabyProfile[] = [
+      // Only show profiles user has valid role for
+      const allProfiles = [
         ...(ownedProfiles || []).map(profile => ({
           ...profile,
           is_shared: false,
           user_role: 'owner'
         })),
-        ...(familyMembers || []).map(member => ({
-          ...member.baby_profiles,
-          is_shared: true,
-          user_role: member.role,
-          is_active: false // Shared profiles are not active by default
-        }))
+        ...(familyMembers || [])
+          .filter(member => ['owner', 'caregiver', 'viewer'].includes(member.role))
+          .map(member => ({
+            ...member.baby_profiles,
+            is_shared: true,
+            user_role: member.role,
+            is_active: false // Shared profiles are not active by default
+          }))
       ];
 
       setProfiles(allProfiles);

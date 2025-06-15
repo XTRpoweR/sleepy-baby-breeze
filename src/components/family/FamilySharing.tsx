@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,6 +36,7 @@ import {
   Eye
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 
 interface FamilySharingProps {
   babyId: string;
@@ -56,6 +56,7 @@ const ROLE_COLORS = {
 
 export const FamilySharing = ({ babyId }: FamilySharingProps) => {
   const { members, invitations, loading, inviteFamilyMember, removeFamilyMember, cancelInvitation } = useFamilyMembers(babyId);
+  const { permissions } = useProfilePermissions(babyId);
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('caregiver');
   const [isInviting, setIsInviting] = useState(false);
@@ -95,6 +96,7 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Invite New Member */}
+      {permissions.canInvite && 
       <Card className="mx-2 sm:mx-0 shadow-sm">
         <CardHeader className="pb-4 sm:pb-6">
           <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
@@ -142,7 +144,7 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
           </form>
         </CardContent>
       </Card>
-
+      }
       {/* Invitation Links */}
       <div className="mx-2 sm:mx-0">
         <InvitationLink invitations={invitations} />

@@ -3,6 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+const validateRole = (role: string) =>
+  ['caregiver', 'viewer'].includes(role) ? role : 'viewer';
+
 interface FamilyMember {
   id: string;
   user_id: string;
@@ -38,13 +42,32 @@ export const useFamilyMembers = (babyId: string | null) => {
   const [invitations, setInvitations] = useState<FamilyInvitation[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [ownerCheck, setOwnerCheck] = useState(false);
+
+  // Only allow baby owners to fetch/manipulate family/invitations
+  const checkOwnerPermission = async () => {
+    if (!user || !babyId) {
+      setOwnerCheck(false);
+      return false;
+    }
+    const { data, error } = await supabase.rpc('get_family_member_role', {
+      user_uuid: user.id,
+      baby_uuid: babyId
+    });
+    if (error || !data || data !== 'owner') {
+      setOwnerCheck(false);
+      return false;
+    }
+    setOwnerCheck(true);
+    return true;
+  };
+
   const fetchFamilyMembers = async () => {
     if (!user || !babyId) {
-      console.log('Missing user or babyId:', { user: !!user, babyId });
       setLoading(false);
       return;
     }
-
+    await checkOwnerPermission();
     console.log('Fetching family members for baby:', babyId, 'user:', user.id);
 
     try {
@@ -125,6 +148,19 @@ export const useFamilyMembers = (babyId: string | null) => {
 
   const inviteFamilyMember = async (email: string, role: string = 'caregiver') => {
     if (!user || !babyId) return false;
+
+    // Enforce normalization
+    email = normalizeEmail(email);
+    role = validateRole(role);
+
+    if (!(await checkOwnerPermission())) {
+      toast({
+        title: "No Permission",
+        description: "Only baby owners can invite family.",
+        variant: "destructive",
+      });
+      return false;
+    }
 
     console.log('Inviting family member:', email, 'role:', role);
 
@@ -275,6 +311,14 @@ export const useFamilyMembers = (babyId: string | null) => {
 
   const removeFamilyMember = async (memberId: string) => {
     if (!user) return false;
+    if (!(await checkOwnerPermission())) {
+      toast({
+        title: "No Permission",
+        description: "Only baby owners can remove family.",
+        variant: "destructive",
+      });
+      return false;
+    }
 
     console.log('Removing family member:', memberId);
 
@@ -314,6 +358,14 @@ export const useFamilyMembers = (babyId: string | null) => {
 
   const cancelInvitation = async (invitationId: string) => {
     if (!user) return false;
+    if (!(await checkOwnerPermission())) {
+      toast({
+        title: "No Permission",
+        description: "Only baby owners can cancel invitations.",
+        variant: "destructive",
+      });
+      return false;
+    }
 
     console.log('Canceling invitation:', invitationId);
 
@@ -362,6 +414,7 @@ export const useFamilyMembers = (babyId: string | null) => {
     inviteFamilyMember,
     removeFamilyMember,
     cancelInvitation,
-    refetch: fetchFamilyMembers
+    refetch: fetchFamilyMembers,
+    ownerCheck
   };
 };

@@ -79,7 +79,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
   const createCheckout = async () => {
     if (upgrading) return;
-
     try {
       setUpgrading(true);
       // Always get the latest session before making the call
