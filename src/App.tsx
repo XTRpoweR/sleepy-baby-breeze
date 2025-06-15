@@ -27,6 +27,7 @@ import HelpCenter from "./pages/HelpCenter";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Blog from "./pages/Blog";
 import Careers from "./pages/Careers";
+import Tutorial from "./pages/Tutorial";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,8 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/help" element={<HelpCenter />} />
+                <Route path="/tutorial" element={<Tutorial />} />
+                <Route path="/getting-started" element={<Tutorial />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/careers" element={<Careers />} />

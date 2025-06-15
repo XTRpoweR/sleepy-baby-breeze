@@ -21,7 +21,10 @@ import {
   Baby,
   BarChart3,
   Volume2,
-  Calendar
+  Calendar,
+  PlayCircle,
+  GraduationCap,
+  ArrowRight
 } from "lucide-react";
 
 const HelpCenter = () => {
@@ -74,6 +77,33 @@ const HelpCenter = () => {
     }
   ];
 
+  const quickStartOptions = [
+    {
+      title: "Interactive Tutorial",
+      description: "Step-by-step guided tour of all features",
+      icon: GraduationCap,
+      action: () => navigate('/tutorial'),
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
+    },
+    {
+      title: "Video Guides",
+      description: "Watch how to use key features",
+      icon: PlayCircle,
+      action: () => {},
+      color: "text-green-600",
+      bgColor: "bg-green-50"
+    },
+    {
+      title: "Quick Setup",
+      description: "Get started in under 5 minutes",
+      icon: Baby,
+      action: () => navigate('/dashboard'),
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
+    }
+  ];
+
   const popularArticles = [
     "How to create your first baby profile",
     "Understanding sleep pattern charts",
@@ -106,8 +136,8 @@ const HelpCenter = () => {
             </div>
             <div className="flex items-center space-x-4">
               <LanguageSelector />
-              <Button onClick={() => navigate('/contact')} variant="outline">
-                Contact Support
+              <Button onClick={() => navigate('/tutorial')} className="bg-blue-600 hover:bg-blue-700">
+                Start Tutorial
               </Button>
             </div>
           </div>
@@ -136,6 +166,40 @@ const HelpCenter = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Start Section */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Quick Start Options
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {quickStartOptions.map((option, index) => {
+              const IconComponent = option.icon;
+              return (
+                <Card 
+                  key={index} 
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                  onClick={option.action}
+                >
+                  <CardContent className="p-8 text-center">
+                    <div className={`inline-flex p-4 rounded-2xl ${option.bgColor} mb-6 group-hover:scale-110 transition-transform`}>
+                      <IconComponent className={`h-8 w-8 ${option.color}`} />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{option.title}</h3>
+                    <p className="text-gray-600 mb-4">{option.description}</p>
+                    <div className="flex items-center justify-center text-blue-600 group-hover:text-blue-700">
+                      <span className="mr-2">Get Started</span>
+                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -203,6 +267,18 @@ const HelpCenter = () => {
                 Additional Resources
               </h2>
               <div className="space-y-6">
+                <Card className="border-0 shadow-lg cursor-pointer" onClick={() => navigate('/tutorial')}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <GraduationCap className="h-8 w-8 text-blue-600" />
+                      <div>
+                        <h3 className="font-bold text-lg">Interactive Tutorial</h3>
+                        <p className="text-gray-600">Complete step-by-step walkthrough</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
                 <Card className="border-0 shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">

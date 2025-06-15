@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "SleepyBaby",
@@ -13,7 +12,8 @@
     "dashboard": "Till instrumentpanel",
     "signOut": "Logga ut",
     "back": "Tillbaka",
-    "backToDashboard": "Tillbaka till instrumentpanel"
+    "backToDashboard": "Tillbaka till instrumentpanel",
+    "tutorial": "Handledning"
   },
   "hero": {
     "title": "Bättre sömn för",
@@ -25,6 +25,59 @@
     "freeTrial": "Gratis i 14 dagar",
     "noCreditCard": "Inget kreditkort krävs",
     "madeByParents": "Gjort av föräldrar"
+  },
+  "tutorial": {
+    "title": "Kom igång med SleepyBaby",
+    "subtitle": "Lär dig hur du spårar, förstår och förbättrar ditt barns sömnmönster med vår steg-för-steg guide.",
+    "progress": "Framsteg",
+    "videoTitle": "Video handledning",
+    "videoComingSoon": "Video handledning kommer snart",
+    "estimatedTime": "Uppskattad tid",
+    "difficulty": "Svårighetsgrad",
+    "beginner": "Nybörjare",
+    "completedSteps": "{{completed}} av {{total}} steg slutförda",
+    "allCompleted": "Alla steg slutförda!",
+    "steps": {
+      "setup": {
+        "title": "Kontoinställning",
+        "description": "Skapa ditt konto och sätt upp din första barnprofil",
+        "step1": "Registrera dig för ditt gratis SleepyBaby-konto med din e-postadress",
+        "step2": "Verifiera din e-post och fyll i din profilinformation",
+        "step3": "Skapa din första barnprofil med namn och födelsedatum",
+        "step4": "Bekanta dig med instrumentpanelens layout och huvudfunktioner"
+      },
+      "tracking": {
+        "title": "Aktivitetsspårning",
+        "description": "Lär dig hur du loggar sömn, matning och blöjaktiviteter",
+        "step1": "Starta en live sömnsession eller logga sömn manuellt med start-/sluttider",
+        "step2": "Registrera matningssessioner inklusive typ (bröst/ersättning) och varaktighet",
+        "step3": "Spåra blöjbyten med innehåll (våt/smutsig) och anteckningar",
+        "step4": "Lägg till anpassade aktiviteter som magläge, badtid eller leksessioner"
+      },
+      "reports": {
+        "title": "Rapporter och analys",
+        "description": "Förstå ditt barns mönster genom diagram och insikter",
+        "step1": "Visa dagliga sömnsammanfattningar och totala sovtimmar per dag",
+        "step2": "Analysera matmönster och frekvens över tid",
+        "step3": "Använd datumintervallfilter för att visa data för specifika perioder",
+        "step4": "Identifiera trender och mönster för att optimera ditt barns rutin"
+      },
+      "advanced": {
+        "title": "Avancerade funktioner",
+        "description": "Utforska sömnscheman, ljud och familjeindelning",
+        "step1": "Skapa personliga sömnscheman baserat på ditt barns ålder",
+        "step2": "Använd vårt ljudbibliotek med vitt brus och vaggvisor",
+        "step3": "Bjud in familjemedlemmar att samarbeta kring spårning",
+        "step4": "Ställ in aviseringar och anpassa din upplevelse"
+      }
+    },
+    "actions": {
+      "createProfile": "Skapa barnprofil",
+      "startTracking": "Börja spåra aktiviteter",
+      "viewReports": "Visa rapporter och analys",
+      "exploreFeatures": "Utforska avancerade funktioner",
+      "markCompleted": "Markera som slutförd"
+    }
   },
   "features": {
     "title": "Allt du behöver för bättre sömn",

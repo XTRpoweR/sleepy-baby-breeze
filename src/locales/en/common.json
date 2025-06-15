@@ -12,7 +12,8 @@
     "dashboard": "Go to Dashboard",
     "signOut": "Sign Out",
     "backToDashboard": "Back to Dashboard",
-    "back": "Back"
+    "back": "Back",
+    "tutorial": "Tutorial"
   },
   "hero": {
     "title": "Better Sleep for",
@@ -24,6 +25,59 @@
     "freeTrial": "Free for 14 days",
     "noCreditCard": "No credit card required",
     "madeByParents": "Made by parents"
+  },
+  "tutorial": {
+    "title": "Getting Started with SleepyBaby",
+    "subtitle": "Learn how to track, understand, and improve your baby's sleep patterns with our step-by-step guide.",
+    "progress": "Progress",
+    "videoTitle": "Video Tutorial",
+    "videoComingSoon": "Video tutorial coming soon",
+    "estimatedTime": "Estimated time",
+    "difficulty": "Difficulty",
+    "beginner": "Beginner",
+    "completedSteps": "{{completed}} of {{total}} steps completed",
+    "allCompleted": "All steps completed!",
+    "steps": {
+      "setup": {
+        "title": "Account Setup",
+        "description": "Create your account and set up your first baby profile",
+        "step1": "Sign up for your free SleepyBaby account using your email address",
+        "step2": "Verify your email and complete your profile information",
+        "step3": "Create your first baby profile with name and birth date",
+        "step4": "Familiarize yourself with the dashboard layout and main features"
+      },
+      "tracking": {
+        "title": "Activity Tracking",
+        "description": "Learn how to log sleep, feeding, and diaper activities",
+        "step1": "Start a live sleep session or log sleep manually with start/end times",
+        "step2": "Record feeding sessions including type (breast/formula) and duration",
+        "step3": "Track diaper changes with contents (wet/soiled) and notes",
+        "step4": "Add custom activities like tummy time, bath time, or play sessions"
+      },
+      "reports": {
+        "title": "Reports & Analytics",
+        "description": "Understand your baby's patterns through charts and insights",
+        "step1": "View daily sleep summaries and total hours of sleep per day",
+        "step2": "Analyze feeding patterns and frequency over time",
+        "step3": "Use date range filters to view data for specific periods",
+        "step4": "Identify trends and patterns to optimize your baby's routine"
+      },
+      "advanced": {
+        "title": "Advanced Features",
+        "description": "Explore sleep schedules, sounds, and family sharing",
+        "step1": "Create personalized sleep schedules based on your baby's age",
+        "step2": "Use our sound library with white noise and lullabies",
+        "step3": "Invite family members to collaborate on tracking",
+        "step4": "Set up notifications and customize your experience"
+      }
+    },
+    "actions": {
+      "createProfile": "Create Baby Profile",
+      "startTracking": "Start Tracking Activities",
+      "viewReports": "View Reports & Analytics",
+      "exploreFeatures": "Explore Advanced Features",
+      "markCompleted": "Mark as Completed"
+    }
   },
   "features": {
     "title": "Everything You Need for Better Sleep",

@@ -19,7 +19,8 @@ import {
   Crown,
   Settings,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  GraduationCap
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
@@ -140,12 +141,26 @@ const Dashboard = () => {
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
         {/* Welcome Section */}
         <div className="mb-6 lg:mb-8">
-          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-            {userName ? t('dashboard.welcome', { name: userName }) : t('dashboard.welcomeFallback')}
-          </h1>
-          <p className="text-gray-600 mb-4 lg:mb-6 text-sm lg:text-base">
-            {t('dashboard.subtitle')}
-          </p>
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mb-4">
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+                {userName ? t('dashboard.welcome', { name: userName }) : t('dashboard.welcomeFallback')}
+              </h1>
+              <p className="text-gray-600 mb-4 lg:mb-6 text-sm lg:text-base">
+                {t('dashboard.subtitle')}
+              </p>
+            </div>
+            
+            {/* Tutorial Button */}
+            <Button 
+              onClick={() => navigate('/tutorial')}
+              variant="outline"
+              className="w-full lg:w-auto flex items-center space-x-2 mb-4 lg:mb-0"
+            >
+              <GraduationCap className="h-4 w-4" />
+              <span>Quick Tutorial</span>
+            </Button>
+          </div>
           
           {/* Profile Selector */}
           <div className="mb-4 lg:mb-6">
