@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "SleepyBaby",
@@ -120,6 +121,8 @@
     "familySharingDesc": "Invite family members and caregivers",
     "viewReports": "View Reports",
     "viewReportsDesc": "Analyze sleep and activity patterns",
+    "pediatricianReports": "Pediatrician Reports",
+    "pediatricianReportsDesc": "Generate professional reports for your doctor",
     "todaysActivity": "Today's Activity Summary",
     "weekOverview": "Week Overview",
     "averageSleep": "Average Sleep",

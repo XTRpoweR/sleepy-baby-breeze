@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useNavigate } from "react-router-dom";
-import { Crown, Baby, History, Users, BarChart3, Volume2, Camera, X } from "lucide-react";
+import { Crown, Baby, History, Users, BarChart3, Volume2, Camera, X, FileText } from "lucide-react";
 
 interface UpgradePromptProps {
   isOpen: boolean;
   onClose: () => void;
-  feature: 'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories';
+  feature: 'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician';
 }
 
 export const UpgradePrompt = ({ isOpen, onClose, feature }: UpgradePromptProps) => {
@@ -80,6 +80,17 @@ export const UpgradePrompt = ({ isOpen, onClose, feature }: UpgradePromptProps) 
         "Organize memories by date",
         "Add titles and descriptions",
         "Share memories with family"
+      ]
+    },
+    pediatrician: {
+      icon: FileText,
+      title: "Pediatrician Reports",
+      description: "Generate professional reports to share with your healthcare provider.",
+      benefits: [
+        "Generate comprehensive health reports",
+        "Easy to download and securely share",
+        "Professional formatting for doctors",
+        "Track growth and development milestones"
       ]
     }
   };

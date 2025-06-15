@@ -7,7 +7,7 @@ import { Crown, Lock } from 'lucide-react';
 
 interface FeatureGateProps {
   children: ReactNode;
-  feature: 'profiles' | 'history' | 'sharing' | 'reports' | 'sounds';
+  feature: 'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'pediatrician';
   fallback?: ReactNode;
   showUpgrade?: boolean;
   onUpgradeClick?: () => void;
@@ -38,7 +38,8 @@ export const FeatureGate = ({
     history: 'Extended History',
     sharing: 'Family Sharing',
     reports: 'Advanced Reports',
-    sounds: 'Premium Sounds'
+    sounds: 'Premium Sounds',
+    pediatrician: 'Pediatrician Reports'
   };
 
   return (
