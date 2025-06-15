@@ -248,12 +248,12 @@ const Features = () => {
               Unlock additional powerful features with SleepyBaby Premium
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* FIXED: Use responsive 1/2/3 columns for premium features for best appearance */}
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {premiumFeatures.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card key={index} className="border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <Card key={index} className="border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between">
                   <CardHeader>
                     <div className="flex items-center justify-between mb-4">
                       <div className="inline-flex p-3 rounded-2xl bg-orange-100">
@@ -270,7 +270,6 @@ const Features = () => {
               );
             })}
           </div>
-
           <div className="text-center mt-12">
             <Button size="lg" onClick={() => navigate('/pricing')} className="bg-orange-600 hover:bg-orange-700">
               Upgrade to Premium
@@ -345,3 +344,4 @@ const Features = () => {
 };
 
 export default Features;
+
