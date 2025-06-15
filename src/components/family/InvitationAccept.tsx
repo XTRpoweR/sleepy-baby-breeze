@@ -16,7 +16,8 @@ import {
   Heart,
   Shield,
   Eye,
-  AlertTriangle
+  AlertTriangle,
+  LogIn
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -62,7 +63,6 @@ export const InvitationAccept = () => {
   const [invitation, setInvitation] = useState<InvitationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
-  const [emailMismatch, setEmailMismatch] = useState(false);
 
   const token = searchParams.get('token');
 
@@ -88,7 +88,7 @@ export const InvitationAccept = () => {
     console.log('Fetching invitation with token:', token);
 
     try {
-      // Use service role key to bypass RLS for invitation lookup
+      // Fetch invitation data - this now works for unauthenticated users
       const { data: invitationData, error: invitationError } = await supabase
         .from('family_invitations')
         .select('*')
@@ -116,14 +116,14 @@ export const InvitationAccept = () => {
         return;
       }
 
-      // Fetch baby profile
+      // Fetch baby profile - this now works for unauthenticated users
       const { data: babyData, error: babyError } = await supabase
         .from('baby_profiles')
         .select('name')
         .eq('id', invitationData.baby_id)
         .maybeSingle();
 
-      // Fetch inviter profile
+      // Fetch inviter profile - this now works for unauthenticated users
       const { data: inviterData, error: inviterError } = await supabase
         .from('profiles')
         .select('full_name')
@@ -135,17 +135,6 @@ export const InvitationAccept = () => {
         baby_name: babyData?.name || 'Baby',
         inviter_name: inviterData?.full_name || 'Someone'
       });
-
-      // Check for email mismatch early if user is logged in
-      if (user) {
-        const invitedEmail = normalizeEmail(invitationData.email);
-        const userEmail = normalizeEmail(user.email || '');
-        console.log('Email comparison:', { invitedEmail, userEmail, match: invitedEmail === userEmail });
-        
-        if (invitedEmail !== userEmail) {
-          setEmailMismatch(true);
-        }
-      }
     } catch (error) {
       console.error('Error fetching invitation:', error);
       toast({
@@ -158,21 +147,26 @@ export const InvitationAccept = () => {
     }
   };
 
-  const acceptInvitation = async () => {
-    if (!user || !invitation) return;
+  const handleAcceptInvitation = async () => {
+    if (!invitation) return;
+
+    // If user is not authenticated, redirect to auth page with the invitation token
+    if (!user) {
+      const currentUrl = new URL(window.location.href);
+      navigate(`/auth?redirect=${encodeURIComponent(currentUrl.pathname + currentUrl.search)}`);
+      return;
+    }
 
     setProcessing(true);
 
     try {
-      // Check if user's email matches the invitation with improved comparison
+      // Check if user's email matches the invitation
       const invitedEmail = normalizeEmail(invitation.email);
       const userEmail = normalizeEmail(user.email || '');
       
-      console.log('Final email verification:', { 
+      console.log('Email verification:', { 
         invitedEmail, 
         userEmail, 
-        originalInvited: invitation.email,
-        originalUser: user.email,
         match: invitedEmail === userEmail 
       });
 
@@ -234,7 +228,7 @@ export const InvitationAccept = () => {
         description: `You've successfully joined ${invitation.baby_name}'s family sharing as a ${invitation.role}.`,
       });
 
-      // Redirect to dashboard with a slight delay to ensure state updates
+      // Redirect to dashboard
       setTimeout(() => {
         navigate('/dashboard');
       }, 1000);
@@ -277,7 +271,7 @@ export const InvitationAccept = () => {
         description: "You have declined the family sharing invitation.",
       });
 
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Error declining invitation:', error);
       toast({
@@ -301,26 +295,6 @@ export const InvitationAccept = () => {
     );
   }
 
-  if (!user && !authLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center">Sign In Required</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-gray-600 mb-4">
-              Please sign in to accept this family sharing invitation.
-            </p>
-            <Button onClick={() => navigate('/auth')} className="bg-blue-600 hover:bg-blue-700">
-              Sign In
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   if (!invitation) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
@@ -335,8 +309,8 @@ export const InvitationAccept = () => {
             <p className="text-gray-600 mb-4">
               This invitation link is invalid, expired, or has already been used.
             </p>
-            <Button onClick={() => navigate('/dashboard')} variant="outline">
-              Go to Dashboard
+            <Button onClick={() => navigate('/')} variant="outline">
+              Go Home
             </Button>
           </CardContent>
         </Card>
@@ -346,6 +320,10 @@ export const InvitationAccept = () => {
 
   const RoleIcon = ROLE_ICONS[invitation.role as keyof typeof ROLE_ICONS] || Shield;
   const permissions = ROLE_PERMISSIONS[invitation.role as keyof typeof ROLE_PERMISSIONS] || [];
+
+  // Show email mismatch warning only if user is logged in and emails don't match
+  const showEmailMismatch = user && 
+    normalizeEmail(invitation.email) !== normalizeEmail(user.email || '');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -369,14 +347,14 @@ export const InvitationAccept = () => {
             </p>
           </div>
 
-          {emailMismatch && user && (
+          {showEmailMismatch && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
               <div className="flex items-start space-x-2">
                 <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
                 <div>
                   <h4 className="font-medium text-amber-800">Email Mismatch Warning</h4>
                   <p className="text-sm text-amber-700 mt-1">
-                    This invitation was sent to <strong>{invitation.email}</strong> but you're signed in as <strong>{user.email}</strong>.
+                    This invitation was sent to <strong>{invitation.email}</strong> but you're signed in as <strong>{user?.email}</strong>.
                   </p>
                   <p className="text-sm text-amber-700 mt-2">
                     You may need to sign in with the correct account or contact the person who invited you.
@@ -387,6 +365,10 @@ export const InvitationAccept = () => {
           )}
 
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Invited to:</span>
+              <span className="font-medium">{invitation.email}</span>
+            </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Role:</span>
               <Badge className={invitation.role === 'caregiver' ? 'bg-blue-100 text-blue-800' : invitation.role === 'viewer' ? 'bg-gray-100 text-gray-800' : 'bg-yellow-100 text-yellow-800'}>
@@ -414,18 +396,34 @@ export const InvitationAccept = () => {
             </div>
           )}
 
+          {!user && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start space-x-2">
+                <LogIn className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div>
+                  <h4 className="font-medium text-blue-800">Sign In Required</h4>
+                  <p className="text-sm text-blue-700 mt-1">
+                    To accept this invitation, you'll need to sign in or create an account.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex space-x-3">
             <Button
-              onClick={acceptInvitation}
+              onClick={handleAcceptInvitation}
               disabled={processing}
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
               {processing ? (
                 <Clock className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
+              ) : user ? (
                 <CheckCircle className="h-4 w-4 mr-2" />
+              ) : (
+                <LogIn className="h-4 w-4 mr-2" />
               )}
-              Accept
+              {user ? 'Accept' : 'Sign In & Accept'}
             </Button>
             <Button
               onClick={declineInvitation}
