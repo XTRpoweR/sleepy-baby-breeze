@@ -410,7 +410,7 @@ const Index = () => {
             <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
               Start Free Trial
             </Button>
-            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6 border-white text-white hover:text-blue-600 transition-all duration-300 hover:scale-105 font-medium bg-zinc-50">
+            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6 border-white transition-all duration-300 hover:scale-105 font-medium bg-zinc-50 text-indigo-600">
               View Pricing
             </Button>
           </div>
