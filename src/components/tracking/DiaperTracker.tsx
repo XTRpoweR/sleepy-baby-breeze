@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ interface DiaperTrackerProps {
 }
 
 export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) => {
+  const { t } = useTranslation();
   const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
   const [changeTime, setChangeTime] = useState('');
   const [isWet, setIsWet] = useState(false);
@@ -56,13 +58,13 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
       <CardHeader className="pb-3 sm:pb-6">
         <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
           <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-pink-600" />
-          <span>Diaper Change</span>
+          <span>{t('tracking.diaperTracker.title')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="changeTime" className="text-sm sm:text-base">Change Time *</Label>
+            <Label htmlFor="changeTime" className="text-sm sm:text-base">{t('tracking.diaperTracker.changeTimeRequired')}</Label>
             <Input
               id="changeTime"
               type="datetime-local"
@@ -74,7 +76,7 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
           </div>
 
           <div>
-            <Label className="text-sm sm:text-base">Diaper Contents *</Label>
+            <Label className="text-sm sm:text-base">{t('tracking.diaperTracker.contentsRequired')}</Label>
             <div className="space-y-3 mt-3">
               <div className="flex items-center space-x-3">
                 <Checkbox 
@@ -84,7 +86,7 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
                 />
                 <Label htmlFor="wet" className="flex items-center space-x-2 text-sm sm:text-base">
                   <DropletIcon className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
-                  <span>Wet</span>
+                  <span>{t('tracking.diaperTracker.wetLabel')}</span>
                 </Label>
               </div>
               <div className="flex items-center space-x-3">
@@ -95,19 +97,19 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
                 />
                 <Label htmlFor="soiled" className="flex items-center space-x-2 text-sm sm:text-base">
                   <Circle className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-600" />
-                  <span>Soiled</span>
+                  <span>{t('tracking.diaperTracker.soiledLabel')}</span>
                 </Label>
               </div>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="notes" className="text-sm sm:text-base">Notes (Optional)</Label>
+            <Label htmlFor="notes" className="text-sm sm:text-base">{t('tracking.diaperTracker.notesLabel')}</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Any observations about the diaper change..."
+              placeholder={t('tracking.diaperTracker.notesPlaceholder')}
               rows={3}
               className="mt-1"
             />
@@ -118,7 +120,7 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
             className="w-full bg-pink-600 hover:bg-pink-700 py-2 sm:py-3"
             disabled={!changeTime || (!isWet && !isSoiled) || isSubmitting}
           >
-            {isSubmitting ? 'Saving...' : 'Log Diaper Change'}
+            {isSubmitting ? t('tracking.diaperTracker.submittingButton') : t('tracking.diaperTracker.submitButton')}
           </Button>
         </form>
       </CardContent>

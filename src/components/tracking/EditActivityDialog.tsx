@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -31,6 +32,7 @@ interface EditActivityDialogProps {
 }
 
 export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: EditActivityDialogProps) => {
+  const { t } = useTranslation();
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [notes, setNotes] = useState('');
@@ -70,22 +72,22 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
 
   const getActivityTitle = () => {
     if (log.activity_type === 'custom') {
-      return log.metadata?.activity_name || 'Custom Activity';
+      return log.metadata?.activity_name || t('activities.custom');
     }
-    return log.activity_type.charAt(0).toUpperCase() + log.activity_type.slice(1);
+    return t(`activities.${log.activity_type}`);
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit {getActivityTitle()}</DialogTitle>
+          <DialogTitle>{t('tracking.editActivity.title', { activity: getActivityTitle() })}</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="editStartTime">Start Time *</Label>
+              <Label htmlFor="editStartTime">{t('tracking.editActivity.startTimeLabel')}</Label>
               <Input
                 id="editStartTime"
                 type="datetime-local"
@@ -95,7 +97,7 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
               />
             </div>
             <div>
-              <Label htmlFor="editEndTime">End Time</Label>
+              <Label htmlFor="editEndTime">{t('tracking.editActivity.endTimeLabel')}</Label>
               <Input
                 id="editEndTime"
                 type="datetime-local"
@@ -106,22 +108,22 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
           </div>
 
           <div>
-            <Label htmlFor="editNotes">Notes</Label>
+            <Label htmlFor="editNotes">{t('tracking.editActivity.notesLabel')}</Label>
             <Textarea
               id="editNotes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add any notes about this activity..."
+              placeholder={t('tracking.editActivity.notesPlaceholder')}
               rows={3}
             />
           </div>
 
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {t('tracking.editActivity.cancelButton')}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+              {isSubmitting ? t('tracking.editActivity.savingButton') : t('tracking.editActivity.saveButton')}
             </Button>
           </div>
         </form>

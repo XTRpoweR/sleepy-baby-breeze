@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,15 +16,8 @@ interface CustomActivityTrackerProps {
   onActivityAdded?: () => void;
 }
 
-const PRESET_ACTIVITIES = [
-  { id: 'tummy_time', name: 'Tummy Time', icon: Activity },
-  { id: 'bath', name: 'Bath Time', icon: Bath },
-  { id: 'playtime', name: 'Play Time', icon: Smile },
-  { id: 'walk', name: 'Walk/Outing', icon: Activity },
-  { id: 'custom', name: 'Custom Activity', icon: Plus }
-];
-
 export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivityTrackerProps) => {
+  const { t } = useTranslation();
   const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
   const [activityType, setActivityType] = useState('');
   const [customName, setCustomName] = useState('');
@@ -31,6 +25,14 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
   const [endTime, setEndTime] = useState('');
   const [notes, setNotes] = useState('');
   const isMobile = useIsMobile();
+
+  const PRESET_ACTIVITIES = [
+    { id: 'tummy_time', name: t('tracking.customActivityTracker.tummyTime'), icon: Activity },
+    { id: 'bath', name: t('tracking.customActivityTracker.bathTime'), icon: Bath },
+    { id: 'playtime', name: t('tracking.customActivityTracker.playTime'), icon: Smile },
+    { id: 'walk', name: t('tracking.customActivityTracker.walkOuting'), icon: Activity },
+    { id: 'custom', name: t('tracking.customActivityTracker.customActivity'), icon: Plus }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,16 +72,16 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
       <CardHeader className="pb-3 sm:pb-6">
         <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
           <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
-          <span>Custom Activities</span>
+          <span>{t('tracking.customActivityTracker.title')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="activityType" className="text-sm sm:text-base">Activity Type *</Label>
+            <Label htmlFor="activityType" className="text-sm sm:text-base">{t('tracking.customActivityTracker.activityTypeRequired')}</Label>
             <Select value={activityType} onValueChange={setActivityType}>
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select an activity" />
+                <SelectValue placeholder={t('tracking.customActivityTracker.activityTypePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {PRESET_ACTIVITIES.map((activity) => {
@@ -99,12 +101,12 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
 
           {activityType === 'custom' && (
             <div>
-              <Label htmlFor="customName" className="text-sm sm:text-base">Custom Activity Name *</Label>
+              <Label htmlFor="customName" className="text-sm sm:text-base">{t('tracking.customActivityTracker.customNameRequired')}</Label>
               <Input
                 id="customName"
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
-                placeholder="Enter activity name"
+                placeholder={t('tracking.customActivityTracker.customNamePlaceholder')}
                 required
                 className="mt-1"
               />
@@ -113,7 +115,7 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
 
           <div className="grid grid-cols-1 gap-4">
             <div>
-              <Label htmlFor="startTime" className="text-sm sm:text-base">Start Time *</Label>
+              <Label htmlFor="startTime" className="text-sm sm:text-base">{t('tracking.customActivityTracker.startTimeRequired')}</Label>
               <Input
                 id="startTime"
                 type="datetime-local"
@@ -124,7 +126,7 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
               />
             </div>
             <div>
-              <Label htmlFor="endTime" className="text-sm sm:text-base">End Time</Label>
+              <Label htmlFor="endTime" className="text-sm sm:text-base">{t('tracking.customActivityTracker.endTimeLabel')}</Label>
               <Input
                 id="endTime"
                 type="datetime-local"
@@ -136,12 +138,12 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
           </div>
 
           <div>
-            <Label htmlFor="notes" className="text-sm sm:text-base">Notes (Optional)</Label>
+            <Label htmlFor="notes" className="text-sm sm:text-base">{t('tracking.customActivityTracker.notesLabel')}</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="How did the activity go? Any observations..."
+              placeholder={t('tracking.customActivityTracker.notesPlaceholder')}
               rows={3}
               className="mt-1"
             />
@@ -152,7 +154,7 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
             className="w-full bg-orange-600 hover:bg-orange-700 py-2 sm:py-3"
             disabled={!startTime || !activityType || (activityType === 'custom' && !customName.trim()) || isSubmitting}
           >
-            {isSubmitting ? 'Saving...' : 'Log Activity'}
+            {isSubmitting ? t('tracking.customActivityTracker.submittingButton') : t('tracking.customActivityTracker.submitButton')}
           </Button>
         </form>
       </CardContent>

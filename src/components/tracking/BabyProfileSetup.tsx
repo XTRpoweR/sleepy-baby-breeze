@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +13,7 @@ interface BabyProfileSetupProps {
 }
 
 export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -42,19 +44,19 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
         <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
           <Baby className="h-8 w-8 text-blue-600" />
         </div>
-        <CardTitle>Set Up Baby Profile</CardTitle>
-        <p className="text-gray-600">Create a profile to start tracking activities</p>
+        <CardTitle>{t('tracking.babyProfileSetup.title')}</CardTitle>
+        <p className="text-gray-600">{t('tracking.babyProfileSetup.subtitle')}</p>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name">Baby's Name *</Label>
+            <Label htmlFor="name">{t('tracking.babyProfileSetup.nameRequired')}</Label>
             <Input
               id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter baby's name"
+              placeholder={t('tracking.babyProfileSetup.namePlaceholder')}
               required
             />
           </div>
@@ -62,7 +64,7 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
           <div>
             <Label htmlFor="birthDate" className="flex items-center space-x-2">
               <Calendar className="h-4 w-4" />
-              <span>Birth Date (Optional)</span>
+              <span>{t('tracking.babyProfileSetup.birthDateLabel')}</span>
             </Label>
             <Input
               id="birthDate"
@@ -73,7 +75,7 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
           </div>
 
           <div>
-            <Label className="mb-3 block">Photo (Optional)</Label>
+            <Label className="mb-3 block">{t('tracking.babyProfileSetup.photoLabel')}</Label>
             <PhotoUpload
               value={photoUrl || undefined}
               onChange={setPhotoUrl}
@@ -86,7 +88,7 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
             className="w-full bg-blue-600 hover:bg-blue-700"
             disabled={!name.trim() || isSubmitting}
           >
-            {isSubmitting ? 'Creating...' : 'Create Profile'}
+            {isSubmitting ? t('tracking.babyProfileSetup.creatingButton') : t('tracking.babyProfileSetup.createButton')}
           </Button>
         </form>
       </CardContent>

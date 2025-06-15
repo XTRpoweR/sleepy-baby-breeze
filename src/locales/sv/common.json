@@ -11,7 +11,9 @@
     "reviews": "Recensioner",
     "getStarted": "Kom igång",
     "dashboard": "Till instrumentpanel",
-    "signOut": "Logga ut"
+    "signOut": "Logga ut",
+    "back": "Tillbaka",
+    "backToDashboard": "Tillbaka till instrumentpanel"
   },
   "hero": {
     "title": "Bättre sömn för",
@@ -50,6 +52,130 @@
     "multilingual": {
       "title": "Tillgänglig på 8 språk",
       "description": "Använd SleepyBaby på svenska, engelska, tyska, spanska, franska, italienska, grekiska och finska för en bekväm upplevelse på ditt modersmål."
+    }
+  },
+  "pages": {
+    "trackActivity": {
+      "loading": "Laddar...",
+      "title": "Spåra aktiviteter",
+      "subtitle": "Spåra {{name}}s aktiviteter idag",
+      "noActiveProfile": "Ingen aktiv profil",
+      "selectProfileMessage": "Välj eller skapa en barnprofil för att börja spåra aktiviteter."
+    }
+  },
+  "activities": {
+    "sleep": "Sömn",
+    "feeding": "Matning",
+    "diaper": "Blöja",
+    "custom": "Anpassad"
+  },
+  "tracking": {
+    "babyProfileSetup": {
+      "title": "Skapa barnprofil",
+      "subtitle": "Skapa en profil för att börja spåra aktiviteter",
+      "nameLabel": "Barnets namn",
+      "nameRequired": "Barnets namn *",
+      "namePlaceholder": "Ange barnets namn",
+      "birthDateLabel": "Födelsedatum (Valfritt)",
+      "photoLabel": "Foto (Valfritt)",
+      "createButton": "Skapa profil",
+      "creatingButton": "Skapar..."
+    },
+    "diaperTracker": {
+      "title": "Blöjbyte",
+      "changeTimeLabel": "Bytte tid",
+      "changeTimeRequired": "Bytte tid *",
+      "contentsLabel": "Blöjinnehåll",
+      "contentsRequired": "Blöjinnehåll *",
+      "wetLabel": "Våt",
+      "soiledLabel": "Smutsig",
+      "notesLabel": "Anteckningar (Valfritt)",
+      "notesPlaceholder": "Några observationer om blöjbytet...",
+      "submitButton": "Logga blöjbyte",
+      "submittingButton": "Sparar..."
+    },
+    "sleepTracker": {
+      "sessionTitle": "Sömnpass",
+      "manualTitle": "Logga sömn manuellt",
+      "startButton": "Starta sömnpass",
+      "endButton": "Avsluta sömnpass",
+      "sessionStarted": "Sömnpass startat",
+      "sessionStartedDesc": "Timer körs nu...",
+      "sessionEnded": "Sömnpass avslutat",
+      "sessionInProgress": "Sömnpass pågår...",
+      "sleepTypeLabel": "Sömntyp",
+      "napLabel": "Tupplur",
+      "nightLabel": "Nattsömn",
+      "startTimeLabel": "Starttid",
+      "startTimeRequired": "Starttid *",
+      "endTimeLabel": "Sluttid",
+      "notesLabel": "Anteckningar (Valfritt)",
+      "notesPlaceholder": "Hur var sömnen? Några observationer...",
+      "submitButton": "Logga sömnpass",
+      "submittingButton": "Sparar..."
+    },
+    "feedingTracker": {
+      "title": "Matningsspårare",
+      "feedingTypeLabel": "Matningstyp",
+      "breastfeedingLabel": "Amning",
+      "formulaLabel": "Ersättning",
+      "bothLabel": "Båda",
+      "breastSideLabel": "Bröstida",
+      "leftLabel": "Vänster",
+      "rightLabel": "Höger",
+      "bothSidesLabel": "Båda",
+      "startTimeLabel": "Starttid",
+      "startTimeRequired": "Starttid *",
+      "endTimeLabel": "Sluttid",
+      "quantityLabel": "Mängd (ml/oz)",
+      "quantityPlaceholder": "Konsumerad mängd",
+      "notesLabel": "Anteckningar (Valfritt)",
+      "notesPlaceholder": "Hur gick matningen? Några observationer...",
+      "submitButton": "Logga matning",
+      "submittingButton": "Sparar..."
+    },
+    "customActivityTracker": {
+      "title": "Anpassade aktiviteter",
+      "activityTypeLabel": "Aktivitetstyp",
+      "activityTypeRequired": "Aktivitetstyp *",
+      "activityTypePlaceholder": "Välj en aktivitet",
+      "customNameLabel": "Anpassat aktivitetsnamn",
+      "customNameRequired": "Anpassat aktivitetsnamn *",
+      "customNamePlaceholder": "Ange aktivitetsnamn",
+      "tummyTime": "Magläge",
+      "bathTime": "Badtid",
+      "playTime": "Lektid",
+      "walkOuting": "Promenad/Utflykt",
+      "customActivity": "Anpassad aktivitet",
+      "startTimeLabel": "Starttid",
+      "startTimeRequired": "Starttid *",
+      "endTimeLabel": "Sluttid",
+      "notesLabel": "Anteckningar (Valfritt)",
+      "notesPlaceholder": "Hur gick aktiviteten? Några observationer...",
+      "submitButton": "Logga aktivitet",
+      "submittingButton": "Sparar..."
+    },
+    "common": {
+      "startTime": "Starttid",
+      "endTime": "Sluttid",
+      "notes": "Anteckningar",
+      "notesOptional": "Anteckningar (Valfritt)",
+      "save": "Spara",
+      "cancel": "Avbryt",
+      "edit": "Redigera",
+      "delete": "Ta bort",
+      "saving": "Sparar...",
+      "required": "Obligatorisk"
+    },
+    "editActivity": {
+      "title": "Redigera {{activity}}",
+      "startTimeLabel": "Starttid *",
+      "endTimeLabel": "Sluttid",
+      "notesLabel": "Anteckningar",
+      "notesPlaceholder": "Lägg till anteckningar om denna aktivitet...",
+      "cancelButton": "Avbryt",
+      "saveButton": "Spara ändringar",
+      "savingButton": "Sparar..."
     }
   },
   "dashboard": {
