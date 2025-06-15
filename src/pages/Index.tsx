@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
 const Index = () => {
   const navigate = useNavigate();
   const {
@@ -14,6 +16,7 @@ const Index = () => {
   const {
     t
   } = useTranslation();
+  const { toast } = useToast();
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -27,6 +30,12 @@ const Index = () => {
     } else {
       navigate('/auth');
     }
+  };
+  const handleDownloadComingSoon = () => {
+    toast({
+      title: "Coming Soon",
+      description: "The Download feature is not available yet. Stay tuned!",
+    });
   };
   const features = [{
     icon: Clock,
@@ -440,7 +449,15 @@ const Index = () => {
               <div className="space-y-2 text-gray-400">
                 <Link to="/features" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('navigation.features')}</Link>
                 <Link to="/pricing" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</Link>
-                <Link to="/download" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.download')}</Link>
+                {/* Replace Download link with a button that shows "Coming Soon" */}
+                <button
+                  type="button"
+                  onClick={handleDownloadComingSoon}
+                  className="block w-full text-left text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0"
+                  style={{ font: 'inherit' }}
+                >
+                  {t('footer.download')}
+                </button>
               </div>
             </div>
             
