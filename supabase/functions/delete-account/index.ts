@@ -1,6 +1,5 @@
-
 import { serve } from "std/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "npm:@supabase/supabase-js";
 
 // Setup Supabase admin client
 const supabase = createClient(
