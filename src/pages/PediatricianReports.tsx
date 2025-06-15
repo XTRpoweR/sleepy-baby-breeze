@@ -25,6 +25,8 @@ import { SleepAnalytics } from '@/components/reports/SleepAnalytics';
 import { FeedingAnalytics } from '@/components/reports/FeedingAnalytics';
 import { ActivitySummary } from '@/components/reports/ActivitySummary';
 import { getDateRange, DateRangeOption } from '@/utils/dateRangeUtils';
+import { ReportTypesGrid } from "@/components/reports/ReportTypesGrid";
+import { HiddenReportsContainer } from "@/components/reports/HiddenReportsContainer";
 
 const PediatricianReports = () => {
   const { user, loading } = useAuth();
@@ -171,83 +173,22 @@ const PediatricianReports = () => {
       ) : (
         <div className="max-w-4xl mx-auto">
           {/* Report Types Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {reportTypes.map((report) => {
-              const IconComponent = report.icon;
-              return (
-                <Card key={report.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader className="pb-4">
-                    <div className="bg-teal-100 rounded-full w-12 h-12 flex items-center justify-center mb-3">
-                      <IconComponent className="h-6 w-6 text-teal-600" />
-                    </div>
-                    <CardTitle className="text-lg">{report.title}</CardTitle>
-                    <p className="text-sm text-gray-600">{report.description}</p>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="text-xs text-gray-500 flex items-center">
-                        <Calendar className="h-3 w-3 mr-1" />
-                        {report.timeframe}
-                      </span>
-                    </div>
-                    <Button 
-                      onClick={() => handleGenerateReport(report.id)}
-                      className="w-full bg-teal-600 hover:bg-teal-700"
-                      disabled={pdfLoading}
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      {pdfLoading ? 'Preparing...' : 'Generate Report'}
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+          <ReportTypesGrid
+            reportTypes={reportTypes}
+            onGenerateReport={handleGenerateReport}
+            pdfLoading={pdfLoading}
+          />
 
-          {/* Actual hidden report contents, rendered but visually hidden (for PDF) */}
-          <div style={{ position: 'fixed', left: -9999, top: -9999, width: '800px', pointerEvents: 'none', opacity: 0 }}>
-            <div ref={comprehensiveRef}>
-              <h2 className="text-2xl font-bold mb-2">Comprehensive Health Report</h2>
-              <ReportsOverview
-                babyId={activeProfile.id}
-                dateRange={getDateRange(comprehensiveRange)}
-              />
-              <SleepAnalytics
-                babyId={activeProfile.id}
-                dateRange={getDateRange(comprehensiveRange)}
-              />
-              <FeedingAnalytics
-                babyId={activeProfile.id}
-                dateRange={getDateRange(comprehensiveRange)}
-              />
-              <ActivitySummary
-                babyId={activeProfile.id}
-                dateRange={getDateRange(comprehensiveRange)}
-              />
-            </div>
-            <div ref={sleepRef}>
-              <h2 className="text-2xl font-bold mb-2">Sleep Pattern Analysis</h2>
-              <SleepAnalytics
-                babyId={activeProfile.id}
-                dateRange={getDateRange(sleepRange)}
-              />
-              <ReportsOverview
-                babyId={activeProfile.id}
-                dateRange={getDateRange(sleepRange)}
-              />
-            </div>
-            <div ref={growthRef}>
-              <h2 className="text-2xl font-bold mb-2">Growth & Development Report</h2>
-              <ReportsOverview
-                babyId={activeProfile.id}
-                dateRange={getDateRange(growthRange)}
-              />
-              <ActivitySummary
-                babyId={activeProfile.id}
-                dateRange={getDateRange(growthRange)}
-              />
-            </div>
-          </div>
+          {/* Hidden Reports used for PDF export */}
+          <HiddenReportsContainer
+            comprehensiveRef={comprehensiveRef}
+            sleepRef={sleepRef}
+            growthRef={growthRef}
+            activeProfile={activeProfile}
+            comprehensiveRange={comprehensiveRange}
+            sleepRange={sleepRange}
+            growthRange={growthRange}
+          />
 
           {/* Additional Information */}
           <Card className="bg-blue-50 border-blue-200">
