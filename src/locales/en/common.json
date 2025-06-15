@@ -384,6 +384,16 @@
       "notesPlaceholder": "How was the activity? Any observations...",
       "submitButton": "Log Activity",
       "submittingButton": "Saving..."
+    },
+    "editActivity": {
+      "title": "Edit {{activity}}",
+      "startTimeLabel": "Start Time",
+      "endTimeLabel": "End Time",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Add observations or notes here…",
+      "cancelButton": "Cancel",
+      "saveButton": "Save",
+      "savingButton": "Saving…"
     }
   },
   "footer": {
