@@ -16,7 +16,8 @@ import {
   Calendar,
   AlertTriangle,
   Check,
-  RefreshCcw
+  RefreshCcw,
+  Trash2
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -24,9 +25,10 @@ import { useToast } from '@/hooks/use-toast';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { supabase } from '@/integrations/supabase/client';
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 
 const Account = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const { 
     subscriptionTier, 
     isPremium, 
@@ -47,6 +49,9 @@ const Account = () => {
   });
   const [saving, setSaving] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -128,6 +133,60 @@ const Account = () => {
     openCustomerPortal();
   };
 
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setDeleting(true);
+    try {
+      // Use the user's session access token for authentication
+      const session = localStorage.getItem("sb-wjxxgccfazpkdfzbcgen-auth-token");
+      const parsed = session ? JSON.parse(session) : null;
+      const accessToken = parsed?.currentSession?.access_token;
+      // Fallback to try | supabase.auth.getSession().data.session?.access_token etc. if needed in your project context
+
+      if (!accessToken) {
+        toast({
+          title: "Not Authenticated",
+          description: "Could not find session token. Please login again.",
+          variant: "destructive",
+        });
+        setDeleting(false);
+        return;
+      }
+
+      const res = await fetch("https://wjxxgccfazpkdfzbcgen.functions.supabase.co/delete-account", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to delete account");
+      }
+      // Success!
+      toast({
+        title: "Account Deleted",
+        description: "Your account and all data were deleted.",
+      });
+      // Log out and redirect
+      setTimeout(() => {
+        signOut();
+        window.location.href = "/";
+      }, 1500);
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to delete account",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
+      setShowDeleteDialog(false);
+      setDeleteConfirm("");
+    }
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString();
@@ -174,7 +233,7 @@ const Account = () => {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="h-4 w-4" />
               <span>Profile</span>
@@ -182,6 +241,10 @@ const Account = () => {
             <TabsTrigger value="subscription" className="flex items-center space-x-2">
               <Crown className="h-4 w-4" />
               <span>Subscription</span>
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center space-x-2 text-red-700">
+              <Trash2 className="h-4 w-4" />
+              <span>Security</span>
             </TabsTrigger>
           </TabsList>
 
@@ -353,6 +416,66 @@ const Account = () => {
                       </li>
                     </ul>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Security Tab */}
+          <TabsContent value="security" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-red-700">
+                  <Trash2 className="h-5 w-5 text-red-600" />
+                  <span>Delete Account</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-md px-4 py-3">
+                    <b>Warning:</b> Deleting your account is <b>irreversible</b>.<br />
+                    This will permanently erase your profile, baby profiles, activity logs, memories, invitations, and all associated data. You will lose access to any premium features purchased. <br />
+                    <span className="text-sm">If you have an active subscription, it will be cancelled automatically before account deletion.</span>
+                  </div>
+                  <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        className="flex items-center space-x-2"
+                        disabled={deleting}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span>{deleting ? "Deleting..." : "Delete My Account"}</span>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Permanently Delete Account?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. All your data will be erased. <br />
+                          To continue, type <b>DELETE</b> below and confirm.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <Input
+                        autoFocus
+                        disabled={deleting}
+                        placeholder="Type DELETE to confirm"
+                        value={deleteConfirm}
+                        onChange={(e) => setDeleteConfirm(e.target.value)}
+                        className="mb-2"
+                      />
+                      <AlertDialogFooter>
+                        <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          disabled={deleteConfirm !== "DELETE" || deleting}
+                          className="bg-red-600 hover:bg-red-700"
+                          onClick={handleDeleteAccount}
+                        >
+                          {deleting ? "Deleting..." : "Delete Account"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </CardContent>
             </Card>
