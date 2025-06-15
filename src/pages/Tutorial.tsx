@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -261,13 +260,14 @@ const Tutorial = () => {
             </CardHeader>
             <CardContent>
               <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-4 relative overflow-hidden">
-                <div className="text-center">
-                  <div className="bg-white rounded-full p-4 mb-4 shadow-lg">
-                    <Play className="h-8 w-8 text-blue-600" />
-                  </div>
-                  <h3 className="font-medium text-gray-900 mb-2">{currentTutorial.title}</h3>
-                  <p className="text-sm text-gray-600">{t('tutorial.videoComingSoon')}</p>
-                </div>
+                <video
+                  src="https://www.w3schools.com/html/mov_bbb.mp4"
+                  controls
+                  className="w-full h-full object-cover rounded-lg"
+                  poster="/placeholder.svg"
+                >
+                  {t('tutorial.videoNotSupported')}
+                </video>
               </div>
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex justify-between">
