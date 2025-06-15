@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -131,7 +130,10 @@ const Features = () => {
       icon: Share2,
       title: "Pediatrician Reports",
       description: "Generate professional reports to share with your healthcare provider.",
-      badge: "Premium"
+      badge: "Premium",
+      advantages: [
+        "Easy to download and securely share with your doctor"
+      ]
     },
     {
       icon: Shield,
@@ -248,7 +250,6 @@ const Features = () => {
               Unlock additional powerful features with SleepyBaby Premium
             </p>
           </div>
-          {/* FIXED: Use responsive 1/2/3 columns for premium features for best appearance */}
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {premiumFeatures.map((feature, index) => {
               const IconComponent = feature.icon;
@@ -265,6 +266,15 @@ const Features = () => {
                     <CardDescription className="text-gray-600">
                       {feature.description}
                     </CardDescription>
+                    {feature.advantages && (
+                      <ul className="mt-4 space-y-1 pl-4 list-disc text-gray-700 text-sm">
+                        {feature.advantages.map((adv, aidx) => (
+                          <li key={aidx}>
+                            {adv}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </CardHeader>
                 </Card>
               );
@@ -344,4 +354,3 @@ const Features = () => {
 };
 
 export default Features;
-
