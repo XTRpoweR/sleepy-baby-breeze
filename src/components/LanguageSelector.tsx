@@ -9,27 +9,39 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Globe } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 const languages = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'sv', name: 'Svenska', flag: '🇸🇪' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
-  { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
+  { code: 'en', name: 'English', flag: '🇺🇸', comingSoon: false },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪', comingSoon: false },
+  { code: 'sv', name: 'Svenska', flag: '🇸🇪', comingSoon: false },
+  { code: 'es', name: 'Español', flag: '🇪🇸', comingSoon: true },
+  { code: 'fr', name: 'Français', flag: '🇫🇷', comingSoon: true },
+  { code: 'it', name: 'Italiano', flag: '🇮🇹', comingSoon: true },
+  { code: 'el', name: 'Ελληνικά', flag: '🇬🇷', comingSoon: true },
+  { code: 'fi', name: 'Suomi', flag: '🇫🇮', comingSoon: true },
 ];
 
 export const LanguageSelector = () => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  // Only show real language or fallback to English
+  const currentLanguage =
+    languages.find(l => l.code === i18n.language && !l.comingSoon) ||
+    languages[0];
 
-  const handleLanguageChange = async (languageCode: string) => {
-    console.log('Changing language to:', languageCode);
-    await i18n.changeLanguage(languageCode);
+  const handleLanguageChange = async (language) => {
+    if (language.comingSoon) {
+      toast({
+        title: `${language.name}`,
+        description: "This language is coming soon!",
+        variant: "default",
+      });
+      return;
+    }
+    await i18n.changeLanguage(language.code);
     setIsOpen(false);
   };
 
@@ -46,17 +58,27 @@ export const LanguageSelector = () => {
           <span className="hidden md:inline">{currentLanguage.name}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-56">
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}
-            onClick={() => handleLanguageChange(language.code)}
-            className={`flex items-center space-x-3 cursor-pointer ${
-              i18n.language === language.code ? 'bg-blue-50 font-medium' : ''
+            onClick={() => handleLanguageChange(language)}
+            disabled={language.comingSoon}
+            className={`flex items-center justify-between space-x-2 cursor-pointer ${
+              i18n.language === language.code && !language.comingSoon
+                ? 'bg-blue-50 font-medium'
+                : ''
             }`}
           >
-            <span className="text-lg">{language.flag}</span>
-            <span>{language.name}</span>
+            <span className="flex items-center space-x-2">
+              <span className="text-lg">{language.flag}</span>
+              <span>{language.name}</span>
+            </span>
+            {language.comingSoon && (
+              <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded">
+                Coming soon
+              </span>
+            )}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
