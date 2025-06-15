@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "SleepyBaby",
@@ -55,6 +56,23 @@
   },
   "pages": {
     "sleepSchedule": {
+      "title": "Personligt sömnschema",
+      "subtitle": "Skapa och hantera sömnscheman som är anpassade efter ditt barns behov.",
+      "loading": "Laddar sömnschema...",
+      "noProfile": "Ingen barnprofil vald",
+      "noProfileMessage": "Välj eller skapa en barnprofil för att använda sömnschemafunktionen.",
+      "addProfile": "Lägg till barnprofil"
+    },
+    "trackActivity": {
+      "loading": "Laddar...",
+      "title": "Spåra aktiviteter",
+      "subtitle": "Spåra {{name}}s aktiviteter idag",
+      "noActiveProfile": "Ingen aktiv profil",
+      "selectProfileMessage": "Välj eller skapa en barnprofil för att börja spåra aktiviteter."
+    }
+  },
+  "components": {
+    "sleepSchedule": {
       "childInformation": "Barninformation",
       "childAge": "Barnets ålder (i månader)",
       "childAgeHelper": "Vänligen ange ditt barns ålder i månader",
@@ -75,18 +93,7 @@
       "challengeShortNaps": "Korta tupplurar",
       "challengeFightingNaps": "Motstånd till tupplur",
       "challengeBedtimeResistance": "Motstånd vid läggdags",
-      "createSchedule": "Skapa personligt sömnschema",
-      "loading": "Laddar sömnschema...",
-      "noProfile": "Ingen barnprofil vald",
-      "noProfileMessage": "Välj eller skapa en barnprofil för att använda sömnschemafunktionen.",
-      "addProfile": "Lägg till barnprofil"
-    },
-    "trackActivity": {
-      "loading": "Laddar...",
-      "title": "Spåra aktiviteter",
-      "subtitle": "Spåra {{name}}s aktiviteter idag",
-      "noActiveProfile": "Ingen aktiv profil",
-      "selectProfileMessage": "Välj eller skapa en barnprofil för att börja spåra aktiviteter."
+      "createSchedule": "Skapa personligt sömnschema"
     }
   },
   "activities": {
