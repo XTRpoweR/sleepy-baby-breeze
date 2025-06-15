@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "SleepyBaby",
@@ -214,7 +213,8 @@
     "previous": "Föregående",
     "confirm": "Bekräfta",
     "yes": "Ja",
-    "no": "Nej"
+    "no": "Nej",
+    "duration": "Varaktighet"
   },
   "footer": {
     "tagline": "Hjälpa familjer att få den vila de förtjänar, en natt i taget.",
