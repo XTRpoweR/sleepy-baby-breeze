@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "SleepyBaby",
@@ -247,6 +246,27 @@
       "notesLabel": "Notizen (Optional)",
       "notesPlaceholder": "Irgendwelche Beobachtungen zum Windelwechsel...",
       "submitButton": "Windelwechsel protokollieren",
+      "submittingButton": "Speichern..."
+    },
+    "customActivityTracker": {
+      "title": "Benutzerdefinierte Aktivitäten",
+      "activityTypeLabel": "Aktivitätstyp",
+      "activityTypeRequired": "Aktivitätstyp *",
+      "activityTypePlaceholder": "Aktivität auswählen",
+      "customNameLabel": "Name der Aktivität",
+      "customNameRequired": "Name der Aktivität *",
+      "customNamePlaceholder": "Geben Sie den Aktivitätsnamen ein",
+      "tummyTime": "Bauchzeit",
+      "bathTime": "Badezeit",
+      "playTime": "Spielzeit",
+      "walkOuting": "Spaziergang/Ausflug",
+      "customActivity": "Benutzerdefinierte Aktivität",
+      "startTimeLabel": "Startzeit",
+      "startTimeRequired": "Startzeit *",
+      "endTimeLabel": "Endzeit",
+      "notesLabel": "Notizen (Optional)",
+      "notesPlaceholder": "Wie war die Aktivität? Irgendwelche Beobachtungen...",
+      "submitButton": "Aktivität protokollieren",
       "submittingButton": "Speichern..."
     }
   },
