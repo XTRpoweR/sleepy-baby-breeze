@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "SleepyBaby",
@@ -69,6 +70,26 @@
     "custom": "Anpassad"
   },
   "tracking": {
+    "sleepTracker": {
+      "title": "Sömnspårning",
+      "sleepSession": "Sömnpass",
+      "logManually": "Logga sömn manuellt",
+      "startSleepSession": "Starta sömnpass",
+      "endSleepSession": "Avsluta sömnpass",
+      "sessionStarted": "Sömnpass startat",
+      "sessionStartedDesc": "Timer körs nu...",
+      "sessionEnded": "Sömnpass avslutat",
+      "sessionInProgress": "Sömnpass pågår...",
+      "sleepType": "Sömntyp",
+      "nap": "Tupplur",
+      "nightSleep": "Nattsömn",
+      "startTime": "Starttid",
+      "endTime": "Sluttid",
+      "notes": "Anteckningar",
+      "notesPlaceholder": "Hur var sömnen? Några observationer...",
+      "logSleep": "Logga sömnpass",
+      "saving": "Sparar..."
+    },
     "babyProfileSetup": {
       "title": "Skapa barnprofil",
       "subtitle": "Skapa en profil för att börja spåra aktiviteter",
@@ -91,26 +112,6 @@
       "notesLabel": "Anteckningar (Valfritt)",
       "notesPlaceholder": "Några observationer om blöjbytet...",
       "submitButton": "Logga blöjbyte",
-      "submittingButton": "Sparar..."
-    },
-    "sleepTracker": {
-      "sessionTitle": "Sömnpass",
-      "manualTitle": "Logga sömn manuellt",
-      "startButton": "Starta sömnpass",
-      "endButton": "Avsluta sömnpass",
-      "sessionStarted": "Sömnpass startat",
-      "sessionStartedDesc": "Timer körs nu...",
-      "sessionEnded": "Sömnpass avslutat",
-      "sessionInProgress": "Sömnpass pågår...",
-      "sleepTypeLabel": "Sömntyp",
-      "napLabel": "Tupplur",
-      "nightLabel": "Nattsömn",
-      "startTimeLabel": "Starttid",
-      "startTimeRequired": "Starttid *",
-      "endTimeLabel": "Sluttid",
-      "notesLabel": "Anteckningar (Valfritt)",
-      "notesPlaceholder": "Hur var sömnen? Några observationer...",
-      "submitButton": "Logga sömnpass",
       "submittingButton": "Sparar..."
     },
     "feedingTracker": {
@@ -200,6 +201,16 @@
     "startTracking": "Börja spåra",
     "noDataMessage": "Börja spåra {{name}}s aktiviteter för att se insikter och mönster här.",
     "noProfileMessage": "Skapa en barnprofil för att se personliga insikter"
+  },
+  "forms": {
+    "required": "Obligatorisk",
+    "optional": "Valfritt",
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "delete": "Ta bort",
+    "edit": "Redigera",
+    "create": "Skapa",
+    "update": "Uppdatera"
   },
   "common": {
     "loading": "Laddar...",
