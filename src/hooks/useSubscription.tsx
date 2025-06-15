@@ -78,50 +78,68 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   };
 
   const createCheckout = async () => {
-    if (!user || upgrading) return;
+    if (upgrading) return;
 
     try {
       setUpgrading(true);
+      // Always get the latest session before making the call
+      const sessionResult = await supabase.auth.getSession();
+      const accessToken = sessionResult.data.session?.access_token;
+
+      if (!user || !accessToken) {
+        toast({
+          title: "Authentication Required",
+          description: "Please log in to upgrade your subscription.",
+          variant: "destructive",
+        });
+        setUpgrading(false);
+        return;
+      }
+
       console.log('Creating checkout session...');
 
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      if (error) {
-        console.error('Error creating checkout:', error);
-        toast({
-          title: "Error",
-          description: "Failed to create checkout session",
-          variant: "destructive",
-        });
+      if (error || !data?.url) {
+        // Check for likely authentication errors
+        const msg = error?.message || data?.error || '';
+        if (
+          msg.includes('User not authenticated') ||
+          msg.includes('No authorization header') ||
+          msg.includes('Session from session_id claim in JWT does not exist')
+        ) {
+          toast({
+            title: "Your login session expired",
+            description: "Please sign in again to continue with subscription checkout.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to create checkout session",
+            variant: "destructive",
+          });
+        }
+        setUpgrading(false);
         return;
       }
 
       console.log('Checkout URL received:', data.url);
-      
-      // Handle mobile vs desktop differently
+
       if (isMobile) {
-        // On mobile, redirect in the same window to avoid popup blockers
-        console.log('Mobile device detected, redirecting in same window');
         window.location.href = data.url;
       } else {
-        // On desktop, open in new tab
-        console.log('Desktop device detected, opening in new tab');
         const newWindow = window.open(data.url, '_blank');
-        
-        // Fallback if popup was blocked
         if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-          console.log('Popup blocked, showing fallback');
           toast({
             title: "Popup Blocked",
             description: "Please allow popups or click the link to continue to checkout",
             variant: "default",
           });
-          
-          // Provide manual link as fallback
           setTimeout(() => {
             if (confirm('Click OK to redirect to checkout page')) {
               window.location.href = data.url;
@@ -129,13 +147,25 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
           }, 1000);
         }
       }
-    } catch (error) {
-      console.error('Error creating checkout:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create checkout session",
-        variant: "destructive",
-      });
+    } catch (error: any) {
+      const msg = error?.message || '';
+      if (
+        msg.includes('User not authenticated') ||
+        msg.includes('No authorization header') ||
+        msg.includes('Session from session_id claim in JWT does not exist')
+      ) {
+        toast({
+          title: "Your login session expired",
+          description: "Please sign in again to continue with subscription checkout.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to create checkout session",
+          variant: "destructive",
+        });
+      }
     } finally {
       setUpgrading(false);
     }
