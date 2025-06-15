@@ -240,12 +240,14 @@
     },
     "diaperTracker": {
       "title": "Windelwechsel",
-      "type": "Art",
-      "wet": "Nass",
-      "dirty": "Schmutzig",
-      "mixed": "Gemischt",
-      "notes": "Notizen",
-      "logDiaperChange": "Windelwechsel protokollieren"
+      "changeTimeRequired": "Wechselzeit *",
+      "contentsRequired": "Windelinhalt *",
+      "wetLabel": "Nass",
+      "soiledLabel": "Schmutzig",
+      "notesLabel": "Notizen (Optional)",
+      "notesPlaceholder": "Irgendwelche Beobachtungen zum Windelwechsel...",
+      "submitButton": "Windelwechsel protokollieren",
+      "submittingButton": "Speichern..."
     }
   },
   "activities": {
