@@ -46,7 +46,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    debug: true,
+    debug: false,
     defaultNS: 'common',
     ns: ['common'],
     
@@ -59,20 +59,9 @@ i18n
       caches: ['localStorage'],
     },
 
-    // Add more robust fallback and retry options
     react: {
       useSuspense: false,
     },
-    
-    // Ensure translations are loaded synchronously
-    initImmediate: false,
   });
-
-// Add event listener for language changes
-i18n.on('languageChanged', (lng) => {
-  console.log('Language changed to:', lng);
-  // Force a page refresh of translation-dependent components
-  window.dispatchEvent(new CustomEvent('languageChanged', { detail: lng }));
-});
 
 export default i18n;

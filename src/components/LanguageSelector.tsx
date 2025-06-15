@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
@@ -24,34 +24,13 @@ const languages = [
 export const LanguageSelector = () => {
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState(i18n.language);
 
-  // Listen for language changes to force re-render
-  useEffect(() => {
-    const handleLanguageChange = (event: CustomEvent) => {
-      console.log('LanguageSelector: Language changed to:', event.detail);
-      setCurrentLang(event.detail);
-    };
-
-    window.addEventListener('languageChanged', handleLanguageChange as EventListener);
-    
-    return () => {
-      window.removeEventListener('languageChanged', handleLanguageChange as EventListener);
-    };
-  }, []);
-
-  const currentLanguage = languages.find(lang => lang.code === currentLang) || languages[0];
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   const handleLanguageChange = async (languageCode: string) => {
     console.log('Changing language to:', languageCode);
     await i18n.changeLanguage(languageCode);
-    setCurrentLang(languageCode);
     setIsOpen(false);
-    
-    // Force a small delay to ensure the language change is processed
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
   };
 
   return (
@@ -73,7 +52,7 @@ export const LanguageSelector = () => {
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
             className={`flex items-center space-x-3 cursor-pointer ${
-              currentLang === language.code ? 'bg-blue-50 font-medium' : ''
+              i18n.language === language.code ? 'bg-blue-50 font-medium' : ''
             }`}
           >
             <span className="text-lg">{language.flag}</span>
