@@ -19,6 +19,12 @@ interface BabyMemory {
   updated_at: string;
 }
 
+// Helper to convert a raw Supabase row to the correct BabyMemory type
+const toBabyMemory = (row: any): BabyMemory => ({
+  ...row,
+  media_type: row.media_type === 'video' ? 'video' : 'photo',
+});
+
 export const useBabyMemories = (babyId?: string) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -55,7 +61,7 @@ export const useBabyMemories = (babyId?: string) => {
         return;
       }
 
-      setMemories(data || []);
+      setMemories((data || []).map(toBabyMemory));
     } catch (error) {
       console.error('Error fetching memories:', error);
     } finally {
@@ -126,7 +132,7 @@ export const useBabyMemories = (babyId?: string) => {
         return false;
       }
 
-      setMemories(prev => [data, ...prev]);
+      setMemories(prev => [toBabyMemory(data), ...prev]);
       toast({
         title: "Success!",
         description: "Memory uploaded successfully",
@@ -218,7 +224,7 @@ export const useBabyMemories = (babyId?: string) => {
         return false;
       }
 
-      setMemories(prev => prev.map(m => m.id === memoryId ? data : m));
+      setMemories(prev => prev.map(m => m.id === memoryId ? toBabyMemory(data) : m));
       toast({
         title: "Success!",
         description: "Memory updated successfully",
@@ -240,3 +246,4 @@ export const useBabyMemories = (babyId?: string) => {
     refetch: fetchMemories
   };
 };
+
