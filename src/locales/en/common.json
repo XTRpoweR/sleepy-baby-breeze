@@ -85,9 +85,12 @@
   },
   "pages": {
     "sleepSchedule": {
-      "title": "Sleep Schedule",
-      "subtitle": "Create personalized sleep schedules and get recommendations based on your baby's age and patterns",
-      "loading": "Loading sleep schedules..."
+      "title": "Personalized Sleep Schedule",
+      "subtitle": "Create and manage sleep schedules tailored to your baby's needs.",
+      "loading": "Loading sleep schedule...",
+      "noProfile": "No Child Profile Selected",
+      "noProfileMessage": "Please select or create a child profile to access sleep schedule features.",
+      "addProfile": "Add Child Profile"
     },
     "familySharing": {
       "title": "Family Sharing",

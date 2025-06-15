@@ -23,6 +23,7 @@ import { ProfileManagementDialog } from '@/components/profiles/ProfileManagement
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
+import { useTranslation } from 'react-i18next';
 
 const SleepSchedule = () => {
   const { user, loading, signOut } = useAuth();
@@ -39,6 +40,8 @@ const SleepSchedule = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -153,7 +156,9 @@ const SleepSchedule = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="text-center">
           <Moon className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600 text-sm sm:text-base">Loading sleep schedule...</p>
+          <p className="text-gray-600 text-sm sm:text-base">
+            {t('pages.sleepSchedule.loading')}
+          </p>
         </div>
       </div>
     );
@@ -181,16 +186,16 @@ const SleepSchedule = () => {
             className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
           >
             <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>Back to Dashboard</span>
+            <span>{t('navigation.backToDashboard')}</span>
           </Button>
           
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                Personalized Sleep Schedule
+                {t('pages.sleepSchedule.title')}
               </h1>
               <p className="text-gray-600 text-sm sm:text-base">
-                Create and manage sleep schedules tailored to your baby's needs.
+                {t('pages.sleepSchedule.subtitle')}
               </p>
             </div>
             
@@ -264,13 +269,13 @@ const SleepSchedule = () => {
           <Card className="max-w-md mx-auto">
             <CardContent className="p-6 sm:p-8 text-center">
               <Baby className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No Child Profile Selected</h3>
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">{t('pages.sleepSchedule.noProfile')}</h3>
               <p className="text-gray-600 mb-4 text-sm sm:text-base">
-                Please select or create a child profile to access sleep schedule features.
+                {t('pages.sleepSchedule.noProfileMessage')}
               </p>
               <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
-                Add Child Profile
+                {t('pages.sleepSchedule.addProfile')}
               </Button>
             </CardContent>
           </Card>

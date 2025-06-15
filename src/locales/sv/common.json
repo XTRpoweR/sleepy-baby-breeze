@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "SleepyBaby",
@@ -55,6 +54,14 @@
     }
   },
   "pages": {
+    "sleepSchedule": {
+      "title": "Personligt sömnschema",
+      "subtitle": "Skapa och hantera sömnscheman som är anpassade efter ditt barns behov.",
+      "loading": "Laddar sömnschema...",
+      "noProfile": "Ingen barnprofil vald",
+      "noProfileMessage": "Välj eller skapa en barnprofil för att använda sömnschemafunktionen.",
+      "addProfile": "Lägg till barnprofil"
+    },
     "trackActivity": {
       "loading": "Laddar...",
       "title": "Spåra aktiviteter",
@@ -192,7 +199,7 @@
     "viewReports": "Visa rapporter",
     "viewReportsDesc": "Analysera sömn- och aktivitetsmönster",
     "todaysActivity": "Dagens aktivitetssammanfattning",
-    "weekOverview": "Veckoöversikt",
+    "weekOverview": "Veckaöversikt",
     "averageSleep": "Genomsnittlig sömn",
     "feedings": "Matningar",
     "diaperChanges": "Blöjbyten",
