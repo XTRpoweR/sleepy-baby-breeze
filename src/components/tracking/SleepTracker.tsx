@@ -121,7 +121,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
             <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-            <span>Sömnpass</span>
+            <span>{t('tracking.sleepTracker.sleepSession')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
@@ -131,14 +131,14 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
                 <div className={`text-xl sm:text-2xl font-bold text-blue-600 mb-2 ${isActive ? 'animate-pulse' : ''}`}>
                   {formatDuration()}
                 </div>
-                <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">Sömnpass pågår...</p>
+                <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">{t('tracking.sleepTracker.sessionInProgress')}</p>
                 <Button 
                   onClick={handleStopSleep} 
                   className="bg-red-500 hover:bg-red-600 w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3"
                   size={isMobile ? "default" : "lg"}
                 >
                   <Square className="h-4 w-4 mr-2" />
-                  Avsluta sömnpass
+                  {t('tracking.sleepTracker.endSleepSession')}
                 </Button>
               </div>
             ) : (
@@ -149,7 +149,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
                   size={isMobile ? "default" : "lg"}
                 >
                   <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  Starta sömnpass
+                  {t('tracking.sleepTracker.startSleepSession')}
                 </Button>
               </div>
             )}
@@ -162,26 +162,26 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
             <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-            <span>Logga sömn manuellt</span>
+            <span>{t('tracking.sleepTracker.logManually')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label className="text-sm sm:text-base">Sömntyp</Label>
+              <Label className="text-sm sm:text-base">{t('tracking.sleepTracker.sleepType')}</Label>
               <RadioGroup value={sleepType} onValueChange={(value: 'nap' | 'night') => setSleepType(value)} className="mt-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="nap" id="nap" />
                   <Label htmlFor="nap" className="flex items-center space-x-2 text-sm sm:text-base">
                     <Sun className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span>Tupplur</span>
+                    <span>{t('tracking.sleepTracker.nap')}</span>
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="night" id="night" />
                   <Label htmlFor="night" className="flex items-center space-x-2 text-sm sm:text-base">
                     <Moon className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span>Nattsömn</span>
+                    <span>{t('tracking.sleepTracker.nightSleep')}</span>
                   </Label>
                 </div>
               </RadioGroup>
@@ -189,7 +189,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
 
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <Label htmlFor="startTime" className="text-sm sm:text-base">Starttid *</Label>
+                <Label htmlFor="startTime" className="text-sm sm:text-base">{t('tracking.sleepTracker.startTime')} *</Label>
                 <Input
                   id="startTime"
                   type="datetime-local"
@@ -200,7 +200,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
                 />
               </div>
               <div>
-                <Label htmlFor="endTime" className="text-sm sm:text-base">Sluttid</Label>
+                <Label htmlFor="endTime" className="text-sm sm:text-base">{t('tracking.sleepTracker.endTime')}</Label>
                 <Input
                   id="endTime"
                   type="datetime-local"
@@ -212,12 +212,12 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
             </div>
 
             <div>
-              <Label htmlFor="notes" className="text-sm sm:text-base">Anteckningar (Valfritt)</Label>
+              <Label htmlFor="notes" className="text-sm sm:text-base">{t('tracking.sleepTracker.notes')} ({t('forms.optional')})</Label>
               <Textarea
                 id="notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Hur var sömnen? Några observationer..."
+                placeholder={t('tracking.sleepTracker.notesPlaceholder')}
                 rows={3}
                 className="mt-1"
               />
@@ -228,7 +228,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
               className="w-full bg-purple-600 hover:bg-purple-700 py-2 sm:py-3"
               disabled={!startTime || isSubmitting}
             >
-              {isSubmitting ? 'Sparar...' : 'Logga sömnpass'}
+              {isSubmitting ? t('tracking.sleepTracker.saving') : t('tracking.sleepTracker.logSleep')}
             </Button>
           </form>
         </CardContent>

@@ -197,6 +197,52 @@
       "resendInvitation": "Einladung erneut senden"
     }
   },
+  "tracking": {
+    "sleepTracker": {
+      "title": "Schlafverfolgung",
+      "sessionStarted": "Schlafphase gestartet",
+      "sessionStartedDesc": "Schlafverfolgung läuft jetzt",
+      "sessionEnded": "Schlafphase beendet",
+      "sleepSession": "Schlafphase",
+      "startSleepSession": "Schlafphase starten",
+      "endSleepSession": "Schlafphase beenden",
+      "sessionInProgress": "Schlafphase läuft...",
+      "logManually": "Schlaf manuell protokollieren",
+      "sleepType": "Schlaftyp",
+      "nap": "Nickerchen",
+      "nightSleep": "Nachtschlaf",
+      "startTime": "Startzeit",
+      "endTime": "Endzeit",
+      "notes": "Notizen",
+      "notesPlaceholder": "Wie war der Schlaf? Irgendwelche Beobachtungen...",
+      "logSleep": "Schlafphase protokollieren",
+      "saving": "Speichern..."
+    },
+    "feedingTracker": {
+      "title": "Fütterungsverfolgung",
+      "feedingType": "Fütterungsart",
+      "breast": "Stillen",
+      "bottle": "Flasche",
+      "solid": "Feste Nahrung",
+      "breastSide": "Brust",
+      "left": "Links",
+      "right": "Rechts",
+      "both": "Beide",
+      "amount": "Menge",
+      "duration": "Dauer",
+      "notes": "Notizen",
+      "logFeeding": "Fütterung protokollieren"
+    },
+    "diaperTracker": {
+      "title": "Windelwechsel",
+      "type": "Art",
+      "wet": "Nass",
+      "dirty": "Schmutzig",
+      "mixed": "Gemischt",
+      "notes": "Notizen",
+      "logDiaperChange": "Windelwechsel protokollieren"
+    }
+  },
   "activities": {
     "sleep": "Schlaf",
     "feeding": "Fütterung",
@@ -246,7 +292,8 @@
     "no": "Nein",
     "view": "Anzeigen",
     "add": "Hinzufügen",
-    "remove": "Entfernen"
+    "remove": "Entfernen",
+    "duration": "Dauer"
   },
   "footer": {
     "tagline": "Familien dabei zu helfen, die Ruhe zu bekommen, die sie verdienen, eine Nacht nach der anderen.",
