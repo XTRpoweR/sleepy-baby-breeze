@@ -458,7 +458,7 @@ const Index = () => {
               <div className="space-y-2 text-gray-400">
                 <Link to="/about" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.about')}</Link>
                 <Link to="/blog" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.blog')}</Link>
-                <Link to="/careers" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.careers')}</Link>
+                
               </div>
             </div>
           </div>
