@@ -277,7 +277,7 @@ const Pricing = () => {
             <Button size="lg" onClick={handleGetStarted} className="bg-white text-blue-600 hover:bg-blue-50">
               Start Free Today
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 bg-white/5">
               View All Features
             </Button>
           </div>
