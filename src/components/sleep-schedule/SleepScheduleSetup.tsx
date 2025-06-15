@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,13 +57,14 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
     });
   };
 
+  // Updated challenge options to use translation keys
   const challengeOptions = [
-    'Difficulty falling asleep',
-    'Frequent night wakings',
-    'Early morning wake-ups',
-    'Short naps',
-    'Fighting naps',
-    'Bedtime resistance'
+    t('components.sleepSchedule.challengeDifficulty'),
+    t('components.sleepSchedule.challengeNightWakings'),
+    t('components.sleepSchedule.challengeEarlyWakeups'),
+    t('components.sleepSchedule.challengeShortNaps'),
+    t('components.sleepSchedule.challengeFightingNaps'),
+    t('components.sleepSchedule.challengeBedtimeResistance')
   ];
 
   return (
@@ -154,12 +154,15 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Moon className="h-5 w-5 text-indigo-600" />
-            <span>{t('components.sleepSchedule.sleepChallenges')}</span>
+            <span>
+              {t('components.sleepSchedule.sleepChallenges')}
+              <span className="ml-1 text-gray-400 text-sm">({t('components.sleepSchedule.optional')})</span>
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {challengeOptions.map((challenge) => (
+            {challengeOptions.map((challenge, idx) => (
               <div key={challenge} className="flex items-center space-x-2">
                 <Checkbox
                   id={challenge}
