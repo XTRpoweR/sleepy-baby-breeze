@@ -20,7 +20,8 @@ import {
   Settings,
   ArrowRight,
   Sparkles,
-  GraduationCap
+  GraduationCap,
+  Camera
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
@@ -44,7 +45,7 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds'>('profiles');
+  const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories'>('profiles');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -91,6 +92,15 @@ const Dashboard = () => {
       return;
     }
     navigate('/family');
+  };
+
+  const handleMemories = () => {
+    if (!isPremium) {
+      setUpgradeFeature('memories');
+      setShowUpgradePrompt(true);
+      return;
+    }
+    navigate('/memories');
   };
 
   const handleAddProfile = () => {
@@ -224,7 +234,7 @@ const Dashboard = () => {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleTrackActivity}>
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="bg-blue-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
@@ -242,6 +252,24 @@ const Dashboard = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">{t('dashboard.sleepSchedule')}</h3>
               <p className="text-xs lg:text-sm text-gray-600">{t('dashboard.sleepScheduleDesc')}</p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer relative" 
+            onClick={handleMemories}
+          >
+            <CardContent className="p-4 lg:p-6 text-center">
+              <div className="bg-pink-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
+                <Camera className="h-5 w-5 lg:h-6 lg:w-6 text-pink-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Photo & Video Memories</h3>
+              <p className="text-xs lg:text-sm text-gray-600">Capture precious moments</p>
+              {!isPremium && (
+                <div className="absolute top-2 right-2">
+                  <Crown className="h-3 w-3 lg:h-4 lg:w-4 text-orange-500" />
+                </div>
+              )}
             </CardContent>
           </Card>
 

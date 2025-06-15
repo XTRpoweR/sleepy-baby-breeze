@@ -53,6 +53,51 @@ export type Database = {
           },
         ]
       }
+      baby_memories: {
+        Row: {
+          baby_id: string
+          created_at: string
+          description: string | null
+          file_size: number | null
+          id: string
+          media_type: string
+          media_url: string
+          mime_type: string | null
+          taken_at: string | null
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          baby_id: string
+          created_at?: string
+          description?: string | null
+          file_size?: number | null
+          id?: string
+          media_type: string
+          media_url: string
+          mime_type?: string | null
+          taken_at?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          baby_id?: string
+          created_at?: string
+          description?: string | null
+          file_size?: number | null
+          id?: string
+          media_type?: string
+          media_url?: string
+          mime_type?: string | null
+          taken_at?: string | null
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       baby_profiles: {
         Row: {
           birth_date: string | null

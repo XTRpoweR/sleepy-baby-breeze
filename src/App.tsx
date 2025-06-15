@@ -29,6 +29,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Blog from "./pages/Blog";
 import Careers from "./pages/Careers";
 import Tutorial from "./pages/Tutorial";
+import Memories from "./pages/Memories";
 
 // Create queryClient outside of component to avoid recreation on each render
 const queryClient = new QueryClient({
@@ -58,6 +59,7 @@ const App: React.FC = () => {
                   <Route path="/family" element={<FamilySharing />} />
                   <Route path="/invitation" element={<InvitationAcceptPage />} />
                   <Route path="/sounds" element={<Sounds />} />
+                  <Route path="/memories" element={<Memories />} />
                   <Route path="/subscription" element={<Subscription />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/features" element={<Features />} />
