@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "SleepyBaby",
@@ -247,6 +246,66 @@
     "view": "View",
     "add": "Add",
     "remove": "Remove"
+  },
+  "tracking": {
+    "sleepTracker": {
+      "title": "Sleep Tracking",
+      "sessionStarted": "Sleep session started",
+      "sessionStartedDesc": "Sleep tracking is now running",
+      "sessionEnded": "Sleep session ended",
+      "sleepSession": "Sleep session",
+      "startSleepSession": "Start sleep session",
+      "endSleepSession": "End sleep session",
+      "sessionInProgress": "Sleep session in progress...",
+      "logManually": "Log sleep manually",
+      "sleepType": "Sleep type",
+      "nap": "Nap",
+      "nightSleep": "Night sleep",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "notes": "Notes",
+      "notesPlaceholder": "How was sleep? Any observations...",
+      "logSleep": "Log sleep session",
+      "saving": "Saving..."
+    },
+    "diaperTracker": {
+      "title": "Diaper Tracker",
+      "sessionStarted": "Diaper session started",
+      "sessionStartedDesc": "Diaper tracking is now running",
+      "sessionEnded": "Diaper session ended",
+      "diaperSession": "Diaper session",
+      "startDiaperSession": "Start diaper session",
+      "endDiaperSession": "End diaper session",
+      "sessionInProgress": "Diaper session in progress...",
+      "logManually": "Log diaper manually",
+      "diaperType": "Diaper type",
+      "diaperChange": "Diaper change",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "notes": "Notes",
+      "notesPlaceholder": "How was diaper change? Any observations...",
+      "logDiaper": "Log diaper session",
+      "saving": "Saving..."
+    },
+    "feedingTracker": {
+      "title": "Feeding Tracker",
+      "sessionStarted": "Feeding session started",
+      "sessionStartedDesc": "Feeding tracking is now running",
+      "sessionEnded": "Feeding session ended",
+      "feedingSession": "Feeding session",
+      "startFeedingSession": "Start feeding session",
+      "endFeedingSession": "End feeding session",
+      "sessionInProgress": "Feeding session in progress...",
+      "logManually": "Log feeding manually",
+      "feedingType": "Feeding type",
+      "feeding": "Feeding",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "notes": "Notes",
+      "notesPlaceholder": "How was feeding? Any observations...",
+      "logFeeding": "Log feeding session",
+      "saving": "Saving..."
+    }
   },
   "footer": {
     "tagline": "Helping families get the rest they deserve, one night at a time.",
