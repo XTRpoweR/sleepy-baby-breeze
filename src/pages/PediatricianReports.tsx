@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +19,12 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { exportNodeAsPDF } from '@/utils/generatePediatricianReport';
+import { ReportsOverview } from '@/components/reports/ReportsOverview';
+import { SleepAnalytics } from '@/components/reports/SleepAnalytics';
+import { FeedingAnalytics } from '@/components/reports/FeedingAnalytics';
+import { ActivitySummary } from '@/components/reports/ActivitySummary';
+import { getDateRange, DateRangeOption } from '@/utils/dateRangeUtils';
 
 const PediatricianReports = () => {
   const { user, loading } = useAuth();
@@ -38,9 +43,44 @@ const PediatricianReports = () => {
     navigate('/dashboard');
   };
 
-  const handleGenerateReport = (reportType: string) => {
-    // TODO: Implement report generation logic
-    console.log(`Generating ${reportType} report for ${activeProfile?.name}`);
+  // NEW: Refs to report containers and date controls
+  const comprehensiveRef = useRef<HTMLDivElement>(null);
+  const sleepRef = useRef<HTMLDivElement>(null);
+  const growthRef = useRef<HTMLDivElement>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  // For timing, use last 30, 14, or full range
+  const [comprehensiveRange] = useState<DateRangeOption>('last30');
+  const [sleepRange] = useState<DateRangeOption>('last14');
+  const [growthRange] = useState<DateRangeOption>('all');
+
+  const handleGenerateReport = async (reportType: string) => {
+    if (!activeProfile) return;
+    setPdfLoading(true);
+    let node: HTMLElement | null = null;
+    let filename = '';
+    switch (reportType) {
+      case 'comprehensive':
+        node = comprehensiveRef.current;
+        filename = `Comprehensive_Report_${activeProfile.name}.pdf`;
+        break;
+      case 'sleep-analysis':
+        node = sleepRef.current;
+        filename = `Sleep_Analysis_${activeProfile.name}.pdf`;
+        break;
+      case 'growth-tracking':
+        node = growthRef.current;
+        filename = `Growth_Development_${activeProfile.name}.pdf`;
+        break;
+      default:
+        setPdfLoading(false);
+        return;
+    }
+
+    if (node) {
+      await exportNodeAsPDF(node, filename);
+    }
+    setPdfLoading(false);
   };
 
   if (loading) {
@@ -153,14 +193,60 @@ const PediatricianReports = () => {
                     <Button 
                       onClick={() => handleGenerateReport(report.id)}
                       className="w-full bg-teal-600 hover:bg-teal-700"
+                      disabled={pdfLoading}
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Generate Report
+                      {pdfLoading ? 'Preparing...' : 'Generate Report'}
                     </Button>
                   </CardContent>
                 </Card>
               );
             })}
+          </div>
+
+          {/* Actual hidden report contents, rendered but visually hidden (for PDF) */}
+          <div style={{ position: 'fixed', left: -9999, top: -9999, width: '800px', pointerEvents: 'none', opacity: 0 }}>
+            <div ref={comprehensiveRef}>
+              <h2 className="text-2xl font-bold mb-2">Comprehensive Health Report</h2>
+              <ReportsOverview
+                babyId={activeProfile.id}
+                dateRange={getDateRange(comprehensiveRange)}
+              />
+              <SleepAnalytics
+                babyId={activeProfile.id}
+                dateRange={getDateRange(comprehensiveRange)}
+              />
+              <FeedingAnalytics
+                babyId={activeProfile.id}
+                dateRange={getDateRange(comprehensiveRange)}
+              />
+              <ActivitySummary
+                babyId={activeProfile.id}
+                dateRange={getDateRange(comprehensiveRange)}
+              />
+            </div>
+            <div ref={sleepRef}>
+              <h2 className="text-2xl font-bold mb-2">Sleep Pattern Analysis</h2>
+              <SleepAnalytics
+                babyId={activeProfile.id}
+                dateRange={getDateRange(sleepRange)}
+              />
+              <ReportsOverview
+                babyId={activeProfile.id}
+                dateRange={getDateRange(sleepRange)}
+              />
+            </div>
+            <div ref={growthRef}>
+              <h2 className="text-2xl font-bold mb-2">Growth & Development Report</h2>
+              <ReportsOverview
+                babyId={activeProfile.id}
+                dateRange={getDateRange(growthRange)}
+              />
+              <ActivitySummary
+                babyId={activeProfile.id}
+                dateRange={getDateRange(growthRange)}
+              />
+            </div>
           </div>
 
           {/* Additional Information */}
