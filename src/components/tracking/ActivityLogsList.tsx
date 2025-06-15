@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -77,6 +77,7 @@ export const ActivityLogsList = ({
   updateLog, 
   onActivityUpdated 
 }: ActivityLogsListProps) => {
+  const { t } = useTranslation();
   const [editingLog, setEditingLog] = useState<any>(null);
 
   const formatDuration = (minutes: number | null) => {
@@ -88,22 +89,22 @@ export const ActivityLogsList = ({
 
   const getActivityLabel = (log: any) => {
     if (log.activity_type === 'custom') {
-      return log.metadata?.activity_name || 'Custom Activity';
+      return log.metadata?.activity_name || t('activities.custom');
     }
-    return log.activity_type.charAt(0).toUpperCase() + log.activity_type.slice(1);
+    return t(`activities.${log.activity_type}`);
   };
 
   const getActivityDetails = (log: any) => {
     switch (log.activity_type) {
       case 'sleep':
-        return log.metadata?.sleep_type || 'Sleep';
+        return log.metadata?.sleep_type || t('activities.sleep');
       case 'feeding':
-        const type = log.metadata?.feeding_type || 'Feeding';
+        const type = log.metadata?.feeding_type || t('activities.feeding');
         const side = log.metadata?.side ? ` (${log.metadata.side})` : '';
         const quantity = log.metadata?.quantity ? ` - ${log.metadata.quantity}ml` : '';
         return `${type}${side}${quantity}`;
       case 'diaper':
-        return log.metadata?.type || 'Diaper change';
+        return log.metadata?.type || t('activities.diaper');
       default:
         return '';
     }
@@ -128,12 +129,12 @@ export const ActivityLogsList = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Activity Logs</CardTitle>
+          <CardTitle>{t('common.loading')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="text-gray-600 mt-2">Loading activity logs...</p>
+            <p className="text-gray-600 mt-2">{t('common.loading')}</p>
           </div>
         </CardContent>
       </Card>
@@ -144,13 +145,12 @@ export const ActivityLogsList = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Activity Logs</CardTitle>
+          <CardTitle>{t('dashboard.todaysActivity')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No activities logged yet.</p>
-            <p className="text-sm text-gray-500">Start tracking activities to see them here.</p>
+            <p className="text-gray-600">{t('dashboard.noDataMessage', { name: '' })}</p>
           </div>
         </CardContent>
       </Card>
@@ -162,7 +162,7 @@ export const ActivityLogsList = ({
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Clock className="h-5 w-5" />
-          <span>Activity Logs ({logs.length})</span>
+          <span>{t('dashboard.todaysActivity')} ({logs.length})</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -170,11 +170,11 @@ export const ActivityLogsList = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Activity</TableHead>
-                <TableHead>Date & Time</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Details</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('activities.sleep')}</TableHead>
+                <TableHead>{t('tracking.common.startTime')}</TableHead>
+                <TableHead>{t('common.duration')}</TableHead>
+                <TableHead>{t('tracking.common.notes')}</TableHead>
+                <TableHead>{t('common.edit')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -234,18 +234,18 @@ export const ActivityLogsList = ({
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Activity Log</AlertDialogTitle>
+                              <AlertDialogTitle>{t('common.delete')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete this activity log? This action cannot be undone.
+                                {t('common.confirm')}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => handleDeleteLog(log.id)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
-                                Delete
+                                {t('common.delete')}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
