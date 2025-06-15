@@ -6,8 +6,6 @@ import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
 const Index = () => {
   const navigate = useNavigate();
   const {
@@ -16,8 +14,6 @@ const Index = () => {
   const {
     t
   } = useTranslation();
-  const { toast } = useToast();
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -32,13 +28,6 @@ const Index = () => {
       navigate('/auth');
     }
   };
-  const handleComingSoon = () => {
-    toast({
-      title: t("comingSoonTitle") || "Coming Soon",
-      description: t("comingSoonDesc") || "This page or feature is coming soon. Stay tuned!",
-    });
-  };
-
   const features = [{
     icon: Clock,
     title: t('features.trackEverything.title'),
@@ -459,15 +448,7 @@ const Index = () => {
               <h3 className="font-semibold mb-4">{t('footer.support')}</h3>
               <div className="space-y-2 text-gray-400">
                 <Link to="/help" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.helpCenter')}</Link>
-                <span
-                  onClick={handleComingSoon}
-                  className="block hover:text-white transition-colors duration-300 cursor-pointer"
-                  tabIndex={0}
-                  role="button"
-                  onKeyDown={e => (e.key === "Enter" || e.key === " ") && handleComingSoon()}
-                >
-                  {t('footer.contactUs')}
-                </span>
+                <Link to="/contact" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.contactUs')}</Link>
                 <Link to="/privacy" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.privacyPolicy')}</Link>
               </div>
             </div>
@@ -475,24 +456,9 @@ const Index = () => {
             <div>
               <h3 className="font-semibold mb-4">{t('footer.company')}</h3>
               <div className="space-y-2 text-gray-400">
-                <span
-                  onClick={handleComingSoon}
-                  className="block hover:text-white transition-colors duration-300 cursor-pointer"
-                  tabIndex={0}
-                  role="button"
-                  onKeyDown={e => (e.key === "Enter" || e.key === " ") && handleComingSoon()}
-                >
-                  {t('footer.about')}
-                </span>
-                <span
-                  onClick={handleComingSoon}
-                  className="block hover:text-white transition-colors duration-300 cursor-pointer"
-                  tabIndex={0}
-                  role="button"
-                  onKeyDown={e => (e.key === "Enter" || e.key === " ") && handleComingSoon()}
-                >
-                  {t('footer.blog')}
-                </span>       
+                <Link to="/about" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.about')}</Link>
+                <Link to="/blog" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.blog')}</Link>
+                
               </div>
             </div>
           </div>
