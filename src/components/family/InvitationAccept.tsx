@@ -63,16 +63,30 @@ export const InvitationAccept = () => {
   const [invitation, setInvitation] = useState<InvitationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [alreadyAccepted, setAlreadyAccepted] = useState(false);
 
   const token = searchParams.get('token');
+  const success = searchParams.get('success');
 
   useEffect(() => {
+    // If we have a success parameter, it means we just came back from accepting an invitation
+    if (success === 'true') {
+      toast({
+        title: "Welcome to the family!",
+        description: "You've successfully joined the family sharing.",
+      });
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
+      return;
+    }
+
     if (token) {
       fetchInvitation();
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, success, navigate, toast]);
 
   const normalizeEmail = (email: string) => {
     return email.trim().toLowerCase();
@@ -88,14 +102,29 @@ export const InvitationAccept = () => {
     console.log('Fetching invitation with token:', token);
 
     try {
-      // Fetch invitation data - this now works for unauthenticated users
-      const { data: invitationData, error: invitationError } = await supabase
+      // First try to fetch pending invitations
+      let { data: invitationData, error: invitationError } = await supabase
         .from('family_invitations')
         .select('*')
         .eq('invitation_token', token)
         .eq('status', 'pending')
         .gt('expires_at', new Date().toISOString())
         .maybeSingle();
+
+      // If no pending invitation found, check if it was already accepted
+      if (!invitationData && !invitationError) {
+        const { data: acceptedInvitation, error: acceptedError } = await supabase
+          .from('family_invitations')
+          .select('*')
+          .eq('invitation_token', token)
+          .eq('status', 'accepted')
+          .maybeSingle();
+
+        if (acceptedInvitation && !acceptedError) {
+          setAlreadyAccepted(true);
+          invitationData = acceptedInvitation;
+        }
+      }
 
       console.log('Invitation query result:', { invitationData, invitationError });
 
@@ -150,10 +179,21 @@ export const InvitationAccept = () => {
   const handleAcceptInvitation = async () => {
     if (!invitation) return;
 
+    // If invitation was already accepted, just redirect to auth if needed
+    if (alreadyAccepted) {
+      if (!user) {
+        navigate(`/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search + '&success=true')}`);
+        return;
+      } else {
+        // User is already authenticated and invitation was accepted, go to dashboard
+        navigate('/dashboard');
+        return;
+      }
+    }
+
     // If user is not authenticated, redirect to auth page with the invitation token
     if (!user) {
-      const currentUrl = new URL(window.location.href);
-      navigate(`/auth?redirect=${encodeURIComponent(currentUrl.pathname + currentUrl.search)}`);
+      navigate(`/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
       return;
     }
 
@@ -228,7 +268,7 @@ export const InvitationAccept = () => {
         description: `You've successfully joined ${invitation.baby_name}'s family sharing as a ${invitation.role}.`,
       });
 
-      // Redirect to dashboard
+      // Redirect to dashboard immediately instead of going back to invitation page
       setTimeout(() => {
         navigate('/dashboard');
       }, 1000);
@@ -245,7 +285,7 @@ export const InvitationAccept = () => {
   };
 
   const declineInvitation = async () => {
-    if (!invitation) return;
+    if (!invitation || alreadyAccepted) return;
 
     setProcessing(true);
 
@@ -295,6 +335,27 @@ export const InvitationAccept = () => {
     );
   }
 
+  // Show success message when coming back from successful acceptance
+  if (success === 'true') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center flex items-center justify-center space-x-2">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+              <span>Welcome to the Family!</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center">
+            <p className="text-gray-600 mb-4">
+              You've successfully joined the family sharing. Redirecting to your dashboard...
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (!invitation) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
@@ -324,6 +385,34 @@ export const InvitationAccept = () => {
   // Show email mismatch warning only if user is logged in and emails don't match
   const showEmailMismatch = user && 
     normalizeEmail(invitation.email) !== normalizeEmail(user.email || '');
+
+  // Show already accepted message
+  if (alreadyAccepted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center flex items-center justify-center space-x-2">
+              <CheckCircle className="h-6 w-6 text-green-600" />
+              <span>Invitation Already Accepted</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-gray-600">
+              This invitation has already been accepted. 
+              {user ? " You can access the family dashboard now." : " Please sign in to access the family dashboard."}
+            </p>
+            <Button 
+              onClick={handleAcceptInvitation}
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              {user ? 'Go to Dashboard' : 'Sign In'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -427,7 +516,7 @@ export const InvitationAccept = () => {
             </Button>
             <Button
               onClick={declineInvitation}
-              disabled={processing}
+              disabled={processing || alreadyAccepted}
               variant="outline"
               className="flex-1"
             >

@@ -27,7 +27,14 @@ const Auth = () => {
     if (user) {
       // If user is already authenticated and there's a redirect, go there
       if (redirectTo) {
-        navigate(redirectTo);
+        // Check if the redirect URL contains success parameter to avoid loops
+        const redirectUrl = new URL(redirectTo, window.location.origin);
+        if (redirectUrl.searchParams.get('success') === 'true') {
+          // If already marked as success, go directly to dashboard
+          navigate('/dashboard');
+        } else {
+          navigate(redirectTo);
+        }
       } else {
         navigate('/dashboard');
       }
@@ -66,6 +73,9 @@ const Auth = () => {
             data: {
               full_name: fullName,
             },
+            emailRedirectTo: redirectTo ? 
+              `${window.location.origin}${redirectTo}` : 
+              `${window.location.origin}/dashboard`,
           },
         });
 
@@ -99,7 +109,9 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + (redirectTo || '/dashboard'),
+          redirectTo: redirectTo ? 
+            `${window.location.origin}${redirectTo}` : 
+            `${window.location.origin}/dashboard`,
         },
       });
 
