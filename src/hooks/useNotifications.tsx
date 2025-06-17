@@ -62,6 +62,26 @@ export const useNotifications = () => {
       return false;
     }
 
+    // Check if already granted
+    if (Notification.permission === 'granted') {
+      setPermission('granted');
+      toast({
+        title: "Notifications Already Enabled",
+        description: "You're all set to receive smart reminders!",
+      });
+      return true;
+    }
+
+    // If already denied, show instructions
+    if (Notification.permission === 'denied') {
+      toast({
+        title: "Notifications Blocked",
+        description: "Please enable notifications in your browser settings and refresh the page",
+        variant: "destructive",
+      });
+      return false;
+    }
+
     setIsLoading(true);
     try {
       const result = await Notification.requestPermission();
@@ -69,20 +89,32 @@ export const useNotifications = () => {
       
       if (result === 'granted') {
         toast({
-          title: "Notifications Enabled",
+          title: "Notifications Enabled!",
           description: "You'll now receive smart reminders for your baby's care",
         });
         return true;
+      } else if (result === 'denied') {
+        toast({
+          title: "Notifications Blocked",
+          description: "You can enable them later in your browser settings",
+          variant: "destructive",
+        });
+        return false;
       } else {
         toast({
-          title: "Notifications Disabled",
-          description: "You can enable them later in your browser settings",
+          title: "Permission Needed",
+          description: "Please allow notifications to receive reminders",
           variant: "destructive",
         });
         return false;
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
+      toast({
+        title: "Error",
+        description: "Failed to request notification permission",
+        variant: "destructive",
+      });
       return false;
     } finally {
       setIsLoading(false);
