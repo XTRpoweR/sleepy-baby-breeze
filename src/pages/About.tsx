@@ -186,7 +186,21 @@ const About = () => {
       </section>
 
       {/* Team Section */}
-      
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            Meet Our Team
+          </h2>
+          <p className="text-xl text-gray-600 mb-12">
+            A diverse group of parents, sleep experts, and technologists united by one goal: 
+            helping families get better sleep.
+          </p>
+          
+          <Card className="border-0 shadow-lg">
+            
+          </Card>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
