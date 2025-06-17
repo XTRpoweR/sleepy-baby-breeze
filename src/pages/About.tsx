@@ -216,9 +216,7 @@ const About = () => {
             <Button size="lg" onClick={() => navigate('/')} className="bg-white text-blue-600 hover:bg-blue-50">
               Start Your Journey
             </Button>
-            <Button size="lg" onClick={() => navigate('/contact')} variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-              Get in Touch
-            </Button>
+            
           </div>
         </div>
       </section>
