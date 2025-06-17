@@ -1,39 +1,21 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { 
-  Moon, 
-  ArrowLeft, 
-  Heart, 
-  Users, 
-  Target, 
-  Award,
-  Baby,
-  Clock,
-  Shield,
-  Globe
-} from "lucide-react";
-
+import { Moon, ArrowLeft, Heart, Users, Target, Award, Baby, Clock, Shield, Globe } from "lucide-react";
 const About = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  const {
+    t
+  } = useTranslation();
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-2"
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back</span>
               </Button>
@@ -215,22 +197,7 @@ const About = () => {
           </p>
           
           <Card className="border-0 shadow-lg">
-            <CardContent className="p-12">
-              <Users className="h-16 w-16 text-blue-600 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Parents, Pediatric Sleep Specialists & Engineers
-              </h3>
-              <p className="text-gray-600 text-lg leading-relaxed max-w-3xl mx-auto">
-                Our team combines real parenting experience with expertise in pediatric sleep science 
-                and cutting-edge technology. We're parents who understand your challenges, scientists 
-                who know what works, and engineers who make it accessible.
-              </p>
-              <div className="mt-8">
-                <Button onClick={() => navigate('/careers')} variant="outline" size="lg">
-                  Join Our Team
-                </Button>
-              </div>
-            </CardContent>
+            
           </Card>
         </div>
       </section>
@@ -255,8 +222,6 @@ const About = () => {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default About;
