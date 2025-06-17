@@ -46,7 +46,7 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician'>('profiles');
+  const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician' | 'notifications'>('profiles');
 
   useEffect(() => {
     if (!loading && !user) {
