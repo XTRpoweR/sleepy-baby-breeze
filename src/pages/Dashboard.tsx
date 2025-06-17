@@ -21,7 +21,8 @@ import {
   Sparkles,
   GraduationCap,
   Camera,
-  FileText
+  FileText,
+  Bell
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
@@ -131,6 +132,15 @@ const Dashboard = () => {
       return;
     }
     navigate('/pediatrician-reports');
+  };
+
+  const handleNotifications = () => {
+    if (!isPremium) {
+      setUpgradeFeature('notifications');
+      setShowUpgradePrompt(true);
+      return;
+    }
+    navigate('/notifications');
   };
 
   if (loading) {
@@ -261,6 +271,24 @@ const Dashboard = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">{t('dashboard.sleepSchedule')}</h3>
               <p className="text-xs lg:text-sm text-gray-600">{t('dashboard.sleepScheduleDesc')}</p>
+            </CardContent>
+          </Card>
+
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer relative" 
+            onClick={handleNotifications}
+          >
+            <CardContent className="p-4 lg:p-6 text-center">
+              <div className="bg-indigo-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
+                <Bell className="h-5 w-5 lg:h-6 lg:w-6 text-indigo-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Smart Notifications</h3>
+              <p className="text-xs lg:text-sm text-gray-600">Intelligent care reminders</p>
+              {!isPremium && (
+                <div className="absolute top-2 right-2">
+                  <Crown className="h-3 w-3 lg:h-4 lg:w-4 text-orange-500" />
+                </div>
+              )}
             </CardContent>
           </Card>
 

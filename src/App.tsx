@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -30,6 +31,7 @@ import Careers from "./pages/Careers";
 import Tutorial from "./pages/Tutorial";
 import Memories from "./pages/Memories";
 import PediatricianReports from "./pages/PediatricianReports";
+import Notifications from "./pages/Notifications";
 
 // Create queryClient outside of component to avoid recreation on each render
 const queryClient = new QueryClient({
@@ -61,6 +63,7 @@ const App: React.FC = () => {
                   <Route path="/sounds" element={<Sounds />} />
                   <Route path="/memories" element={<Memories />} />
                   <Route path="/pediatrician-reports" element={<PediatricianReports />} />
+                  <Route path="/notifications" element={<Notifications />} />
                   <Route path="/subscription" element={<Subscription />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/features" element={<Features />} />

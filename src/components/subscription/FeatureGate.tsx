@@ -7,7 +7,7 @@ import { Crown, Lock } from 'lucide-react';
 
 interface FeatureGateProps {
   children: ReactNode;
-  feature: 'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'pediatrician';
+  feature: 'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'pediatrician' | 'notifications';
   fallback?: ReactNode;
   showUpgrade?: boolean;
   onUpgradeClick?: () => void;
@@ -22,8 +22,8 @@ export const FeatureGate = ({
 }: FeatureGateProps) => {
   const { isPremium, createCheckout, upgrading } = useSubscription();
 
-  // For now, only profiles feature is gated for basic users
-  const isFeatureAllowed = feature === 'profiles' ? isPremium : true;
+  // For now, only profiles and notifications features are gated for basic users
+  const isFeatureAllowed = (feature === 'profiles' || feature === 'notifications') ? isPremium : true;
 
   if (isFeatureAllowed) {
     return <>{children}</>;
@@ -39,7 +39,8 @@ export const FeatureGate = ({
     sharing: 'Family Sharing',
     reports: 'Advanced Reports',
     sounds: 'Premium Sounds',
-    pediatrician: 'Pediatrician Reports'
+    pediatrician: 'Pediatrician Reports',
+    notifications: 'Smart Notifications'
   };
 
   return (
