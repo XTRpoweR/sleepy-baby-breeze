@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -128,7 +127,7 @@ const BlogArticle = () => {
         <ul>
           <li>Ensuring adequate daytime feedings</li>
           <li>Keeping night interactions brief and boring</li>
-          <li>Maintaining consistent response patterns</li>
+          <li>Maintain consistent response patterns</li>
         </ul>
 
         <h2>Customizing for Your Family</h2>
@@ -222,6 +221,561 @@ const BlogArticle = () => {
         </ul>
 
         <p>Sleep regressions are a normal part of development. With patience, consistency, and the right strategies, you and your baby will get through this challenging but temporary phase.</p>
+      `
+    },
+    "white-noise-benefits": {
+      title: "The Benefits of White Noise for Baby Sleep",
+      excerpt: "Discover how different types of sound can help your baby fall asleep faster and sleep more soundly.",
+      author: "Lisa Rodriguez",
+      date: "December 3, 2024",
+      readTime: "4 min read",
+      category: "Sleep Tips",
+      content: `
+        <h2>Understanding White Noise and Your Baby's Sleep</h2>
+        <p>White noise has become increasingly popular among parents seeking better sleep solutions for their babies. But what exactly is white noise, and how can it benefit your little one's sleep patterns?</p>
+
+        <h3>What is White Noise?</h3>
+        <p>White noise is a consistent sound that contains all frequencies at equal intensity. Think of it as a steady "shhhh" sound that masks other noises in the environment. For babies, this consistent sound can be incredibly soothing and sleep-promoting.</p>
+
+        <h2>The Science Behind White Noise</h2>
+        <p>Research shows that white noise can benefit baby sleep in several ways:</p>
+        <ul>
+          <li><strong>Mimics the Womb:</strong> The constant sound environment babies experience in utero is similar to white noise</li>
+          <li><strong>Masks Disruptive Sounds:</strong> Helps block out household noises, traffic, or other disturbances</li>
+          <li><strong>Triggers Sleep Associations:</strong> Becomes a consistent cue that signals sleep time</li>
+          <li><strong>Reduces Startle Reflex:</strong> The consistent sound can help minimize the Moro reflex that often wakes babies</li>
+        </ul>
+
+        <h2>Types of Sleep Sounds</h2>
+        <p>While white noise is most common, there are several types of beneficial sounds for baby sleep:</p>
+
+        <h3>White Noise</h3>
+        <p>The classic "shhhh" sound or static-like noise that's consistent across all frequencies.</p>
+
+        <h3>Pink Noise</h3>
+        <p>A deeper, more balanced sound like rainfall or ocean waves. Some studies suggest pink noise may be even more effective than white noise.</p>
+
+        <h3>Brown Noise</h3>
+        <p>An even deeper, rumbling sound similar to thunder or a waterfall.</p>
+
+        <h3>Nature Sounds</h3>
+        <p>Gentle sounds like rain, ocean waves, or forest ambiance can be very soothing for some babies.</p>
+
+        <h2>Best Practices for Using White Noise</h2>
+
+        <h3>Volume Guidelines</h3>
+        <p>Keep the volume at a safe level - around 50 decibels (about as loud as a quiet conversation). The sound should be audible but not overwhelming.</p>
+
+        <h3>Placement Tips</h3>
+        <ul>
+          <li>Place the sound machine across the room, not directly next to your baby's crib</li>
+          <li>Ensure the device is out of reach of curious little hands</li>
+          <li>Consider portable options for travel and consistency</li>
+        </ul>
+
+        <h3>Timing Considerations</h3>
+        <p>You can run white noise throughout the entire sleep period, including naps and nighttime sleep. Many babies benefit from having it on continuously during sleep times.</p>
+
+        <h2>Choosing the Right White Noise Machine</h2>
+        <p>When selecting a white noise machine for your baby, consider:</p>
+        <ul>
+          <li><strong>Sound Quality:</strong> Look for machines that produce true white noise, not looped recordings</li>
+          <li><strong>Volume Control:</strong> Ensure you can adjust the volume to appropriate levels</li>
+          <li><strong>Timer Options:</strong> Some parents prefer machines with auto-shut-off timers</li>
+          <li><strong>Portability:</strong> Consider whether you need something travel-friendly</li>
+          <li><strong>Additional Features:</strong> Some machines offer multiple sound options, nightlights, or app connectivity</li>
+        </ul>
+
+        <h2>Safety Considerations</h2>
+        <p>While white noise is generally safe when used properly, keep these safety tips in mind:</p>
+        <ul>
+          <li>Never exceed 50 decibels in volume</li>
+          <li>Place the machine at least 7 feet away from your baby's crib</li>
+          <li>Ensure the device is secure and cannot fall into the crib</li>
+          <li>Choose machines with automatic shut-off features for added safety</li>
+        </ul>
+
+        <h2>Common Concerns and Solutions</h2>
+
+        <h3>"Will My Baby Become Dependent on White Noise?"</h3>
+        <p>While some babies do become accustomed to white noise, this isn't necessarily problematic. If you're concerned about dependency, you can gradually reduce the volume over time.</p>
+
+        <h3>"What If We're Traveling?"</h3>
+        <p>Portable white noise machines or smartphone apps can help maintain consistency when away from home.</p>
+
+        <p>White noise can be a valuable tool in your baby's sleep toolkit. When used safely and consistently, it can help create a more peaceful sleep environment for the whole family.</p>
+      `
+    },
+    "consult-sleep-specialist": {
+      title: "When to Consult a Pediatric Sleep Specialist",
+      excerpt: "Learn the warning signs that indicate it might be time to seek professional help for your baby's sleep issues.",
+      author: "Dr. Jennifer Kim",
+      date: "November 30, 2024",
+      readTime: "6 min read",
+      category: "Medical",
+      content: `
+        <h2>Recognizing When Professional Help is Needed</h2>
+        <p>While many sleep challenges are normal parts of infant development, some situations warrant professional evaluation. Understanding when to seek help from a pediatric sleep specialist can make a significant difference in your family's wellbeing.</p>
+
+        <h2>Red Flag Signs That Require Immediate Attention</h2>
+        <p>Contact a pediatric sleep specialist immediately if you notice:</p>
+
+        <h3>Breathing-Related Concerns</h3>
+        <ul>
+          <li><strong>Sleep Apnea Signs:</strong> Pauses in breathing during sleep, gasping, or choking sounds</li>
+          <li><strong>Loud Snoring:</strong> Persistent, loud snoring in infants (unusual for babies under 2)</li>
+          <li><strong>Blue Coloring:</strong> Any blue tint around lips or face during sleep</li>
+          <li><strong>Restless Sleep:</strong> Constant movement or inability to stay asleep due to breathing issues</li>
+        </ul>
+
+        <h3>Severe Sleep Disruptions</h3>
+        <ul>
+          <li><strong>Chronic Insomnia:</strong> Consistent inability to fall asleep after 6 months of age</li>
+          <li><strong>Frequent Night Terrors:</strong> Intense crying episodes during sleep that don't respond to comfort</li>
+          <li><strong>Extreme Sleep Resistance:</strong> Persistent refusal to sleep despite appropriate routines</li>
+        </ul>
+
+        <h2>Developmental and Behavioral Concerns</h2>
+        
+        <h3>When Sleep Issues Affect Development</h3>
+        <p>Consider professional help if sleep problems are impacting:</p>
+        <ul>
+          <li><strong>Growth Patterns:</strong> Falling off growth curves or failure to thrive</li>
+          <li><strong>Cognitive Development:</strong> Delays in reaching developmental milestones</li>
+          <li><strong>Behavioral Issues:</strong> Extreme irritability, aggression, or mood changes</li>
+          <li><strong>Feeding Problems:</strong> Difficulty eating due to exhaustion</li>
+        </ul>
+
+        <h3>Family Impact Indicators</h3>
+        <p>Seek help when sleep issues significantly affect:</p>
+        <ul>
+          <li>Parental mental health and wellbeing</li>
+          <li>Family relationships and functioning</li>
+          <li>Parents' ability to work or care for other children</li>
+          <li>Overall family safety due to exhaustion</li>
+        </ul>
+
+        <h2>Age-Specific Concerns</h2>
+
+        <h3>Newborns (0-3 months)</h3>
+        <p>While frequent waking is normal, consult a specialist if:</p>
+        <ul>
+          <li>Your baby sleeps less than 8 hours total in 24 hours</li>
+          <li>Extreme difficulty staying asleep even for short periods</li>
+          <li>Signs of colic that don't improve with standard interventions</li>
+        </ul>
+
+        <h3>Older Infants (4-12 months)</h3>
+        <p>Consider professional help for:</p>
+        <ul>
+          <li>Inability to sleep for 3-4 hour stretches by 6 months</li>
+          <li>Regression in sleep skills that lasts more than 4 weeks</li>
+          <li>Complete resistance to sleep training methods</li>
+        </ul>
+
+        <h3>Toddlers (12+ months)</h3>
+        <p>Red flags include:</p>
+        <ul>
+          <li>Persistent bedtime battles lasting hours</li>
+          <li>Frequent nightmares or night terrors</li>
+          <li>Early morning wakings (before 5 AM) that resist schedule adjustments</li>
+        </ul>
+
+        <h2>Medical Conditions That Affect Sleep</h2>
+        <p>Certain medical conditions may require specialized sleep intervention:</p>
+        <ul>
+          <li><strong>Reflux:</strong> Severe GERD that disrupts sleep despite treatment</li>
+          <li><strong>Allergies:</strong> Environmental or food allergies causing sleep disruption</li>
+          <li><strong>Neurological Conditions:</strong> Any diagnosed neurological issues</li>
+          <li><strong>Respiratory Issues:</strong> Chronic congestion, asthma, or breathing problems</li>
+        </ul>
+
+        <h2>What to Expect from a Pediatric Sleep Specialist</h2>
+
+        <h3>Initial Consultation</h3>
+        <p>Your specialist will likely:</p>
+        <ul>
+          <li>Review detailed sleep history and patterns</li>
+          <li>Examine your child's medical history</li>
+          <li>Assess current sleep environment and routines</li>
+          <li>Rule out underlying medical conditions</li>
+        </ul>
+
+        <h3>Diagnostic Tools</h3>
+        <p>Depending on concerns, they may recommend:</p>
+        <ul>
+          <li><strong>Sleep Study:</strong> Overnight monitoring in a sleep lab</li>
+          <li><strong>Sleep Diary:</strong> Detailed tracking of sleep patterns at home</li>
+          <li><strong>Medical Tests:</strong> Blood work or other tests to rule out medical issues</li>
+        </ul>
+
+        <h3>Treatment Plans</h3>
+        <p>Treatment may include:</p>
+        <ul>
+          <li>Customized sleep training approaches</li>
+          <li>Environmental modifications</li>
+          <li>Medical interventions if needed</li>
+          <li>Family support and counseling</li>
+        </ul>
+
+        <h2>Preparing for Your Appointment</h2>
+        <p>To make the most of your consultation:</p>
+
+        <h3>Document Everything</h3>
+        <ul>
+          <li>Keep a detailed sleep log for 1-2 weeks before your appointment</li>
+          <li>Note feeding times, nap schedules, and bedtime routines</li>
+          <li>Record any concerning behaviors or symptoms</li>
+        </ul>
+
+        <h3>Prepare Questions</h3>
+        <ul>
+          <li>What could be causing these sleep issues?</li>
+          <li>Are there any medical concerns to rule out?</li>
+          <li>What treatment options are available?</li>
+          <li>How long should we expect treatment to take?</li>
+        </ul>
+
+        <h2>Finding the Right Specialist</h2>
+        <p>When choosing a pediatric sleep specialist:</p>
+        <ul>
+          <li>Look for board certification in sleep medicine</li>
+          <li>Seek specialists with pediatric experience</li>
+          <li>Ask for referrals from your pediatrician</li>
+          <li>Consider their approach and treatment philosophy</li>
+        </ul>
+
+        <p>Remember, seeking help for persistent sleep issues is not a sign of failure as a parent. Professional guidance can provide the tools and support needed to help your entire family get the rest you need and deserve.</p>
+      `
+    },
+    "co-parenting-night-duties": {
+      title: "Co-Parenting Night Duties: Strategies That Actually Work",
+      excerpt: "Practical tips for sharing nighttime responsibilities fairly and effectively between partners.",
+      author: "Mark Thompson",
+      date: "November 28, 2024",
+      readTime: "5 min read",
+      category: "Parenting",
+      content: `
+        <h2>The Importance of Sharing Night Duties</h2>
+        <p>Nighttime parenting responsibilities can be overwhelming when shouldered by one person alone. Effective co-parenting during night hours not only ensures better care for your baby but also protects both parents' mental and physical health.</p>
+
+        <h2>Understanding Each Parent's Needs</h2>
+        <p>Before establishing a night routine, it's crucial to understand that each parent may have different:</p>
+        <ul>
+          <li><strong>Sleep Patterns:</strong> Some people are natural night owls, others are early birds</li>
+          <li><strong>Work Schedules:</strong> Consider who has early meetings or demanding days</li>
+          <li><strong>Physical Recovery:</strong> Birthing parents may need additional rest initially</li>
+          <li><strong>Stress Tolerance:</strong> Some handle sleep deprivation better than others</li>
+        </ul>
+
+        <h2>Effective Night Duty Strategies</h2>
+
+        <h3>The Shift System</h3>
+        <p>Divide the night into shifts, allowing each parent uninterrupted sleep blocks:</p>
+        <ul>
+          <li><strong>Early Shift (7 PM - 1 AM):</strong> One parent handles bedtime and early night wakings</li>
+          <li><strong>Late Shift (1 AM - 7 AM):</strong> Other parent takes over for the rest of the night</li>
+          <li><strong>Benefits:</strong> Each parent gets a guaranteed 6-hour sleep block</li>
+        </ul>
+
+        <h3>The Alternating Nights Approach</h3>
+        <p>Take turns being the "on-duty" parent for entire nights:</p>
+        <ul>
+          <li>One parent handles all night duties on their assigned nights</li>
+          <li>The other parent gets completely uninterrupted sleep</li>
+          <li>Switch every other night or every few nights</li>
+          <li>Best for families with unpredictable wake patterns</li>
+        </ul>
+
+        <h3>The Skills-Based Division</h3>
+        <p>Assign duties based on each parent's strengths:</p>
+        <ul>
+          <li><strong>Feeding Parent:</strong> Handles milk/formula preparation and feeding</li>
+          <li><strong>Comfort Parent:</strong> Manages diaper changes, soothing, and settling</li>
+          <li><strong>Tag Team:</strong> Work together but with defined roles</li>
+        </ul>
+
+        <h2>Special Considerations for Breastfeeding Families</h2>
+
+        <h3>Creative Solutions</h3>
+        <p>Even when breastfeeding, the non-breastfeeding parent can contribute:</p>
+        <ul>
+          <li><strong>Diaper Duty:</strong> Handle all diaper changes during night feedings</li>
+          <li><strong>Burp and Settle:</strong> Take over after feeding to burp and put baby back to sleep</li>
+          <li><strong>Pump Support:</strong> Handle pumped milk or formula for some feeds</li>
+          <li><strong>Morning Shift:</strong> Take over early morning duties so the breastfeeding parent can sleep in</li>
+        </ul>
+
+        <h3>The Breastfeeding Support System</h3>
+        <ul>
+          <li>Non-breastfeeding parent brings baby to bed for feeds</li>
+          <li>Handles all settling and diaper changes</li>
+          <li>Takes over if baby won't settle after feeding</li>
+          <li>Manages older children's nighttime needs</li>
+        </ul>
+
+        <h2>Communication Strategies</h2>
+
+        <h3>Establish Clear Agreements</h3>
+        <p>Before sleep deprivation sets in, agree on:</p>
+        <ul>
+          <li><strong>Duty Distribution:</strong> Who does what and when</li>
+          <li><strong>Emergency Protocols:</strong> When to wake the "off-duty" parent</li>
+          <li><strong>Schedule Flexibility:</strong> How to handle changes due to illness or work</li>
+          <li><strong>Review Periods:</strong> Regular check-ins to adjust the system</li>
+        </ul>
+
+        <h3>Middle-of-the-Night Communication</h3>
+        <ul>
+          <li>Use quiet signals to indicate when help is needed</li>
+          <li>Avoid detailed conversations during night duties</li>
+          <li>Save discussions for daytime when both are alert</li>
+          <li>Use apps or notes to track feeding times and patterns</li>
+        </ul>
+
+        <h2>Practical Tools and Tips</h2>
+
+        <h3>Environmental Setup</h3>
+        <ul>
+          <li><strong>Separate Sleep Spaces:</strong> Consider temporarily sleeping in different rooms</li>
+          <li><strong>Baby Stations:</strong> Set up changing and feeding stations in multiple rooms</li>
+          <li><strong>Red Light:</strong> Use red nightlights to preserve night vision</li>
+          <li><strong>White Noise:</strong> Machines in each room to mask sounds</li>
+        </ul>
+
+        <h3>Technology Helpers</h3>
+        <ul>
+          <li><strong>Baby Monitors:</strong> Allow the off-duty parent to sleep elsewhere</li>
+          <li><strong>Apps:</strong> Track feedings, diapers, and sleep patterns</li>
+          <li><strong>Smart Watches:</strong> Silent alarms for shift changes</li>
+          <li><strong>Meal Prep:</strong> Pre-made snacks and drinks for night duties</li>
+        </ul>
+
+        <h2>Handling Challenges</h2>
+
+        <h3>When One Parent Does More</h3>
+        <p>If the division feels unequal:</p>
+        <ul>
+          <li>Track duties objectively for a week</li>
+          <li>Discuss specific concerns without blame</li>
+          <li>Consider non-night ways to balance responsibilities</li>
+          <li>Acknowledge that equal doesn't always mean identical</li>
+        </ul>
+
+        <h3>Dealing with Resentment</h3>
+        <ul>
+          <li>Regular appreciation expressions</li>
+          <li>Acknowledgment of each other's contributions</li>
+          <li>Scheduled breaks for each parent</li>
+          <li>Professional support if needed</li>
+        </ul>
+
+        <h2>Adjusting the System</h2>
+        <p>Your night duty system should evolve as:</p>
+        <ul>
+          <li><strong>Baby's Sleep Patterns Change:</strong> Longer stretches mean different strategies</li>
+          <li><strong>Work Schedules Shift:</strong> New jobs or schedules require adjustments</li>
+          <li><strong>Additional Children:</strong> More kids mean more complex logistics</li>
+          <li><strong>Health Changes:</strong> Illness or stress may temporarily alter arrangements</li>
+        </ul>
+
+        <h2>Self-Care for Both Parents</h2>
+        <p>Remember that taking care of yourselves is essential:</p>
+        <ul>
+          <li>Schedule individual downtime</li>
+          <li>Maintain some personal routines</li>
+          <li>Ask for help from family and friends</li>
+          <li>Consider professional support when needed</li>
+        </ul>
+
+        <p>Effective co-parenting during nighttime hours requires patience, communication, and flexibility. The goal isn't perfect equality but rather a sustainable system that supports your baby's needs while preserving both parents' wellbeing. Remember, this phase is temporary, and finding what works for your family is more important than following any prescribed formula.</p>
+      `
+    },
+    "sleep-data-understanding": {
+      title: "Understanding Your Baby's Sleep Data: Making Sense of the Numbers",
+      excerpt: "How to interpret sleep tracking data to make informed decisions about your baby's sleep schedule.",
+      author: "Anna Phillips",
+      date: "November 25, 2024",
+      readTime: "8 min read",
+      category: "Data & Analytics",
+      content: `
+        <h2>The Power of Sleep Data</h2>
+        <p>In today's digital age, many parents have access to detailed sleep tracking data through apps, wearables, and smart monitors. But raw numbers alone don't tell the whole story. Understanding how to interpret and act on this data can transform your approach to your baby's sleep health.</p>
+
+        <h2>Key Sleep Metrics to Track</h2>
+
+        <h3>Total Sleep Duration</h3>
+        <p>This includes both nighttime sleep and daytime naps:</p>
+        <ul>
+          <li><strong>Newborns (0-3 months):</strong> 14-17 hours per day</li>
+          <li><strong>Infants (4-11 months):</strong> 12-15 hours per day</li>
+          <li><strong>Toddlers (1-2 years):</strong> 11-14 hours per day</li>
+        </ul>
+        <p><em>Remember:</em> These are averages. Some babies naturally need more or less sleep.</p>
+
+        <h3>Sleep Efficiency</h3>
+        <p>This measures the percentage of time spent actually sleeping versus time spent in bed:</p>
+        <ul>
+          <li><strong>Good Efficiency:</strong> 85% or higher</li>
+          <li><strong>Fair Efficiency:</strong> 75-84%</li>
+          <li><strong>Poor Efficiency:</strong> Below 75%</li>
+        </ul>
+
+        <h3>Number of Night Wakings</h3>
+        <p>Track how many times your baby wakes during the night:</p>
+        <ul>
+          <li><strong>Newborns:</strong> 2-6 wakings are normal</li>
+          <li><strong>3-6 months:</strong> 1-3 wakings are typical</li>
+          <li><strong>6+ months:</strong> 0-2 wakings are expected</li>
+        </ul>
+
+        <h3>Time to Fall Asleep</h3>
+        <p>Also called "sleep onset latency":</p>
+        <ul>
+          <li><strong>Healthy Range:</strong> 10-20 minutes for babies</li>
+          <li><strong>Concerning:</strong> Consistently over 30 minutes</li>
+          <li><strong>Too Fast:</strong> Under 5 minutes may indicate overtiredness</li>
+        </ul>
+
+        <h2>Understanding Sleep Patterns</h2>
+
+        <h3>Circadian Rhythm Development</h3>
+        <p>Your data should show:</p>
+        <ul>
+          <li><strong>0-6 weeks:</strong> Irregular patterns, no clear day/night distinction</li>
+          <li><strong>6-12 weeks:</strong> Longer sleep stretches begin to emerge at night</li>
+          <li><strong>3-6 months:</strong> More predictable patterns, longer nighttime sleep</li>
+          <li><strong>6+ months:</strong> Established circadian rhythms</li>
+        </ul>
+
+        <h3>Sleep Cycle Patterns</h3>
+        <p>Look for:</p>
+        <ul>
+          <li><strong>Cycle Length:</strong> Gradually increasing from 50-60 minutes to 90 minutes</li>
+          <li><strong>Deep Sleep Periods:</strong> Longer stretches without movement or awakening</li>
+          <li><strong>REM Sleep:</strong> Periods of movement and dreaming (normal and healthy)</li>
+        </ul>
+
+        <h2>Analyzing Your Data Effectively</h2>
+
+        <h3>Look for Trends, Not Single Nights</h3>
+        <p>Focus on patterns over 7-14 days rather than individual nights:</p>
+        <ul>
+          <li>Calculate weekly averages for total sleep</li>
+          <li>Note patterns in wake times and bedtimes</li>
+          <li>Track improvement or regression trends</li>
+          <li>Identify days of the week with different patterns</li>
+        </ul>
+
+        <h3>Context is Everything</h3>
+        <p>Always consider external factors:</p>
+        <ul>
+          <li><strong>Growth Spurts:</strong> May cause temporary sleep disruption</li>
+          <li><strong>Illness:</strong> Can significantly alter sleep patterns</li>
+          <li><strong>Schedule Changes:</strong> Travel, daycare, or routine changes</li>
+          <li><strong>Developmental Milestones:</strong> Learning new skills often disrupts sleep</li>
+        </ul>
+
+        <h2>Common Data Interpretation Mistakes</h2>
+
+        <h3>Over-Reacting to Single Bad Nights</h3>
+        <p>One poor night doesn't indicate a problem. Look for sustained patterns instead.</p>
+
+        <h3>Comparing to Other Babies</h3>
+        <p>Every baby is unique. Use age-appropriate ranges as guides, not strict rules.</p>
+
+        <h3>Ignoring Daytime Sleep</h3>
+        <p>Daytime naps directly impact nighttime sleep. Track both for the complete picture.</p>
+
+        <h3>Focusing Only on Quantity</h3>
+        <p>Sleep quality is as important as quantity. A baby who sleeps 10 hours soundly may be better rested than one who sleeps 12 hours with frequent wakings.</p>
+
+        <h2>Using Data to Optimize Sleep</h2>
+
+        <h3>Identifying Optimal Bedtime</h3>
+        <p>Use your data to find the "sweet spot":</p>
+        <ul>
+          <li>Compare sleep onset times with different bedtimes</li>
+          <li>Note which bedtimes result in longer sleep stretches</li>
+          <li>Track mood and behavior the next day</li>
+          <li>Adjust gradually (15-minute increments)</li>
+        </ul>
+
+        <h3>Perfecting Nap Timing</h3>
+        <p>Data can help optimize nap schedules:</p>
+        <ul>
+          <li><strong>Wake Windows:</strong> Track time between sleep periods</li>
+          <li><strong>Nap Duration:</strong> Find the ideal length for your baby</li>
+          <li><strong>Last Nap Timing:</strong> Ensure it doesn't interfere with bedtime</li>
+        </ul>
+
+        <h2>Red Flags in Your Data</h2>
+        <p>Consult your pediatrician if you consistently see:</p>
+        <ul>
+          <li><strong>Total Sleep:</strong> Significantly below age-appropriate ranges</li>
+          <li><strong>Frequent Wakings:</strong> More than expected for age with no improvement</li>
+          <li><strong>Very Long Sleep Onset:</strong> Consistently over 45 minutes to fall asleep</li>
+          <li><strong>Irregular Patterns:</strong> No discernible routine after 4-6 months</li>
+          <li><strong>Daytime Impact:</strong> Excessive fussiness or developmental concerns</li>
+        </ul>
+
+        <h2>Tools for Data Collection</h2>
+
+        <h3>Manual Tracking</h3>
+        <ul>
+          <li><strong>Sleep Diaries:</strong> Simple pen and paper logs</li>
+          <li><strong>Apps:</strong> User-friendly mobile applications</li>
+          <li><strong>Benefits:</strong> Complete control, detailed notes possible</li>
+          <li><strong>Drawbacks:</strong> Requires consistency, potential for human error</li>
+        </ul>
+
+        <h3>Automated Tracking</h3>
+        <ul>
+          <li><strong>Smart Monitors:</strong> Camera-based sleep tracking</li>
+          <li><strong>Wearable Devices:</strong> Baby-safe sleep monitors</li>
+          <li><strong>Benefits:</strong> Accurate, consistent data collection</li>
+          <li><strong>Drawbacks:</strong> Cost, potential technical issues</li>
+        </ul>
+
+        <h2>Making Data-Driven Decisions</h2>
+
+        <h3>The Scientific Approach</h3>
+        <ol>
+          <li><strong>Establish Baseline:</strong> Track current patterns for 1-2 weeks</li>
+          <li><strong>Identify Issues:</strong> What needs improvement?</li>
+          <li><strong>Make One Change:</strong> Adjust only one variable at a time</li>
+          <li><strong>Monitor Results:</strong> Track for another 1-2 weeks</li>
+          <li><strong>Evaluate:</strong> Did the change help or hurt?</li>
+          <li><strong>Adjust Accordingly:</strong> Keep, modify, or reverse the change</li>
+        </ol>
+
+        <h3>Sample Changes to Test</h3>
+        <ul>
+          <li>Adjusting bedtime by 15-30 minutes</li>
+          <li>Modifying nap timing or duration</li>
+          <li>Changing the bedtime routine</li>
+          <li>Altering the sleep environment</li>
+        </ul>
+
+        <h2>Beyond the Numbers</h2>
+        <p>While data is valuable, remember to also consider:</p>
+        <ul>
+          <li><strong>Your Baby's Mood:</strong> Happy, alert babies may need less sleep than average</li>
+          <li><strong>Family Lifestyle:</strong> Your schedule and needs matter too</li>
+          <li><strong>Developmental Appropriateness:</strong> Some sleep challenges are normal phases</li>
+          <li><strong>Individual Variation:</strong> Your baby's unique temperament and needs</li>
+        </ul>
+
+        <h2>Creating Actionable Reports</h2>
+        <p>Turn your data into useful insights:</p>
+        <ul>
+          <li><strong>Weekly Summaries:</strong> Average sleep duration, efficiency, and wake times</li>
+          <li><strong>Trend Analysis:</strong> Are things improving, worsening, or stable?</li>
+          <li><strong>Correlation Notes:</strong> What environmental factors affect sleep?</li>
+          <li><strong>Goal Setting:</strong> Specific, measurable improvements to work toward</li>
+        </ul>
+
+        <p>Remember, sleep data is a tool to help you understand your baby's patterns and make informed decisions. The numbers should support your parenting, not create additional stress. Use this information as a guide, but always trust your instincts and consider your baby's individual needs alongside the data.</p>
       `
     }
   };
