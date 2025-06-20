@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +29,7 @@ const Blog = () => {
     date: "December 10, 2024",
     readTime: "8 min read",
     category: "Sleep Science",
+    slug: "science-behind-baby-sleep-cycles",
     image: "/placeholder.svg"
   };
 
@@ -41,6 +41,7 @@ const Blog = () => {
       date: "December 8, 2024",
       readTime: "5 min read",
       category: "Sleep Training",
+      slug: "perfect-bedtime-routine-6-month-old",
       icon: Baby
     },
     {
@@ -50,6 +51,7 @@ const Blog = () => {
       date: "December 5, 2024",
       readTime: "7 min read",
       category: "Development",
+      slug: "managing-sleep-regressions",
       icon: Heart
     },
     {
@@ -59,6 +61,7 @@ const Blog = () => {
       date: "December 3, 2024",
       readTime: "4 min read",
       category: "Sleep Tips",
+      slug: "white-noise-benefits",
       icon: Lightbulb
     },
     {
@@ -68,6 +71,7 @@ const Blog = () => {
       date: "November 30, 2024",
       readTime: "6 min read",
       category: "Medical",
+      slug: "consult-sleep-specialist",
       icon: Stethoscope
     },
     {
@@ -77,6 +81,7 @@ const Blog = () => {
       date: "November 28, 2024",
       readTime: "5 min read",
       category: "Parenting",
+      slug: "co-parenting-night-duties",
       icon: Users
     },
     {
@@ -86,6 +91,7 @@ const Blog = () => {
       date: "November 25, 2024",
       readTime: "8 min read",
       category: "Data & Analytics",
+      slug: "sleep-data-understanding",
       icon: BookOpen
     }
   ];
@@ -150,7 +156,7 @@ const Blog = () => {
       {/* Featured Article */}
       <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <Card className="border-0 shadow-xl sm:shadow-2xl overflow-hidden">
+          <Card className="border-0 shadow-xl sm:shadow-2xl overflow-hidden cursor-pointer hover:shadow-3xl transition-shadow duration-300">
             <div className="grid lg:grid-cols-2">
               <div className="bg-gradient-to-br from-blue-100 to-purple-100 p-6 sm:p-8 lg:p-12 flex items-center justify-center">
                 <div className="text-center">
@@ -181,7 +187,10 @@ const Blog = () => {
                     <span>{featuredArticle.readTime}</span>
                   </div>
                 </div>
-                <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto touch-target">
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto touch-target"
+                  onClick={() => navigate(`/blog/${featuredArticle.slug}`)}
+                >
                   Read Full Article
                 </Button>
               </div>
@@ -221,7 +230,11 @@ const Blog = () => {
             {articles.map((article, index) => {
               const IconComponent = article.icon;
               return (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
+                <Card 
+                  key={index} 
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  onClick={() => navigate(`/blog/${article.slug}`)}
+                >
                   <CardHeader className="p-4 sm:p-6">
                     <div className="flex items-start justify-between mb-2">
                       <Badge variant="secondary" className="text-xs">{article.category}</Badge>
