@@ -1,4 +1,5 @@
 
+
 import { useState, useRef, useEffect } from 'react';
 
 interface AudioTrack {
@@ -107,7 +108,7 @@ export const useAudioPlayer = () => {
         
         if (remaining <= 0) {
           stopAudio();
-          clearTimer();
+          clearTimerFunction();
         }
       }
     };
@@ -449,3 +450,4 @@ export const useAudioPlayer = () => {
     formatTime
   };
 };
+
