@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 
 interface AudioTrack {
@@ -31,8 +30,8 @@ export const useAudioPlayer = () => {
   const [fadeOut, setFadeOut] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerTimeoutRef = useRef<number | null>(null);
-  const fadeIntervalRef = useRef<number | null>(null);
+  const timerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Updated audio tracks with correct file paths
   const audioTracks: AudioTrack[] = [
@@ -349,7 +348,7 @@ export const useAudioPlayer = () => {
     const totalMinutes = hours * 60 + minutes + seconds / 60;
     setTimer(totalMinutes);
   };
-  const clearTimer = () => {
+  const clearTimerFunction = () => {
     setTimer(null);
     setTimeRemaining(null);
   };
@@ -441,7 +440,7 @@ export const useAudioPlayer = () => {
     // Timer controls
     setAudioTimer,
     setCustomTimer,
-    clearTimer,
+    clearTimer: clearTimerFunction,
     
     // Utility functions
     setSearchQuery,

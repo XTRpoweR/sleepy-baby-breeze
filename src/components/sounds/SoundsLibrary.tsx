@@ -12,8 +12,7 @@ import {
   Square, 
   Volume2, 
   VolumeX,
-  VolumeMinus,
-  VolumePlus,
+  Volume1,
   Repeat, 
   Timer,
   Music,
@@ -32,7 +31,9 @@ import {
   Settings,
   SkipForward,
   SkipBack,
-  AlertCircle
+  AlertCircle,
+  Minus,
+  Plus
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { EnhancedAudioTimerDialog } from './EnhancedAudioTimerDialog';
@@ -530,10 +531,12 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                     {/* Volume Control */}
                     <div className="flex items-center space-x-3">
                       <Button size="sm" variant="ghost" onClick={volumeDown}>
-                        <VolumeMinus className="h-4 w-4" />
+                        <Minus className="h-4 w-4" />
                       </Button>
                       {volume === 0 ? (
                         <VolumeX className="h-4 w-4 text-gray-600" />
+                      ) : volume < 0.5 ? (
+                        <Volume1 className="h-4 w-4 text-gray-600" />
                       ) : (
                         <Volume2 className="h-4 w-4 text-gray-600" />
                       )}
@@ -545,7 +548,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                         className="flex-1"
                       />
                       <Button size="sm" variant="ghost" onClick={volumeUp}>
-                        <VolumePlus className="h-4 w-4" />
+                        <Plus className="h-4 w-4" />
                       </Button>
                       <span className="text-sm text-gray-600 w-10">
                         {Math.round(volume * 100)}%
