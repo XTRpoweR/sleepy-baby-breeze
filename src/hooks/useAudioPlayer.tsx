@@ -29,6 +29,7 @@ export const useAudioPlayer = () => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  const [autoplay, setAutoplay] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -120,6 +121,8 @@ export const useAudioPlayer = () => {
     const handleEnded = () => {
       if (audio.loop) {
         // Audio will loop automatically
+      } else if (autoplay) {
+        playNextTrack();
       } else {
         stopAudio();
       }
@@ -147,7 +150,7 @@ export const useAudioPlayer = () => {
         audio.pause();
       }
     };
-  }, []);
+  }, [autoplay]);
 
   // Timer logic with seconds precision
   useEffect(() => {
@@ -164,7 +167,11 @@ export const useAudioPlayer = () => {
         setTimeRemaining(prev => {
           if (prev === null || prev <= 1) {
             clearInterval(timerIntervalRef.current!);
-            stopAudio();
+            // Stop the audio when timer reaches zero
+            if (audioRef.current) {
+              audioRef.current.pause();
+              setIsPlaying(false);
+            }
             clearTimerFunction();
             return null;
           }
@@ -180,24 +187,51 @@ export const useAudioPlayer = () => {
     };
   }, [timer, isPlaying]);
 
+  const playNextTrack = () => {
+    if (!currentTrack) return;
+    
+    const currentIndex = audioTracks.findIndex(track => track.id === currentTrack.id);
+    const nextIndex = (currentIndex + 1) % audioTracks.length;
+    const nextTrack = audioTracks[nextIndex];
+    
+    playAudio(nextTrack);
+  };
+
   const playAudio = async (track: AudioTrack) => {
     if (!audioRef.current) return;
     
     setError(null);
     
+    // If it's the same track and it's currently playing, pause it
     if (currentTrack?.id === track.id && isPlaying) {
       pauseAudio();
       return;
     }
     
+    // If it's the same track but paused, resume from current position
+    if (currentTrack?.id === track.id && !isPlaying) {
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+        return;
+      } catch (error) {
+        console.error("Error resuming audio:", error);
+        setError('Failed to resume audio. Please try again.');
+        return;
+      }
+    }
+    
+    // Playing a new track
     try {
       setIsLoading(true);
       audioRef.current.src = track.url;
       audioRef.current.playbackRate = playbackRate;
+      audioRef.current.currentTime = 0; // Start from beginning for new tracks
       
       await audioRef.current.play();
       setCurrentTrack(track);
       setIsPlaying(true);
+      setCurrentTime(0);
       addToRecentlyPlayed(track.id);
       
       if (fadeIn) {
@@ -412,6 +446,7 @@ export const useAudioPlayer = () => {
     isLoading,
     error,
     playbackRate,
+    autoplay,
     
     // Timer state
     timer,
@@ -430,6 +465,7 @@ export const useAudioPlayer = () => {
     seekTo,
     skipForward,
     skipBackward,
+    playNextTrack,
     
     // Volume controls
     setVolume,
@@ -441,6 +477,7 @@ export const useAudioPlayer = () => {
     changePlaybackRate,
     setFadeIn,
     setFadeOut,
+    setAutoplay,
     
     // Timer controls
     setAudioTimer,

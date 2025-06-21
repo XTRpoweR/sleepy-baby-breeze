@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,8 @@ import {
   SkipBack,
   AlertCircle,
   Minus,
-  Plus
+  Plus,
+  Shuffle
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { EnhancedAudioTimerDialog } from './EnhancedAudioTimerDialog';
@@ -64,12 +64,14 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     playbackRate,
     fadeIn,
     fadeOut,
+    autoplay,
     playAudio,
     pauseAudio,
     stopAudio,
     seekTo,
     skipForward,
     skipBackward,
+    playNextTrack,
     setVolume,
     volumeUp,
     volumeDown,
@@ -77,6 +79,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     changePlaybackRate,
     setFadeIn,
     setFadeOut,
+    setAutoplay,
     setAudioTimer,
     setCustomTimer,
     clearTimer,
@@ -200,11 +203,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     if (onSoundSelect) {
       onSoundSelect(track);
     } else {
-      if (currentTrack?.id === track.id && isPlaying) {
-        pauseAudio();
-      } else {
-        await playAudio(track);
-      }
+      await playAudio(track);
     }
   };
 
@@ -300,6 +299,11 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                   {playbackRate !== 1 && (
                     <Badge variant="outline">{playbackRate}x speed</Badge>
                   )}
+                  {autoplay && (
+                    <Badge variant="outline" className="bg-blue-100 text-blue-800">
+                      Auto-play
+                    </Badge>
+                  )}
                 </div>
                 {timeRemaining && (
                   <div className={`text-sm font-medium ${colors.accent}`}>
@@ -370,6 +374,15 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                     className={isLooping ? colors.button : ''}
                   >
                     <Repeat className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={autoplay ? "default" : "outline"}
+                    onClick={() => setAutoplay(!autoplay)}
+                    className={autoplay ? colors.button : ''}
+                    title="Auto-play next track"
+                  >
+                    <Shuffle className="h-4 w-4" />
                   </Button>
                 </div>
                 
