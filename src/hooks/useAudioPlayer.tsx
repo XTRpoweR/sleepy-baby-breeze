@@ -25,9 +25,9 @@ export const useAudioPlayer = () => {
   const [recentlyPlayed, setRecentlyPlayed] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Ref for the main HTMLAudioElement
+  // Ref for the core HTMLAudioElement
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timerTimeoutRef = useRef<number | null>(null); // Corrected type: number
 
   // This Effect hook creates the audio player instance and sets up event listeners
   useEffect(() => {
@@ -59,7 +59,9 @@ export const useAudioPlayer = () => {
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('waiting', handleLoading);
       audio.removeEventListener('canplay', handleCanPlay);
-      audio.pause();
+      if (audio) {
+        audio.pause();
+      }
     };
   }, []);
 
@@ -71,7 +73,7 @@ export const useAudioPlayer = () => {
       category: 'nature',
       subcategory: 'rain',
       url: '/sounds/meditative-rain-114484.mp3',
-      duration: 0, // You can update duration later
+      duration: 0,
       description: 'Calm and meditative rain sounds.'
     },
     {
@@ -179,7 +181,7 @@ export const useAudioPlayer = () => {
         clearTimer();
       }, remaining * 1000);
     }
-    return () => {
+     return () => {
       if(timerTimeoutRef.current) clearTimeout(timerTimeoutRef.current)
     }
   }, [timer, isPlaying, currentTrack]);
@@ -187,7 +189,7 @@ export const useAudioPlayer = () => {
   const setAudioTimer = (minutes: number) => setTimer(minutes);
   const clearTimer = () => setTimer(null);
 
-  // Helper functions (no change)
+  // Helper functions
   const filteredTracks = audioTracks.filter(track => 
     searchQuery === '' || 
     track.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
