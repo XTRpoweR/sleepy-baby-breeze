@@ -1,5 +1,4 @@
 
-
 import { useState, useRef, useEffect } from 'react';
 
 interface AudioTrack {
@@ -32,7 +31,7 @@ export const useAudioPlayer = () => {
   const [fadeOut, setFadeOut] = useState(false);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Updated audio tracks with correct file paths
@@ -100,17 +99,6 @@ export const useAudioPlayer = () => {
 
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
-      
-      // Update timer countdown
-      if (timer && timeRemaining !== null) {
-        const remaining = Math.max(0, timeRemaining - 1);
-        setTimeRemaining(remaining);
-        
-        if (remaining <= 0) {
-          stopAudio();
-          clearTimerFunction();
-        }
-      }
     };
 
     const handleLoadStart = () => {
@@ -159,7 +147,38 @@ export const useAudioPlayer = () => {
         audio.pause();
       }
     };
-  }, [timer, timeRemaining]);
+  }, []);
+
+  // Timer logic with seconds precision
+  useEffect(() => {
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+    }
+    
+    if (isPlaying && timer && timer > 0) {
+      const timerInSeconds = timer * 60;
+      setTimeRemaining(timerInSeconds);
+      
+      // Use interval for second-by-second countdown
+      timerIntervalRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev === null || prev <= 1) {
+            clearInterval(timerIntervalRef.current!);
+            stopAudio();
+            clearTimerFunction();
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
+  }, [timer, isPlaying]);
 
   const playAudio = async (track: AudioTrack) => {
     if (!audioRef.current) return;
@@ -318,39 +337,23 @@ export const useAudioPlayer = () => {
     }
   }, [playbackRate]);
 
-  // Timer logic with seconds precision
-  useEffect(() => {
-    if (timerTimeoutRef.current) {
-      clearTimeout(timerTimeoutRef.current);
-    }
-    
-    if (isPlaying && timer) {
-      const timerInSeconds = timer * 60;
-      setTimeRemaining(timerInSeconds);
-      
-      // Use interval for second-by-second countdown
-      const intervalId = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev === null || prev <= 1) {
-            clearInterval(intervalId);
-            stopAudio();
-            clearTimerFunction();
-            return null;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      
-      return () => clearInterval(intervalId);
-    }
-  }, [timer, isPlaying, currentTrack]);
-
-  const setAudioTimer = (minutes: number) => setTimer(minutes);
+  const setAudioTimer = (minutes: number) => {
+    console.log('Setting timer for:', minutes, 'minutes');
+    setTimer(minutes);
+  };
+  
   const setCustomTimer = (hours: number, minutes: number, seconds: number) => {
     const totalMinutes = hours * 60 + minutes + seconds / 60;
+    console.log('Setting custom timer for:', totalMinutes, 'minutes');
     setTimer(totalMinutes);
   };
+  
   const clearTimerFunction = () => {
+    console.log('Clearing timer');
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
     setTimer(null);
     setTimeRemaining(null);
   };
@@ -450,4 +453,3 @@ export const useAudioPlayer = () => {
     formatTime
   };
 };
-

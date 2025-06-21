@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -287,6 +288,137 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
               </Button>
             </div>
           </div>
+          
+          {/* Audio Controls - Show when track is currently playing */}
+          {isCurrentTrack && currentTrack && !onSoundSelect && (
+            <div className={`mt-4 p-4 rounded-lg ${colors.gradient} border-2 ${colors.ring.replace('ring-', 'border-')}`}>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-2">
+                  <Badge className={colors.badge}>
+                    {currentTrack.category.replace('-', ' ')}
+                  </Badge>
+                  {playbackRate !== 1 && (
+                    <Badge variant="outline">{playbackRate}x speed</Badge>
+                  )}
+                </div>
+                {timeRemaining && (
+                  <div className={`text-sm font-medium ${colors.accent}`}>
+                    Timer: {formatTime(timeRemaining)}
+                  </div>
+                )}
+              </div>
+
+              {/* Progress Bar */}
+              {duration > 0 && (
+                <div className="mb-4">
+                  <div 
+                    className="relative cursor-pointer"
+                    onClick={handleProgressClick}
+                  >
+                    <Progress 
+                      value={getProgressPercentage()} 
+                      className="h-2"
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration)}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Playback Controls */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={skipBackward}
+                    disabled={!isPlaying}
+                  >
+                    <SkipBack className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => isPlaying ? pauseAudio() : playAudio(currentTrack)}
+                    className={colors.button}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : isPlaying ? (
+                      <Pause className="h-4 w-4" />
+                    ) : (
+                      <Play className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={stopAudio}>
+                    <Square className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={skipForward}
+                    disabled={!isPlaying}
+                  >
+                    <SkipForward className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={isLooping ? "default" : "outline"}
+                    onClick={() => setIsLooping(!isLooping)}
+                    className={isLooping ? colors.button : ''}
+                  >
+                    <Repeat className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowTimerDialog(true)}
+                  >
+                    <Timer className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowSettingsDialog(true)}
+                  >
+                    <Settings className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Volume Control */}
+              <div className="flex items-center space-x-3">
+                <Button size="sm" variant="ghost" onClick={volumeDown}>
+                  <Minus className="h-4 w-4" />
+                </Button>
+                {volume === 0 ? (
+                  <VolumeX className="h-4 w-4 text-gray-600" />
+                ) : volume < 0.5 ? (
+                  <Volume1 className="h-4 w-4 text-gray-600" />
+                ) : (
+                  <Volume2 className="h-4 w-4 text-gray-600" />
+                )}
+                <Slider
+                  value={[volume * 100]}
+                  onValueChange={(value) => setVolume(value[0] / 100)}
+                  max={100}
+                  step={1}
+                  className="flex-1"
+                />
+                <Button size="sm" variant="ghost" onClick={volumeUp}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+                <span className="text-sm text-gray-600 w-10">
+                  {Math.round(volume * 100)}%
+                </span>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -324,7 +456,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
 
           {/* Tabs for organization */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="browse" className="flex items-center space-x-2">
                 <Music className="h-4 w-4" />
                 <span className="hidden sm:inline">Browse</span>
@@ -336,10 +468,6 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
               <TabsTrigger value="recent" className="flex items-center space-x-2">
                 <Clock className="h-4 w-4" />
                 <span className="hidden sm:inline">Recent</span>
-              </TabsTrigger>
-              <TabsTrigger value="playing" className="flex items-center space-x-2">
-                <Volume2 className="h-4 w-4" />
-                <span className="hidden sm:inline">Now Playing</span>
               </TabsTrigger>
             </TabsList>
 
@@ -411,156 +539,6 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                   <Clock className="h-8 w-8 mx-auto mb-2" />
                   <p>No recently played sounds</p>
                   <p className="text-sm">Play a sound to see it here</p>
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="playing" className="space-y-4">
-              {/* Current Playing Track */}
-              {currentTrack && !onSoundSelect ? (
-                <Card className={`bg-gradient-to-r ${getCategoryColors(currentTrack.category, true, isPlaying).gradient} border-2 ${getCategoryColors(currentTrack.category, true, isPlaying).ring.replace('ring-', 'border-')}`}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className={getCategoryColors(currentTrack.category, true, isPlaying).accent}>
-                          {getCategoryIcon(currentTrack.category)}
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{currentTrack.name}</h3>
-                          <p className="text-sm text-gray-600">{currentTrack.description}</p>
-                          <div className="flex items-center space-x-2 mt-1">
-                            <Badge className={getCategoryColors(currentTrack.category).badge}>
-                              {currentTrack.category.replace('-', ' ')}
-                            </Badge>
-                            {playbackRate !== 1 && (
-                              <Badge variant="outline">{playbackRate}x speed</Badge>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      {timeRemaining && (
-                        <div className={`text-sm font-medium ${getCategoryColors(currentTrack.category, true, isPlaying).accent}`}>
-                          Timer: {formatTime(timeRemaining)}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Progress Bar */}
-                    {duration > 0 && (
-                      <div className="mb-4">
-                        <div 
-                          className="relative cursor-pointer"
-                          onClick={handleProgressClick}
-                        >
-                          <Progress 
-                            value={getProgressPercentage()} 
-                            className="h-2"
-                          />
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-600 mt-1">
-                          <span>{formatTime(currentTime)}</span>
-                          <span>{formatTime(duration)}</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Playback Controls */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={skipBackward}
-                          disabled={!isPlaying}
-                        >
-                          <SkipBack className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => isPlaying ? pauseAudio() : playAudio(currentTrack)}
-                          className={getCategoryColors(currentTrack.category).button}
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : isPlaying ? (
-                            <Pause className="h-4 w-4" />
-                          ) : (
-                            <Play className="h-4 w-4" />
-                          )}
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={stopAudio}>
-                          <Square className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={skipForward}
-                          disabled={!isPlaying}
-                        >
-                          <SkipForward className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={isLooping ? "default" : "outline"}
-                          onClick={() => setIsLooping(!isLooping)}
-                          className={isLooping ? getCategoryColors(currentTrack.category).button : ''}
-                        >
-                          <Repeat className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setShowTimerDialog(true)}
-                        >
-                          <Timer className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setShowSettingsDialog(true)}
-                        >
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Volume Control */}
-                    <div className="flex items-center space-x-3">
-                      <Button size="sm" variant="ghost" onClick={volumeDown}>
-                        <Minus className="h-4 w-4" />
-                      </Button>
-                      {volume === 0 ? (
-                        <VolumeX className="h-4 w-4 text-gray-600" />
-                      ) : volume < 0.5 ? (
-                        <Volume1 className="h-4 w-4 text-gray-600" />
-                      ) : (
-                        <Volume2 className="h-4 w-4 text-gray-600" />
-                      )}
-                      <Slider
-                        value={[volume * 100]}
-                        onValueChange={(value) => setVolume(value[0] / 100)}
-                        max={100}
-                        step={1}
-                        className="flex-1"
-                      />
-                      <Button size="sm" variant="ghost" onClick={volumeUp}>
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                      <span className="text-sm text-gray-600 w-10">
-                        {Math.round(volume * 100)}%
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Volume2 className="h-8 w-8 mx-auto mb-2" />
-                  <p>No sound currently playing</p>
-                  <p className="text-sm">Select a sound to start playing</p>
                 </div>
               )}
             </TabsContent>
