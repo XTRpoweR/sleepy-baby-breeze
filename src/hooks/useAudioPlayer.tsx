@@ -1,13 +1,13 @@
+
 import { useState, useRef, useEffect } from 'react';
 
-// The interface has been simplified to use audio files directly
 interface AudioTrack {
   id: string;
   name: string;
   category: 'nature' | 'ambient' | 'lullaby' | 'sleep' | 'white-noise';
   subcategory?: string;
-  url: string; // This is now the source of the audio
-  duration: number; // in seconds
+  url: string;
+  duration: number;
   description?: string;
   isFavorite?: boolean;
 }
@@ -16,66 +16,26 @@ export const useAudioPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<AudioTrack | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isLooping, setIsLooping] = useState(false);
   const [timer, setTimer] = useState<number | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recentlyPlayed, setRecentlyPlayed] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [fadeIn, setFadeIn] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
   
-  // Ref for the core HTMLAudioElement
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerTimeoutRef = useRef<number | null>(null); // Corrected type: number
+  const timerTimeoutRef = useRef<number | null>(null);
+  const fadeIntervalRef = useRef<number | null>(null);
 
-  // This Effect hook creates the audio player instance and sets up event listeners
-  useEffect(() => {
-    // Create the audio element instance only once
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-    }
-    const audio = audioRef.current;
-
-    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const handleLoading = () => setIsLoading(true);
-    const handleCanPlay = () => setIsLoading(false);
-    const handleEnded = () => {
-      if (audio.loop) {
-        // Audio will loop automatically if the `loop` property is true
-      } else {
-        stopAudio();
-      }
-    };
-
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('waiting', handleLoading);
-    audio.addEventListener('canplay', handleCanPlay);
-
-    // Cleanup function on component unmount
-    return () => {
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('waiting', handleLoading);
-      audio.removeEventListener('canplay', handleCanPlay);
-      if (audio) {
-        audio.pause();
-      }
-    };
-  }, []);
-
-  // New audio tracks list (with correct file paths)
+  // Updated audio tracks with correct file paths
   const audioTracks: AudioTrack[] = [
-    {
-      id: 'meditative-rain',
-      name: 'Meditative Rain',
-      category: 'nature',
-      subcategory: 'rain',
-      url: '/sounds/meditative-rain-114484.mp3',
-      duration: 0,
-      description: 'Calm and meditative rain sounds.'
-    },
     {
       id: 'heavy-rain-drops',
       name: 'Heavy Rain Drops',
@@ -83,23 +43,7 @@ export const useAudioPlayer = () => {
       subcategory: 'rain',
       url: '/sounds/mixkit-heavy-rain-drops-2399.mp3',
       duration: 0,
-      description: 'The sound of heavy rain.'
-    },
-    {
-      id: 'fireplace-piano',
-      name: 'Fireplace & Piano',
-      category: 'ambient',
-      url: '/sounds/crackling-fireplace-and-soft-piano-music-10454.mp3',
-      duration: 0,
-      description: 'A relaxing mix of crackling fire and soft piano.'
-    },
-    {
-      id: 'sleep-of-nature',
-      name: 'Sleep of Nature',
-      category: 'nature',
-      url: '/sounds/sleep-of-nature-short-pixabay-315677.mp3',
-      duration: 0,
-      description: 'Peaceful sounds from nature for sleeping.'
+      description: 'The sound of heavy rain drops for relaxation.'
     },
     {
       id: 'water-fountain-healing',
@@ -108,36 +52,142 @@ export const useAudioPlayer = () => {
       subcategory: 'water',
       url: '/sounds/water-fountain-healing-music-239455.mp3',
       duration: 0,
-      description: 'Healing music with a water fountain.'
+      description: 'Healing music with a peaceful water fountain.'
     },
     {
       id: 'waves-sad-piano',
-      name: 'Waves and Sad Piano',
+      name: 'Waves and Piano',
       category: 'lullaby',
       subcategory: 'music',
       url: '/sounds/waves-and-tears-sad-piano-music-with-calm-ocean-waves-8164.mp3',
       duration: 0,
-      description: 'Piano music mixed with ocean waves.'
+      description: 'Calming piano music mixed with gentle ocean waves.'
+    },
+    {
+      id: 'dark-atmosphere-rain',
+      name: 'Dark Atmosphere Rain',
+      category: 'nature',
+      subcategory: 'rain',
+      url: '/sounds/dark-atmosphere-with-rain-352570.mp3',
+      duration: 0,
+      description: 'Deep atmospheric rain sounds for deep relaxation.'
+    },
+    {
+      id: 'nature-investigation',
+      name: 'Nature Investigation',
+      category: 'nature',
+      url: '/sounds/nature-investigation-255161.mp3',
+      duration: 0,
+      description: 'Natural ambient sounds for peaceful meditation.'
+    },
+    {
+      id: 'soft-birds-sound',
+      name: 'Soft Bird Sounds',
+      category: 'nature',
+      subcategory: 'birds',
+      url: '/sounds/soft-birds-sound-304132.mp3',
+      duration: 0,
+      description: 'Gentle bird chirping for a peaceful atmosphere.'
     }
   ];
 
-  // Updated audio playback functions
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+    }
+    const audio = audioRef.current;
+
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+      
+      // Update timer countdown
+      if (timer && timeRemaining !== null) {
+        const remaining = Math.max(0, timeRemaining - 1);
+        setTimeRemaining(remaining);
+        
+        if (remaining <= 0) {
+          stopAudio();
+          clearTimer();
+        }
+      }
+    };
+
+    const handleLoadStart = () => {
+      setIsLoading(true);
+      setError(null);
+    };
+
+    const handleCanPlay = () => {
+      setIsLoading(false);
+      setDuration(audio.duration);
+    };
+
+    const handleError = () => {
+      setIsLoading(false);
+      setError('Failed to load audio. Please try again.');
+      console.error('Audio loading error:', audio.error);
+    };
+
+    const handleEnded = () => {
+      if (audio.loop) {
+        // Audio will loop automatically
+      } else {
+        stopAudio();
+      }
+    };
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audio.addEventListener('loadstart', handleLoadStart);
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+    return () => {
+      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audio.removeEventListener('loadstart', handleLoadStart);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      if (audio) {
+        audio.pause();
+      }
+    };
+  }, [timer, timeRemaining]);
+
   const playAudio = async (track: AudioTrack) => {
     if (!audioRef.current) return;
+    
+    setError(null);
+    
     if (currentTrack?.id === track.id && isPlaying) {
       pauseAudio();
       return;
     }
     
-    audioRef.current.src = track.url;
     try {
+      setIsLoading(true);
+      audioRef.current.src = track.url;
+      audioRef.current.playbackRate = playbackRate;
+      
       await audioRef.current.play();
       setCurrentTrack(track);
       setIsPlaying(true);
       addToRecentlyPlayed(track.id);
+      
+      if (fadeIn) {
+        startFadeIn();
+      }
     } catch (error) {
       console.error("Error playing audio:", error);
+      setError('Failed to play audio. Please check your connection and try again.');
       setIsPlaying(false);
+      setIsLoading(false);
     }
   };
 
@@ -147,16 +197,110 @@ export const useAudioPlayer = () => {
   };
 
   const stopAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    if (fadeOut) {
+      startFadeOut(() => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
+        setIsPlaying(false);
+        setCurrentTrack(null);
+        setCurrentTime(0);
+      });
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+      setIsPlaying(false);
+      setCurrentTrack(null);
+      setCurrentTime(0);
     }
-    setIsPlaying(false);
-    setCurrentTrack(null);
+  };
+
+  const seekTo = (time: number) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  const skipForward = () => {
+    if (audioRef.current) {
+      const newTime = Math.min(audioRef.current.currentTime + 15, duration);
+      seekTo(newTime);
+    }
+  };
+
+  const skipBackward = () => {
+    if (audioRef.current) {
+      const newTime = Math.max(audioRef.current.currentTime - 15, 0);
+      seekTo(newTime);
+    }
+  };
+
+  const volumeUp = () => {
+    const newVolume = Math.min(volume + 0.1, 1);
+    setVolume(newVolume);
+  };
+
+  const volumeDown = () => {
+    const newVolume = Math.max(volume - 0.1, 0);
+    setVolume(newVolume);
+  };
+
+  const changePlaybackRate = (rate: number) => {
+    setPlaybackRate(rate);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = rate;
+    }
+  };
+
+  const startFadeIn = () => {
+    if (!audioRef.current) return;
+    
+    audioRef.current.volume = 0;
+    let currentVol = 0;
+    const targetVol = volume;
+    const step = targetVol / 20; // 20 steps for smooth fade
+    
+    fadeIntervalRef.current = setInterval(() => {
+      currentVol += step;
+      if (currentVol >= targetVol) {
+        currentVol = targetVol;
+        if (fadeIntervalRef.current) {
+          clearInterval(fadeIntervalRef.current);
+        }
+      }
+      if (audioRef.current) {
+        audioRef.current.volume = currentVol;
+      }
+    }, 100);
+  };
+
+  const startFadeOut = (callback?: () => void) => {
+    if (!audioRef.current) return;
+    
+    let currentVol = volume;
+    const step = volume / 20;
+    
+    fadeIntervalRef.current = setInterval(() => {
+      currentVol -= step;
+      if (currentVol <= 0) {
+        currentVol = 0;
+        if (fadeIntervalRef.current) {
+          clearInterval(fadeIntervalRef.current);
+        }
+        if (callback) callback();
+      }
+      if (audioRef.current) {
+        audioRef.current.volume = currentVol;
+      }
+    }, 100);
   };
 
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && !fadeIntervalRef.current) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
@@ -167,27 +311,48 @@ export const useAudioPlayer = () => {
     }
   }, [isLooping]);
 
-  // Timer logic
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
+
+  // Timer logic with seconds precision
   useEffect(() => {
     if (timerTimeoutRef.current) {
       clearTimeout(timerTimeoutRef.current);
     }
+    
     if (isPlaying && timer) {
-      const remaining = timer * 60 - (audioRef.current?.currentTime || 0);
-      setTimeRemaining(remaining);
-
-      timerTimeoutRef.current = setTimeout(() => {
-        stopAudio();
-        clearTimer();
-      }, remaining * 1000);
-    }
-     return () => {
-      if(timerTimeoutRef.current) clearTimeout(timerTimeoutRef.current)
+      const timerInSeconds = timer * 60;
+      setTimeRemaining(timerInSeconds);
+      
+      // Use interval for second-by-second countdown
+      const intervalId = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev === null || prev <= 1) {
+            clearInterval(intervalId);
+            stopAudio();
+            clearTimer();
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      return () => clearInterval(intervalId);
     }
   }, [timer, isPlaying, currentTrack]);
-  
+
   const setAudioTimer = (minutes: number) => setTimer(minutes);
-  const clearTimer = () => setTimer(null);
+  const setCustomTimer = (hours: number, minutes: number, seconds: number) => {
+    const totalMinutes = hours * 60 + minutes + seconds / 60;
+    setTimer(totalMinutes);
+  };
+  const clearTimer = () => {
+    setTimer(null);
+    setTimeRemaining(null);
+  };
 
   // Helper functions
   const filteredTracks = audioTracks.filter(track => 
@@ -196,9 +361,19 @@ export const useAudioPlayer = () => {
     track.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
     track.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
   const favoriteTracks = audioTracks.filter(track => favorites.includes(track.id));
-  const recentTracks = recentlyPlayed.map(id => audioTracks.find(track => track.id === id)).filter(Boolean) as AudioTrack[];
-  const toggleFavorite = (trackId: string) => setFavorites(prev => prev.includes(trackId) ? prev.filter(id => id !== trackId) : [...prev, trackId]);
+  const recentTracks = recentlyPlayed
+    .map(id => audioTracks.find(track => track.id === id))
+    .filter(Boolean) as AudioTrack[];
+
+  const toggleFavorite = (trackId: string) => 
+    setFavorites(prev => 
+      prev.includes(trackId) 
+        ? prev.filter(id => id !== trackId) 
+        : [...prev, trackId]
+    );
+
   const addToRecentlyPlayed = (trackId: string) => {
     setRecentlyPlayed(prev => {
       const filtered = prev.filter(id => id !== trackId);
@@ -206,29 +381,71 @@ export const useAudioPlayer = () => {
     });
   };
 
-  // Values to be returned by the hook
+  const formatTime = (seconds: number) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    
+    if (hrs > 0) {
+      return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return {
+    // Audio tracks and lists
     audioTracks: filteredTracks,
     favoriteTracks,
     recentTracks,
+    
+    // Playback state
     isPlaying,
     currentTrack,
     currentTime,
+    duration,
     volume,
     isLooping,
+    isLoading,
+    error,
+    playbackRate,
+    
+    // Timer state
     timer,
     timeRemaining,
-    isLoading,
+    
+    // Settings
     searchQuery,
+    favorites,
+    fadeIn,
+    fadeOut,
+    
+    // Playback controls
     playAudio,
     pauseAudio,
     stopAudio,
+    seekTo,
+    skipForward,
+    skipBackward,
+    
+    // Volume controls
     setVolume,
+    volumeUp,
+    volumeDown,
+    
+    // Advanced controls
     setIsLooping,
+    changePlaybackRate,
+    setFadeIn,
+    setFadeOut,
+    
+    // Timer controls
     setAudioTimer,
+    setCustomTimer,
     clearTimer,
+    
+    // Utility functions
     setSearchQuery,
     toggleFavorite,
-    favorites
+    formatTime
   };
 };

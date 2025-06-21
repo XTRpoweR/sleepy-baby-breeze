@@ -1,16 +1,19 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Play, 
   Pause, 
   Square, 
   Volume2, 
+  VolumeX,
+  VolumeMinus,
+  VolumePlus,
   Repeat, 
   Timer,
   Music,
@@ -25,10 +28,15 @@ import {
   Flame,
   Coffee,
   BrainCircuit,
-  Baby
+  Baby,
+  Settings,
+  SkipForward,
+  SkipBack,
+  AlertCircle
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
-import { AudioTimerDialog } from './AudioTimerDialog';
+import { EnhancedAudioTimerDialog } from './EnhancedAudioTimerDialog';
+import { AudioSettingsDialog } from './AudioSettingsDialog';
 
 interface SoundsLibraryProps {
   onSoundSelect?: (sound: any) => void;
@@ -41,27 +49,44 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     recentTracks,
     isPlaying,
     currentTrack,
+    currentTime,
+    duration,
     volume,
     isLooping,
     timer,
     timeRemaining,
     isLoading,
+    error,
     searchQuery,
     favorites,
+    playbackRate,
+    fadeIn,
+    fadeOut,
     playAudio,
     pauseAudio,
     stopAudio,
+    seekTo,
+    skipForward,
+    skipBackward,
     setVolume,
+    volumeUp,
+    volumeDown,
     setIsLooping,
+    changePlaybackRate,
+    setFadeIn,
+    setFadeOut,
     setAudioTimer,
+    setCustomTimer,
     clearTimer,
     setSearchQuery,
-    toggleFavorite
+    toggleFavorite,
+    formatTime
   } = useAudioPlayer();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
   const [showTimerDialog, setShowTimerDialog] = useState(false);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const [activeTab, setActiveTab] = useState('browse');
 
   const categories = [
@@ -99,12 +124,6 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
   };
 
   const filteredTracks = getFilteredTracks();
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -185,6 +204,20 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
         await playAudio(track);
       }
     }
+  };
+
+  const getProgressPercentage = () => {
+    if (duration === 0) return 0;
+    return (currentTime / duration) * 100;
+  };
+
+  const handleProgressClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!duration) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const percentage = clickX / rect.width;
+    const newTime = percentage * duration;
+    seekTo(newTime);
   };
 
   const renderTrackCard = (track: any) => {
@@ -269,6 +302,14 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Error Display */}
+          {error && (
+            <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg mb-4">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <span className="text-sm text-red-700">{error}</span>
+            </div>
+          )}
+
           {/* Search Bar */}
           <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -386,9 +427,14 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                         <div>
                           <h3 className="font-medium">{currentTrack.name}</h3>
                           <p className="text-sm text-gray-600">{currentTrack.description}</p>
-                          <Badge className={getCategoryColors(currentTrack.category).badge}>
-                            {currentTrack.category.replace('-', ' ')}
-                          </Badge>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <Badge className={getCategoryColors(currentTrack.category).badge}>
+                              {currentTrack.category.replace('-', ' ')}
+                            </Badge>
+                            {playbackRate !== 1 && (
+                              <Badge variant="outline">{playbackRate}x speed</Badge>
+                            )}
+                          </div>
                         </div>
                       </div>
                       {timeRemaining && (
@@ -398,9 +444,36 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                       )}
                     </div>
 
+                    {/* Progress Bar */}
+                    {duration > 0 && (
+                      <div className="mb-4">
+                        <div 
+                          className="relative cursor-pointer"
+                          onClick={handleProgressClick}
+                        >
+                          <Progress 
+                            value={getProgressPercentage()} 
+                            className="h-2"
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-600 mt-1">
+                          <span>{formatTime(currentTime)}</span>
+                          <span>{formatTime(duration)}</span>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Playback Controls */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={skipBackward}
+                          disabled={!isPlaying}
+                        >
+                          <SkipBack className="h-4 w-4" />
+                        </Button>
                         <Button
                           size="sm"
                           onClick={() => isPlaying ? pauseAudio() : playAudio(currentTrack)}
@@ -420,12 +493,23 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                         </Button>
                         <Button
                           size="sm"
+                          variant="outline"
+                          onClick={skipForward}
+                          disabled={!isPlaying}
+                        >
+                          <SkipForward className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
                           variant={isLooping ? "default" : "outline"}
                           onClick={() => setIsLooping(!isLooping)}
                           className={isLooping ? getCategoryColors(currentTrack.category).button : ''}
                         >
                           <Repeat className="h-4 w-4" />
                         </Button>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
                         <Button
                           size="sm"
                           variant="outline"
@@ -433,12 +517,26 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                         >
                           <Timer className="h-4 w-4" />
                         </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowSettingsDialog(true)}
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
 
                     {/* Volume Control */}
                     <div className="flex items-center space-x-3">
-                      <Volume2 className="h-4 w-4 text-gray-600" />
+                      <Button size="sm" variant="ghost" onClick={volumeDown}>
+                        <VolumeMinus className="h-4 w-4" />
+                      </Button>
+                      {volume === 0 ? (
+                        <VolumeX className="h-4 w-4 text-gray-600" />
+                      ) : (
+                        <Volume2 className="h-4 w-4 text-gray-600" />
+                      )}
                       <Slider
                         value={[volume * 100]}
                         onValueChange={(value) => setVolume(value[0] / 100)}
@@ -446,6 +544,9 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                         step={1}
                         className="flex-1"
                       />
+                      <Button size="sm" variant="ghost" onClick={volumeUp}>
+                        <VolumePlus className="h-4 w-4" />
+                      </Button>
                       <span className="text-sm text-gray-600 w-10">
                         {Math.round(volume * 100)}%
                       </span>
@@ -465,13 +566,31 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
       </Card>
 
       {!onSoundSelect && (
-        <AudioTimerDialog
-          open={showTimerDialog}
-          onOpenChange={setShowTimerDialog}
-          onSetTimer={setAudioTimer}
-          onClearTimer={clearTimer}
-          currentTimer={timer}
-        />
+        <>
+          <EnhancedAudioTimerDialog
+            open={showTimerDialog}
+            onOpenChange={setShowTimerDialog}
+            onSetTimer={setAudioTimer}
+            onSetCustomTimer={setCustomTimer}
+            onClearTimer={clearTimer}
+            currentTimer={timer}
+            timeRemaining={timeRemaining}
+            formatTime={formatTime}
+          />
+          
+          <AudioSettingsDialog
+            open={showSettingsDialog}
+            onOpenChange={setShowSettingsDialog}
+            volume={volume}
+            playbackRate={playbackRate}
+            fadeIn={fadeIn}
+            fadeOut={fadeOut}
+            onVolumeChange={setVolume}
+            onPlaybackRateChange={changePlaybackRate}
+            onFadeInChange={setFadeIn}
+            onFadeOutChange={setFadeOut}
+          />
+        </>
       )}
     </div>
   );
