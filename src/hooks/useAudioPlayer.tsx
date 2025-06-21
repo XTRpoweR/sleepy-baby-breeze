@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 
 interface AudioTrack {
@@ -332,7 +333,7 @@ export const useAudioPlayer = () => {
           if (prev === null || prev <= 1) {
             clearInterval(intervalId);
             stopAudio();
-            clearTimer();
+            clearTimerFunction();
             return null;
           }
           return prev - 1;
