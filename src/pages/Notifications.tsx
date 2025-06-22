@@ -23,7 +23,7 @@ const Notifications = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Bell className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">{t('common.loading')}</p>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -41,11 +41,11 @@ const Notifications = () => {
             onClick={() => navigate('/dashboard')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('navigation.backToDashboard')}
+            Back to Dashboard
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{t('pages.notifications.title')}</h1>
-            <p className="text-gray-600">{t('pages.notifications.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-gray-900">Smart Notifications</h1>
+            <p className="text-gray-600">Intelligent reminders for your baby's care</p>
           </div>
         </div>
 
