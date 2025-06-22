@@ -162,7 +162,8 @@
       "subtitle": "Choose from our library of calming sounds and helpful sleep guides for your baby.",
       "loading": "Loading sounds...",
       "guidesTab": "Guides & Articles",
-      "soundsTab": "Sounds"
+      "soundsTab": "Sounds",
+      "quickLogTab": "Sleep Articles & Tips"
     },
     "reports": {
       "title": "View Reports",

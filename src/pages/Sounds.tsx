@@ -19,6 +19,7 @@ import { ProfileManagementDialog } from '@/components/profiles/ProfileManagement
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+
 const Sounds = () => {
   const {
     user,
@@ -117,7 +118,7 @@ const Sounds = () => {
               </TabsTrigger>
               <TabsTrigger value="quick-log" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
                 <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="Sleep Articles & Advice">{t('pages.sounds.quickLogTab')}</span>
+                <span>{t('pages.sounds.quickLogTab')}</span>
               </TabsTrigger>
             </TabsList>
 
@@ -168,4 +169,5 @@ const Sounds = () => {
       <ProfileManagementDialog isOpen={showProfileManagement} onClose={() => setShowProfileManagement(false)} />
     </div>;
 };
+
 export default Sounds;
