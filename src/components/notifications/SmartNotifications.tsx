@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -13,6 +14,7 @@ import { useSmartNotifications } from '@/hooks/useSmartNotifications';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 
 export const SmartNotifications = () => {
+  const { t } = useTranslation();
   const { 
     permission, 
     settings, 
@@ -51,7 +53,7 @@ export const SmartNotifications = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Bell className="h-5 w-5 text-blue-600" />
-              <span>Smart Notifications</span>
+              <span>{t('notifications.enableTitle')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -60,7 +62,7 @@ export const SmartNotifications = () => {
                 <Alert>
                   <Info className="h-4 w-4" />
                   <AlertDescription>
-                    Your browser doesn't support notifications. Please use a modern browser for the best experience.
+                    {t('notifications.notSupported')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -69,13 +71,13 @@ export const SmartNotifications = () => {
                 <Alert>
                   <Bell className="h-4 w-4" />
                   <AlertDescription className="flex items-center justify-between">
-                    <span>Enable notifications to receive smart reminders for your baby's care</span>
+                    <span>{t('notifications.enablePrompt')}</span>
                     <Button 
                       onClick={handlePermissionRequest}
                       disabled={isLoading}
                       size="sm"
                     >
-                      {isLoading ? 'Requesting...' : 'Enable Notifications'}
+                      {isLoading ? t('notifications.requesting') : t('notifications.enableButton')}
                     </Button>
                   </AlertDescription>
                 </Alert>
@@ -85,13 +87,13 @@ export const SmartNotifications = () => {
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Notifications are blocked. To enable them:
+                    {t('notifications.blocked')}
                     <br />
-                    1. Click the lock icon in your browser's address bar
+                    {t('notifications.blockedStep1')}
                     <br />
-                    2. Change notifications to "Allow"
+                    {t('notifications.blockedStep2')}
                     <br />
-                    3. Refresh this page
+                    {t('notifications.blockedStep3')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -100,7 +102,7 @@ export const SmartNotifications = () => {
                 <Alert>
                   <Bell className="h-4 w-4 text-green-600" />
                   <AlertDescription>
-                    Notifications are enabled! You'll receive smart reminders based on your baby's patterns.
+                    {t('notifications.enabled')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -114,14 +116,14 @@ export const SmartNotifications = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Baby className="h-5 w-5 text-purple-600" />
-                <span>Reminder Types</span>
+                <span>{t('notifications.reminderTypes')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="feeding-reminders">Feeding Reminders</Label>
-                  <p className="text-sm text-gray-600">Get notified when it's time for the next feeding</p>
+                  <Label htmlFor="feeding-reminders">{t('notifications.feedingReminders')}</Label>
+                  <p className="text-sm text-gray-600">{t('notifications.feedingRemindersDesc')}</p>
                 </div>
                 <Switch
                   id="feeding-reminders"
@@ -132,7 +134,7 @@ export const SmartNotifications = () => {
 
               {settings.feedingReminders && (
                 <div className="ml-6 space-y-2">
-                  <Label htmlFor="feeding-interval">Reminder Interval</Label>
+                  <Label htmlFor="feeding-interval">{t('notifications.reminderInterval')}</Label>
                   <Select
                     value={settings.feedingInterval.toString()}
                     onValueChange={(value) => handleSettingChange('feedingInterval', parseInt(value))}
@@ -141,11 +143,11 @@ export const SmartNotifications = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="120">2 hours</SelectItem>
-                      <SelectItem value="150">2.5 hours</SelectItem>
-                      <SelectItem value="180">3 hours</SelectItem>
-                      <SelectItem value="210">3.5 hours</SelectItem>
-                      <SelectItem value="240">4 hours</SelectItem>
+                      <SelectItem value="120">{t('notifications.intervals.2hours')}</SelectItem>
+                      <SelectItem value="150">{t('notifications.intervals.2.5hours')}</SelectItem>
+                      <SelectItem value="180">{t('notifications.intervals.3hours')}</SelectItem>
+                      <SelectItem value="210">{t('notifications.intervals.3.5hours')}</SelectItem>
+                      <SelectItem value="240">{t('notifications.intervals.4hours')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -153,8 +155,8 @@ export const SmartNotifications = () => {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="sleep-reminders">Sleep Reminders</Label>
-                  <p className="text-sm text-gray-600">Age-appropriate nap and bedtime suggestions</p>
+                  <Label htmlFor="sleep-reminders">{t('notifications.sleepReminders')}</Label>
+                  <p className="text-sm text-gray-600">{t('notifications.sleepRemindersDesc')}</p>
                 </div>
                 <Switch
                   id="sleep-reminders"
@@ -165,8 +167,8 @@ export const SmartNotifications = () => {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="milestone-reminders">Milestone Reminders</Label>
-                  <p className="text-sm text-gray-600">Important developmental milestones and checkups</p>
+                  <Label htmlFor="milestone-reminders">{t('notifications.milestoneReminders')}</Label>
+                  <p className="text-sm text-gray-600">{t('notifications.milestoneRemindersDesc')}</p>
                 </div>
                 <Switch
                   id="milestone-reminders"
@@ -177,8 +179,8 @@ export const SmartNotifications = () => {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="pattern-alerts">Pattern Alerts</Label>
-                  <p className="text-sm text-gray-600">Unusual sleep or feeding pattern notifications</p>
+                  <Label htmlFor="pattern-alerts">{t('notifications.patternAlerts')}</Label>
+                  <p className="text-sm text-gray-600">{t('notifications.patternAlertsDesc')}</p>
                 </div>
                 <Switch
                   id="pattern-alerts"
@@ -197,14 +199,14 @@ export const SmartNotifications = () => {
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Settings className="h-5 w-5 text-gray-600" />
-                  <span>Advanced Settings</span>
+                  <span>{t('notifications.advancedSettings')}</span>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowAdvanced(!showAdvanced)}
                 >
-                  {showAdvanced ? 'Hide' : 'Show'}
+                  {showAdvanced ? t('notifications.hide') : t('notifications.show')}
                 </Button>
               </CardTitle>
             </CardHeader>
@@ -213,8 +215,8 @@ export const SmartNotifications = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label htmlFor="quiet-hours">Quiet Hours</Label>
-                      <p className="text-sm text-gray-600">Disable notifications during these hours</p>
+                      <Label htmlFor="quiet-hours">{t('notifications.quietHours')}</Label>
+                      <p className="text-sm text-gray-600">{t('notifications.quietHoursDesc')}</p>
                     </div>
                     <Switch
                       id="quiet-hours"
@@ -226,7 +228,7 @@ export const SmartNotifications = () => {
                   {settings.quietHours.enabled && (
                     <div className="ml-6 grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="quiet-start">Start Time</Label>
+                        <Label htmlFor="quiet-start">{t('notifications.startTime')}</Label>
                         <Input
                           id="quiet-start"
                           type="time"
@@ -235,7 +237,7 @@ export const SmartNotifications = () => {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="quiet-end">End Time</Label>
+                        <Label htmlFor="quiet-end">{t('notifications.endTime')}</Label>
                         <Input
                           id="quiet-end"
                           type="time"
@@ -256,26 +258,26 @@ export const SmartNotifications = () => {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <TrendingUp className="h-5 w-5 text-green-600" />
-              <span>How Smart Notifications Work</span>
+              <span>{t('notifications.howItWorks')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Feeding Reminders</h4>
-                <p>Based on your baby's last feeding time and your preferred interval</p>
+                <h4 className="font-medium text-gray-900 mb-2">{t('notifications.feedingReminders')}</h4>
+                <p>{t('notifications.feedingRemindersHow')}</p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Sleep Suggestions</h4>
-                <p>Age-appropriate nap times and bedtime reminders based on developmental stages</p>
+                <h4 className="font-medium text-gray-900 mb-2">{t('notifications.sleepReminders')}</h4>
+                <p>{t('notifications.sleepSuggestionsHow')}</p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Milestone Alerts</h4>
-                <p>Important developmental milestones and scheduled checkup reminders</p>
+                <h4 className="font-medium text-gray-900 mb-2">{t('notifications.milestoneReminders')}</h4>
+                <p>{t('notifications.milestoneAlertsHow')}</p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">Pattern Analysis</h4>
-                <p>Notifications about unusual patterns in sleep or feeding behaviors</p>
+                <h4 className="font-medium text-gray-900 mb-2">{t('notifications.patternAlerts')}</h4>
+                <p>{t('notifications.patternAnalysisHow')}</p>
               </div>
             </div>
           </CardContent>

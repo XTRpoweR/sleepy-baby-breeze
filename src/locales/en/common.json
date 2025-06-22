@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "SleepyBaby",
@@ -138,6 +139,50 @@
     "monitorFrequency": "Monitor Frequency",
     "weeklyTrends": "Weekly Trends",
     "visualCharts": "Visual Charts"
+  },
+  "notifications": {
+    "title": "Smart Notifications",
+    "subtitle": "Intelligent reminders for your baby's care",
+    "loading": "Loading...",
+    "enableTitle": "Smart Notifications",
+    "reminderTypes": "Reminder Types",
+    "advancedSettings": "Advanced Settings",
+    "howItWorks": "How Smart Notifications Work",
+    "notSupported": "Your browser doesn't support notifications. Please use a modern browser for the best experience.",
+    "enablePrompt": "Enable notifications to receive smart reminders for your baby's care",
+    "enableButton": "Enable Notifications",
+    "requesting": "Requesting...",
+    "blocked": "Notifications are blocked. To enable them:",
+    "blockedStep1": "1. Click the lock icon in your browser's address bar",
+    "blockedStep2": "2. Change notifications to \"Allow\"",
+    "blockedStep3": "3. Refresh this page",
+    "enabled": "Notifications are enabled! You'll receive smart reminders based on your baby's patterns.",
+    "feedingReminders": "Feeding Reminders",
+    "feedingRemindersDesc": "Get notified when it's time for the next feeding",
+    "reminderInterval": "Reminder Interval",
+    "sleepReminders": "Sleep Reminders",
+    "sleepRemindersDesc": "Age-appropriate nap and bedtime suggestions",
+    "milestoneReminders": "Milestone Reminders",
+    "milestoneRemindersDesc": "Important developmental milestones and checkups",
+    "patternAlerts": "Pattern Alerts",
+    "patternAlertsDesc": "Unusual sleep or feeding pattern notifications",
+    "quietHours": "Quiet Hours",
+    "quietHoursDesc": "Disable notifications during these hours",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "show": "Show",
+    "hide": "Hide",
+    "feedingRemindersHow": "Based on your baby's last feeding time and your preferred interval",
+    "sleepSuggestionsHow": "Age-appropriate nap times and bedtime reminders based on developmental stages",
+    "milestoneAlertsHow": "Important developmental milestones and scheduled checkup reminders",
+    "patternAnalysisHow": "Notifications about unusual patterns in sleep or feeding behaviors",
+    "intervals": {
+      "2hours": "2 hours",
+      "2.5hours": "2.5 hours",
+      "3hours": "3 hours",
+      "3.5hours": "3.5 hours",
+      "4hours": "4 hours"
+    }
   },
   "pages": {
     "sleepSchedule": {
