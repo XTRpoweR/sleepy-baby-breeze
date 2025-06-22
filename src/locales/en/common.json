@@ -1,4 +1,3 @@
-
 {
   "app": {
     "name": "SleepyBaby",
@@ -163,7 +162,8 @@
       "loading": "Loading sounds...",
       "guidesTab": "Guides & Articles",
       "soundsTab": "Sounds",
-      "quickLogTab": "Sleep Articles & Tips"
+      "quickLogTab": "Sleep Articles & Tips",
+      "soothingSounds": "Sounds"
     },
     "reports": {
       "title": "View Reports",
