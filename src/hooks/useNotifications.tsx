@@ -38,19 +38,16 @@ export const useNotifications = () => {
 
   // More robust browser support detection
   const isSupported = useCallback(() => {
-    // Check for Notification API
     if (!('Notification' in window)) {
       console.log('Notification API not available');
       return false;
     }
 
-    // Check if we're in a secure context (HTTPS or localhost)
     if (!window.isSecureContext && location.hostname !== 'localhost') {
       console.log('Notifications require HTTPS');
       return false;
     }
 
-    // Check if notifications are available in this context
     try {
       if (typeof Notification.requestPermission !== 'function') {
         console.log('Notification.requestPermission not available');
@@ -63,6 +60,7 @@ export const useNotifications = () => {
     }
   }, []);
 
+  // Load settings from localStorage on mount
   useEffect(() => {
     if (isSupported()) {
       setPermission(Notification.permission);
@@ -72,7 +70,9 @@ export const useNotifications = () => {
     const savedSettings = localStorage.getItem('notificationSettings');
     if (savedSettings) {
       try {
-        setSettings(JSON.parse(savedSettings));
+        const parsed = JSON.parse(savedSettings);
+        setSettings({ ...defaultSettings, ...parsed });
+        console.log('Loaded notification settings from localStorage:', parsed);
       } catch (error) {
         console.error('Error loading notification settings:', error);
       }
@@ -83,13 +83,12 @@ export const useNotifications = () => {
     if (!isSupported()) {
       toast({
         title: "Not Supported",
-        description: "Your browser or environment doesn't support notifications. Try using Chrome, Firefox, or Safari on HTTPS.",
+        description: "Your browser doesn't support notifications. Try using Chrome, Firefox, or Safari on HTTPS.",
         variant: "destructive",
       });
       return false;
     }
 
-    // Check if already granted
     if (Notification.permission === 'granted') {
       setPermission('granted');
       toast({
@@ -99,7 +98,6 @@ export const useNotifications = () => {
       return true;
     }
 
-    // If already denied, show instructions
     if (Notification.permission === 'denied') {
       toast({
         title: "Notifications Blocked",
@@ -119,6 +117,13 @@ export const useNotifications = () => {
           title: "Notifications Enabled!",
           description: "You'll now receive smart reminders for your baby's care",
         });
+        
+        // Send a test notification to confirm it works
+        showNotification('Welcome!', {
+          body: 'Notifications are now enabled. You\'ll receive reminders based on your settings.',
+          tag: 'welcome-notification'
+        });
+        
         return true;
       } else if (result === 'denied') {
         toast({
@@ -146,10 +151,13 @@ export const useNotifications = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, isSupported]);
+  }, [toast, isSupported, showNotification]);
 
   const showNotification = useCallback((title: string, options?: NotificationOptions) => {
-    if (permission !== 'granted' || !isSupported()) return;
+    if (permission !== 'granted' || !isSupported()) {
+      console.log('Cannot show notification - permission not granted or not supported');
+      return;
+    }
 
     // Check quiet hours
     if (settings.quietHours.enabled) {
@@ -160,26 +168,61 @@ export const useNotifications = () => {
       
       if (startTime > endTime) {
         // Quiet hours span midnight
-        if (currentTime >= startTime || currentTime <= endTime) return;
+        if (currentTime >= startTime || currentTime <= endTime) {
+          console.log('Notification suppressed due to quiet hours');
+          return;
+        }
       } else {
         // Quiet hours within the same day
-        if (currentTime >= startTime && currentTime <= endTime) return;
+        if (currentTime >= startTime && currentTime <= endTime) {
+          console.log('Notification suppressed due to quiet hours');
+          return;
+        }
       }
     }
 
-    new Notification(title, {
-      icon: '/favicon.ico',
-      badge: '/favicon.ico',
-      tag: 'sleepybaby-notification',
-      ...options
-    });
+    try {
+      const notification = new Notification(title, {
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        tag: 'sleepybaby-notification',
+        requireInteraction: true, // Keep notification visible until user interacts
+        ...options
+      });
+
+      // Auto-close after 10 seconds if user doesn't interact
+      setTimeout(() => {
+        notification.close();
+      }, 10000);
+
+      console.log('Notification sent:', title);
+    } catch (error) {
+      console.error('Error showing notification:', error);
+    }
   }, [permission, settings.quietHours, isSupported]);
 
   const updateSettings = useCallback((newSettings: Partial<NotificationSettings>) => {
     const updatedSettings = { ...settings, ...newSettings };
     setSettings(updatedSettings);
+    
+    // Save to localStorage immediately
     localStorage.setItem('notificationSettings', JSON.stringify(updatedSettings));
-  }, [settings]);
+    console.log('Notification settings saved:', updatedSettings);
+    
+    toast({
+      title: "Settings Saved",
+      description: "Your notification preferences have been saved successfully",
+    });
+  }, [settings, toast]);
+
+  const saveSettings = useCallback(() => {
+    localStorage.setItem('notificationSettings', JSON.stringify(settings));
+    toast({
+      title: "Settings Saved",
+      description: "Your notification preferences have been saved successfully",
+    });
+    console.log('Notification settings manually saved:', settings);
+  }, [settings, toast]);
 
   return {
     permission,
@@ -188,6 +231,7 @@ export const useNotifications = () => {
     requestPermission,
     showNotification,
     updateSettings,
+    saveSettings,
     isSupported: isSupported()
   };
 };

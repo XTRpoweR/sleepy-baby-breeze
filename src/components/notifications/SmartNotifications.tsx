@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Bell, BellOff, Settings, Clock, Baby, TrendingUp, Info, AlertCircle, Globe } from 'lucide-react';
+import { Bell, BellOff, Settings, Clock, Baby, TrendingUp, Info, AlertCircle, Globe, Save, CheckCircle } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSmartNotifications } from '@/hooks/useSmartNotifications';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
@@ -20,13 +20,15 @@ export const SmartNotifications = () => {
     settings, 
     isLoading, 
     requestPermission, 
-    updateSettings, 
+    updateSettings,
+    saveSettings,
     isSupported 
   } = useNotifications();
   
   useSmartNotifications(); // Activate smart notifications
   
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const handlePermissionRequest = async () => {
     await requestPermission();
@@ -34,6 +36,7 @@ export const SmartNotifications = () => {
 
   const handleSettingChange = (key: string, value: any) => {
     updateSettings({ [key]: value });
+    setHasUnsavedChanges(false); // updateSettings auto-saves now
   };
 
   const handleQuietHoursChange = (key: string, value: any) => {
@@ -43,6 +46,12 @@ export const SmartNotifications = () => {
         [key]: value
       }
     });
+    setHasUnsavedChanges(false); // updateSettings auto-saves now
+  };
+
+  const handleManualSave = () => {
+    saveSettings();
+    setHasUnsavedChanges(false);
   };
 
   return (
@@ -51,9 +60,17 @@ export const SmartNotifications = () => {
         {/* Header */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Bell className="h-5 w-5 text-blue-600" />
-              <span>{t('notifications.enableTitle')}</span>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Bell className="h-5 w-5 text-blue-600" />
+                <span>{t('notifications.enableTitle')}</span>
+              </div>
+              {permission === 'granted' && (
+                <div className="flex items-center space-x-2 text-green-600">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="text-sm">Active</span>
+                </div>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -120,7 +137,7 @@ export const SmartNotifications = () => {
                 <Alert>
                   <Bell className="h-4 w-4 text-green-600" />
                   <AlertDescription>
-                    {t('notifications.enabled')}
+                    {t('notifications.enabled')} You'll receive smart reminders based on your settings below.
                   </AlertDescription>
                 </Alert>
               )}
@@ -131,14 +148,25 @@ export const SmartNotifications = () => {
         {/* Show tracking options even if notifications aren't supported */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Baby className="h-5 w-5 text-purple-600" />
-              <span>
-                {isSupported && permission === 'granted' 
-                  ? t('notifications.reminderTypes')
-                  : 'Tracking Preferences'
-                }
-              </span>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Baby className="h-5 w-5 text-purple-600" />
+                <span>
+                  {isSupported && permission === 'granted' 
+                    ? t('notifications.reminderTypes')
+                    : 'Tracking Preferences'
+                  }
+                </span>
+              </div>
+              <Button
+                onClick={handleManualSave}
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-2"
+              >
+                <Save className="h-4 w-4" />
+                <span>Save Settings</span>
+              </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -223,7 +251,7 @@ export const SmartNotifications = () => {
           </CardContent>
         </Card>
 
-        {/* Advanced Settings - Show regardless of notification support */}
+        {/* Advanced Settings */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
@@ -294,19 +322,19 @@ export const SmartNotifications = () => {
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">{t('notifications.feedingReminders')}</h4>
-                <p>{t('notifications.feedingRemindersHow')}</p>
+                <p>Get notified when it's time for your baby's next feeding based on your set intervals. Notifications are smart and won't spam you.</p>
               </div>
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">{t('notifications.sleepReminders')}</h4>
-                <p>{t('notifications.sleepSuggestionsHow')}</p>
+                <p>Receive age-appropriate sleep suggestions for naps and bedtime based on your baby's age and typical sleep patterns.</p>
               </div>
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">{t('notifications.milestoneReminders')}</h4>
-                <p>{t('notifications.milestoneAlertsHow')}</p>
+                <p>Get alerts about important developmental milestones and checkup reminders based on your baby's age.</p>
               </div>
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">{t('notifications.patternAlerts')}</h4>
-                <p>{t('notifications.patternAnalysisHow')}</p>
+                <p>Receive notifications about unusual patterns or changes in your baby's routine that might need attention.</p>
               </div>
             </div>
           </CardContent>
