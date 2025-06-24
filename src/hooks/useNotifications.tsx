@@ -36,8 +36,35 @@ export const useNotifications = () => {
   const [settings, setSettings] = useState<NotificationSettings>(defaultSettings);
   const [isLoading, setIsLoading] = useState(false);
 
+  // More robust browser support detection
+  const isSupported = useCallback(() => {
+    // Check for Notification API
+    if (!('Notification' in window)) {
+      console.log('Notification API not available');
+      return false;
+    }
+
+    // Check if we're in a secure context (HTTPS or localhost)
+    if (!window.isSecureContext && location.hostname !== 'localhost') {
+      console.log('Notifications require HTTPS');
+      return false;
+    }
+
+    // Check if notifications are available in this context
+    try {
+      if (typeof Notification.requestPermission !== 'function') {
+        console.log('Notification.requestPermission not available');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.log('Error checking notification support:', error);
+      return false;
+    }
+  }, []);
+
   useEffect(() => {
-    if ('Notification' in window) {
+    if (isSupported()) {
       setPermission(Notification.permission);
     }
 
@@ -50,13 +77,13 @@ export const useNotifications = () => {
         console.error('Error loading notification settings:', error);
       }
     }
-  }, []);
+  }, [isSupported]);
 
   const requestPermission = useCallback(async () => {
-    if (!('Notification' in window)) {
+    if (!isSupported()) {
       toast({
         title: "Not Supported",
-        description: "Your browser doesn't support notifications",
+        description: "Your browser or environment doesn't support notifications. Try using Chrome, Firefox, or Safari on HTTPS.",
         variant: "destructive",
       });
       return false;
@@ -119,10 +146,10 @@ export const useNotifications = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, isSupported]);
 
   const showNotification = useCallback((title: string, options?: NotificationOptions) => {
-    if (permission !== 'granted') return;
+    if (permission !== 'granted' || !isSupported()) return;
 
     // Check quiet hours
     if (settings.quietHours.enabled) {
@@ -146,7 +173,7 @@ export const useNotifications = () => {
       tag: 'sleepybaby-notification',
       ...options
     });
-  }, [permission, settings.quietHours]);
+  }, [permission, settings.quietHours, isSupported]);
 
   const updateSettings = useCallback((newSettings: Partial<NotificationSettings>) => {
     const updatedSettings = { ...settings, ...newSettings };
@@ -161,6 +188,6 @@ export const useNotifications = () => {
     requestPermission,
     showNotification,
     updateSettings,
-    isSupported: 'Notification' in window
+    isSupported: isSupported()
   };
 };
