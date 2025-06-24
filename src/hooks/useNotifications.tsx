@@ -79,6 +79,54 @@ export const useNotifications = () => {
     }
   }, [isSupported]);
 
+  const showNotification = useCallback((title: string, options?: NotificationOptions) => {
+    if (permission !== 'granted' || !isSupported()) {
+      console.log('Cannot show notification - permission not granted or not supported');
+      return;
+    }
+
+    // Check quiet hours
+    if (settings.quietHours.enabled) {
+      const now = new Date();
+      const currentTime = now.getHours() * 60 + now.getMinutes();
+      const startTime = parseInt(settings.quietHours.start.split(':')[0]) * 60 + parseInt(settings.quietHours.start.split(':')[1]);
+      const endTime = parseInt(settings.quietHours.end.split(':')[0]) * 60 + parseInt(settings.quietHours.end.split(':')[1]);
+      
+      if (startTime > endTime) {
+        // Quiet hours span midnight
+        if (currentTime >= startTime || currentTime <= endTime) {
+          console.log('Notification suppressed due to quiet hours');
+          return;
+        }
+      } else {
+        // Quiet hours within the same day
+        if (currentTime >= startTime && currentTime <= endTime) {
+          console.log('Notification suppressed due to quiet hours');
+          return;
+        }
+      }
+    }
+
+    try {
+      const notification = new Notification(title, {
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        tag: 'sleepybaby-notification',
+        requireInteraction: true, // Keep notification visible until user interacts
+        ...options
+      });
+
+      // Auto-close after 10 seconds if user doesn't interact
+      setTimeout(() => {
+        notification.close();
+      }, 10000);
+
+      console.log('Notification sent:', title);
+    } catch (error) {
+      console.error('Error showing notification:', error);
+    }
+  }, [permission, settings.quietHours, isSupported]);
+
   const requestPermission = useCallback(async () => {
     if (!isSupported()) {
       toast({
@@ -152,54 +200,6 @@ export const useNotifications = () => {
       setIsLoading(false);
     }
   }, [toast, isSupported, showNotification]);
-
-  const showNotification = useCallback((title: string, options?: NotificationOptions) => {
-    if (permission !== 'granted' || !isSupported()) {
-      console.log('Cannot show notification - permission not granted or not supported');
-      return;
-    }
-
-    // Check quiet hours
-    if (settings.quietHours.enabled) {
-      const now = new Date();
-      const currentTime = now.getHours() * 60 + now.getMinutes();
-      const startTime = parseInt(settings.quietHours.start.split(':')[0]) * 60 + parseInt(settings.quietHours.start.split(':')[1]);
-      const endTime = parseInt(settings.quietHours.end.split(':')[0]) * 60 + parseInt(settings.quietHours.end.split(':')[1]);
-      
-      if (startTime > endTime) {
-        // Quiet hours span midnight
-        if (currentTime >= startTime || currentTime <= endTime) {
-          console.log('Notification suppressed due to quiet hours');
-          return;
-        }
-      } else {
-        // Quiet hours within the same day
-        if (currentTime >= startTime && currentTime <= endTime) {
-          console.log('Notification suppressed due to quiet hours');
-          return;
-        }
-      }
-    }
-
-    try {
-      const notification = new Notification(title, {
-        icon: '/favicon.ico',
-        badge: '/favicon.ico',
-        tag: 'sleepybaby-notification',
-        requireInteraction: true, // Keep notification visible until user interacts
-        ...options
-      });
-
-      // Auto-close after 10 seconds if user doesn't interact
-      setTimeout(() => {
-        notification.close();
-      }, 10000);
-
-      console.log('Notification sent:', title);
-    } catch (error) {
-      console.error('Error showing notification:', error);
-    }
-  }, [permission, settings.quietHours, isSupported]);
 
   const updateSettings = useCallback((newSettings: Partial<NotificationSettings>) => {
     const updatedSettings = { ...settings, ...newSettings };
