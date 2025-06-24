@@ -9,7 +9,8 @@ import {
   LogOut,
   Crown,
   Settings,
-  Baby
+  Baby,
+  Bell
 } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +30,10 @@ export const DesktopHeader = () => {
     navigate('/account');
   };
 
+  const handleNotifications = () => {
+    navigate('/notifications');
+  };
+
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,6 +44,17 @@ export const DesktopHeader = () => {
           </div>
           <div className="flex items-center space-x-4">
             <LanguageSelector />
+            
+            {/* Notifications Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNotifications}
+              className="flex items-center space-x-1 relative"
+            >
+              <Bell className="h-4 w-4" />
+              <span>{t('notifications.title')}</span>
+            </Button>
             
             {/* Subscription Status */}
             <div className="flex items-center space-x-2">

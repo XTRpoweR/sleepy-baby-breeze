@@ -11,14 +11,16 @@ import {
   Crown,
   Settings,
   Menu,
-  Globe
+  Bell
 } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const MobileHeader = () => {
   const { user, signOut } = useAuth();
   const { isPremium } = useSubscription();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -29,6 +31,11 @@ export const MobileHeader = () => {
 
   const handleManageSubscription = () => {
     navigate('/account');
+    setIsOpen(false);
+  };
+
+  const handleNotifications = () => {
+    navigate('/notifications');
     setIsOpen(false);
   };
 
@@ -61,6 +68,20 @@ export const MobileHeader = () => {
                     {user?.email}
                   </div>
                 </div>
+              </div>
+
+              {/* Notifications */}
+              <div className="space-y-3">
+                <span className="text-sm font-medium">{t('notifications.title')}</span>
+                <Button 
+                  variant="outline"
+                  size="sm" 
+                  onClick={handleNotifications}
+                  className="w-full"
+                >
+                  <Bell className="h-4 w-4 mr-2" />
+                  <span>{t('notifications.title')}</span>
+                </Button>
               </div>
 
               {/* Subscription Status */}
