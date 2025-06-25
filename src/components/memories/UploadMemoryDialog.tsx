@@ -25,6 +25,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   const [showCamera, setShowCamera] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const [cameraError, setCameraError] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -32,6 +33,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
 
   const resetForm = () => {
     setFile(null);
@@ -70,96 +72,216 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   };
 
   const startCamera = async () => {
+    setCameraError(null);
+    console.log('Starting camera...');
+    
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' },
+      // Request camera permissions with more specific constraints
+      const constraints = {
+        video: {
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+          facingMode: 'environment'
+        },
         audio: true
-      });
+      };
+
+      console.log('Requesting user media with constraints:', constraints);
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Got media stream:', stream);
+      
       streamRef.current = stream;
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        console.log('Set video srcObject');
+        
+        // Wait for video to load
+        await new Promise((resolve) => {
+          if (videoRef.current) {
+            videoRef.current.onloadedmetadata = () => {
+              console.log('Video metadata loaded');
+              resolve(true);
+            };
+          }
+        });
+        
+        // Play the video
+        await videoRef.current.play();
+        console.log('Video playing');
       }
+      
       setShowCamera(true);
     } catch (error) {
       console.error('Error accessing camera:', error);
-      alert('Could not access camera. Please check permissions.');
+      let errorMessage = 'Could not access camera. ';
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          errorMessage += 'Please allow camera permissions and try again.';
+        } else if (error.name === 'NotFoundError') {
+          errorMessage += 'No camera found on this device.';
+        } else if (error.name === 'NotSupportedError') {
+          errorMessage += 'Camera not supported in this browser.';
+        } else {
+          errorMessage += error.message;
+        }
+      }
+      
+      setCameraError(errorMessage);
     }
   };
 
   const stopCamera = () => {
+    console.log('Stopping camera...');
+    
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach(track => {
+        console.log('Stopping track:', track.kind);
+        track.stop();
+      });
       streamRef.current = null;
     }
+    
     if (recordingIntervalRef.current) {
       clearInterval(recordingIntervalRef.current);
       recordingIntervalRef.current = null;
     }
+    
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+    }
+    
     setShowCamera(false);
     setIsRecording(false);
     setRecordingTime(0);
+    setCameraError(null);
+    recordedChunksRef.current = [];
   };
 
   const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      if (ctx) {
-        ctx.drawImage(video, 0, 0);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
-            setFile(file);
-            setTitle('Camera Photo');
-            stopCamera();
-          }
-        }, 'image/jpeg', 0.8);
-      }
+    console.log('Capturing photo...');
+    
+    if (!videoRef.current || !canvasRef.current) {
+      console.error('Video or canvas ref not available');
+      return;
     }
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    if (!ctx) {
+      console.error('Could not get canvas context');
+      return;
+    }
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    
+    console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
+    console.log('Video dimensions:', video.videoWidth, 'x', video.videoHeight);
+    
+    // Draw the current video frame to canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert canvas to blob
+    canvas.toBlob((blob) => {
+      if (blob) {
+        console.log('Photo captured, blob size:', blob.size);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const file = new File([blob], `photo-${timestamp}.jpg`, { type: 'image/jpeg' });
+        setFile(file);
+        setTitle('Camera Photo');
+        stopCamera();
+      } else {
+        console.error('Failed to create blob from canvas');
+      }
+    }, 'image/jpeg', 0.9);
   };
 
   const startRecording = () => {
-    if (!streamRef.current) return;
+    console.log('Starting video recording...');
+    
+    if (!streamRef.current) {
+      console.error('No stream available for recording');
+      return;
+    }
 
-    const mediaRecorder = new MediaRecorder(streamRef.current, {
-      mimeType: 'video/webm;codecs=vp9'
-    });
-    
-    const chunks: BlobPart[] = [];
-    
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        chunks.push(event.data);
+    recordedChunksRef.current = [];
+
+    try {
+      // Try different mime types for better browser compatibility
+      let mimeType = 'video/webm;codecs=vp9,opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'video/webm;codecs=vp8,opus';
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          mimeType = 'video/webm';
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = 'video/mp4';
+          }
+        }
       }
-    };
+      
+      console.log('Using mime type:', mimeType);
+      
+      const mediaRecorder = new MediaRecorder(streamRef.current, {
+        mimeType: mimeType
+      });
+      
+      mediaRecorder.ondataavailable = (event) => {
+        console.log('Data available, size:', event.data.size);
+        if (event.data.size > 0) {
+          recordedChunksRef.current.push(event.data);
+        }
+      };
 
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
-      const file = new File([blob], 'recorded-video.webm', { type: 'video/webm' });
-      setFile(file);
-      setTitle('Recorded Video');
-      stopCamera();
-    };
+      mediaRecorder.onstop = () => {
+        console.log('Recording stopped, chunks:', recordedChunksRef.current.length);
+        
+        if (recordedChunksRef.current.length > 0) {
+          const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+          console.log('Created video blob, size:', blob.size);
+          
+          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+          const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
+          const file = new File([blob], `video-${timestamp}.${extension}`, { type: mimeType });
+          
+          setFile(file);
+          setTitle('Recorded Video');
+          stopCamera();
+        } else {
+          console.error('No recorded data available');
+        }
+      };
 
-    mediaRecorderRef.current = mediaRecorder;
-    mediaRecorder.start();
-    setIsRecording(true);
-    setRecordingTime(0);
+      mediaRecorder.onerror = (event) => {
+        console.error('MediaRecorder error:', event);
+      };
 
-    recordingIntervalRef.current = setInterval(() => {
-      setRecordingTime(prev => prev + 1);
-    }, 1000);
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start(100); // Collect data every 100ms
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      recordingIntervalRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+      
+      console.log('Recording started');
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
   };
 
   const stopRecording = () => {
+    console.log('Stopping recording...');
+    
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+      
       if (recordingIntervalRef.current) {
         clearInterval(recordingIntervalRef.current);
         recordingIntervalRef.current = null;
@@ -198,52 +320,70 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="relative bg-black rounded-lg overflow-hidden">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-64 object-cover"
-              />
-              <canvas ref={canvasRef} className="hidden" />
-              
-              {isRecording && (
-                <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
-                  <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-                  {formatTime(recordingTime)}
+            {cameraError ? (
+              <div className="text-center p-8">
+                <div className="text-red-600 mb-4">{cameraError}</div>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCameraError(null);
+                    startCamera();
+                  }}
+                >
+                  Try Again
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="relative bg-black rounded-lg overflow-hidden">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="w-full h-64 object-cover"
+                    style={{ transform: 'scaleX(-1)' }} // Mirror effect for selfie mode
+                  />
+                  <canvas ref={canvasRef} className="hidden" />
+                  
+                  {isRecording && (
+                    <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                      <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+                      {formatTime(recordingTime)}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div className="flex justify-center space-x-4">
-              <Button
-                onClick={capturePhoto}
-                disabled={isRecording}
-                className="bg-blue-600 hover:bg-blue-700 flex-1"
-              >
-                <Camera className="h-4 w-4 mr-2" />
-                Take Photo
-              </Button>
-              
-              {!isRecording ? (
-                <Button
-                  onClick={startRecording}
-                  className="bg-red-600 hover:bg-red-700 flex-1"
-                >
-                  <Video className="h-4 w-4 mr-2" />
-                  Record Video
-                </Button>
-              ) : (
-                <Button
-                  onClick={stopRecording}
-                  className="bg-gray-600 hover:bg-gray-700 flex-1"
-                >
-                  <Square className="h-4 w-4 mr-2" />
-                  Stop Recording
-                </Button>
-              )}
-            </div>
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    onClick={capturePhoto}
+                    disabled={isRecording}
+                    className="bg-blue-600 hover:bg-blue-700 flex-1"
+                  >
+                    <Camera className="h-4 w-4 mr-2" />
+                    Take Photo
+                  </Button>
+                  
+                  {!isRecording ? (
+                    <Button
+                      onClick={startRecording}
+                      className="bg-red-600 hover:bg-red-700 flex-1"
+                    >
+                      <Video className="h-4 w-4 mr-2" />
+                      Record Video
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={stopRecording}
+                      className="bg-gray-600 hover:bg-gray-700 flex-1"
+                    >
+                      <Square className="h-4 w-4 mr-2" />
+                      Stop Recording
+                    </Button>
+                  )}
+                </div>
+              </>
+            )}
 
             <Button
               variant="outline"
