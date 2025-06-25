@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Calendar, Upload, X, Image, Video, Camera, Square } from 'lucide-react';
+import { Calendar, Upload, X, Image, Video, Camera, Square, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface UploadMemoryDialogProps {
@@ -26,6 +26,8 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraLoading, setCameraLoading] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -73,47 +75,112 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
 
   const startCamera = async () => {
     setCameraError(null);
-    console.log('Starting camera...');
+    setCameraLoading(true);
+    setCameraReady(false);
+    console.log('Starting camera initialization...');
     
     try {
-      // Request camera permissions with more specific constraints
-      const constraints = {
-        video: {
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          facingMode: 'environment'
+      // Try multiple constraint configurations for better compatibility
+      const constraintOptions = [
+        {
+          video: { 
+            width: { ideal: 1280 }, 
+            height: { ideal: 720 },
+            facingMode: 'user'
+          },
+          audio: true
         },
-        audio: true
-      };
+        {
+          video: { 
+            width: { ideal: 640 }, 
+            height: { ideal: 480 },
+            facingMode: 'user'
+          },
+          audio: true
+        },
+        {
+          video: { facingMode: 'user' },
+          audio: true
+        },
+        {
+          video: true,
+          audio: true
+        }
+      ];
 
-      console.log('Requesting user media with constraints:', constraints);
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('Got media stream:', stream);
+      let stream: MediaStream | null = null;
       
+      for (let i = 0; i < constraintOptions.length; i++) {
+        try {
+          console.log(`Trying camera constraints ${i + 1}:`, constraintOptions[i]);
+          stream = await navigator.mediaDevices.getUserMedia(constraintOptions[i]);
+          console.log('Camera stream obtained successfully');
+          break;
+        } catch (err) {
+          console.log(`Constraint ${i + 1} failed:`, err);
+          if (i === constraintOptions.length - 1) {
+            throw err;
+          }
+        }
+      }
+
+      if (!stream) {
+        throw new Error('Failed to get camera stream');
+      }
+
       streamRef.current = stream;
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        console.log('Set video srcObject');
         
-        // Wait for video to load
-        await new Promise((resolve) => {
-          if (videoRef.current) {
-            videoRef.current.onloadedmetadata = () => {
-              console.log('Video metadata loaded');
-              resolve(true);
-            };
+        // Wait for the video to be ready
+        await new Promise<void>((resolve, reject) => {
+          if (!videoRef.current) {
+            reject(new Error('Video element not available'));
+            return;
           }
+
+          const video = videoRef.current;
+          
+          const onLoadedMetadata = () => {
+            console.log('Video metadata loaded:', {
+              width: video.videoWidth,
+              height: video.videoHeight,
+              duration: video.duration
+            });
+            resolve();
+          };
+
+          const onError = (error: Event) => {
+            console.error('Video error:', error);
+            reject(new Error('Failed to load video'));
+          };
+
+          video.addEventListener('loadedmetadata', onLoadedMetadata, { once: true });
+          video.addEventListener('error', onError, { once: true });
+
+          // Cleanup function
+          setTimeout(() => {
+            video.removeEventListener('loadedmetadata', onLoadedMetadata);
+            video.removeEventListener('error', onError);
+            reject(new Error('Video loading timeout'));
+          }, 5000);
         });
         
         // Play the video
-        await videoRef.current.play();
-        console.log('Video playing');
+        try {
+          await videoRef.current.play();
+          console.log('Video is now playing');
+          setCameraReady(true);
+          setShowCamera(true);
+        } catch (playError) {
+          console.error('Failed to play video:', playError);
+          throw new Error('Failed to start video playback');
+        }
       }
       
-      setShowCamera(true);
     } catch (error) {
-      console.error('Error accessing camera:', error);
+      console.error('Camera initialization failed:', error);
       let errorMessage = 'Could not access camera. ';
       
       if (error instanceof Error) {
@@ -123,12 +190,17 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
           errorMessage += 'No camera found on this device.';
         } else if (error.name === 'NotSupportedError') {
           errorMessage += 'Camera not supported in this browser.';
+        } else if (error.name === 'NotReadableError') {
+          errorMessage += 'Camera is being used by another application.';
         } else {
           errorMessage += error.message;
         }
       }
       
       setCameraError(errorMessage);
+      stopCamera();
+    } finally {
+      setCameraLoading(false);
     }
   };
 
@@ -141,6 +213,10 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
         track.stop();
       });
       streamRef.current = null;
+    }
+    
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
     }
     
     if (recordingIntervalRef.current) {
@@ -156,6 +232,8 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     setIsRecording(false);
     setRecordingTime(0);
     setCameraError(null);
+    setCameraLoading(false);
+    setCameraReady(false);
     recordedChunksRef.current = [];
   };
 
@@ -164,24 +242,31 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     
     if (!videoRef.current || !canvasRef.current) {
       console.error('Video or canvas ref not available');
+      setCameraError('Camera not ready for photo capture');
       return;
     }
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
     
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      console.error('Video dimensions are zero');
+      setCameraError('Camera video not ready');
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
     if (!ctx) {
       console.error('Could not get canvas context');
+      setCameraError('Failed to prepare photo capture');
       return;
     }
 
     // Set canvas dimensions to match video
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
     
-    console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
-    console.log('Video dimensions:', video.videoWidth, 'x', video.videoHeight);
+    console.log('Capturing with dimensions:', canvas.width, 'x', canvas.height);
     
     // Draw the current video frame to canvas
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -189,7 +274,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     // Convert canvas to blob
     canvas.toBlob((blob) => {
       if (blob) {
-        console.log('Photo captured, blob size:', blob.size);
+        console.log('Photo captured successfully, size:', blob.size);
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const file = new File([blob], `photo-${timestamp}.jpg`, { type: 'image/jpeg' });
         setFile(file);
@@ -197,6 +282,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
         stopCamera();
       } else {
         console.error('Failed to create blob from canvas');
+        setCameraError('Failed to save photo');
       }
     }, 'image/jpeg', 0.9);
   };
@@ -206,6 +292,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     
     if (!streamRef.current) {
       console.error('No stream available for recording');
+      setCameraError('Camera stream not available');
       return;
     }
 
@@ -213,15 +300,23 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
 
     try {
       // Try different mime types for better browser compatibility
-      let mimeType = 'video/webm;codecs=vp9,opus';
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        mimeType = 'video/webm;codecs=vp8,opus';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'video/webm';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/mp4';
-          }
+      const mimeTypes = [
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/webm',
+        'video/mp4'
+      ];
+      
+      let mimeType = '';
+      for (const type of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+          mimeType = type;
+          break;
         }
+      }
+      
+      if (!mimeType) {
+        throw new Error('No supported video format found');
       }
       
       console.log('Using mime type:', mimeType);
@@ -231,14 +326,14 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
       });
       
       mediaRecorder.ondataavailable = (event) => {
-        console.log('Data available, size:', event.data.size);
+        console.log('Recording data available, size:', event.data.size);
         if (event.data.size > 0) {
           recordedChunksRef.current.push(event.data);
         }
       };
 
       mediaRecorder.onstop = () => {
-        console.log('Recording stopped, chunks:', recordedChunksRef.current.length);
+        console.log('Recording stopped, total chunks:', recordedChunksRef.current.length);
         
         if (recordedChunksRef.current.length > 0) {
           const blob = new Blob(recordedChunksRef.current, { type: mimeType });
@@ -253,15 +348,17 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
           stopCamera();
         } else {
           console.error('No recorded data available');
+          setCameraError('Recording failed - no data captured');
         }
       };
 
       mediaRecorder.onerror = (event) => {
         console.error('MediaRecorder error:', event);
+        setCameraError('Recording failed');
       };
 
       mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start(100); // Collect data every 100ms
+      mediaRecorder.start(1000); // Collect data every second
       setIsRecording(true);
       setRecordingTime(0);
 
@@ -269,9 +366,10 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
         setRecordingTime(prev => prev + 1);
       }, 1000);
       
-      console.log('Recording started');
+      console.log('Recording started successfully');
     } catch (error) {
       console.error('Error starting recording:', error);
+      setCameraError('Failed to start recording');
     }
   };
 
@@ -320,7 +418,12 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
           </DialogHeader>
 
           <div className="space-y-4">
-            {cameraError ? (
+            {cameraLoading ? (
+              <div className="text-center p-8">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+                <p className="text-gray-600">Initializing camera...</p>
+              </div>
+            ) : cameraError ? (
               <div className="text-center p-8">
                 <div className="text-red-600 mb-4">{cameraError}</div>
                 <Button
@@ -333,7 +436,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                   Try Again
                 </Button>
               </div>
-            ) : (
+            ) : cameraReady ? (
               <>
                 <div className="relative bg-black rounded-lg overflow-hidden">
                   <video
@@ -342,7 +445,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                     playsInline
                     muted
                     className="w-full h-64 object-cover"
-                    style={{ transform: 'scaleX(-1)' }} // Mirror effect for selfie mode
+                    style={{ transform: 'scaleX(-1)' }}
                   />
                   <canvas ref={canvasRef} className="hidden" />
                   
@@ -383,6 +486,11 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                   )}
                 </div>
               </>
+            ) : (
+              <div className="text-center p-8">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+                <p className="text-gray-600">Setting up camera...</p>
+              </div>
             )}
 
             <Button
@@ -468,8 +576,13 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                     variant="outline"
                     onClick={startCamera}
                     className="flex-1"
+                    disabled={cameraLoading}
                   >
-                    <Camera className="h-4 w-4 mr-2" />
+                    {cameraLoading ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Camera className="h-4 w-4 mr-2" />
+                    )}
                     Camera
                   </Button>
                 </div>
