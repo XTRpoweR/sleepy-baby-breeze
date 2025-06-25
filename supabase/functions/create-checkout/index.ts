@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -21,7 +22,10 @@ serve(async (req) => {
     logStep("Function started");
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    if (!stripeKey) {
+      logStep("ERROR: STRIPE_SECRET_KEY not set");
+      throw new Error("STRIPE_SECRET_KEY is not set");
+    }
     logStep("Stripe key verified");
 
     const supabaseClient = createClient(
@@ -31,7 +35,7 @@ serve(async (req) => {
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      logStep("No authorization header provided");
+      logStep("ERROR: No authorization header provided");
       return new Response(
         JSON.stringify({ error: "No authorization header provided" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
@@ -39,6 +43,8 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
+    logStep("Authenticating user with token");
+    
     const { data, error: authError } = await supabaseClient.auth.getUser(token);
     if (authError) {
       logStep("Auth error", authError);
@@ -47,9 +53,10 @@ serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
       );
     }
+    
     const user = data.user;
     if (!user?.email) {
-      logStep("User not authenticated or email not available");
+      logStep("ERROR: User not authenticated or email not available");
       return new Response(
         JSON.stringify({ error: "User not authenticated or email not available" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
@@ -60,18 +67,30 @@ serve(async (req) => {
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
     // Check if customer already exists
+    logStep("Checking for existing customer");
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
+    
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
       logStep("Existing customer found", { customerId });
     } else {
       logStep("Creating new customer");
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: {
+          user_id: user.id,
+        },
+      });
+      customerId = customer.id;
+      logStep("New customer created", { customerId });
     }
 
     // Create or find the premium subscription product and price
     let priceId;
     try {
+      logStep("Setting up product and price");
+      
       // First, try to find an existing product named "SleepyBaby Premium"
       const products = await stripe.products.list({ 
         active: true,
@@ -126,10 +145,10 @@ serve(async (req) => {
     }
 
     const origin = req.headers.get("origin") || "http://localhost:3000";
+    logStep("Creating checkout session", { origin, priceId, customerId });
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
       line_items: [
         {
           price: priceId,
@@ -151,7 +170,7 @@ serve(async (req) => {
       },
     });
 
-    logStep("Checkout session created", { sessionId: session.id, priceId });
+    logStep("Checkout session created successfully", { sessionId: session.id, url: session.url });
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -159,7 +178,7 @@ serve(async (req) => {
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR", { message: errorMessage });
+    logStep("ERROR in create-checkout", { message: errorMessage });
     
     // If it's a Stripe auth/session error ensure a 401 is returned
     if (

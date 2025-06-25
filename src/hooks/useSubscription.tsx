@@ -1,3 +1,4 @@
+
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -78,24 +79,30 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   };
 
   const createCheckout = async () => {
-    if (upgrading) return;
+    if (upgrading) {
+      console.log('Already processing upgrade, skipping...');
+      return;
+    }
+    
     try {
       setUpgrading(true);
+      console.log('Starting checkout process...');
+      
       // Always get the latest session before making the call
       const sessionResult = await supabase.auth.getSession();
       const accessToken = sessionResult.data.session?.access_token;
 
       if (!user || !accessToken) {
+        console.error('User not authenticated or no access token');
         toast({
           title: "Authentication Required",
           description: "Please log in to upgrade your subscription.",
           variant: "destructive",
         });
-        setUpgrading(false);
         return;
       }
 
-      console.log('Creating checkout session...');
+      console.log('Creating checkout session for user:', user.email);
 
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         headers: {
@@ -103,9 +110,11 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         },
       });
 
-      if (error || !data?.url) {
-        // Check for likely authentication errors
-        const msg = error?.message || data?.error || '';
+      console.log('Checkout response:', { data, error });
+
+      if (error) {
+        console.error('Checkout error:', error);
+        const msg = error?.message || '';
         if (
           msg.includes('User not authenticated') ||
           msg.includes('No authorization header') ||
@@ -118,35 +127,31 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
           });
         } else {
           toast({
-            title: "Error",
-            description: "Failed to create checkout session",
+            title: "Checkout Error",
+            description: error.message || "Failed to create checkout session. Please try again.",
             variant: "destructive",
           });
         }
-        setUpgrading(false);
         return;
       }
 
-      console.log('Checkout URL received:', data.url);
-
-      if (isMobile) {
-        window.location.href = data.url;
-      } else {
-        const newWindow = window.open(data.url, '_blank');
-        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-          toast({
-            title: "Popup Blocked",
-            description: "Please allow popups or click the link to continue to checkout",
-            variant: "default",
-          });
-          setTimeout(() => {
-            if (confirm('Click OK to redirect to checkout page')) {
-              window.location.href = data.url;
-            }
-          }, 1000);
-        }
+      if (!data?.url) {
+        console.error('No checkout URL received:', data);
+        toast({
+          title: "Checkout Error",
+          description: "Failed to get checkout URL. Please try again.",
+          variant: "destructive",
+        });
+        return;
       }
+
+      console.log('Checkout URL received, redirecting:', data.url);
+
+      // Always redirect to the checkout URL - don't use popups as they're often blocked
+      window.location.href = data.url;
+      
     } catch (error: any) {
+      console.error('Checkout exception:', error);
       const msg = error?.message || '';
       if (
         msg.includes('User not authenticated') ||
@@ -161,12 +166,16 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       } else {
         toast({
           title: "Error",
-          description: "Failed to create checkout session",
+          description: "Failed to create checkout session. Please try again.",
           variant: "destructive",
         });
       }
     } finally {
-      setUpgrading(false);
+      // Only reset upgrading state if we're not redirecting
+      // The timeout allows for redirect to happen
+      setTimeout(() => {
+        setUpgrading(false);
+      }, 2000);
     }
   };
 
