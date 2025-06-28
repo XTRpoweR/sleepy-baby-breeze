@@ -362,6 +362,16 @@
     "duration": "Duration"
   },
   "tracking": {
+    "babyProfileSetup": {
+      "title": "Create Baby Profile",
+      "subtitle": "Create a profile to start tracking activities",
+      "nameRequired": "Baby's Name *",
+      "namePlaceholder": "Enter baby's name",
+      "birthDateLabel": "Birth Date (Optional)",
+      "photoLabel": "Photo (Optional)",
+      "createButton": "Create Profile",
+      "creatingButton": "Creating..."
+    },
     "sleepTracker": {
       "title": "Sleep Tracking",
       "sessionStarted": "Sleep session started",
