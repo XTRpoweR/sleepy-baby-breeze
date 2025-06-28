@@ -271,9 +271,7 @@ const HelpCenter = () => {
             <Button size="lg" onClick={() => navigate('/contact')} className="bg-white text-blue-600 hover:bg-blue-50">
               Contact Support
             </Button>
-            <Button size="lg" variant="outline" className="border-white bg-slate-50 text-violet-500">
-              Schedule a Call
-            </Button>
+            
           </div>
           <p className="text-blue-100 text-sm mt-6">
             Average response time: Under 24 hours
