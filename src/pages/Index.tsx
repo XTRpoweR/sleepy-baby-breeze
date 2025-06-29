@@ -336,11 +336,23 @@ const Index = () => {
                     <Crown className="h-6 w-6 text-orange-600" />
                     <h3 className="text-2xl font-bold">SleepyBaby Premium</h3>
                   </div>
-                  <div className="flex items-center justify-center space-x-1 mb-2">
+                  
+                  {/* Discount Badge */}
+                  <div className="mb-2">
+                    <Badge className="bg-red-500 text-white text-sm font-bold px-2 py-1">
+                      40% OFF
+                    </Badge>
+                  </div>
+                  
+                  {/* Pricing with old price crossed out */}
+                  <div className="flex items-center justify-center space-x-2 mb-1">
+                    <span className="text-lg text-gray-500 line-through font-medium">$14.99</span>
                     <span className="text-4xl font-bold text-gray-900">$9.99</span>
                     <span className="text-gray-600">/month</span>
                   </div>
+                  <p className="text-red-600 text-sm font-medium mb-4">Save $5.00 per month!</p>
                   <p className="text-gray-600 mb-6">Complete baby tracking solution</p>
+                  
                   <ul className="space-y-3 text-left mb-8">
                     <li className="flex items-center">
                       <Check className="h-4 w-4 text-green-500 mr-3" />
