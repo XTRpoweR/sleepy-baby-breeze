@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Moon, ArrowLeft, Mail, MessageCircle, Phone, MapPin, Clock, Send, HelpCircle, Users, Briefcase } from "lucide-react";
+
 const Contact = () => {
   const navigate = useNavigate();
   const {
@@ -213,6 +214,11 @@ const Contact = () => {
                     <p className="text-xs sm:text-sm text-blue-800">
                       Emergency support available 24/7 for Premium subscribers
                     </p>
+                    {/* Updated Premium pricing with discount */}
+                    <div className="mt-2 flex items-center space-x-2">
+                      <span className="text-xs text-gray-500 line-through">$14.99/month</span>
+                      <span className="text-sm font-bold text-blue-800">$9.99/month (40% OFF)</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -234,24 +240,31 @@ const Contact = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            {[{
-            question: "How do I add family members?",
-            answer: "Go to Family Sharing in your dashboard and send invitations via email. Family members can join with the invitation link."
-          }, {
-            question: "Can I export my data?",
-            answer: "Yes! Premium users can export all their data in CSV format from the Reports section."
-          }, {
-            question: "Is my baby's data secure?",
-            answer: "Absolutely. We use enterprise-grade encryption and never share personal data with third parties."
-          }, {
-            question: "How do I cancel my subscription?",
-            answer: "You can cancel anytime from your Account settings. Your data remains accessible until the end of your billing period."
-          }].map((faq, index) => <Card key={index} className="border-0 shadow-sm">
+            {[
+              {
+                question: "How do I add family members?",
+                answer: "Go to Family Sharing in your dashboard and send invitations via email. Family members can join with the invitation link."
+              },
+              {
+                question: "Can I export my data?",
+                answer: "Yes! Premium users can export all their data in CSV format from the Reports section."
+              },
+              {
+                question: "Is my baby's data secure?",
+                answer: "Absolutely. We use enterprise-grade encryption and never share personal data with third parties."
+              },
+              {
+                question: "How do I cancel my subscription?",
+                answer: "You can cancel anytime from your Account settings. Your data remains accessible until the end of your billing period."
+              }
+            ].map((faq, index) => (
+              <Card key={index} className="border-0 shadow-sm">
                 <CardContent className="p-4 sm:p-6">
                   <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{faq.question}</h3>
                   <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{faq.answer}</p>
                 </CardContent>
-              </Card>)}
+              </Card>
+            ))}
           </div>
 
           <div className="text-center mt-6 sm:mt-8">

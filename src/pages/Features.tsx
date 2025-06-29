@@ -249,6 +249,12 @@ const Features = () => {
             <p className="text-xl text-gray-600">
               Unlock additional powerful features with SleepyBaby Premium
             </p>
+            {/* Added discount info */}
+            <div className="mt-4 inline-flex items-center space-x-2 bg-red-100 px-4 py-2 rounded-full">
+              <span className="text-lg text-gray-500 line-through">$14.99/month</span>
+              <span className="text-xl font-bold text-red-600">$9.99/month</span>
+              <Badge className="bg-red-500 text-white text-xs">40% OFF</Badge>
+            </div>
           </div>
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {premiumFeatures.map((feature, index) => {
