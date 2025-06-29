@@ -146,7 +146,7 @@ const Pricing = () => {
                     <span className="text-xl text-gray-500 line-through font-medium">${originalPrice.toFixed(2)}</span>
                     <div className="flex items-center space-x-1">
                       <span className="text-4xl font-bold text-gray-900">
-                        ${isAnnual ? (annualPrice / 12).toFixed(2) : monthlyPrice.toFixed(2)}
+                        $9.99
                       </span>
                       <span className="text-gray-600">/month</span>
                     </div>
