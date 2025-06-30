@@ -41,32 +41,32 @@ const Index = () => {
     icon: Clock,
     title: t('features.trackEverything.title'),
     description: t('features.trackEverything.description'),
-    color: "text-blue-500"
+    color: "text-coral-500"
   }, {
     icon: Calendar,
     title: t('features.customSchedules.title'),
     description: t('features.customSchedules.description'),
-    color: "text-purple-500"
+    color: "text-lavender-500"
   }, {
     icon: Volume2,
     title: t('features.soothingSounds.title'),
     description: t('features.soothingSounds.description'),
-    color: "text-green-500"
+    color: "text-mint-green-500"
   }, {
     icon: Users,
     title: t('features.multiCaregiver.title'),
     description: t('features.multiCaregiver.description'),
-    color: "text-orange-500"
+    color: "text-soft-orange-500"
   }, {
     icon: BarChart3,
     title: t('features.insights.title'),
     description: t('features.insights.description'),
-    color: "text-indigo-500"
+    color: "text-teal-500"
   }, {
     icon: Globe,
     title: t('features.multilingual.title'),
     description: t('features.multilingual.description'),
-    color: "text-pink-500"
+    color: "text-warm-yellow-500"
   }];
   const testimonials = [{
     name: "Sarah M.",
@@ -84,24 +84,24 @@ const Index = () => {
     content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
     rating: 5
   }];
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 font-sans">
+  return <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-lavender-50 font-sans">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 animate-fade-in">
+      <nav className="bg-white/80 backdrop-blur-sm border-b border-coral-100 sticky top-0 z-50 animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
-              <Moon className="h-8 w-8 text-blue-600 transition-transform duration-300 group-hover:rotate-12" />
+              <Moon className="h-8 w-8 text-coral-500 transition-transform duration-300 group-hover:rotate-12" />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.features')}</a>
-              <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.insights')}</a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Pricing</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
+              <a href="#features" className="text-gray-700 hover:text-coral-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.features')}</a>
+              <a href="#insights" className="text-gray-700 hover:text-teal-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.insights')}</a>
+              <a href="#pricing" className="text-gray-700 hover:text-coral-600 transition-all duration-300 font-medium hover:scale-105">Pricing</a>
+              <a href="#testimonials" className="text-gray-700 hover:text-coral-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
               <LanguageSelector />
-              {user ? <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
+              {user ? <Button onClick={() => navigate('/dashboard')} className="bg-coral-500 hover:bg-coral-600 transition-all duration-300 hover:scale-105 font-medium">
                   {t('navigation.dashboard')}
-                </Button> : <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
+                </Button> : <Button onClick={handleGetStarted} className="bg-coral-500 hover:bg-coral-600 transition-all duration-300 hover:scale-105 font-medium">
                   {t('navigation.getStarted')}
                 </Button>}
             </div>
@@ -117,7 +117,7 @@ const Index = () => {
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
                   {t('hero.title')}
-                  <span className="text-blue-600 block">{t('hero.titleHighlight')}</span>
+                  <span className="text-coral-500 block">{t('hero.titleHighlight')}</span>
                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed font-light">
                   {t('hero.subtitle')}
@@ -126,37 +126,37 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
+                <Button size="lg" className="bg-coral-500 hover:bg-coral-600 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
                   <Play className="h-5 w-5 mr-2" />
                   {t('hero.startTracking')}
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-blue-200 hover:bg-blue-50 transition-all duration-300 hover:scale-105 font-medium">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-teal-200 hover:bg-teal-50 text-teal-700 transition-all duration-300 hover:scale-105 font-medium">
                   {t('hero.exploreFeatures')}
                 </Button>
               </div>
 
               <div className="flex items-center space-x-6 text-sm text-gray-600">
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <CheckCircle className="h-4 w-4 text-mint-green-500" />
                   <span className="font-medium">{t('hero.freeTrial')}</span>
                 </div>
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <CheckCircle className="h-4 w-4 text-mint-green-500" />
                   <span className="font-medium">{t('hero.noCreditCard')}</span>
                 </div>
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
-                  <Heart className="h-4 w-4 text-red-500" />
+                  <Heart className="h-4 w-4 text-coral-500" />
                   <span className="font-medium">{t('hero.madeByParents')}</span>
                 </div>
               </div>
             </div>
 
             <div className="relative animate-scale-in">
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-8 shadow-2xl animate-float">
+              <div className="bg-gradient-to-br from-coral-100 to-lavender-100 rounded-3xl p-8 shadow-2xl animate-float">
                 <div className="bg-white rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-900">Tonight's Sleep</h3>
-                    <Baby className="h-6 w-6 text-blue-600" />
+                    <Baby className="h-6 w-6 text-coral-500" />
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
@@ -165,16 +165,16 @@ const Index = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600 font-medium">Total Sleep</span>
-                      <span className="font-semibold text-green-600">11h 20m</span>
+                      <span className="font-semibold text-mint-green-600">11h 20m</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600 font-medium">Wake-ups</span>
                       <span className="font-semibold">2 times</span>
                     </div>
-                    <div className="bg-green-50 rounded-lg p-3 mt-4">
+                    <div className="bg-mint-green-50 rounded-lg p-3 mt-4">
                       <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-green-800 font-medium">Great progress! Sleep improved 15% this week.</span>
+                        <CheckCircle className="h-4 w-4 text-mint-green-600" />
+                        <span className="text-sm text-mint-green-800 font-medium">Great progress! Sleep improved 15% this week.</span>
                       </div>
                     </div>
                   </div>
@@ -217,13 +217,13 @@ const Index = () => {
       </section>
 
       {/* Insights Section */}
-      <section id="insights" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-indigo-50">
+      <section id="insights" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-teal-50 to-mint-green-50">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 animate-fade-in-up">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
                 Turn Sleep Data Into 
-                <span className="text-blue-600 block">Actionable Insights</span>
+                <span className="text-teal-500 block">Actionable Insights</span>
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed font-light">
                 Our intelligent analytics help you spot patterns, predict optimal bedtimes, and understand what works best for your unique baby. 
@@ -233,11 +233,11 @@ const Index = () => {
                 {["Weekly sleep pattern analysis", "Personalized bedtime recommendations", "Sleep regression alerts and tips", "Progress tracking and milestones"].map((item, index) => <div key={index} className="flex items-center space-x-3 transition-all duration-300 hover:scale-105" style={{
                 animationDelay: `${index * 100}ms`
               }}>
-                    <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-mint-green-500 flex-shrink-0" />
                     <span className="text-gray-700 font-medium">{item}</span>
                   </div>)}
               </div>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
+              <Button size="lg" className="bg-teal-500 hover:bg-teal-600 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
                 See Your Sleep Insights
               </Button>
             </div>
@@ -247,12 +247,12 @@ const Index = () => {
                 <h3 className="text-xl font-bold text-gray-900">This Week's Summary</h3>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-50 rounded-2xl p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-600">11.2h</div>
+                  <div className="bg-teal-50 rounded-2xl p-4 text-center">
+                    <div className="text-2xl font-bold text-teal-600">11.2h</div>
                     <div className="text-sm text-gray-600">Avg. Night Sleep</div>
                   </div>
-                  <div className="bg-green-50 rounded-2xl p-4 text-center">
-                    <div className="text-2xl font-bold text-green-600">2.1h</div>
+                  <div className="bg-mint-green-50 rounded-2xl p-4 text-center">
+                    <div className="text-2xl font-bold text-mint-green-600">2.1h</div>
                     <div className="text-sm text-gray-600">Avg. Day Naps</div>
                   </div>
                 </div>
@@ -261,12 +261,12 @@ const Index = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Sleep Quality</span>
                     <div className="flex space-x-1">
-                      {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
+                      {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-4 w-4 fill-warm-yellow-400 text-warm-yellow-400" />)}
                     </div>
                   </div>
                   
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <div className="text-sm font-medium text-green-800">
+                  <div className="bg-mint-green-50 rounded-lg p-3">
+                    <div className="text-sm font-medium text-mint-green-800">
                       🎉 Bedtime routine is working great! Keep it up.
                     </div>
                   </div>
@@ -298,48 +298,48 @@ const Index = () => {
               <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-8 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-4">
-                    <Baby className="h-6 w-6 text-blue-600" />
+                    <Baby className="h-6 w-6 text-coral-500" />
                     <h3 className="text-2xl font-bold">SleepyBaby Basic</h3>
                   </div>
                   <div className="text-4xl font-bold text-gray-900 mb-2">Free</div>
                   <p className="text-gray-600 mb-6">Perfect for getting started</p>
                   <ul className="space-y-3 text-left mb-8">
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <Check className="h-4 w-4 text-mint-green-500 mr-3" />
                       <span>1 baby profile</span>
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <Check className="h-4 w-4 text-mint-green-500 mr-3" />
                       <span>Current day tracking</span>
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <Check className="h-4 w-4 text-mint-green-500 mr-3" />
                       <span>Basic sleep reports</span>
                     </li>
                   </ul>
-                  <Button className="w-full" variant="outline" onClick={handleGetStarted}>
+                  <Button className="w-full bg-teal-500 hover:bg-teal-600" variant="outline" onClick={handleGetStarted}>
                     Get Started Free
                   </Button>
                 </CardContent>
               </Card>
 
               {/* Premium Plan Preview */}
-              <Card className="border-2 border-orange-500 hover:shadow-xl transition-all duration-300 relative">
+              <Card className="border-2 border-soft-orange-500 hover:shadow-xl transition-all duration-300 relative">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-orange-500 text-white">
+                  <Badge className="bg-soft-orange-500 text-white">
                     <Crown className="h-3 w-3 mr-1" />
                     Most Popular
                   </Badge>
                 </div>
                 <CardContent className="p-8 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-4">
-                    <Crown className="h-6 w-6 text-orange-600" />
+                    <Crown className="h-6 w-6 text-soft-orange-500" />
                     <h3 className="text-2xl font-bold">SleepyBaby Premium</h3>
                   </div>
                   
                   {/* Discount Badge */}
                   <div className="mb-2">
-                    <Badge className="bg-red-500 text-white text-sm font-bold px-2 py-1">
+                    <Badge className="bg-coral-500 text-white text-sm font-bold px-2 py-1">
                       40% OFF
                     </Badge>
                   </div>
@@ -350,35 +350,35 @@ const Index = () => {
                     <span className="text-4xl font-bold text-gray-900">$9.99</span>
                     <span className="text-gray-600">/month</span>
                   </div>
-                  <p className="text-red-600 text-sm font-medium mb-4">Save $5.00 per month!</p>
+                  <p className="text-coral-600 text-sm font-medium mb-4">Save $5.00 per month!</p>
                   <p className="text-gray-600 mb-6">Complete baby tracking solution</p>
                   
                   <ul className="space-y-3 text-left mb-8">
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <Check className="h-4 w-4 text-mint-green-500 mr-3" />
                       <span>Unlimited baby profiles</span>
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <Check className="h-4 w-4 text-mint-green-500 mr-3" />
                       <span>Extended activity history</span>
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <Check className="h-4 w-4 text-mint-green-500 mr-3" />
                       <span>Family sharing & collaboration</span>
                     </li>
                     <li className="flex items-center">
-                      <Check className="h-4 w-4 text-green-500 mr-3" />
+                      <Check className="h-4 w-4 text-mint-green-500 mr-3" />
                       <span>Advanced analytics & trends</span>
                     </li>
                   </ul>
-                  <Button className="w-full bg-orange-600 hover:bg-orange-700" onClick={handleViewPricing}>
+                  <Button className="w-full bg-soft-orange-500 hover:bg-soft-orange-600" onClick={handleViewPricing}>
                     {user ? 'View All Features' : 'Start Premium Trial'}
                   </Button>
                 </CardContent>
               </Card>
             </div>
 
-            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6">
+            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6 border-teal-200 text-teal-700 hover:bg-teal-50">
               View Detailed Pricing & Features
             </Button>
           </div>
@@ -403,7 +403,7 @@ const Index = () => {
           }}>
                 <CardContent className="p-8">
                   <div className="flex space-x-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
+                    {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-4 w-4 fill-warm-yellow-400 text-warm-yellow-400" />)}
                   </div>
                   <p className="text-gray-600 mb-6 italic font-light">"{testimonial.content}"</p>
                   <div>
@@ -417,26 +417,26 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-coral-500 to-soft-orange-500">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">
             Ready for Better Nights?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 font-light">
+          <p className="text-xl text-coral-100 mb-8 font-light">
             Start your journey to understanding your baby's sleep patterns today. 
             <span className="block mt-2">Your whole family will thank you.</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
+            <Button size="lg" className="bg-white text-coral-600 hover:bg-coral-50 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
               Start Free Trial
             </Button>
-            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6 border-white transition-all duration-300 hover:scale-105 font-medium bg-zinc-50 text-indigo-600">
+            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6 border-white transition-all duration-300 hover:scale-105 font-medium bg-zinc-50 text-soft-orange-600">
               View Pricing
             </Button>
           </div>
           
-          <p className="text-blue-100 text-sm mt-6 font-medium">
+          <p className="text-coral-100 text-sm mt-6 font-medium">
             Free 7-day trial • No credit card required • Available on iOS & Android
           </p>
         </div>
@@ -448,7 +448,7 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-2 group">
-                <Moon className="h-6 w-6 text-blue-400 transition-transform duration-300 group-hover:rotate-12" />
+                <Moon className="h-6 w-6 text-coral-400 transition-transform duration-300 group-hover:rotate-12" />
                 <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>
               <p className="text-gray-400 font-light">
