@@ -3,8 +3,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/ui/logo';
 import { 
-  Moon, 
   User,
   LogOut,
   Crown,
@@ -35,11 +35,11 @@ export const DesktopHeader = () => {
   };
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm border-b border-coral-100 hidden lg:block">
+    <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
-            <Moon className="h-8 w-8 text-coral-500" />
+            <Logo className="transition-transform duration-300 hover:scale-110" />
             <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
           </div>
           <div className="flex items-center space-x-4">
@@ -50,7 +50,7 @@ export const DesktopHeader = () => {
               variant="outline"
               size="sm"
               onClick={handleNotifications}
-              className="flex items-center space-x-1 relative border-teal-200 text-teal-700 hover:bg-teal-50"
+              className="flex items-center space-x-1 relative"
             >
               <Bell className="h-4 w-4" />
               <span>{t('notifications.title')}</span>
@@ -59,12 +59,12 @@ export const DesktopHeader = () => {
             {/* Subscription Status */}
             <div className="flex items-center space-x-2">
               {isPremium ? (
-                <div className="flex items-center space-x-2 bg-soft-orange-100 text-soft-orange-800 px-3 py-1 rounded-full text-sm">
+                <div className="flex items-center space-x-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
                   <Crown className="h-4 w-4" />
                   <span>Premium</span>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2 bg-lavender-100 text-lavender-700 px-3 py-1 rounded-full text-sm">
+                <div className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
                   <Baby className="h-4 w-4" />
                   <span>Basic</span>
                 </div>
@@ -73,7 +73,7 @@ export const DesktopHeader = () => {
                 variant="outline"
                 size="sm" 
                 onClick={handleManageSubscription}
-                className="flex items-center space-x-1 border-teal-200 text-teal-700 hover:bg-teal-50"
+                className="flex items-center space-x-1"
               >
                 <Settings className="h-4 w-4" />
                 <span>Account</span>
@@ -90,7 +90,7 @@ export const DesktopHeader = () => {
               variant="outline" 
               size="sm" 
               onClick={handleSignOut}
-              className="flex items-center space-x-1 border-coral-200 text-coral-700 hover:bg-coral-50"
+              className="flex items-center space-x-1"
             >
               <LogOut className="h-4 w-4" />
               <span>{t('navigation.signOut')}</span>
