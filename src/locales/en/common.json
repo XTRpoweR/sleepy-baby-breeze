@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "SleepyBaby",
@@ -80,15 +81,15 @@
     }
   },
   "features": {
-    "title": "Everything you need for better sleep",
-    "subtitle": "Designed by sleep experts and parents who understand the challenges of sleepless nights.",
+    "title": "Everything You Need for Better Sleep",
+    "subtitle": "Designed by sleep experts and parents who understand the challenges of those sleepless nights.",
     "trackEverything": {
       "title": "Track Everything",
       "description": "Log sleep times, wake-ups, and patterns effortlessly. Get a complete picture of your baby's sleep journey with just a few taps."
     },
     "customSchedules": {
       "title": "Custom Sleep Schedules",
-      "description": "Create flexible, age-appropriate schedules that adapt to your baby's natural rhythms. No rigid rules—just gentle guidance."
+      "description": "Create flexible, age-appropriate schedules that adapt to your baby's natural rhythms. No rigid rules - just gentle guidance."
     },
     "soothingSounds": {
       "title": "Soothing Sounds & Guidance",
@@ -96,7 +97,7 @@
     },
     "multiCaregiver": {
       "title": "Multi-Caregiver Support",
-      "description": "Share access with partners, grandparents, or caregivers. Everyone stays updated and no sleep detail gets missed."
+      "description": "Share access with partners, grandparents, or caregivers. Everyone stays updated, and no sleep detail gets missed."
     },
     "insights": {
       "title": "Sleep Insights & Analytics",
@@ -109,7 +110,7 @@
   },
   "dashboard": {
     "welcome": "Welcome back, {{name}}! 👋",
-    "welcomeFallback": "Welcome back! 👋",
+    "welcomeFallback": "Welcome back, there! 👋",
     "subtitle": "Ready to track your baby's sleep patterns and activities today?",
     "childProfiles": "Child Profiles",
     "trackActivities": "Track Activities",
@@ -120,16 +121,227 @@
     "familySharingDesc": "Invite family members and caregivers",
     "viewReports": "View Reports",
     "viewReportsDesc": "Analyze sleep and activity patterns",
+    "pediatricianReports": "Pediatrician Reports",
+    "pediatricianReportsDesc": "Generate professional reports for your doctor",
     "todaysActivity": "Today's Activity Summary",
     "weekOverview": "Week Overview",
     "averageSleep": "Average Sleep",
     "feedings": "Feedings",
     "diaperChanges": "Diaper Changes",
-    "createProfile": "Create Child Profile",
+    "createProfile": "Create a Child Profile",
     "addProfile": "Add Child Profile",
     "startTracking": "Start Tracking",
     "noDataMessage": "Start tracking {{name}}'s activities to see insights and patterns here.",
-    "noProfileMessage": "Create a child profile to see personalized insights"
+    "noProfileMessage": "Create a child profile to see personalized insights",
+    "dailySleep": "Daily Sleep",
+    "trackPatterns": "Track Patterns",
+    "feedingData": "Feeding Data",
+    "monitorFrequency": "Monitor Frequency",
+    "weeklyTrends": "Weekly Trends",
+    "visualCharts": "Visual Charts"
+  },
+  "notifications": {
+    "title": "Smart Notifications",
+    "subtitle": "Intelligent reminders for your baby's care",
+    "loading": "Loading...",
+    "enableTitle": "Smart Notifications",
+    "reminderTypes": "Reminder Types",
+    "advancedSettings": "Advanced Settings",
+    "howItWorks": "How Smart Notifications Work",
+    "notSupported": "Your browser doesn't support notifications. Please use a modern browser for the best experience.",
+    "enablePrompt": "Enable notifications to receive smart reminders for your baby's care",
+    "enableButton": "Enable Notifications",
+    "requesting": "Requesting...",
+    "blocked": "Notifications are blocked. To enable them:",
+    "blockedStep1": "1. Click the lock icon in your browser's address bar",
+    "blockedStep2": "2. Change notifications to \"Allow\"",
+    "blockedStep3": "3. Refresh this page",
+    "enabled": "Notifications are enabled! You'll receive smart reminders based on your baby's patterns.",
+    "feedingReminders": "Feeding Reminders",
+    "feedingRemindersDesc": "Get notified when it's time for the next feeding",
+    "reminderInterval": "Reminder Interval",
+    "sleepReminders": "Sleep Reminders",
+    "sleepRemindersDesc": "Age-appropriate nap and bedtime suggestions",
+    "milestoneReminders": "Milestone Reminders",
+    "milestoneRemindersDesc": "Important developmental milestones and checkups",
+    "patternAlerts": "Pattern Alerts",
+    "patternAlertsDesc": "Unusual sleep or feeding pattern notifications",
+    "quietHours": "Quiet Hours",
+    "quietHoursDesc": "Disable notifications during these hours",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "show": "Show",
+    "hide": "Hide",
+    "feedingRemindersHow": "Based on your baby's last feeding time and your preferred interval",
+    "sleepSuggestionsHow": "Age-appropriate nap times and bedtime reminders based on developmental stages",
+    "milestoneAlertsHow": "Important developmental milestones and scheduled checkup reminders",
+    "patternAnalysisHow": "Notifications about unusual patterns in sleep or feeding behaviors",
+    "intervals": {
+      "2hours": "2 hours",
+      "2.5hours": "2.5 hours",
+      "3hours": "3 hours",
+      "3.5hours": "3.5 hours",
+      "4hours": "4 hours"
+    }
+  },
+  "pages": {
+    "sleepSchedule": {
+      "title": "Personalized Sleep Schedule",
+      "subtitle": "Create and manage sleep schedules tailored to your baby's needs.",
+      "loading": "Loading sleep schedule...",
+      "noProfile": "No Child Profile Selected",
+      "noProfileMessage": "Please select or create a child profile to access sleep schedule features.",
+      "addProfile": "Add Child Profile"
+    },
+    "familySharing": {
+      "title": "Family Sharing",
+      "subtitle": "Invite family members and caregivers to help track activities and view reports",
+      "setupFirst": "Set Up Baby Profile First",
+      "setupMessage": "You need to create a baby profile before you can share access with family members.",
+      "sharingFor": "Family Sharing for {{name}}",
+      "inviteMessage": "Invite family members and caregivers to help track {{name}}'s activities and view reports."
+    },
+    "sounds": {
+      "title": "Soothing Sounds & Audio",
+      "subtitle": "Choose from our library of calming sounds and helpful sleep guides for your baby.",
+      "loading": "Loading sounds...",
+      "guidesTab": "Guides & Articles",
+      "soundsTab": "Sounds",
+      "quickLogTab": "Sleep Articles & Tips",
+      "soothingSounds": "Sounds"
+    },
+    "reports": {
+      "title": "View Reports",
+      "subtitle": "Analyze sleep and activity patterns to understand your baby's routines.",
+      "loading": "Loading reports...",
+      "showingData": "Showing data for:",
+      "noBabyProfile": "No Baby Profile Found",
+      "createProfileMessage": "Create a baby profile to start tracking and viewing reports."
+    },
+    "trackActivity": {
+      "title": "Track Activities",
+      "subtitle": "Recording for {{name}}",
+      "loading": "Loading...",
+      "noActiveProfile": "No Active Profile",
+      "selectProfileMessage": "Please select a child profile to start tracking activities."
+    }
+  },
+  "components": {
+    "profileSelector": {
+      "selectChild": "Select Child",
+      "addNewProfile": "Add New Profile",
+      "manageProfiles": "Manage Profiles"
+    },
+    "sleepSchedule": {
+      "childInformation": "Child Information",
+      "childAge": "Child's Age (in months)",
+      "childAgeHelper": "Please enter your child's age in months",
+      "childAgeCalculated": "Calculated from birth date (you can adjust if needed)",
+      "currentSleepHabits": "Current Sleep Habits",
+      "currentBedtime": "Current Bedtime",
+      "currentWakeTime": "Current Wake Time",
+      "napFrequency": "How many naps does your child currently take?",
+      "noNaps": "No naps",
+      "oneNap": "1 nap per day",
+      "twoNaps": "2 naps per day",
+      "threePlusNaps": "3+ naps per day",
+      "sleepChallenges": "Sleep Challenges",
+      "optional": "Optional",
+      "challengeDifficulty": "Difficulty falling asleep",
+      "challengeNightWakings": "Frequent night wakings",
+      "challengeEarlyWakeups": "Early morning wake-ups",
+      "challengeShortNaps": "Short naps",
+      "challengeFightingNaps": "Fighting naps",
+      "challengeBedtimeResistance": "Bedtime resistance",
+      "createSchedule": "Create Personalized Sleep Schedule",
+      "savedSchedules": "Saved Sleep Schedules",
+      "noSavedSchedules": "No saved sleep schedules yet.",
+      "createFirstSchedule": "Create your first personalized schedule above!",
+      "ageUpdate": "Age Update: {{current}} → {{new}} months",
+      "scheduleAdjustmentRecommended": "Sleep Schedule Adjustment Recommended",
+      "currentSchedule": "Current Schedule",
+      "suggestedSchedule": "Suggested Schedule",
+      "bedtime": "Bedtime",
+      "wakeTime": "Wake Time",
+      "naps": "Naps",
+      "totalSleep": "Total Sleep",
+      "napsPerDay": "per day",
+      "suggestedNapSchedule": "Suggested Nap Schedule:",
+      "applyNewSchedule": "Apply New Schedule",
+      "notNow": "Not Now",
+      "createdOn": "Created on"
+    },
+    "sounds": {
+      "soothingSounds": "Soothing Sounds & Audio",
+      "setSleepTimer": "Set Sleep Timer",
+      "chooseTimer": "Choose how long you want the audio to play before automatically stopping.",
+      "currentTimer": "Current timer",
+      "clearTimer": "Clear Timer",
+      "setTimer": "Set Timer",
+      "minutes": "minutes",
+      "hour": "hour",
+      "hours": "hours"
+    },
+    "reports": {
+      "overview": "Overview",
+      "totalSleep": "Total Sleep",
+      "avgSleepDuration": "Avg Sleep Duration",
+      "totalFeedings": "Total Feedings",
+      "totalActivities": "Total Activities",
+      "hoursOfSleep": "Hours of sleep",
+      "perSleepSession": "Per sleep session",
+      "feedingSessions": "Feeding sessions",
+      "allActivities": "All activities",
+      "sleepDurationTrend": "Sleep Duration Trend",
+      "dailySleepSessions": "Daily Sleep Sessions"
+    },
+    "familySharing": {
+      "inviteMembers": "Invite Family Members",
+      "pendingInvitations": "Pending Invitations",
+      "activeMembers": "Active Family Members",
+      "sendInvitation": "Send Invitation",
+      "emailAddress": "Email Address",
+      "inviteRole": "Role",
+      "admin": "Admin",
+      "viewer": "Viewer",
+      "invitationSent": "Invitation sent successfully",
+      "removeAccess": "Remove Access",
+      "resendInvitation": "Resend Invitation"
+    }
+  },
+  "activities": {
+    "sleep": "Sleep",
+    "feeding": "Feeding",
+    "diaper": "Diaper",
+    "custom": "Custom",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "duration": "Duration",
+    "notes": "Notes",
+    "logActivity": "Log Activity",
+    "editActivity": "Edit Activity",
+    "deleteActivity": "Delete Activity"
+  },
+  "forms": {
+    "required": "Required",
+    "optional": "Optional",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update"
+  },
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "custom": "Custom Range"
   },
   "common": {
     "loading": "Loading...",
@@ -143,7 +355,105 @@
     "previous": "Previous",
     "confirm": "Confirm",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "view": "View",
+    "add": "Add",
+    "remove": "Remove",
+    "duration": "Duration"
+  },
+  "tracking": {
+    "babyProfileSetup": {
+      "title": "Create Baby Profile",
+      "subtitle": "Create a profile to start tracking activities",
+      "nameRequired": "Baby's Name *",
+      "namePlaceholder": "Enter baby's name",
+      "birthDateLabel": "Birth Date (Optional)",
+      "photoLabel": "Photo (Optional)",
+      "createButton": "Create Profile",
+      "creatingButton": "Creating..."
+    },
+    "sleepTracker": {
+      "title": "Sleep Tracking",
+      "sessionStarted": "Sleep session started",
+      "sessionStartedDesc": "Sleep tracking is now running",
+      "sessionEnded": "Sleep session ended",
+      "sleepSession": "Sleep session",
+      "startSleepSession": "Start sleep session",
+      "endSleepSession": "End sleep session",
+      "sessionInProgress": "Sleep session in progress...",
+      "logManually": "Log sleep manually",
+      "sleepType": "Sleep type",
+      "nap": "Nap",
+      "nightSleep": "Night sleep",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "notes": "Notes",
+      "notesPlaceholder": "How was sleep? Any observations...",
+      "logSleep": "Log sleep session",
+      "saving": "Saving..."
+    },
+    "diaperTracker": {
+      "title": "Diaper Tracker",
+      "changeTimeRequired": "Change Time *",
+      "contentsRequired": "Contents *",
+      "wetLabel": "Wet",
+      "soiledLabel": "Soiled",
+      "notesLabel": "Notes (Optional)",
+      "notesPlaceholder": "How was diaper change? Any observations...",
+      "submitButton": "Log Diaper Change",
+      "submittingButton": "Saving..."
+    },
+    "feedingTracker": {
+      "title": "Feeding Tracker",
+      "feedingTypeLabel": "Feeding Type",
+      "breastfeedingLabel": "Breastfeeding",
+      "formulaLabel": "Formula",
+      "bothLabel": "Both",
+      "breastSideLabel": "Breast Side",
+      "leftLabel": "Left",
+      "rightLabel": "Right",
+      "bothSidesLabel": "Both Sides",
+      "startTimeRequired": "Start Time *",
+      "startTimeLabel": "Start Time",
+      "endTimeLabel": "End Time",
+      "quantityLabel": "Quantity (ml/oz)",
+      "quantityPlaceholder": "Amount consumed",
+      "notesLabel": "Notes (Optional)",
+      "notesPlaceholder": "How was feeding? Any observations...",
+      "submitButton": "Log Feeding",
+      "submittingButton": "Saving..."
+    },
+    "customActivityTracker": {
+      "title": "Custom Activities",
+      "activityTypeLabel": "Activity Type",
+      "activityTypeRequired": "Activity Type *",
+      "activityTypePlaceholder": "Select activity",
+      "customNameLabel": "Activity Name",
+      "customNameRequired": "Activity Name *",
+      "customNamePlaceholder": "Enter activity name",
+      "tummyTime": "Tummy Time",
+      "bathTime": "Bath Time",
+      "playTime": "Play Time",
+      "walkOuting": "Walk/Outing",
+      "customActivity": "Custom Activity",
+      "startTimeLabel": "Start Time",
+      "startTimeRequired": "Start Time *",
+      "endTimeLabel": "End Time",
+      "notesLabel": "Notes (Optional)",
+      "notesPlaceholder": "How was the activity? Any observations...",
+      "submitButton": "Log Activity",
+      "submittingButton": "Saving..."
+    },
+    "editActivity": {
+      "title": "Edit {{activity}}",
+      "startTimeLabel": "Start Time",
+      "endTimeLabel": "End Time",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Add observations or notes here…",
+      "cancelButton": "Cancel",
+      "saveButton": "Save",
+      "savingButton": "Saving…"
+    }
   },
   "footer": {
     "tagline": "Helping families get the rest they deserve, one night at a time.",
@@ -158,6 +468,6 @@
     "about": "About",
     "blog": "Blog",
     "careers": "Careers",
-    "copyright": "© 2025 SleepyBaby. Made by parents, for parents."
+    "copyright": "© 2024 SleepyBaby. Made with ❤️ by parents, for parents."
   }
 }
