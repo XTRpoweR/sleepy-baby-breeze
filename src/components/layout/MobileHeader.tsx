@@ -4,8 +4,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Logo } from '@/components/ui/logo';
 import { 
+  Moon, 
   User,
   LogOut,
   Crown,
@@ -43,7 +43,7 @@ export const MobileHeader = () => {
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
       <div className="flex justify-between items-center h-14 px-4">
         <div className="flex items-center space-x-2">
-          <Logo size="sm" />
+          <Moon className="h-6 w-6 text-blue-600" />
           <span className="text-lg font-bold text-gray-900">Baby Tracker</span>
         </div>
         
