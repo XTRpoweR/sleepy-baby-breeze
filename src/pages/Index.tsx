@@ -5,18 +5,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
+import { Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-  const {
-    t
-  } = useTranslation();
+  const { user } = useAuth();
+  const { t } = useTranslation();
   const { toast } = useToast();
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -24,6 +22,7 @@ const Index = () => {
       navigate('/auth');
     }
   };
+
   const handleViewPricing = () => {
     if (user) {
       navigate('/subscription');
@@ -31,66 +30,82 @@ const Index = () => {
       navigate('/auth');
     }
   };
+
   const handleDownloadComingSoon = () => {
     toast({
       title: "Coming Soon",
       description: "The Download feature is not available yet. Stay tuned!",
     });
   };
-  const features = [{
-    icon: Clock,
-    title: t('features.trackEverything.title'),
-    description: t('features.trackEverything.description'),
-    color: "text-blue-500"
-  }, {
-    icon: Calendar,
-    title: t('features.customSchedules.title'),
-    description: t('features.customSchedules.description'),
-    color: "text-purple-500"
-  }, {
-    icon: Volume2,
-    title: t('features.soothingSounds.title'),
-    description: t('features.soothingSounds.description'),
-    color: "text-green-500"
-  }, {
-    icon: Users,
-    title: t('features.multiCaregiver.title'),
-    description: t('features.multiCaregiver.description'),
-    color: "text-orange-500"
-  }, {
-    icon: BarChart3,
-    title: t('features.insights.title'),
-    description: t('features.insights.description'),
-    color: "text-indigo-500"
-  }, {
-    icon: Globe,
-    title: t('features.multilingual.title'),
-    description: t('features.multilingual.description'),
-    color: "text-pink-500"
-  }];
-  const testimonials = [{
-    name: "Sarah M.",
-    role: "New Mom",
-    content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
-    rating: 5
-  }, {
-    name: "Mike & Jessica",
-    role: "First-time Parents",
-    content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
-    rating: 5
-  }, {
-    name: "Dr. Emily Chen",
-    role: "Pediatric Sleep Specialist",
-    content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
-    rating: 5
-  }];
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 font-sans">
+
+  const features = [
+    {
+      icon: Clock,
+      title: t('features.trackEverything.title'),
+      description: t('features.trackEverything.description'),
+      color: "text-blue-500"
+    },
+    {
+      icon: Calendar,
+      title: t('features.customSchedules.title'),
+      description: t('features.customSchedules.description'),
+      color: "text-purple-500"
+    },
+    {
+      icon: Volume2,
+      title: t('features.soothingSounds.title'),
+      description: t('features.soothingSounds.description'),
+      color: "text-green-500"
+    },
+    {
+      icon: Users,
+      title: t('features.multiCaregiver.title'),
+      description: t('features.multiCaregiver.description'),
+      color: "text-orange-500"
+    },
+    {
+      icon: BarChart3,
+      title: t('features.insights.title'),
+      description: t('features.insights.description'),
+      color: "text-indigo-500"
+    },
+    {
+      icon: Globe,
+      title: t('features.multilingual.title'),
+      description: t('features.multilingual.description'),
+      color: "text-pink-500"
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: "Sarah M.",
+      role: "New Mom",
+      content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
+      rating: 5
+    },
+    {
+      name: "Mike & Jessica",
+      role: "First-time Parents",
+      content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
+      rating: 5
+    },
+    {
+      name: "Dr. Emily Chen",
+      role: "Pediatric Sleep Specialist",
+      content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
+      rating: 5
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 font-sans">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
-              <Moon className="h-8 w-8 text-blue-600 transition-transform duration-300 group-hover:rotate-12" />
+              <Logo className="transition-transform duration-300 group-hover:scale-110" />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -99,11 +114,15 @@ const Index = () => {
               <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Pricing</a>
               <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
               <LanguageSelector />
-              {user ? <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
+              {user ? (
+                <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
                   {t('navigation.dashboard')}
-                </Button> : <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
+                </Button>
+              ) : (
+                <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
                   {t('navigation.getStarted')}
-                </Button>}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -448,7 +467,7 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-2 group">
-                <Moon className="h-6 w-6 text-blue-400 transition-transform duration-300 group-hover:rotate-12" />
+                <Logo size="sm" className="transition-transform duration-300 group-hover:scale-110" />
                 <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>
               <p className="text-gray-400 font-light">
@@ -461,7 +480,6 @@ const Index = () => {
               <div className="space-y-2 text-gray-400">
                 <Link to="/features" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('navigation.features')}</Link>
                 <Link to="/pricing" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</Link>
-                {/* Replace Download link with a button that shows "Coming Soon" */}
                 <button
                   type="button"
                   onClick={handleDownloadComingSoon}
@@ -487,7 +505,6 @@ const Index = () => {
               <div className="space-y-2 text-gray-400">
                 <Link to="/about" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.about')}</Link>
                 <Link to="/blog" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.blog')}</Link>
-                
               </div>
             </div>
           </div>
@@ -497,6 +514,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

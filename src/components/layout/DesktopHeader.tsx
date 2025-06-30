@@ -3,8 +3,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/ui/logo';
 import { 
-  Moon, 
   User,
   LogOut,
   Crown,
@@ -39,7 +39,7 @@ export const DesktopHeader = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
-            <Moon className="h-8 w-8 text-blue-600" />
+            <Logo className="transition-transform duration-300 hover:scale-110" />
             <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
           </div>
           <div className="flex items-center space-x-4">
