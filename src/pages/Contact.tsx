@@ -8,13 +8,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { Moon, ArrowLeft, Mail, MessageCircle, Phone, MapPin, Clock, Send, HelpCircle, Users, Briefcase } from "lucide-react";
+import { Moon, ArrowLeft, Mail, MessageCircle, Phone, MapPin, Clock, Send, HelpCircle, Users, Briefcase, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
   const navigate = useNavigate();
-  const {
-    t
-  } = useTranslation();
+  const { t } = useTranslation();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,18 +25,69 @@ const Contact = () => {
     category: '',
     message: ''
   });
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
+    
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData
+      });
+
+      if (error) {
+        console.error('Error sending contact email:', error);
+        throw error;
+      }
+
+      console.log('Contact form submitted successfully:', data);
+      setIsSubmitted(true);
+      
+      toast({
+        title: "Message Sent Successfully!",
+        description: "We'll get back to you within 24 hours.",
+      });
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        category: '',
+        message: ''
+      });
+
+    } catch (error: any) {
+      console.error('Failed to send contact form:', error);
+      toast({
+        title: "Failed to Send Message",
+        description: "Please try again or email us directly at support@sleepybabyy.com",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,56 +133,143 @@ const Contact = () => {
             <div className="lg:col-span-2 order-2 lg:order-1">
               <Card className="border-0 shadow-xl">
                 <CardHeader className="p-4 sm:p-6">
-                  <CardTitle className="text-xl sm:text-2xl">Send us a Message</CardTitle>
+                  <CardTitle className="text-xl sm:text-2xl">
+                    {isSubmitted ? (
+                      <div className="flex items-center space-x-2 text-green-600">
+                        <CheckCircle className="h-6 w-6" />
+                        <span>Message Sent Successfully!</span>
+                      </div>
+                    ) : (
+                      "Send us a Message"
+                    )}
+                  </CardTitle>
                   <CardDescription className="text-sm sm:text-base">
-                    Fill out the form below and we'll get back to you within 24 hours.
+                    {isSubmitted ? (
+                      "Thank you for contacting us! We'll get back to you within 24 hours."
+                    ) : (
+                      "Fill out the form below and we'll get back to you within 24 hours."
+                    )}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0">
-                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
-                        <Input id="name" value={formData.name} onChange={e => handleInputChange('name', e.target.value)} placeholder="Your full name" required className="touch-target" />
+                  {!isSubmitted && (
+                    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-sm font-medium">Full Name *</Label>
+                          <Input 
+                            id="name" 
+                            value={formData.name} 
+                            onChange={e => handleInputChange('name', e.target.value)} 
+                            placeholder="Your full name" 
+                            required 
+                            className="touch-target"
+                            disabled={isSubmitting}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-sm font-medium">Email Address *</Label>
+                          <Input 
+                            id="email" 
+                            type="email" 
+                            value={formData.email} 
+                            onChange={e => handleInputChange('email', e.target.value)} 
+                            placeholder="your.email@example.com" 
+                            required 
+                            className="touch-target"
+                            disabled={isSubmitting}
+                          />
+                        </div>
                       </div>
+
                       <div className="space-y-2">
-                        <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
-                        <Input id="email" type="email" value={formData.email} onChange={e => handleInputChange('email', e.target.value)} placeholder="your.email@example.com" required className="touch-target" />
+                        <Label htmlFor="category" className="text-sm font-medium">Category</Label>
+                        <Select 
+                          value={formData.category} 
+                          onValueChange={value => handleInputChange('category', value)}
+                          disabled={isSubmitting}
+                        >
+                          <SelectTrigger className="touch-target">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="support">Technical Support</SelectItem>
+                            <SelectItem value="billing">Billing & Subscriptions</SelectItem>
+                            <SelectItem value="feedback">Feedback & Suggestions</SelectItem>
+                            <SelectItem value="partnership">Partnership Inquiries</SelectItem>
+                            <SelectItem value="press">Press & Media</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="category" className="text-sm font-medium">Category</Label>
-                      <Select value={formData.category} onValueChange={value => handleInputChange('category', value)}>
-                        <SelectTrigger className="touch-target">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="support">Technical Support</SelectItem>
-                          <SelectItem value="billing">Billing & Subscriptions</SelectItem>
-                          <SelectItem value="feedback">Feedback & Suggestions</SelectItem>
-                          <SelectItem value="partnership">Partnership Inquiries</SelectItem>
-                          <SelectItem value="press">Press & Media</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="subject" className="text-sm font-medium">Subject *</Label>
+                        <Input 
+                          id="subject" 
+                          value={formData.subject} 
+                          onChange={e => handleInputChange('subject', e.target.value)} 
+                          placeholder="Brief description of your inquiry" 
+                          required 
+                          className="touch-target"
+                          disabled={isSubmitting}
+                        />
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="subject" className="text-sm font-medium">Subject</Label>
-                      <Input id="subject" value={formData.subject} onChange={e => handleInputChange('subject', e.target.value)} placeholder="Brief description of your inquiry" required className="touch-target" />
-                    </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="message" className="text-sm font-medium">Message *</Label>
+                        <Textarea 
+                          id="message" 
+                          value={formData.message} 
+                          onChange={e => handleInputChange('message', e.target.value)} 
+                          placeholder="Please provide details about your inquiry..." 
+                          rows={6} 
+                          required 
+                          className="touch-target min-h-[120px] sm:min-h-[150px]"
+                          disabled={isSubmitting}
+                        />
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="message" className="text-sm font-medium">Message</Label>
-                      <Textarea id="message" value={formData.message} onChange={e => handleInputChange('message', e.target.value)} placeholder="Please provide details about your inquiry..." rows={6} required className="touch-target min-h-[120px] sm:min-h-[150px]" />
+                      <Button 
+                        type="submit" 
+                        size="lg" 
+                        className="w-full bg-blue-600 hover:bg-blue-700 touch-target"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                            Sending Message...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="h-5 w-5 mr-2" />
+                            Send Message
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  )}
+                  
+                  {isSubmitted && (
+                    <div className="text-center py-8">
+                      <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                      <p className="text-gray-600 mb-6">
+                        We've received your message and will respond within 24 hours. 
+                        A confirmation email has been sent to your inbox.
+                      </p>
+                      <Button 
+                        onClick={() => setIsSubmitted(false)}
+                        variant="outline"
+                        className="mr-4"
+                      >
+                        Send Another Message
+                      </Button>
+                      <Button onClick={() => navigate('/')}>
+                        Return to Home
+                      </Button>
                     </div>
-
-                    <Button type="submit" size="lg" className="w-full bg-blue-600 hover:bg-blue-700 touch-target">
-                      <Send className="h-5 w-5 mr-2" />
-                      Send Message
-                    </Button>
-                  </form>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -214,7 +355,6 @@ const Contact = () => {
                     <p className="text-xs sm:text-sm text-blue-800">
                       Emergency support available 24/7 for Premium subscribers
                     </p>
-                    {/* Updated Premium pricing with discount */}
                     <div className="mt-2 flex items-center space-x-2">
                       <span className="text-xs text-gray-500 line-through">$14.99/month</span>
                       <span className="text-sm font-bold text-blue-800">$9.99/month (40% OFF)</span>
@@ -274,6 +414,8 @@ const Contact = () => {
           </div>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 };
+
 export default Contact;
