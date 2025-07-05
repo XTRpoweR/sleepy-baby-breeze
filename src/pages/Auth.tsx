@@ -80,9 +80,12 @@ const Auth = () => {
         });
 
         if (error) {
+          console.error('Sign up error:', error);
           toast({
-            title: "Error",
-            description: error.message,
+            title: "Registration Error",
+            description: error.message === 'Invalid API key' 
+              ? "Configuration error. Please contact support." 
+              : error.message,
             variant: "destructive",
           });
         } else {
