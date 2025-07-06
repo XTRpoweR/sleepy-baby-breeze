@@ -51,8 +51,20 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Store the contact form submission in the database
-    const messageText = `Name: ${formData.name}\nEmail: ${formData.email}\nCategory: ${formData.category}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`;
+    // Store the contact form submission in the database with improved formatting
+    const messageText = `=== CONTACT FORM SUBMISSION ===
+
+📧 Contact Information:
+   • Name: ${formData.name}
+   • Email: ${formData.email}
+   • Category: ${formData.category}
+
+📝 Subject: ${formData.subject}
+
+💬 Message:
+${formData.message}
+
+=== END OF SUBMISSION ===`;
     
     const { error: dbError } = await supabase
       .from('user_queries')
