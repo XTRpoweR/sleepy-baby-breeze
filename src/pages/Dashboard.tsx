@@ -3,29 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Moon, 
-  Clock, 
-  Calendar, 
-  BarChart3, 
-  User,
-  LogOut,
-  Baby,
-  Plus,
-  TrendingUp,
-  Activity,
-  Users,
-  Crown,
-  Settings,
-  ArrowRight,
-  Sparkles,
-  GraduationCap,
-  Camera,
-  FileText,
-  Bell,
-  HelpCircle,
-  MessageCircle
-} from 'lucide-react';
+import { Moon, Clock, Calendar, BarChart3, User, LogOut, Baby, Plus, TrendingUp, Activity, Users, Crown, Settings, ArrowRight, Sparkles, GraduationCap, Camera, FileText, Bell, HelpCircle, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -38,18 +16,34 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
-
 const Dashboard = () => {
-  const { user, loading, signOut } = useAuth();
-  const { activeProfile, profiles } = useBabyProfile();
-  const { subscriptionTier, isPremium, openCustomerPortal, checkSubscription } = useSubscription();
-  const { stats, loading: statsLoading, hasActiveProfile } = useDashboardStats();
+  const {
+    user,
+    loading,
+    signOut
+  } = useAuth();
+  const {
+    activeProfile,
+    profiles
+  } = useBabyProfile();
+  const {
+    subscriptionTier,
+    isPremium,
+    openCustomerPortal,
+    checkSubscription
+  } = useSubscription();
+  const {
+    stats,
+    loading: statsLoading,
+    hasActiveProfile
+  } = useDashboardStats();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician' | 'notifications'>('profiles');
-
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
@@ -70,24 +64,19 @@ const Dashboard = () => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [checkSubscription]);
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
-
   const handleTrackActivity = () => {
     navigate('/track');
   };
-
   const handleSleepSchedule = () => {
     navigate('/sleep-schedule');
   };
-
   const handleViewReports = () => {
     navigate('/reports');
   };
-
   const handleFamilySharing = () => {
     if (!isPremium) {
       setUpgradeFeature('sharing');
@@ -96,7 +85,6 @@ const Dashboard = () => {
     }
     navigate('/family');
   };
-
   const handleMemories = () => {
     if (!isPremium) {
       setUpgradeFeature('memories');
@@ -105,7 +93,6 @@ const Dashboard = () => {
     }
     navigate('/memories');
   };
-
   const handleAddProfile = () => {
     if (!isPremium && profiles.length >= 1) {
       setUpgradeFeature('profiles');
@@ -114,11 +101,9 @@ const Dashboard = () => {
     }
     setShowProfileManagement(true);
   };
-
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
   };
-
   const handleManageSubscription = () => {
     if (isPremium) {
       openCustomerPortal();
@@ -126,7 +111,6 @@ const Dashboard = () => {
       navigate('/subscription');
     }
   };
-
   const handlePediatricianReports = () => {
     if (!isPremium) {
       setUpgradeFeature('pediatrician');
@@ -135,7 +119,6 @@ const Dashboard = () => {
     }
     navigate('/pediatrician-reports');
   };
-
   const handleNotifications = () => {
     if (!isPremium) {
       setUpgradeFeature('notifications');
@@ -144,34 +127,25 @@ const Dashboard = () => {
     }
     navigate('/notifications');
   };
-
   const handleHelp = () => {
     navigate('/help');
   };
-
   const handleContact = () => {
     navigate('/contact');
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
           <p className="text-gray-600">{t('common.loading')}</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!user) {
     return null;
   }
-
   const userName = user.user_metadata?.full_name?.split(' ')[0];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Headers */}
       <DesktopHeader />
       <MobileHeader />
@@ -183,7 +157,9 @@ const Dashboard = () => {
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mb-4">
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
-                {userName ? t('dashboard.welcome', { name: userName }) : t('dashboard.welcomeFallback')}
+                {userName ? t('dashboard.welcome', {
+                name: userName
+              }) : t('dashboard.welcomeFallback')}
               </h1>
               <p className="text-gray-600 mb-4 lg:mb-6 text-sm lg:text-base">
                 {t('dashboard.subtitle')}
@@ -191,11 +167,7 @@ const Dashboard = () => {
             </div>
             
             {/* Tutorial Button */}
-            <Button 
-              onClick={() => navigate('/tutorial')}
-              variant="outline"
-              className="w-full lg:w-auto flex items-center space-x-2 mb-4 lg:mb-0"
-            >
+            <Button onClick={() => navigate('/tutorial')} variant="outline" className="w-full lg:w-auto flex items-center space-x-2 mb-4 lg:mb-0">
               <GraduationCap className="h-4 w-4" />
               <span>Quick Tutorial</span>
             </Button>
@@ -207,32 +179,23 @@ const Dashboard = () => {
             
             {/* Desktop Profile Selector */}
             <div className="hidden lg:block">
-              <ProfileSelector 
-                onAddProfile={handleAddProfile}
-                onManageProfiles={handleManageProfiles}
-              />
+              <ProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
             </div>
             
             {/* Mobile Profile Selector */}
             <div className="lg:hidden">
-              <MobileProfileSelector 
-                onAddProfile={handleAddProfile}
-                onManageProfiles={handleManageProfiles}
-              />
+              <MobileProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
             </div>
             
-            {!isPremium && profiles.length >= 1 && (
-              <p className="text-xs lg:text-sm text-orange-600 mt-2 flex items-center">
+            {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-orange-600 mt-2 flex items-center">
                 <Crown className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
                 Upgrade to Premium for unlimited baby profiles
-              </p>
-            )}
+              </p>}
           </div>
         </div>
 
         {/* Upgrade Banner for Basic Users */}
-        {!isPremium && (
-          <Card className="mb-6 lg:mb-8 border-2 border-dashed border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
+        {!isPremium && <Card className="mb-6 lg:mb-8 border-2 border-dashed border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
             <CardContent className="p-4 lg:p-6">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                 <div className="flex items-start lg:items-center space-x-3 lg:space-x-4">
@@ -248,19 +211,14 @@ const Dashboard = () => {
                     </p>
                   </div>
                 </div>
-                <Button 
-                  onClick={() => navigate('/subscription')}
-                  className="bg-orange-600 hover:bg-orange-700 flex items-center justify-center space-x-2 w-full lg:w-auto"
-                  size="sm"
-                >
+                <Button onClick={() => navigate('/subscription')} className="bg-orange-600 hover:bg-orange-700 flex items-center justify-center space-x-2 w-full lg:w-auto" size="sm">
                   <Crown className="h-4 w-4" />
                   <span>View Plans</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
@@ -284,49 +242,33 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer relative" 
-            onClick={handleNotifications}
-          >
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleNotifications}>
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="bg-indigo-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Bell className="h-5 w-5 lg:h-6 lg:w-6 text-indigo-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Smart Notifications</h3>
               <p className="text-xs lg:text-sm text-gray-600">Intelligent care reminders</p>
-              {!isPremium && (
-                <div className="absolute top-2 right-2">
+              {!isPremium && <div className="absolute top-2 right-2">
                   <Crown className="h-3 w-3 lg:h-4 lg:w-4 text-orange-500" />
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleHelp}>
-            <CardContent className="p-4 lg:p-6 text-center">
-              <div className="bg-emerald-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
-                <HelpCircle className="h-5 w-5 lg:h-6 lg:w-6 text-emerald-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Help & Support</h3>
-              <p className="text-xs lg:text-sm text-gray-600">Get help and contact support</p>
-            </CardContent>
+            
           </Card>
 
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer relative" 
-            onClick={handleMemories}
-          >
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleMemories}>
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="bg-pink-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Camera className="h-5 w-5 lg:h-6 lg:w-6 text-pink-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">Photo & Video Memories</h3>
               <p className="text-xs lg:text-sm text-gray-600">Capture precious moments</p>
-              {!isPremium && (
-                <div className="absolute top-2 right-2">
+              {!isPremium && <div className="absolute top-2 right-2">
                   <Crown className="h-3 w-3 lg:h-4 lg:w-4 text-orange-500" />
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
 
@@ -334,39 +276,29 @@ const Dashboard = () => {
             <QuickLogCard />
           </div>
 
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer relative" 
-            onClick={handleFamilySharing}
-          >
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleFamilySharing}>
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="bg-green-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <Users className="h-5 w-5 lg:h-6 lg:w-6 text-green-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">{t('dashboard.familySharing')}</h3>
               <p className="text-xs lg:text-sm text-gray-600">{t('dashboard.familySharingDesc')}</p>
-              {!isPremium && (
-                <div className="absolute top-2 right-2">
+              {!isPremium && <div className="absolute top-2 right-2">
                   <Crown className="h-3 w-3 lg:h-4 lg:w-4 text-orange-500" />
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
 
-          <Card 
-            className="hover:shadow-lg transition-shadow cursor-pointer relative" 
-            onClick={handlePediatricianReports}
-          >
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handlePediatricianReports}>
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="bg-teal-100 rounded-full w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 lg:mb-4">
                 <FileText className="h-5 w-5 lg:h-6 lg:w-6 text-teal-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2 text-sm lg:text-base">{t('dashboard.pediatricianReports')}</h3>
               <p className="text-xs lg:text-sm text-gray-600">{t('dashboard.pediatricianReportsDesc')}</p>
-              {!isPremium && (
-                <div className="absolute top-2 right-2">
+              {!isPremium && <div className="absolute top-2 right-2">
                   <Crown className="h-3 w-3 lg:h-4 lg:w-4 text-orange-500" />
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
 
@@ -403,28 +335,25 @@ const Dashboard = () => {
               <CardTitle className="flex items-center space-x-2 text-base lg:text-lg">
                 <Baby className="h-4 w-4 lg:h-5 lg:w-5 text-blue-600" />
                 <span>{t('dashboard.todaysActivity')}</span>
-                {activeProfile && (
-                  <span className="text-xs lg:text-sm font-normal text-gray-600">
+                {activeProfile && <span className="text-xs lg:text-sm font-normal text-gray-600">
                     for {activeProfile.name}
-                  </span>
-                )}
+                  </span>}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {activeProfile ? (
-                <div className="text-center py-6 lg:py-8">
+              {activeProfile ? <div className="text-center py-6 lg:py-8">
                   <Moon className="h-12 w-12 lg:h-16 lg:w-16 text-gray-300 mx-auto mb-3 lg:mb-4" />
                   <h3 className="text-base lg:text-lg font-medium text-gray-900 mb-2">{t('dashboard.startTracking')}</h3>
                   <p className="text-gray-600 mb-4 text-sm lg:text-base">
-                    {t('dashboard.noDataMessage', { name: activeProfile.name })}
+                    {t('dashboard.noDataMessage', {
+                  name: activeProfile.name
+                })}
                   </p>
                   <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" onClick={handleTrackActivity}>
                     <Plus className="h-4 w-4 mr-2" />
                     {t('dashboard.startTracking')}
                   </Button>
-                </div>
-              ) : (
-                <div className="text-center py-6 lg:py-8">
+                </div> : <div className="text-center py-6 lg:py-8">
                   <Baby className="h-12 w-12 lg:h-16 lg:w-16 text-gray-300 mx-auto mb-3 lg:mb-4" />
                   <h3 className="text-base lg:text-lg font-medium text-gray-900 mb-2">{t('dashboard.createProfile')}</h3>
                   <p className="text-gray-600 mb-4 text-sm lg:text-base">
@@ -434,8 +363,7 @@ const Dashboard = () => {
                     <Plus className="h-4 w-4 mr-2" />
                     {t('dashboard.addProfile')}
                   </Button>
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
 
@@ -448,8 +376,7 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {statsLoading ? (
-                <div className="space-y-4">
+              {statsLoading ? <div className="space-y-4">
                   <div className="text-center">
                     <div className="h-6 bg-gray-200 rounded w-16 mx-auto mb-2 animate-pulse"></div>
                     <div className="h-3 bg-gray-200 rounded w-20 mx-auto animate-pulse"></div>
@@ -462,9 +389,7 @@ const Dashboard = () => {
                     <div className="h-6 bg-gray-200 rounded w-8 mx-auto mb-2 animate-pulse"></div>
                     <div className="h-3 bg-gray-200 rounded w-20 mx-auto animate-pulse"></div>
                   </div>
-                </div>
-              ) : hasActiveProfile ? (
-                <>
+                </div> : hasActiveProfile ? <>
                   <div className="text-center">
                     <div className="text-xl lg:text-2xl font-bold text-gray-900">{stats.weeklyAverageSleep}</div>
                     <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.averageSleep')}</div>
@@ -482,9 +407,7 @@ const Dashboard = () => {
                       Data from this week (Monday-Sunday)
                     </p>
                   </div>
-                </>
-              ) : (
-                <>
+                </> : <>
                   <div className="text-center">
                     <div className="text-xl lg:text-2xl font-bold text-gray-900">0h 0m</div>
                     <div className="text-xs lg:text-sm text-gray-600">{t('dashboard.averageSleep')}</div>
@@ -502,27 +425,17 @@ const Dashboard = () => {
                       {t('dashboard.noProfileMessage')}
                     </p>
                   </div>
-                </>
-              )}
+                </>}
             </CardContent>
           </Card>
         </div>
       </main>
 
       {/* Profile Management Dialog */}
-      <ProfileManagementDialog 
-        isOpen={showProfileManagement}
-        onClose={() => setShowProfileManagement(false)}
-      />
+      <ProfileManagementDialog isOpen={showProfileManagement} onClose={() => setShowProfileManagement(false)} />
 
       {/* Upgrade Prompt */}
-      <UpgradePrompt
-        isOpen={showUpgradePrompt}
-        onClose={() => setShowUpgradePrompt(false)}
-        feature={upgradeFeature}
-      />
-    </div>
-  );
+      <UpgradePrompt isOpen={showUpgradePrompt} onClose={() => setShowUpgradePrompt(false)} feature={upgradeFeature} />
+    </div>;
 };
-
 export default Dashboard;
