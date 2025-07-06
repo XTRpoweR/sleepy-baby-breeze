@@ -17,10 +17,15 @@ import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Shield } from 'lucide-react';
 
 const FamilySharing = () => {
   const { user, loading, signOut } = useAuth();
   const { profile, loading: profileLoading, createProfile } = useBabyProfile();
+  const { role } = useProfilePermissions(profile?.id || null);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -90,18 +95,30 @@ const FamilySharing = () => {
           </div>
         </div>
 
+        {/* Role-based messaging for viewers */}
+        {role === 'viewer' && (
+          <Alert className="mb-6 border-blue-200 bg-blue-50">
+            <Shield className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-blue-800">
+              You have view-only access to family sharing information. You can see who has access to {profile?.name}'s data, but cannot invite new members or manage family settings. Contact the baby's owner for management permissions if needed.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {!profile ? (
-          <div className="text-center mb-6 sm:mb-8 px-2 sm:px-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-              {t('pages.familySharing.setupFirst')}
-            </h2>
-            <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-              {t('pages.familySharing.setupMessage')}
-            </p>
-            <div className="max-w-sm sm:max-w-md mx-auto">
-              <BabyProfileSetup onProfileCreated={createProfile} />
+          <PermissionAwareActions requiredPermission="canEdit">
+            <div className="text-center mb-6 sm:mb-8 px-2 sm:px-4">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
+                {t('pages.familySharing.setupFirst')}
+              </h2>
+              <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+                {t('pages.familySharing.setupMessage')}
+              </p>
+              <div className="max-w-sm sm:max-w-md mx-auto">
+                <BabyProfileSetup onProfileCreated={createProfile} />
+              </div>
             </div>
-          </div>
+          </PermissionAwareActions>
         ) : (
           <div className="space-y-4 sm:space-y-6">
             <div className="text-center sm:text-left px-2 sm:px-0">
@@ -109,7 +126,10 @@ const FamilySharing = () => {
                 {t('pages.familySharing.sharingFor', { name: profile.name })}
               </h2>
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed max-w-3xl">
-                {t('pages.familySharing.inviteMessage', { name: profile.name })}
+                {role === 'viewer' 
+                  ? `You can view family members who have access to ${profile.name}'s data.`
+                  : t('pages.familySharing.inviteMessage', { name: profile.name })
+                }
               </p>
             </div>
 
