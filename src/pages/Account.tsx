@@ -26,6 +26,10 @@ import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Info } from 'lucide-react';
 
 const Account = () => {
   const { user, session, loading, signOut } = useAuth();
@@ -52,6 +56,32 @@ const Account = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [deleting, setDeleting] = useState(false);
+  
+  // Check user role and permissions
+  const { activeProfile } = useBabyProfile();
+  const { role, permissions, loading: permissionsLoading } = useProfilePermissions(activeProfile?.id || null);
+  const [isOnlyViewer, setIsOnlyViewer] = useState(false);
+
+  // Check if user is only a viewer (not an owner of any babies)
+  useEffect(() => {
+    const checkUserRole = async () => {
+      if (!user) return;
+      
+      try {
+        const { data: ownedBabies } = await supabase
+          .from('baby_profiles')
+          .select('id')
+          .eq('user_id', user.id);
+        
+        setIsOnlyViewer(!ownedBabies || ownedBabies.length === 0);
+      } catch (error) {
+        console.error('Error checking user role:', error);
+        setIsOnlyViewer(false);
+      }
+    };
+    
+    checkUserRole();
+  }, [user]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -298,6 +328,16 @@ const Account = () => {
 
           {/* Subscription Tab */}
           <TabsContent value="subscription" className="space-y-6">
+            {isOnlyViewer && (
+              <Alert className="border-blue-200 bg-blue-50">
+                <Info className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-800">
+                  You are currently a viewer in a family sharing setup. Subscription management is only available to account owners. 
+                  Contact the baby's owner if you need changes to the subscription.
+                </AlertDescription>
+              </Alert>
+            )}
+            
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -337,39 +377,41 @@ const Account = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {!isPremium && (
-                    <Button 
-                      onClick={handleUpgrade}
-                      disabled={upgrading}
-                      className="bg-orange-600 hover:bg-orange-700 flex items-center space-x-2"
-                    >
-                      <Crown className="h-4 w-4" />
-                      <span>{upgrading ? 'Processing...' : 'Upgrade to Premium'}</span>
-                    </Button>
-                  )}
-                  
-                  {isPremium && (
+                {!isOnlyViewer && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {!isPremium && (
+                      <Button 
+                        onClick={handleUpgrade}
+                        disabled={upgrading}
+                        className="bg-orange-600 hover:bg-orange-700 flex items-center space-x-2"
+                      >
+                        <Crown className="h-4 w-4" />
+                        <span>{upgrading ? 'Processing...' : 'Upgrade to Premium'}</span>
+                      </Button>
+                    )}
+                    
+                    {isPremium && (
+                      <Button 
+                        variant="outline"
+                        onClick={handleManageSubscription}
+                        className="flex items-center space-x-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                      >
+                        <AlertTriangle className="h-4 w-4" />
+                        <span>Cancel Subscription</span>
+                      </Button>
+                    )}
+
                     <Button 
                       variant="outline"
-                      onClick={handleManageSubscription}
-                      className="flex items-center space-x-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
+                      onClick={handleRefreshStatus}
+                      disabled={refreshing}
+                      className="flex items-center space-x-2"
                     >
-                      <AlertTriangle className="h-4 w-4" />
-                      <span>Cancel Subscription</span>
+                      <RefreshCcw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                      <span>{refreshing ? 'Refreshing...' : 'Refresh Status'}</span>
                     </Button>
-                  )}
-
-                  <Button 
-                    variant="outline"
-                    onClick={handleRefreshStatus}
-                    disabled={refreshing}
-                    className="flex items-center space-x-2"
-                  >
-                    <RefreshCcw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                    <span>{refreshing ? 'Refreshing...' : 'Refresh Status'}</span>
-                  </Button>
-                </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -425,62 +467,74 @@ const Account = () => {
 
           {/* Security Tab */}
           <TabsContent value="security" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-red-700">
-                  <Trash2 className="h-5 w-5 text-red-600" />
-                  <span>Delete Account</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="bg-red-50 border border-red-200 text-red-800 rounded-md px-4 py-3">
-                    <b>Warning:</b> Deleting your account is <b>irreversible</b>.<br />
-                    This will permanently erase your profile, baby profiles, activity logs, memories, invitations, and all associated data. You will lose access to any premium features purchased. <br />
-                    <span className="text-sm">If you have an active subscription, it will be cancelled automatically before account deletion.</span>
-                  </div>
-                  <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        className="flex items-center space-x-2"
-                        disabled={deleting}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span>{deleting ? "Deleting..." : "Delete My Account"}</span>
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Permanently Delete Account?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. All your data will be erased. <br />
-                          To continue, type <b>DELETE</b> below and confirm.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <Input
-                        autoFocus
-                        disabled={deleting}
-                        placeholder="Type DELETE to confirm"
-                        value={deleteConfirm}
-                        onChange={(e) => setDeleteConfirm(e.target.value)}
-                        className="mb-2"
-                      />
-                      <AlertDialogFooter>
-                        <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          disabled={deleteConfirm !== "DELETE" || deleting}
-                          className="bg-red-600 hover:bg-red-700"
-                          onClick={handleDeleteAccount}
+            {isOnlyViewer && (
+              <Alert className="border-amber-200 bg-amber-50">
+                <Info className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800">
+                  You are currently a viewer in a family sharing setup. Account deletion is not available to viewers. 
+                  If you want to leave the family, contact the baby's owner to remove you from family sharing.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {!isOnlyViewer && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2 text-red-700">
+                    <Trash2 className="h-5 w-5 text-red-600" />
+                    <span>Delete Account</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="bg-red-50 border border-red-200 text-red-800 rounded-md px-4 py-3">
+                      <b>Warning:</b> Deleting your account is <b>irreversible</b>.<br />
+                      This will permanently erase your profile, baby profiles, activity logs, memories, invitations, and all associated data. You will lose access to any premium features purchased. <br />
+                      <span className="text-sm">If you have an active subscription, it will be cancelled automatically before account deletion.</span>
+                    </div>
+                    <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          className="flex items-center space-x-2"
+                          disabled={deleting}
                         >
-                          {deleting ? "Deleting..." : "Delete Account"}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </CardContent>
-            </Card>
+                          <Trash2 className="h-4 w-4" />
+                          <span>{deleting ? "Deleting..." : "Delete My Account"}</span>
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Permanently Delete Account?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. All your data will be erased. <br />
+                            To continue, type <b>DELETE</b> below and confirm.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <Input
+                          autoFocus
+                          disabled={deleting}
+                          placeholder="Type DELETE to confirm"
+                          value={deleteConfirm}
+                          onChange={(e) => setDeleteConfirm(e.target.value)}
+                          className="mb-2"
+                        />
+                        <AlertDialogFooter>
+                          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            disabled={deleteConfirm !== "DELETE" || deleting}
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={handleDeleteAccount}
+                          >
+                            {deleting ? "Deleting..." : "Delete Account"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </main>
