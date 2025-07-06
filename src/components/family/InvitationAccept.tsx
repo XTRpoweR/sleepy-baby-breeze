@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useToast } from '@/hooks/use-toast';
+import { EmailVerificationDialog } from './EmailVerificationDialog';
 import { 
   Users, 
   CheckCircle, 
@@ -17,7 +17,8 @@ import {
   Shield,
   Eye,
   AlertTriangle,
-  LogIn
+  LogIn,
+  Mail
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -31,6 +32,7 @@ interface InvitationData {
   expires_at: string;
   created_at: string;
   permissions: any;
+  email_verified?: boolean;
   baby_name?: string;
   inviter_name?: string;
 }
@@ -64,12 +66,12 @@ export const InvitationAccept = () => {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [alreadyAccepted, setAlreadyAccepted] = useState(false);
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
 
   const token = searchParams.get('token');
   const success = searchParams.get('success');
 
   useEffect(() => {
-    // If we have a success parameter, it means we just came back from accepting an invitation
     if (success === 'true') {
       toast({
         title: "Welcome to the family!",
@@ -102,7 +104,6 @@ export const InvitationAccept = () => {
     console.log('Fetching invitation with token:', token);
 
     try {
-      // First try to fetch pending invitations
       let { data: invitationData, error: invitationError } = await supabase
         .from('family_invitations')
         .select('*')
@@ -111,7 +112,6 @@ export const InvitationAccept = () => {
         .gt('expires_at', new Date().toISOString())
         .maybeSingle();
 
-      // If no pending invitation found, check if it was already accepted
       if (!invitationData && !invitationError) {
         const { data: acceptedInvitation, error: acceptedError } = await supabase
           .from('family_invitations')
@@ -145,14 +145,12 @@ export const InvitationAccept = () => {
         return;
       }
 
-      // Fetch baby profile - this now works for unauthenticated users
       const { data: babyData, error: babyError } = await supabase
         .from('baby_profiles')
         .select('name')
         .eq('id', invitationData.baby_id)
         .maybeSingle();
 
-      // Fetch inviter profile - this now works for unauthenticated users
       const { data: inviterData, error: inviterError } = await supabase
         .from('profiles')
         .select('full_name')
@@ -179,48 +177,38 @@ export const InvitationAccept = () => {
   const handleAcceptInvitation = async () => {
     if (!invitation) return;
 
-    // If invitation was already accepted, just redirect to auth if needed
     if (alreadyAccepted) {
       if (!user) {
         navigate(`/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search + '&success=true')}`);
         return;
       } else {
-        // User is already authenticated and invitation was accepted, go to dashboard
         navigate('/dashboard');
         return;
       }
     }
 
-    // If user is not authenticated, redirect to auth page with the invitation token
     if (!user) {
       navigate(`/auth?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
       return;
     }
 
+    const invitedEmail = normalizeEmail(invitation.email);
+    const userEmail = normalizeEmail(user.email || '');
+    
+    if (invitedEmail !== userEmail && !invitation.email_verified) {
+      setShowVerificationDialog(true);
+      return;
+    }
+
+    await proceedWithAcceptance();
+  };
+
+  const proceedWithAcceptance = async () => {
+    if (!invitation || !user) return;
+
     setProcessing(true);
 
     try {
-      // Check if user's email matches the invitation
-      const invitedEmail = normalizeEmail(invitation.email);
-      const userEmail = normalizeEmail(user.email || '');
-      
-      console.log('Email verification:', { 
-        invitedEmail, 
-        userEmail, 
-        match: invitedEmail === userEmail 
-      });
-
-      if (invitedEmail !== userEmail) {
-        toast({
-          title: "Email Mismatch",
-          description: `This invitation was sent to ${invitation.email} but you're signed in as ${user.email}. Please sign in with the correct account or contact the person who invited you.`,
-          variant: "destructive",
-        });
-        setProcessing(false);
-        return;
-      }
-
-      // Create family member record
       const { error: memberError } = await supabase
         .from('family_members')
         .insert({
@@ -247,7 +235,6 @@ export const InvitationAccept = () => {
         return;
       }
 
-      // Update invitation status
       const { error: updateError } = await supabase
         .from('family_invitations')
         .update({ status: 'accepted' })
@@ -257,10 +244,7 @@ export const InvitationAccept = () => {
         console.error('Error updating invitation:', updateError);
       }
 
-      // Refresh profiles to include the new shared baby
       await refetchProfiles();
-
-      // Set the shared baby as active
       setSharedBabyAsActive(invitation.baby_id);
 
       toast({
@@ -268,7 +252,6 @@ export const InvitationAccept = () => {
         description: `You've successfully joined ${invitation.baby_name}'s family sharing as a ${invitation.role}.`,
       });
 
-      // Redirect to dashboard immediately instead of going back to invitation page
       setTimeout(() => {
         navigate('/dashboard');
       }, 1000);
@@ -282,6 +265,12 @@ export const InvitationAccept = () => {
     } finally {
       setProcessing(false);
     }
+  };
+
+  const handleEmailVerified = async () => {
+    setShowVerificationDialog(false);
+    await fetchInvitation();
+    await proceedWithAcceptance();
   };
 
   const declineInvitation = async () => {
@@ -335,7 +324,6 @@ export const InvitationAccept = () => {
     );
   }
 
-  // Show success message when coming back from successful acceptance
   if (success === 'true') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
@@ -382,11 +370,10 @@ export const InvitationAccept = () => {
   const RoleIcon = ROLE_ICONS[invitation.role as keyof typeof ROLE_ICONS] || Shield;
   const permissions = ROLE_PERMISSIONS[invitation.role as keyof typeof ROLE_PERMISSIONS] || [];
 
-  // Show email mismatch warning only if user is logged in and emails don't match
-  const showEmailMismatch = user && 
-    normalizeEmail(invitation.email) !== normalizeEmail(user.email || '');
+  const invitedEmail = normalizeEmail(invitation.email);
+  const userEmail = normalizeEmail(user?.email || '');
+  const showEmailMismatch = user && invitedEmail !== userEmail && !invitation.email_verified;
 
-  // Show already accepted message
   if (alreadyAccepted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -439,14 +426,14 @@ export const InvitationAccept = () => {
           {showEmailMismatch && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
               <div className="flex items-start space-x-2">
-                <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
+                <Mail className="h-5 w-5 text-amber-600 mt-0.5" />
                 <div>
-                  <h4 className="font-medium text-amber-800">Email Mismatch Warning</h4>
+                  <h4 className="font-medium text-amber-800">Different Email Address</h4>
                   <p className="text-sm text-amber-700 mt-1">
                     This invitation was sent to <strong>{invitation.email}</strong> but you're signed in as <strong>{user?.email}</strong>.
                   </p>
                   <p className="text-sm text-amber-700 mt-2">
-                    You may need to sign in with the correct account or contact the person who invited you.
+                    You can still accept this invitation by verifying access to the invited email address.
                   </p>
                 </div>
               </div>
@@ -512,7 +499,7 @@ export const InvitationAccept = () => {
               ) : (
                 <LogIn className="h-4 w-4 mr-2" />
               )}
-              {user ? 'Accept' : 'Sign In & Accept'}
+              {user ? (showEmailMismatch ? 'Verify & Accept' : 'Accept') : 'Sign In & Accept'}
             </Button>
             <Button
               onClick={declineInvitation}
@@ -526,6 +513,14 @@ export const InvitationAccept = () => {
           </div>
         </CardContent>
       </Card>
+
+      <EmailVerificationDialog
+        isOpen={showVerificationDialog}
+        onClose={() => setShowVerificationDialog(false)}
+        onVerified={handleEmailVerified}
+        invitedEmail={invitation.email}
+        invitationToken={token || ''}
+      />
     </div>
   );
 };
