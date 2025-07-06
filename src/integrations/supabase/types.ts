@@ -136,6 +136,7 @@ export type Database = {
           baby_id: string
           created_at: string
           email: string
+          email_verified: boolean | null
           expires_at: string
           id: string
           invitation_token: string
@@ -144,11 +145,14 @@ export type Database = {
           role: string
           status: string
           updated_at: string
+          verification_code: string | null
+          verification_expires_at: string | null
         }
         Insert: {
           baby_id: string
           created_at?: string
           email: string
+          email_verified?: boolean | null
           expires_at?: string
           id?: string
           invitation_token?: string
@@ -157,11 +161,14 @@ export type Database = {
           role?: string
           status?: string
           updated_at?: string
+          verification_code?: string | null
+          verification_expires_at?: string | null
         }
         Update: {
           baby_id?: string
           created_at?: string
           email?: string
+          email_verified?: boolean | null
           expires_at?: string
           id?: string
           invitation_token?: string
@@ -170,6 +177,8 @@ export type Database = {
           role?: string
           status?: string
           updated_at?: string
+          verification_code?: string | null
+          verification_expires_at?: string | null
         }
         Relationships: [
           {
