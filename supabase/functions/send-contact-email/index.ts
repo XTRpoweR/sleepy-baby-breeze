@@ -45,6 +45,30 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
+    // Create Supabase client with service role key for database operations
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Store the contact form submission in the database
+    const messageText = `Name: ${formData.name}\nEmail: ${formData.email}\nCategory: ${formData.category}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`;
+    
+    const { error: dbError } = await supabase
+      .from('user_queries')
+      .insert({
+        email: formData.email,
+        message_text: messageText,
+        user_id: null // Since this is from a contact form, user might not be logged in
+      });
+
+    if (dbError) {
+      console.error('Database error:', dbError);
+      // Continue with email sending even if database insert fails
+    } else {
+      console.log('Contact form data successfully stored in database');
+    }
+
     // Primary and fallback email addresses
     const primaryEmails = ["support@sleepybabyy.com"];
     const fallbackEmails = ["sleepybaby.support@gmail.com"]; // Add your actual fallback email here
