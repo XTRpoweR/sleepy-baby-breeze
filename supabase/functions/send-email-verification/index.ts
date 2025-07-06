@@ -33,7 +33,7 @@ serve(async (req) => {
     // Store the verification code (expires in 10 minutes)
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
     
-    const { error: insertError } = await supabaseClient
+    const { error: updateError } = await supabaseClient
       .from('family_invitations')
       .update({
         verification_code: verificationCode,
@@ -41,8 +41,8 @@ serve(async (req) => {
       })
       .eq('invitation_token', invitationToken)
 
-    if (insertError) {
-      console.error('Error storing verification code:', insertError)
+    if (updateError) {
+      console.error('Error storing verification code:', updateError)
       return new Response(
         JSON.stringify({ error: 'Failed to generate verification code' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
