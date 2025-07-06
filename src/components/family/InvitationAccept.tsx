@@ -102,8 +102,10 @@ export const InvitationAccept = () => {
     }
 
     console.log('Fetching invitation with token:', token);
+    console.log('Current user:', user ? `${user.email} (authenticated)` : 'Anonymous');
 
     try {
+      // First try to get pending invitation
       let { data: invitationData, error: invitationError } = await supabase
         .from('family_invitations')
         .select('*')
@@ -112,7 +114,11 @@ export const InvitationAccept = () => {
         .gt('expires_at', new Date().toISOString())
         .maybeSingle();
 
+      console.log('Pending invitation query result:', { invitationData, invitationError });
+
+      // If no pending invitation found, check for accepted one
       if (!invitationData && !invitationError) {
+        console.log('No pending invitation, checking for accepted invitation...');
         const { data: acceptedInvitation, error: acceptedError } = await supabase
           .from('family_invitations')
           .select('*')
@@ -120,21 +126,33 @@ export const InvitationAccept = () => {
           .eq('status', 'accepted')
           .maybeSingle();
 
+        console.log('Accepted invitation query result:', { acceptedInvitation, acceptedError });
+
         if (acceptedInvitation && !acceptedError) {
           setAlreadyAccepted(true);
           invitationData = acceptedInvitation;
         }
       }
 
-      console.log('Invitation query result:', { invitationData, invitationError });
-
+      // If we have an error, it might be RLS related
       if (invitationError) {
         console.error('Error fetching invitation:', invitationError);
-        toast({
-          title: "Error",
-          description: "Failed to load invitation details.",
-          variant: "destructive",
-        });
+        
+        // If user is authenticated but getting permission denied, this might be an RLS issue
+        if (user && invitationError.code === 'PGRST116') {
+          console.log('RLS policy might be blocking access. User is authenticated but not a baby owner.');
+          toast({
+            title: "Permission Error",
+            description: "There was an issue accessing the invitation. This might be a temporary issue - please try refreshing the page.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to load invitation details.",
+            variant: "destructive",
+          });
+        }
         setLoading(false);
         return;
       }
@@ -145,6 +163,9 @@ export const InvitationAccept = () => {
         return;
       }
 
+      console.log('Found invitation:', invitationData);
+
+      // Fetch baby and inviter details
       const { data: babyData, error: babyError } = await supabase
         .from('baby_profiles')
         .select('name')
@@ -157,13 +178,21 @@ export const InvitationAccept = () => {
         .eq('id', invitationData.invited_by)
         .maybeSingle();
 
+      if (babyError) {
+        console.error('Error fetching baby profile:', babyError);
+      }
+
+      if (inviterError) {
+        console.error('Error fetching inviter profile:', inviterError);
+      }
+
       setInvitation({
         ...invitationData,
         baby_name: babyData?.name || 'Baby',
         inviter_name: inviterData?.full_name || 'Someone'
       });
     } catch (error) {
-      console.error('Error fetching invitation:', error);
+      console.error('Unexpected error fetching invitation:', error);
       toast({
         title: "Error",
         description: "Failed to load invitation details.",
@@ -207,8 +236,10 @@ export const InvitationAccept = () => {
     if (!invitation || !user) return;
 
     setProcessing(true);
+    console.log('Proceeding with invitation acceptance for user:', user.email);
 
     try {
+      // Create family member record
       const { error: memberError } = await supabase
         .from('family_members')
         .insert({
@@ -235,15 +266,20 @@ export const InvitationAccept = () => {
         return;
       }
 
+      console.log('Family member created successfully');
+
+      // Update invitation status
       const { error: updateError } = await supabase
         .from('family_invitations')
         .update({ status: 'accepted' })
         .eq('id', invitation.id);
 
       if (updateError) {
-        console.error('Error updating invitation:', updateError);
+        console.error('Error updating invitation status:', updateError);
+        // Don't fail the whole process if this update fails
       }
 
+      // Refresh profiles and set as active
       await refetchProfiles();
       setSharedBabyAsActive(invitation.baby_id);
 
@@ -277,6 +313,7 @@ export const InvitationAccept = () => {
     if (!invitation || alreadyAccepted) return;
 
     setProcessing(true);
+    console.log('Declining invitation:', invitation.id);
 
     try {
       const { error } = await supabase
