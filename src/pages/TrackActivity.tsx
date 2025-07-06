@@ -14,7 +14,8 @@ import {
   ArrowLeft,
   Clock,
   History,
-  Settings
+  Settings,
+  Shield
 } from 'lucide-react';
 import { SleepTracker } from '@/components/tracking/SleepTracker';
 import { FeedingTracker } from '@/components/tracking/FeedingTracker';
@@ -26,8 +27,11 @@ import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { LanguageSelector } from '@/components/LanguageSelector';
+import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useActivityLogs } from '@/hooks/useActivityLogs';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { TranslationWrapper } from '@/components/TranslationWrapper';
 
@@ -36,6 +40,7 @@ const TrackActivity = () => {
   const navigate = useNavigate();
   const { activeProfile, profiles, loading: profileLoading, switching, createProfile } = useBabyProfile();
   const { logs, loading: logsLoading, deleteLog, updateLog, refetchLogs } = useActivityLogs(activeProfile?.id || '');
+  const { permissions, role, loading: permissionsLoading } = useProfilePermissions(activeProfile?.id || null);
   const [activeTab, setActiveTab] = useState('sleep');
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   const { t } = useTranslation();
@@ -138,6 +143,16 @@ const TrackActivity = () => {
             </div>
           </div>
 
+          {/* Role-based messaging for viewers */}
+          {role === 'viewer' && (
+            <Alert className="mb-6 border-blue-200 bg-blue-50">
+              <Shield className="h-4 w-4 text-blue-600" />
+              <AlertDescription className="text-blue-800">
+                You have view-only access to {activeProfile?.name}'s activities. You can see all activity logs and statistics, but cannot add, edit, or delete activities. Contact the baby's owner for caregiver access if you need to track activities.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {activeProfile ? (
             <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-8">
               {/* Activity Tracking */}
@@ -181,19 +196,27 @@ const TrackActivity = () => {
                   )}
 
                   <TabsContent value="sleep">
-                    <SleepTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    <PermissionAwareActions requiredPermission="canEdit">
+                      <SleepTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="feeding">
-                    <FeedingTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    <PermissionAwareActions requiredPermission="canEdit">
+                      <FeedingTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="diaper">
-                    <DiaperTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    <PermissionAwareActions requiredPermission="canEdit">
+                      <DiaperTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="custom">
-                    <CustomActivityTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    <PermissionAwareActions requiredPermission="canEdit">
+                      <CustomActivityTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
+                    </PermissionAwareActions>
                   </TabsContent>
                 </Tabs>
               </div>

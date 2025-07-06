@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +24,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { EditActivityDialog } from './EditActivityDialog';
+import { PermissionAwareActions } from './PermissionAwareActions';
 import { 
   Moon, 
   Milk, 
@@ -214,42 +216,55 @@ export const ActivityLogsList = ({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setEditingLog(log)}
-                          className="h-8 w-8 p-0"
+                        <PermissionAwareActions 
+                          requiredPermission="canEdit" 
+                          fallback={null}
+                          showMessage={false}
                         >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>{t('common.delete')}</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                {t('common.confirm')}
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDeleteLog(log.id)}
-                                className="bg-red-600 hover:bg-red-700"
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingLog(log)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </PermissionAwareActions>
+                        
+                        <PermissionAwareActions 
+                          requiredPermission="canDelete" 
+                          fallback={null}
+                          showMessage={false}
+                        >
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
                               >
-                                {t('common.delete')}
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{t('common.delete')}</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t('common.confirm')}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteLog(log.id)}
+                                  className="bg-red-600 hover:bg-red-700"
+                                >
+                                  {t('common.delete')}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </PermissionAwareActions>
                       </div>
                     </TableCell>
                   </TableRow>
