@@ -22,14 +22,19 @@ import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelect
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 import { useTranslation } from 'react-i18next';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Shield } from 'lucide-react';
 
 const SleepSchedule = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { activeProfile, profiles, loading: profileLoading } = useBabyProfile();
   const { schedules, loading: schedulesLoading, saveSleepSchedule, deleteSleepSchedule, refetch } = useSleepSchedule(activeProfile?.id || null);
+  const { role } = useProfilePermissions(activeProfile?.id || null);
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   
   const [currentRecommendation, setCurrentRecommendation] = useState<ScheduleRecommendation | null>(null);
@@ -61,7 +66,6 @@ const SleepSchedule = () => {
   };
 
   const generateScheduleRecommendation = (data: SleepScheduleData): ScheduleRecommendation => {
-    // Age-based sleep recommendations
     let totalSleepHours: number;
     let napCount: number;
     let napDuration: number;
@@ -89,7 +93,6 @@ const SleepSchedule = () => {
       napDuration = 60;
     }
 
-    // Generate nap schedule
     const naps = [];
     const wakeHour = parseInt(data.currentWakeTime.split(':')[0]);
     
@@ -121,17 +124,14 @@ const SleepSchedule = () => {
     const recommendation = generateScheduleRecommendation(data);
     setCurrentRecommendation(recommendation);
     
-    // Save to database
     const saved = await saveSleepSchedule(data, recommendation);
     if (saved) {
       setSavedSchedule(saved);
-      // Refresh the schedules list immediately
       refetch();
     }
   };
 
   const handleScheduleDeleted = () => {
-    // Refresh the schedules list after deletion
     refetch();
   };
 
@@ -172,13 +172,10 @@ const SleepSchedule = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Headers */}
       <DesktopHeader />
       <MobileHeader />
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
-        {/* Page Header with Back Button */}
         <div className="mb-6 lg:mb-8">
           <Button 
             variant="ghost" 
@@ -199,9 +196,7 @@ const SleepSchedule = () => {
               </p>
             </div>
             
-            {/* Profile Selector */}
             <div className="flex items-center space-x-4">
-              {/* Desktop Profile Selector */}
               <div className="hidden lg:block">
                 <ProfileSelector 
                   onAddProfile={handleAddProfile}
@@ -209,7 +204,6 @@ const SleepSchedule = () => {
                 />
               </div>
               
-              {/* Mobile Profile Selector */}
               <div className="lg:hidden w-full">
                 <MobileProfileSelector 
                   onAddProfile={handleAddProfile}
@@ -222,17 +216,26 @@ const SleepSchedule = () => {
 
         {activeProfile ? (
           <div className="space-y-6 lg:space-y-8">
-            {/* Sleep Schedule Setup */}
-            {!currentRecommendation && (
-              <div>
-                <SleepScheduleSetup 
-                  onSubmit={handleScheduleSubmit}
-                  profile={activeProfile}
-                />
-              </div>
+            {role === 'viewer' && (
+              <Alert className="border-blue-200 bg-blue-50">
+                <Shield className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-800">
+                  You have view-only access to sleep schedules. You can view existing schedules and recommendations, but cannot create or modify sleep schedules. Contact the baby's owner for caregiver access to manage sleep schedules.
+                </AlertDescription>
+              </Alert>
             )}
 
-            {/* Sleep Schedule Display */}
+            <PermissionAwareActions requiredPermission="canEdit" showMessage={false}>
+              {!currentRecommendation && (
+                <div>
+                  <SleepScheduleSetup 
+                    onSubmit={handleScheduleSubmit}
+                    profile={activeProfile}
+                  />
+                </div>
+              )}
+            </PermissionAwareActions>
+
             {currentRecommendation && (
               <div>
                 <SleepScheduleDisplay 
@@ -243,7 +246,6 @@ const SleepSchedule = () => {
               </div>
             )}
 
-            {/* Saved Schedules */}
             <div>
               <SavedSchedules 
                 babyId={activeProfile.id}
@@ -255,15 +257,16 @@ const SleepSchedule = () => {
               />
             </div>
 
-            {/* Schedule Adjustment Notifications */}
-            {latestSchedule && (
-              <div>
-                <ScheduleAdjustmentNotifications 
-                  babyId={activeProfile.id}
-                  currentSchedule={latestSchedule}
-                />
-              </div>
-            )}
+            <PermissionAwareActions requiredPermission="canEdit" showMessage={false}>
+              {latestSchedule && (
+                <div>
+                  <ScheduleAdjustmentNotifications 
+                    babyId={activeProfile.id}
+                    currentSchedule={latestSchedule}
+                  />
+                </div>
+              )}
+            </PermissionAwareActions>
           </div>
         ) : (
           <Card className="max-w-md mx-auto">
@@ -273,16 +276,17 @@ const SleepSchedule = () => {
               <p className="text-gray-600 mb-4 text-sm sm:text-base">
                 {t('pages.sleepSchedule.noProfileMessage')}
               </p>
-              <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
-                <Plus className="h-4 w-4 mr-2" />
-                {t('pages.sleepSchedule.addProfile')}
-              </Button>
+              <PermissionAwareActions requiredPermission="canEdit" showMessage={false}>
+                <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t('pages.sleepSchedule.addProfile')}
+                </Button>
+              </PermissionAwareActions>
             </CardContent>
           </Card>
         )}
       </main>
 
-      {/* Profile Management Dialog */}
       <ProfileManagementDialog 
         isOpen={showProfileManagement}
         onClose={() => setShowProfileManagement(false)}

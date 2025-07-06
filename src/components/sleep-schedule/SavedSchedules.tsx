@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { History, Trash2, Eye, Calendar } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
+import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
 
 interface SavedSchedulesProps {
   babyId: string;
@@ -118,14 +119,18 @@ export const SavedSchedules = ({
                     <Eye className="h-4 w-4" />
                     <span>{t('common.view')}</span>
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteSchedule(schedule.id)}
-                    className="flex items-center space-x-1 text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  
+                  {/* Delete button - Only for users with delete permissions */}
+                  <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteSchedule(schedule.id)}
+                      className="flex items-center space-x-1 text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </PermissionAwareActions>
                 </div>
               </div>
               
