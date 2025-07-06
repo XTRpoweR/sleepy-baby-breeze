@@ -16,26 +16,33 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Password reset request received')
+    
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     const { email, redirectTo } = await req.json()
+    console.log('Processing password reset for email:', email)
 
     if (!email) {
+      console.error('No email provided')
       return new Response(
         JSON.stringify({ error: 'Email is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Generate secure reset token
+    // Generate secure reset token with corrected redirect URL
+    const resetRedirectUrl = redirectTo || 'https://sleepy-baby-breeze.lovable.app/reset-password'
+    console.log('Using redirect URL:', resetRedirectUrl)
+    
     const { data, error } = await supabaseClient.auth.admin.generateLink({
       type: 'recovery',
       email: email,
       options: {
-        redirectTo: redirectTo || 'https://sleepy-baby-breeze.lovable.app/auth'
+        redirectTo: resetRedirectUrl
       }
     })
 
@@ -48,9 +55,19 @@ serve(async (req) => {
     }
 
     const resetUrl = data.properties?.action_link
+    console.log('Generated reset URL:', resetUrl)
+
+    if (!resetUrl) {
+      console.error('No action link generated')
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate reset link' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     // Send professional password reset email
-    const { error: emailError } = await resend.emails.send({
+    console.log('Sending password reset email to:', email)
+    const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'SleepyBaby <noreply@sleepybabyy.com>',
       to: [email],
       subject: 'Reset Your SleepyBaby Password',
@@ -108,23 +125,26 @@ serve(async (req) => {
     if (emailError) {
       console.error('Error sending email:', emailError)
       return new Response(
-        JSON.stringify({ error: 'Failed to send reset email' }),
+        JSON.stringify({ error: 'Failed to send reset email', details: emailError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    console.log('Email sent successfully:', emailData)
+
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Password reset email sent successfully' 
+        message: 'Password reset email sent successfully',
+        emailId: emailData?.id
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('Unexpected error in password reset function:', error)
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error', details: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
