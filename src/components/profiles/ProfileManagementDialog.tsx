@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -42,7 +43,7 @@ interface ProfileManagementDialogProps {
 
 export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDialogProps) => {
   const { t } = useTranslation();
-  const { profiles, activeProfile, createProfile, deleteProfile, setActiveProfile, loading } = useBabyProfile();
+  const { profiles, activeProfile, createProfile, deleteProfile, switchProfile, loading } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
@@ -70,7 +71,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
   };
 
   const handleSetActive = async (profileId: string) => {
-    await setActiveProfile(profileId);
+    await switchProfile(profileId);
   };
 
   return (
