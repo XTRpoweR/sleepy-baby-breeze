@@ -10,7 +10,8 @@ import {
   Crown,
   Settings,
   Baby,
-  Bell
+  Bell,
+  HelpCircle
 } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useNavigate } from 'react-router-dom';
@@ -34,6 +35,10 @@ export const DesktopHeader = () => {
     navigate('/notifications');
   };
 
+  const handleHelp = () => {
+    navigate('/help');
+  };
+
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,6 +49,17 @@ export const DesktopHeader = () => {
           </div>
           <div className="flex items-center space-x-4">
             <LanguageSelector />
+            
+            {/* Help & Support Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleHelp}
+              className="flex items-center space-x-1"
+            >
+              <HelpCircle className="h-4 w-4" />
+              <span>Help</span>
+            </Button>
             
             {/* Notifications Button */}
             <Button

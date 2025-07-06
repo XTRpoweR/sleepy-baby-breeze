@@ -11,7 +11,9 @@ import {
   Crown,
   Settings,
   Menu,
-  Bell
+  Bell,
+  HelpCircle,
+  MessageCircle
 } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useNavigate } from 'react-router-dom';
@@ -36,6 +38,21 @@ export const MobileHeader = () => {
 
   const handleNotifications = () => {
     navigate('/notifications');
+    setIsOpen(false);
+  };
+
+  const handleHelp = () => {
+    navigate('/help');
+    setIsOpen(false);
+  };
+
+  const handleContact = () => {
+    navigate('/contact');
+    setIsOpen(false);
+  };
+
+  const handleTutorial = () => {
+    navigate('/tutorial');
     setIsOpen(false);
   };
 
@@ -67,6 +84,40 @@ export const MobileHeader = () => {
                   <div className="text-xs text-gray-500">
                     {user?.email}
                   </div>
+                </div>
+              </div>
+
+              {/* Help & Support */}
+              <div className="space-y-3">
+                <span className="text-sm font-medium">Help & Support</span>
+                <div className="space-y-2">
+                  <Button 
+                    variant="outline"
+                    size="sm" 
+                    onClick={handleHelp}
+                    className="w-full justify-start"
+                  >
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    <span>Help Center</span>
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    size="sm" 
+                    onClick={handleContact}
+                    className="w-full justify-start"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    <span>Contact Support</span>
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    size="sm" 
+                    onClick={handleTutorial}
+                    className="w-full justify-start"
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    <span>Tutorial</span>
+                  </Button>
                 </div>
               </div>
 
