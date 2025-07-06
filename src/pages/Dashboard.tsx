@@ -255,7 +255,9 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleHelp}>
+            
+          </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleMemories}>
             <CardContent className="p-4 lg:p-6 text-center">
