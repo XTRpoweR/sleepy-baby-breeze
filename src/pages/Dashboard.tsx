@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Moon, Clock, Calendar, BarChart3, User, LogOut, Baby, Plus, TrendingUp, Activity, Users, Crown, Settings, ArrowRight, Sparkles, GraduationCap, Camera, FileText, Bell, HelpCircle, MessageCircle } from 'lucide-react';
+import { Moon, Clock, Calendar, BarChart3, User, LogOut, Baby, Plus, TrendingUp, Activity, Users, Crown, Settings, ArrowRight, Sparkles, GraduationCap, Camera, FileText, Bell, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -141,10 +141,6 @@ const Dashboard = () => {
     navigate('/notifications');
   };
 
-  const handleHelp = () => {
-    navigate('/help');
-  };
-
   const handleContact = () => {
     navigate('/contact');
   };
@@ -270,16 +266,6 @@ const Dashboard = () => {
               {!isPremium && <div className="absolute top-1 right-1">
                   <Crown className="h-3 w-3 text-orange-500" />
                 </div>}
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleHelp}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-gray-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <HelpCircle className="h-4 w-4 lg:h-5 lg:w-5 text-gray-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Support</h3>
-              <p className="text-xs text-gray-600">Get help when you need it</p>
             </CardContent>
           </Card>
 
