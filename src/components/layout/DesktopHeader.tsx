@@ -44,9 +44,9 @@ export const DesktopHeader = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-              alt="SleepyBaby Logo" 
-              className="h-12 w-auto"
+              src="/lovable-uploads/9b4eb9aa-e73c-46e3-9c09-a17f8136d14c.png" 
+              alt="SleepyBabyy Logo" 
+              className="h-8 w-auto"
             />
             <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
           </div>
