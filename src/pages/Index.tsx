@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
@@ -92,9 +91,9 @@ const Index = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
               <img 
-                src="/lovable-uploads/9b4eb9aa-e73c-46e3-9c09-a17f8136d14c.png" 
-                alt="SleepyBabyy Logo" 
-                className="h-8 w-auto transition-transform duration-300 group-hover:scale-110"
+                src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                alt="SleepyBaby Logo" 
+                className="h-12 w-auto transition-transform duration-300 group-hover:scale-110"
               />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
@@ -454,9 +453,9 @@ const Index = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-2 group">
                 <img 
-                  src="/lovable-uploads/9b4eb9aa-e73c-46e3-9c09-a17f8136d14c.png" 
-                  alt="SleepyBabyy Logo" 
-                  className="h-6 w-auto transition-transform duration-300 group-hover:scale-110"
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                  alt="SleepyBaby Logo" 
+                  className="h-8 w-auto transition-transform duration-300 group-hover:scale-110"
                 />
                 <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>
