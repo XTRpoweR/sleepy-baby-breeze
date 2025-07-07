@@ -93,7 +93,7 @@ const Index = () => {
               <img 
                 src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
                 alt="SleepyBaby Logo" 
-                className="h-8 w-auto transition-transform duration-300 group-hover:scale-110"
+                className="h-12 w-auto transition-transform duration-300 group-hover:scale-110"
               />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
@@ -455,7 +455,7 @@ const Index = () => {
                 <img 
                   src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
                   alt="SleepyBaby Logo" 
-                  className="h-6 w-auto transition-transform duration-300 group-hover:scale-110"
+                  className="h-8 w-auto transition-transform duration-300 group-hover:scale-110"
                 />
                 <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>

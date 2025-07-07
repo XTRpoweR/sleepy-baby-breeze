@@ -57,12 +57,12 @@ export const MobileHeader = () => {
 
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
-      <div className="flex justify-between items-center h-14 px-4">
+      <div className="flex justify-between items-center h-16 px-4">
         <div className="flex items-center space-x-2">
           <img 
             src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
             alt="SleepyBaby Logo" 
-            className="h-6 w-auto"
+            className="h-10 w-auto"
           />
           <span className="text-lg font-bold text-gray-900">SleepyBaby</span>
         </div>
