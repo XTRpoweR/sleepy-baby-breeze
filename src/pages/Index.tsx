@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
@@ -5,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Moon, Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
+import { Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -90,7 +91,11 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
-              <Moon className="h-8 w-8 text-blue-600 transition-transform duration-300 group-hover:rotate-12" />
+              <img 
+                src="/lovable-uploads/9b4eb9aa-e73c-46e3-9c09-a17f8136d14c.png" 
+                alt="SleepyBaby Logo" 
+                className="h-8 w-auto transition-transform duration-300 group-hover:scale-110"
+              />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -448,7 +453,11 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-2 group">
-                <Moon className="h-6 w-6 text-blue-400 transition-transform duration-300 group-hover:rotate-12" />
+                <img 
+                  src="/lovable-uploads/9b4eb9aa-e73c-46e3-9c09-a17f8136d14c.png" 
+                  alt="SleepyBaby Logo" 
+                  className="h-6 w-auto transition-transform duration-300 group-hover:scale-110"
+                />
                 <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>
               <p className="text-gray-400 font-light">

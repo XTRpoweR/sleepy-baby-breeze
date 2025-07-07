@@ -5,7 +5,6 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { 
-  Moon, 
   User,
   LogOut,
   Crown,
@@ -60,8 +59,12 @@ export const MobileHeader = () => {
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
       <div className="flex justify-between items-center h-14 px-4">
         <div className="flex items-center space-x-2">
-          <Moon className="h-6 w-6 text-blue-600" />
-          <span className="text-lg font-bold text-gray-900">Baby Tracker</span>
+          <img 
+            src="/lovable-uploads/9b4eb9aa-e73c-46e3-9c09-a17f8136d14c.png" 
+            alt="SleepyBaby Logo" 
+            className="h-6 w-auto"
+          />
+          <span className="text-lg font-bold text-gray-900">SleepyBaby</span>
         </div>
         
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
