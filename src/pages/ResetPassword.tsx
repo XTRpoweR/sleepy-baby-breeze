@@ -7,13 +7,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Lock, ArrowLeft } from 'lucide-react';
+import { Lock, ArrowLeft, Eye, EyeOff, CheckCircle, AlertTriangle } from 'lucide-react';
+import { validateInput } from '@/utils/validation';
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [validSession, setValidSession] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState<{ isValid: boolean; errors: string[] }>({ isValid: false, errors: [] });
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -37,6 +41,18 @@ const ResetPassword = () => {
     checkSession();
   }, [navigate, toast]);
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    
+    if (newPassword) {
+      const strength = validateInput.isStrongPassword(newPassword);
+      setPasswordStrength(strength);
+    } else {
+      setPasswordStrength({ isValid: false, errors: [] });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password || !confirmPassword) return;
@@ -50,10 +66,10 @@ const ResetPassword = () => {
       return;
     }
 
-    if (password.length < 6) {
+    if (!passwordStrength.isValid) {
       toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters long.",
+        title: "Password too weak",
+        description: "Please choose a stronger password that meets all requirements.",
         variant: "destructive",
       });
       return;
@@ -70,8 +86,8 @@ const ResetPassword = () => {
       }
 
       toast({
-        title: "Password updated!",
-        description: "Your password has been successfully updated.",
+        title: "Password updated successfully!",
+        description: "Your password has been changed. You can now sign in with your new password.",
       });
       
       // Redirect to dashboard after successful password reset
@@ -94,8 +110,8 @@ const ResetPassword = () => {
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center space-y-4 p-6">
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-gray-900">Loading...</h2>
-              <p className="text-gray-600">Verifying your reset link...</p>
+              <h2 className="text-xl font-semibold text-gray-900">Verifying reset link...</h2>
+              <p className="text-gray-600">Please wait while we verify your password reset link.</p>
             </div>
           </CardContent>
         </Card>
@@ -120,10 +136,10 @@ const ResetPassword = () => {
           <CardHeader>
             <CardTitle className="text-center flex items-center justify-center gap-2">
               <Lock className="h-5 w-5 text-blue-600" />
-              Reset Your Password
+              Set Your New Password
             </CardTitle>
             <p className="text-sm text-center text-gray-600">
-              Enter your new password below
+              Choose a strong password for your account
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -134,15 +150,41 @@ const ResetPassword = () => {
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter new password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
+                    onChange={handlePasswordChange}
+                    className="pl-10 pr-10"
                     required
-                    minLength={6}
+                    minLength={8}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff /> : <Eye />}
+                  </button>
                 </div>
+                {password && (
+                  <div className="text-sm space-y-1">
+                    <div className={`text-xs flex items-center gap-1 ${passwordStrength.isValid ? 'text-green-600' : 'text-red-600'}`}>
+                      {passwordStrength.isValid ? (
+                        <CheckCircle className="h-3 w-3" />
+                      ) : (
+                        <AlertTriangle className="h-3 w-3" />
+                      )}
+                      Password Strength: {passwordStrength.isValid ? 'Strong' : 'Weak'}
+                    </div>
+                    {passwordStrength.errors.length > 0 && (
+                      <ul className="text-xs text-red-600 space-y-1 ml-4">
+                        {passwordStrength.errors.map((error, index) => (
+                          <li key={index}>• {error}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -151,21 +193,34 @@ const ResetPassword = () => {
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                   <Input
                     id="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 pr-10"
                     required
-                    minLength={6}
+                    minLength={8}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-3 h-4 w-4 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? <EyeOff /> : <Eye />}
+                  </button>
                 </div>
+                {confirmPassword && password !== confirmPassword && (
+                  <p className="text-xs text-red-600 flex items-center gap-1">
+                    <AlertTriangle className="h-3 w-3" />
+                    Passwords don't match
+                  </p>
+                )}
               </div>
 
               <Button 
                 type="submit" 
                 className="w-full bg-blue-600 hover:bg-blue-700" 
-                disabled={loading || !password || !confirmPassword}
+                disabled={loading || !password || !confirmPassword || !passwordStrength.isValid || password !== confirmPassword}
               >
                 {loading ? 'Updating Password...' : 'Update Password'}
               </Button>

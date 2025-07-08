@@ -32,31 +32,21 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
 
     setLoading(true);
     try {
-      console.log('Calling password reset function for:', email);
+      console.log('Sending password reset email to:', email);
       
-      const { data, error } = await supabase.functions.invoke('send-password-reset', {
-        body: { 
-          email,
-          redirectTo: `${window.location.origin}/reset-password`
-        }
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
       });
 
-      console.log('Function response:', { data, error });
-
       if (error) {
-        console.error('Function error:', error);
-        throw new Error(error.message || 'Failed to send reset email');
-      }
-
-      if (data?.error) {
-        console.error('Function returned error:', data.error);
-        throw new Error(data.error);
+        console.error('Password reset error:', error);
+        throw new Error(error.message);
       }
 
       setSent(true);
       toast({
         title: "Reset email sent!",
-        description: "Check your email for password reset instructions. The email should arrive within a few seconds.",
+        description: "Check your email for password reset instructions. The email should arrive within seconds.",
       });
     } catch (error: any) {
       console.error('Password reset error:', error);
@@ -135,7 +125,7 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
                 </p>
               </div>
               <p className="text-xs text-green-700 mt-2">
-                The email should arrive within a few seconds. Check your spam folder if you don't see it.
+                The email should arrive instantly. Check your spam folder if you don't see it within a minute.
               </p>
             </div>
             <DialogFooter>
