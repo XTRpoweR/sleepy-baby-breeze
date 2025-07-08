@@ -242,6 +242,33 @@ export type Database = {
           },
         ]
       }
+      password_reset_codes: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          used_at: string | null
+          verification_code: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          used_at?: string | null
+          verification_code: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          used_at?: string | null
+          verification_code?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
