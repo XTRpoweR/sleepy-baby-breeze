@@ -90,70 +90,129 @@ serve(async (req) => {
       )
     }
 
-    // Send professional password reset email with better deliverability
+    // Send clean, professional password reset email matching the screenshot
     console.log('Sending password reset email to:', email)
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'SleepyBaby Security <security@sleepybabyy.com>',
+      from: 'SleepyBaby <noreply@sleepybabyy.com>',
       to: [email],
-      subject: '🔒 Reset Your SleepyBaby Password',
+      subject: 'Reset your password',
       html: `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Password Reset - SleepyBaby</title>
+          <title>Reset your password - SleepyBaby</title>
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .content { background: #f8fafc; padding: 30px; border-radius: 12px; }
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+              margin: 0; 
+              padding: 0; 
+              background-color: #f9fafb;
+            }
+            .container { 
+              max-width: 600px; 
+              margin: 0 auto; 
+              background-color: #ffffff;
+            }
+            .header { 
+              text-align: center; 
+              padding: 40px 20px 30px; 
+              border-bottom: 1px solid #e5e7eb;
+            }
+            .logo {
+              font-size: 28px;
+              font-weight: 600;
+              color: #1f2937;
+              margin-bottom: 8px;
+            }
+            .tagline {
+              color: #6b7280;
+              font-size: 14px;
+              margin: 0;
+            }
+            .content { 
+              padding: 40px 20px; 
+            }
+            .title {
+              font-size: 24px;
+              font-weight: 600;
+              color: #1f2937;
+              margin: 0 0 16px 0;
+            }
+            .message {
+              font-size: 16px;
+              line-height: 1.5;
+              color: #374151;
+              margin: 0 0 32px 0;
+            }
+            .button-container {
+              text-align: center;
+              margin: 32px 0;
+            }
             .button { 
               display: inline-block; 
-              background: #3B82F6; 
-              color: white; 
-              padding: 14px 28px; 
+              background-color: #3b82f6; 
+              color: #ffffff; 
+              padding: 12px 24px; 
               text-decoration: none; 
-              border-radius: 8px; 
-              font-weight: 600;
-              margin: 20px 0;
+              border-radius: 6px; 
+              font-weight: 500;
+              font-size: 16px;
             }
-            .footer { text-align: center; margin-top: 30px; color: #64748b; font-size: 14px; }
+            .button:hover {
+              background-color: #2563eb;
+            }
+            .expiry {
+              font-size: 14px;
+              color: #6b7280;
+              margin: 32px 0 0 0;
+              text-align: center;
+            }
+            .footer { 
+              text-align: center; 
+              padding: 30px 20px; 
+              border-top: 1px solid #e5e7eb;
+              background-color: #f9fafb;
+            }
+            .footer-text {
+              color: #6b7280; 
+              font-size: 14px;
+              margin: 0 0 8px 0;
+            }
+            .help-text {
+              font-size: 12px;
+              color: #9ca3af;
+              margin: 0;
+            }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="color: #3B82F6;">🍼 SleepyBaby</h1>
-              <p style="color: #64748b;">Your trusted baby tracking companion</p>
+              <div class="logo">🍼 SleepyBaby</div>
+              <p class="tagline">Your trusted baby tracking companion</p>
             </div>
             
             <div class="content">
-              <h2>Password Reset Request</h2>
-              <p>You recently requested to reset your password for your SleepyBaby account. Click the button below to reset it:</p>
+              <h1 class="title">Reset your password</h1>
+              <p class="message">
+                You recently requested to reset your password for your SleepyBaby account. 
+                Click the button below to reset it.
+              </p>
               
-              <div style="text-align: center;">
-                <a href="${resetUrl}" class="button">Reset My Password</a>
+              <div class="button-container">
+                <a href="${resetUrl}" class="button">Reset password</a>
               </div>
               
-              <p><strong>This link will expire in 1 hour</strong> for your security.</p>
-              
-              <hr style="border: 1px solid #e2e8f0; margin: 20px 0;">
-              
-              <p style="font-size: 14px; color: #64748b;">
-                If you didn't request this password reset, you can safely ignore this email. 
-                Your password will remain unchanged.
-              </p>
-              
-              <p style="font-size: 12px; color: #94a3b8;">
-                If the button doesn't work, copy and paste this link into your browser:<br>
-                <span style="word-break: break-all;">${resetUrl}</span>
-              </p>
+              <p class="expiry">This link will expire in 1 hour for your security.</p>
             </div>
             
             <div class="footer">
-              <p>This email was sent by SleepyBaby</p>
-              <p>Questions? Contact us at support@sleepybabyy.com</p>
+              <p class="footer-text">This email was sent by SleepyBaby</p>
+              <p class="help-text">
+                If you didn't request this password reset, you can safely ignore this email.
+              </p>
             </div>
           </div>
         </body>
