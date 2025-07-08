@@ -32,25 +32,15 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
 
     setLoading(true);
     try {
-      console.log('Calling password reset function for:', email);
+      console.log('Sending password reset for:', email);
       
-      const { data, error } = await supabase.functions.invoke('send-password-reset', {
-        body: { 
-          email,
-          redirectTo: `${window.location.origin}/reset-password`
-        }
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`
       });
 
-      console.log('Function response:', { data, error });
-
       if (error) {
-        console.error('Function error:', error);
-        throw new Error(error.message || 'Failed to send reset email');
-      }
-
-      if (data?.error) {
-        console.error('Function returned error:', data.error);
-        throw new Error(data.error);
+        console.error('Password reset error:', error);
+        throw error;
       }
 
       setSent(true);
@@ -60,9 +50,21 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
       });
     } catch (error: any) {
       console.error('Password reset error:', error);
+      
+      // Handle specific error cases
+      let errorMessage = "Failed to send reset email. Please try again.";
+      
+      if (error.message?.includes('User not found')) {
+        errorMessage = "No account found with this email address.";
+      } else if (error.message?.includes('Email not confirmed')) {
+        errorMessage = "Please confirm your email address first.";
+      } else if (error.message?.includes('too many requests')) {
+        errorMessage = "Too many requests. Please wait a moment before trying again.";
+      }
+      
       toast({
         title: "Error",
-        description: error.message || "Failed to send reset email. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
