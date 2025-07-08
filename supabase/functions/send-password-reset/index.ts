@@ -34,7 +34,32 @@ serve(async (req) => {
       )
     }
 
-    // Generate secure reset token with corrected redirect URL
+    // Check if user exists first
+    const { data: userData, error: userError } = await supabaseClient.auth.admin.listUsers()
+    
+    if (userError) {
+      console.error('Error checking user:', userError)
+      return new Response(
+        JSON.stringify({ error: 'Failed to process request' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const userExists = userData.users.some(user => user.email === email)
+    
+    if (!userExists) {
+      console.log('User not found for email:', email)
+      // Still return success to avoid email enumeration
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'If an account with this email exists, you will receive reset instructions.'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Generate secure reset token
     const resetRedirectUrl = redirectTo || 'https://sleepy-baby-breeze.lovable.app/reset-password'
     console.log('Using redirect URL:', resetRedirectUrl)
     
@@ -65,57 +90,71 @@ serve(async (req) => {
       )
     }
 
-    // Send professional password reset email
+    // Send professional password reset email with better deliverability
     console.log('Sending password reset email to:', email)
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'SleepyBaby <noreply@sleepybabyy.com>',
+      from: 'SleepyBaby Security <security@sleepybabyy.com>',
       to: [email],
-      subject: 'Reset Your SleepyBaby Password',
+      subject: '🔒 Reset Your SleepyBaby Password',
       html: `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Reset Your Password</title>
+          <title>Password Reset - SleepyBaby</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .content { background: #f8fafc; padding: 30px; border-radius: 12px; }
+            .button { 
+              display: inline-block; 
+              background: #3B82F6; 
+              color: white; 
+              padding: 14px 28px; 
+              text-decoration: none; 
+              border-radius: 8px; 
+              font-weight: 600;
+              margin: 20px 0;
+            }
+            .footer { text-align: center; margin-top: 30px; color: #64748b; font-size: 14px; }
+          </style>
         </head>
-        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="text-align: center; margin-bottom: 40px;">
-            <h1 style="color: #3B82F6; margin: 0; font-size: 28px;">🍼 SleepyBaby</h1>
-          </div>
-          
-          <div style="background: #f8fafc; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
-            <h2 style="color: #1e293b; margin-top: 0; font-size: 24px;">Reset Your Password</h2>
-            
-            <p style="font-size: 16px; margin-bottom: 25px;">We received a request to reset your password for your SleepyBaby account. Click the button below to create a new password:</p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${resetUrl}" 
-                 style="background: #3B82F6; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block; transition: background-color 0.2s;">
-                Reset My Password
-              </a>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="color: #3B82F6;">🍼 SleepyBaby</h1>
+              <p style="color: #64748b;">Your trusted baby tracking companion</p>
             </div>
             
-            <p style="font-size: 14px; color: #64748b; margin-top: 25px;">If the button doesn't work, copy and paste this link into your browser:</p>
-            <p style="font-size: 14px; color: #3B82F6; word-break: break-all; background: #f1f5f9; padding: 10px; border-radius: 6px;">${resetUrl}</p>
-            
-            <div style="border-top: 1px solid #e2e8f0; margin-top: 30px; padding-top: 20px;">
-              <p style="font-size: 14px; color: #64748b; margin-bottom: 10px;">🔒 <strong>Security Notice:</strong></p>
-              <ul style="font-size: 14px; color: #64748b; margin: 0; padding-left: 20px;">
-                <li>This link will expire in 1 hour for your security</li>
-                <li>If you didn't request this reset, you can safely ignore this email</li>
-                <li>Never share this link with anyone</li>
-              </ul>
+            <div class="content">
+              <h2>Password Reset Request</h2>
+              <p>You recently requested to reset your password for your SleepyBaby account. Click the button below to reset it:</p>
+              
+              <div style="text-align: center;">
+                <a href="${resetUrl}" class="button">Reset My Password</a>
+              </div>
+              
+              <p><strong>This link will expire in 1 hour</strong> for your security.</p>
+              
+              <hr style="border: 1px solid #e2e8f0; margin: 20px 0;">
+              
+              <p style="font-size: 14px; color: #64748b;">
+                If you didn't request this password reset, you can safely ignore this email. 
+                Your password will remain unchanged.
+              </p>
+              
+              <p style="font-size: 12px; color: #94a3b8;">
+                If the button doesn't work, copy and paste this link into your browser:<br>
+                <span style="word-break: break-all;">${resetUrl}</span>
+              </p>
             </div>
-          </div>
-          
-          <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <p style="font-size: 14px; color: #64748b; margin: 5px 0;">
-              This email was sent by SleepyBaby - Your Baby Tracking Companion
-            </p>
-            <p style="font-size: 12px; color: #94a3b8; margin: 5px 0;">
-              If you have questions, contact us at support@sleepybabyy.com
-            </p>
+            
+            <div class="footer">
+              <p>This email was sent by SleepyBaby</p>
+              <p>Questions? Contact us at support@sleepybabyy.com</p>
+            </div>
           </div>
         </body>
         </html>
