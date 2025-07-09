@@ -84,9 +84,9 @@ const Index = () => {
     content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
     rating: 5
   }];
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 font-sans">
+  return <div className="min-h-screen gradient-dynamic-slow font-sans">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 animate-fade-in">
+      <nav className="bg-white/90 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
@@ -98,16 +98,16 @@ const Index = () => {
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.features')}</a>
-              <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.insights')}</a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Pricing</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
+               <a href="#features" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">{t('navigation.features')}</a>
+               <a href="#insights" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">{t('navigation.insights')}</a>
+               <a href="#pricing" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">Pricing</a>
+               <a href="#testimonials" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">{t('navigation.reviews')}</a>
               <LanguageSelector />
-              {user ? <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
-                  {t('navigation.dashboard')}
-                </Button> : <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
-                  {t('navigation.getStarted')}
-                </Button>}
+               {user ? <Button onClick={() => navigate('/dashboard')} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0">
+                   {t('navigation.dashboard')}
+                 </Button> : <Button onClick={handleGetStarted} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0">
+                   {t('navigation.getStarted')}
+                 </Button>}
             </div>
           </div>
         </div>
@@ -119,10 +119,10 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 animate-fade-in-up">
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-                  {t('hero.title')}
-                  <span className="text-blue-600 block">{t('hero.titleHighlight')}</span>
-                </h1>
+                 <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+                   {t('hero.title')}
+                   <span className="text-gradient block">{t('hero.titleHighlight')}</span>
+                 </h1>
                 <p className="text-xl text-gray-600 leading-relaxed font-light">
                   {t('hero.subtitle')}
                   <span className="block mt-2 font-medium text-gray-700">{t('hero.subtitleExtra')}</span>
@@ -130,13 +130,13 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
-                  <Play className="h-5 w-5 mr-2" />
-                  {t('hero.startTracking')}
-                </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-blue-200 hover:bg-blue-50 transition-all duration-300 hover:scale-105 font-medium">
-                  {t('hero.exploreFeatures')}
-                </Button>
+                 <Button size="lg" className="gradient-dynamic text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-white border-0" onClick={handleGetStarted}>
+                   <Play className="h-5 w-5 mr-2" />
+                   {t('hero.startTracking')}
+                 </Button>
+                 <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-dynamic hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary">
+                   {t('hero.exploreFeatures')}
+                 </Button>
               </div>
 
               <div className="flex items-center space-x-6 text-sm text-gray-600">
@@ -156,11 +156,11 @@ const Index = () => {
             </div>
 
             <div className="relative animate-scale-in">
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-8 shadow-2xl animate-float">
-                <div className="bg-white rounded-2xl p-6 shadow-lg">
+               <div className="gradient-dynamic rounded-3xl p-8 shadow-2xl animate-float card-glow">
+                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-900">Tonight's Sleep</h3>
-                    <Baby className="h-6 w-6 text-blue-600" />
+                     <Baby className="h-6 w-6 text-primary color-shift" />
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
@@ -201,16 +201,16 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-fade-in-up" style={{
-              animationDelay: `${index * 100}ms`
-            }}>
-                  <CardContent className="p-8">
-                    <div className={`inline-flex p-3 rounded-2xl bg-gray-50 mb-6 transition-all duration-300 group-hover:scale-110`}>
-                      <IconComponent className={`h-8 w-8 ${feature.color}`} />
-                    </div>
+           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+             {features.map((feature, index) => {
+             const IconComponent = feature.icon;
+             return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-fade-in-up card-glow" style={{
+               animationDelay: `${index * 100}ms`
+             }}>
+                   <CardContent className="p-8">
+                     <div className={`inline-flex p-3 rounded-2xl gradient-dynamic-slow mb-6 transition-all duration-300 group-hover:scale-110`}>
+                       <IconComponent className={`h-8 w-8 text-white`} />
+                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-4 tracking-tight">{feature.title}</h3>
                     <p className="text-gray-600 leading-relaxed font-light">{feature.description}</p>
                   </CardContent>
@@ -221,14 +221,14 @@ const Index = () => {
       </section>
 
       {/* Insights Section */}
-      <section id="insights" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-indigo-50">
+      <section id="insights" className="py-20 px-4 sm:px-6 lg:px-8 gradient-dynamic-slow">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 animate-fade-in-up">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-                Turn Sleep Data Into 
-                <span className="text-blue-600 block">Actionable Insights</span>
-              </h2>
+               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+                 Turn Sleep Data Into 
+                 <span className="text-gradient block">Actionable Insights</span>
+               </h2>
               <p className="text-lg text-gray-600 leading-relaxed font-light">
                 Our intelligent analytics help you spot patterns, predict optimal bedtimes, and understand what works best for your unique baby. 
                 No more guessing - just gentle, data-driven guidance.
@@ -241,19 +241,19 @@ const Index = () => {
                     <span className="text-gray-700 font-medium">{item}</span>
                   </div>)}
               </div>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
-                See Your Sleep Insights
-              </Button>
+               <Button size="lg" className="gradient-dynamic transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-white border-0" onClick={handleGetStarted}>
+                 See Your Sleep Insights
+               </Button>
             </div>
             
-            <div className="bg-white rounded-3xl p-8 shadow-2xl animate-scale-in">
+            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl animate-scale-in card-glow">
               <div className="space-y-6">
                 <h3 className="text-xl font-bold text-gray-900">This Week's Summary</h3>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-50 rounded-2xl p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-600">11.2h</div>
-                    <div className="text-sm text-gray-600">Avg. Night Sleep</div>
+                   <div className="gradient-dynamic-slow rounded-2xl p-4 text-center">
+                     <div className="text-2xl font-bold text-white">11.2h</div>
+                    <div className="text-sm text-white/80">Avg. Night Sleep</div>
                   </div>
                   <div className="bg-green-50 rounded-2xl p-4 text-center">
                     <div className="text-2xl font-bold text-green-600">2.1h</div>
@@ -421,7 +421,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 gradient-dynamic">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">
             Ready for Better Nights?
@@ -432,12 +432,12 @@ const Index = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
-              Start Free Trial
-            </Button>
-            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6 border-white transition-all duration-300 hover:scale-105 font-medium bg-zinc-50 text-indigo-600">
-              View Pricing
-            </Button>
+             <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
+               Start Free Trial
+             </Button>
+             <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-lg px-8 py-6 border-white transition-all duration-300 hover:scale-105 font-medium bg-white/10 text-white hover:bg-white/20">
+               View Pricing
+             </Button>
           </div>
           
           <p className="text-blue-100 text-sm mt-6 font-medium">
