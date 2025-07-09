@@ -146,10 +146,10 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+    return <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center">
         <div className="text-center">
-          <Moon className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">{t('common.loading')}</p>
+          <Moon className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>;
   }
@@ -159,7 +159,7 @@ const Dashboard = () => {
   }
 
   const userName = user.user_metadata?.full_name?.split(' ')[0];
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-soft gradient-dynamic-slow">
       {/* Headers */}
       <DesktopHeader />
       <MobileHeader />
@@ -170,12 +170,12 @@ const Dashboard = () => {
         <div className="mb-3 lg:mb-4">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mb-2">
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-1">
                 {userName ? t('dashboard.welcome', {
                 name: userName
               }) : t('dashboard.welcomeFallback')}
               </h1>
-              <p className="text-gray-600 mb-2 lg:mb-3 text-sm lg:text-base">
+              <p className="text-muted-foreground mb-2 lg:mb-3 text-sm lg:text-base">
                 {t('dashboard.subtitle')}
               </p>
             </div>
@@ -189,7 +189,7 @@ const Dashboard = () => {
           
           {/* Profile Selector */}
           <div className="mb-2 lg:mb-3">
-            <h2 className="text-base lg:text-lg font-medium text-gray-900 mb-1 lg:mb-2">{t('dashboard.childProfiles')}</h2>
+            <h2 className="text-base lg:text-lg font-medium text-foreground mb-1 lg:mb-2">{t('dashboard.childProfiles')}</h2>
             
             {/* Desktop Profile Selector */}
             <div className="hidden lg:block">
@@ -201,7 +201,7 @@ const Dashboard = () => {
               <MobileProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
             </div>
             
-            {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-orange-600 mt-1 flex items-center">
+            {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
                 <Crown className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
                 Upgrade to Premium for unlimited baby profiles
               </p>}
@@ -209,23 +209,23 @@ const Dashboard = () => {
         </div>
 
         {/* Upgrade Banner for Basic Users */}
-        {!isPremium && <Card className="mb-3 lg:mb-4 border-2 border-dashed border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
+        {!isPremium && <Card className="mb-3 lg:mb-4 border-2 border-dashed border-warning/20 bg-gradient-to-r from-warning/5 to-warning/10 card-glow">
             <CardContent className="p-2 lg:p-3">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-2 lg:space-y-0">
                 <div className="flex items-start lg:items-center space-x-2">
-                  <div className="bg-orange-100 rounded-full p-1.5 flex-shrink-0">
-                    <Sparkles className="h-4 w-4 text-orange-600" />
+                  <div className="bg-warning/20 rounded-full p-1.5 flex-shrink-0">
+                    <Sparkles className="h-4 w-4 text-warning" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-sm lg:text-base font-semibold text-gray-900 mb-0.5">
+                    <h3 className="text-sm lg:text-base font-semibold text-foreground mb-0.5">
                       Unlock Premium Features
                     </h3>
-                    <p className="text-gray-600 text-xs lg:text-sm">
+                    <p className="text-muted-foreground text-xs lg:text-sm">
                       Get unlimited profiles, extended history, family sharing, and more for just $9.99/month
                     </p>
                   </div>
                 </div>
-                <Button onClick={() => navigate('/subscription')} className="bg-orange-600 hover:bg-orange-700 flex items-center justify-center space-x-2 w-full lg:w-auto" size="sm">
+                <Button onClick={() => navigate('/subscription')} variant="warning" className="flex items-center justify-center space-x-2 w-full lg:w-auto" size="sm">
                   <Crown className="h-4 w-4" />
                   <span>View Plans</span>
                   <ArrowRight className="h-4 w-4" />
@@ -236,23 +236,23 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 mb-3 lg:mb-4">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleTrackActivity}>
+          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 card-glow" onClick={handleTrackActivity}>
             <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-blue-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Activity className="h-4 w-4 lg:h-5 lg:w-5 text-blue-600" />
+              <div className="bg-info/20 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2 transition-transform duration-300 hover:scale-110">
+                <Activity className="h-4 w-4 lg:h-5 lg:w-5 text-info" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.trackActivities')}</h3>
-              <p className="text-xs text-gray-600">{t('dashboard.trackActivitiesDesc')}</p>
+              <h3 className="font-semibold text-foreground mb-0.5 text-xs lg:text-sm">{t('dashboard.trackActivities')}</h3>
+              <p className="text-xs text-muted-foreground">{t('dashboard.trackActivitiesDesc')}</p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleSleepSchedule}>
+          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 card-glow" onClick={handleSleepSchedule}>
             <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-purple-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Moon className="h-4 w-4 lg:h-5 lg:w-5 text-purple-600" />
+              <div className="bg-primary/20 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2 transition-transform duration-300 hover:scale-110">
+                <Moon className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.sleepSchedule')}</h3>
-              <p className="text-xs text-gray-600">{t('dashboard.sleepScheduleDesc')}</p>
+              <h3 className="font-semibold text-foreground mb-0.5 text-xs lg:text-sm">{t('dashboard.sleepSchedule')}</h3>
+              <p className="text-xs text-muted-foreground">{t('dashboard.sleepScheduleDesc')}</p>
             </CardContent>
           </Card>
 

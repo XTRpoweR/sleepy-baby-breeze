@@ -86,7 +86,7 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Mail className="h-5 w-5 text-blue-600" />
+            <Mail className="h-5 w-5 text-info" />
             Reset Password
           </DialogTitle>
           <DialogDescription>
@@ -124,7 +124,8 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
               <Button 
                 type="submit"
                 disabled={loading || !email}
-                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+                variant="info"
+                className="w-full sm:w-auto"
               >
                 {loading ? 'Sending...' : 'Send Reset Link'}
               </Button>
@@ -132,14 +133,14 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
           </form>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-lg bg-green-50 p-4 border border-green-200">
+            <div className="rounded-lg bg-success/10 p-4 border border-success/20">
               <div className="flex items-center">
-                <Mail className="h-4 w-4 text-green-600 mr-2" />
-                <p className="text-sm text-green-800">
+                <Mail className="h-4 w-4 text-success mr-2" />
+                <p className="text-sm text-success">
                   Password reset instructions sent to <strong>{email}</strong>
                 </p>
               </div>
-              <p className="text-xs text-green-700 mt-2">
+              <p className="text-xs text-success/80 mt-2">
                 The email should arrive within a few seconds. Check your spam folder if you don't see it.
               </p>
             </div>

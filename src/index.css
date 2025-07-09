@@ -17,21 +17,29 @@
     --primary: 261 83% 58%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 330 81% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 330 81% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 261 83% 58%;
+    --accent: 291 64% 42%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 330 81% 91%;
+    --input: 330 81% 91%;
     --ring: 261 83% 58%;
+
+    /* Enhanced color palette */
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 210 40% 98%;
+    --info: 217 91% 60%;
+    --info-foreground: 210 40% 98%;
 
     --radius: 0.5rem;
 
@@ -70,7 +78,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 261 83% 68%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -79,7 +87,7 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 291 64% 52%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -87,7 +95,15 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 261 83% 68%;
+
+    /* Enhanced dark mode colors */
+    --success: 142 76% 46%;
+    --success-foreground: 210 40% 98%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 210 40% 98%;
+    --info: 217 91% 70%;
+    --info-foreground: 210 40% 98%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -157,6 +173,54 @@
     );
     background-size: 400% 400%;
     animation: gradient-shift 15s ease infinite;
+  }
+
+  /* New utility classes for consistent styling */
+  .bg-soft {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-from) / 0.05), 
+      hsl(var(--gradient-via) / 0.05), 
+      hsl(var(--gradient-to) / 0.05)
+    );
+  }
+
+  .bg-success {
+    background-color: hsl(var(--success));
+    color: hsl(var(--success-foreground));
+  }
+
+  .bg-warning {
+    background-color: hsl(var(--warning));
+    color: hsl(var(--warning-foreground));
+  }
+
+  .bg-info {
+    background-color: hsl(var(--info));
+    color: hsl(var(--info-foreground));
+  }
+
+  .text-success {
+    color: hsl(var(--success));
+  }
+
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+
+  .text-info {
+    color: hsl(var(--info));
+  }
+
+  .border-success {
+    border-color: hsl(var(--success));
+  }
+
+  .border-warning {
+    border-color: hsl(var(--warning));
+  }
+
+  .border-info {
+    border-color: hsl(var(--info));
   }
 
   .color-shift {

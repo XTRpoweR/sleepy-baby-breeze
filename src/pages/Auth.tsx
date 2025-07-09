@@ -139,13 +139,13 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={() => navigate('/')}
-          className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+          className="mb-4 flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Home</span>
@@ -205,7 +205,7 @@ const Auth = () => {
                     <button
                       type="button"
                       onClick={() => setForgotPasswordOpen(true)}
-                      className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                      className="text-sm text-primary hover:text-primary/80 hover:underline transition-colors"
                     >
                       Forgot password?
                     </button>
@@ -227,7 +227,8 @@ const Auth = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700" 
+                variant="gradient"
+                className="w-full" 
                 disabled={loading}
               >
                 {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
@@ -275,7 +276,7 @@ const Auth = () => {
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-primary hover:underline transition-colors"
               >
                 {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
               </button>
