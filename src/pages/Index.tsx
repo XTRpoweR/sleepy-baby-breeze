@@ -10,13 +10,10 @@ import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-  const {
-    t
-  } = useTranslation();
+  const { user } = useAuth();
+  const { t } = useTranslation();
   const { toast } = useToast();
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -24,6 +21,7 @@ const Index = () => {
       navigate('/auth');
     }
   };
+
   const handleViewPricing = () => {
     if (user) {
       navigate('/subscription');
@@ -31,62 +29,78 @@ const Index = () => {
       navigate('/auth');
     }
   };
+
   const handleDownloadComingSoon = () => {
     toast({
       title: "Coming Soon",
       description: "The Download feature is not available yet. Stay tuned!",
     });
   };
-  const features = [{
-    icon: Clock,
-    title: t('features.trackEverything.title'),
-    description: t('features.trackEverything.description'),
-    color: "text-blue-500"
-  }, {
-    icon: Calendar,
-    title: t('features.customSchedules.title'),
-    description: t('features.customSchedules.description'),
-    color: "text-purple-500"
-  }, {
-    icon: Volume2,
-    title: t('features.soothingSounds.title'),
-    description: t('features.soothingSounds.description'),
-    color: "text-green-500"
-  }, {
-    icon: Users,
-    title: t('features.multiCaregiver.title'),
-    description: t('features.multiCaregiver.description'),
-    color: "text-orange-500"
-  }, {
-    icon: BarChart3,
-    title: t('features.insights.title'),
-    description: t('features.insights.description'),
-    color: "text-indigo-500"
-  }, {
-    icon: Globe,
-    title: t('features.multilingual.title'),
-    description: t('features.multilingual.description'),
-    color: "text-pink-500"
-  }];
-  const testimonials = [{
-    name: "Sarah M.",
-    role: "New Mom",
-    content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
-    rating: 5
-  }, {
-    name: "Mike & Jessica",
-    role: "First-time Parents",
-    content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
-    rating: 5
-  }, {
-    name: "Dr. Emily Chen",
-    role: "Pediatric Sleep Specialist",
-    content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
-    rating: 5
-  }];
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 font-sans">
+
+  const features = [
+    {
+      icon: Clock,
+      title: t('features.trackEverything.title'),
+      description: t('features.trackEverything.description'),
+      color: "text-primary"
+    },
+    {
+      icon: Calendar,
+      title: t('features.customSchedules.title'),
+      description: t('features.customSchedules.description'),
+      color: "text-secondary"
+    },
+    {
+      icon: Volume2,
+      title: t('features.soothingSounds.title'),
+      description: t('features.soothingSounds.description'),
+      color: "text-accent"
+    },
+    {
+      icon: Users,
+      title: t('features.multiCaregiver.title'),
+      description: t('features.multiCaregiver.description'),
+      color: "text-muted-foreground"
+    },
+    {
+      icon: BarChart3,
+      title: t('features.insights.title'),
+      description: t('features.insights.description'),
+      color: "text-primary"
+    },
+    {
+      icon: Globe,
+      title: t('features.multilingual.title'),
+      description: t('features.multilingual.description'),
+      color: "text-secondary"
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: "Sarah M.",
+      role: "New Mom",
+      content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
+      rating: 5
+    },
+    {
+      name: "Mike & Jessica",
+      role: "First-time Parents",
+      content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
+      rating: 5
+    },
+    {
+      name: "Dr. Emily Chen",
+      role: "Pediatric Sleep Specialist",
+      content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
+      rating: 5
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/10 to-secondary/10 font-sans">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50 animate-fade-in">
+      <nav className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50 animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
@@ -95,19 +109,23 @@ const Index = () => {
                 alt="SleepyBaby Logo" 
                 className="h-12 w-auto transition-transform duration-300 group-hover:scale-110"
               />
-              <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
+              <span className="text-xl font-semibold text-foreground tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.features')}</a>
-              <a href="#insights" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.insights')}</a>
-              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">Pricing</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
+              <a href="#features" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-105">{t('navigation.features')}</a>
+              <a href="#insights" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-105">{t('navigation.insights')}</a>
+              <a href="#pricing" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-105">Pricing</a>
+              <a href="#testimonials" className="text-foreground hover:text-primary transition-all duration-300 font-medium hover:scale-105">{t('navigation.reviews')}</a>
               <LanguageSelector />
-              {user ? <Button onClick={() => navigate('/dashboard')} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
+              {user ? (
+                <Button onClick={() => navigate('/dashboard')} className="bg-primary hover:bg-primary/80 transition-all duration-300 hover:scale-105 font-medium">
                   {t('navigation.dashboard')}
-                </Button> : <Button onClick={handleGetStarted} className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 font-medium">
+                </Button>
+              ) : (
+                <Button onClick={handleGetStarted} className="bg-primary hover:bg-primary/80 transition-all duration-300 hover:scale-105 font-medium">
                   {t('navigation.getStarted')}
-                </Button>}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -119,66 +137,66 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 animate-fade-in-up">
               <div className="space-y-4">
-                <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+                <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight tracking-tight">
                   {t('hero.title')}
-                  <span className="text-blue-600 block">{t('hero.titleHighlight')}</span>
+                  <span className="text-primary block">{t('hero.titleHighlight')}</span>
                 </h1>
-                <p className="text-xl text-gray-600 leading-relaxed font-light">
+                <p className="text-xl text-muted-foreground leading-relaxed font-light">
                   {t('hero.subtitle')}
-                  <span className="block mt-2 font-medium text-gray-700">{t('hero.subtitleExtra')}</span>
+                  <span className="block mt-2 font-medium text-foreground">{t('hero.subtitleExtra')}</span>
                 </p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
+                <Button size="lg" className="bg-primary hover:bg-primary/80 text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
                   <Play className="h-5 w-5 mr-2" />
                   {t('hero.startTracking')}
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-blue-200 hover:bg-blue-50 transition-all duration-300 hover:scale-105 font-medium">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-border hover:bg-accent/20 transition-all duration-300 hover:scale-105 font-medium">
                   {t('hero.exploreFeatures')}
                 </Button>
               </div>
 
-              <div className="flex items-center space-x-6 text-sm text-gray-600">
+              <div className="flex items-center space-x-6 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <CheckCircle className="h-4 w-4 text-accent" />
                   <span className="font-medium">{t('hero.freeTrial')}</span>
                 </div>
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <CheckCircle className="h-4 w-4 text-accent" />
                   <span className="font-medium">{t('hero.noCreditCard')}</span>
                 </div>
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
-                  <Heart className="h-4 w-4 text-red-500" />
+                  <Heart className="h-4 w-4 text-secondary" />
                   <span className="font-medium">{t('hero.madeByParents')}</span>
                 </div>
               </div>
             </div>
 
             <div className="relative animate-scale-in">
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl p-8 shadow-2xl animate-float">
-                <div className="bg-white rounded-2xl p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl p-8 shadow-2xl animate-float">
+                <div className="bg-card rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-gray-900">Tonight's Sleep</h3>
-                    <Baby className="h-6 w-6 text-blue-600" />
+                    <h3 className="font-semibold text-foreground">Tonight's Sleep</h3>
+                    <Baby className="h-6 w-6 text-primary" />
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Bedtime</span>
+                      <span className="text-muted-foreground font-medium">Bedtime</span>
                       <span className="font-semibold">7:30 PM</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Total Sleep</span>
-                      <span className="font-semibold text-green-600">11h 20m</span>
+                      <span className="text-muted-foreground font-medium">Total Sleep</span>
+                      <span className="font-semibold text-accent">11h 20m</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Wake-ups</span>
+                      <span className="text-muted-foreground font-medium">Wake-ups</span>
                       <span className="font-semibold">2 times</span>
                     </div>
-                    <div className="bg-green-50 rounded-lg p-3 mt-4">
+                    <div className="bg-accent/20 rounded-lg p-3 mt-4">
                       <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-green-800 font-medium">Great progress! Sleep improved 15% this week.</span>
+                        <CheckCircle className="h-4 w-4 text-accent-foreground" />
+                        <span className="text-sm text-accent-foreground font-medium">Great progress! Sleep improved 15% this week.</span>
                       </div>
                     </div>
                   </div>
@@ -190,13 +208,13 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in-up">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 tracking-tight">
               {t('features.title')}
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-light">
               {t('features.subtitle')}
             </p>
           </div>
@@ -211,8 +229,8 @@ const Index = () => {
                     <div className={`inline-flex p-3 rounded-2xl bg-gray-50 mb-6 transition-all duration-300 group-hover:scale-110`}>
                       <IconComponent className={`h-8 w-8 ${feature.color}`} />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 tracking-tight">{feature.title}</h3>
-                    <p className="text-gray-600 leading-relaxed font-light">{feature.description}</p>
+                    <h3 className="text-xl font-bold text-foreground mb-4 tracking-tight">{feature.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed font-light">{feature.description}</p>
                   </CardContent>
                 </Card>;
           })}
@@ -221,15 +239,15 @@ const Index = () => {
       </section>
 
       {/* Insights Section */}
-      <section id="insights" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-indigo-50">
+      <section id="insights" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary/10 to-secondary/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 animate-fade-in-up">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
                 Turn Sleep Data Into 
-                <span className="text-blue-600 block">Actionable Insights</span>
+                <span className="text-primary block">Actionable Insights</span>
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed font-light">
+              <p className="text-lg text-muted-foreground leading-relaxed font-light">
                 Our intelligent analytics help you spot patterns, predict optimal bedtimes, and understand what works best for your unique baby. 
                 No more guessing - just gentle, data-driven guidance.
               </p>
@@ -241,14 +259,14 @@ const Index = () => {
                     <span className="text-gray-700 font-medium">{item}</span>
                   </div>)}
               </div>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
+              <Button size="lg" className="bg-primary hover:bg-primary/80 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium" onClick={handleGetStarted}>
                 See Your Sleep Insights
               </Button>
             </div>
             
             <div className="bg-white rounded-3xl p-8 shadow-2xl animate-scale-in">
               <div className="space-y-6">
-                <h3 className="text-xl font-bold text-gray-900">This Week's Summary</h3>
+                <h3 className="text-xl font-bold text-foreground">This Week's Summary</h3>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-blue-50 rounded-2xl p-4 text-center">
@@ -263,7 +281,7 @@ const Index = () => {
                 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Sleep Quality</span>
+                    <span className="text-muted-foreground">Sleep Quality</span>
                     <div className="flex space-x-1">
                       {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                     </div>
@@ -282,13 +300,13 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in-up">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 tracking-tight">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-light">
               Start for free with our Basic plan, or unlock premium features with our affordable Premium plan. 
               <span className="block mt-2">Perfect for families of any size.</span>
             </p>
@@ -306,7 +324,7 @@ const Index = () => {
                     <h3 className="text-2xl font-bold">SleepyBaby Basic</h3>
                   </div>
                   <div className="text-4xl font-bold text-gray-900 mb-2">Free</div>
-                  <p className="text-gray-600 mb-6">Perfect for getting started</p>
+                  <p className="text-muted-foreground mb-6">Perfect for getting started</p>
                   <ul className="space-y-3 text-left mb-8">
                     <li className="flex items-center">
                       <Check className="h-4 w-4 text-green-500 mr-3" />
@@ -355,7 +373,7 @@ const Index = () => {
                     <span className="text-gray-600">/month</span>
                   </div>
                   <p className="text-red-600 text-sm font-medium mb-4">Save $5.00 per month!</p>
-                  <p className="text-gray-600 mb-6">Complete baby tracking solution</p>
+                  <p className="text-muted-foreground mb-6">Complete baby tracking solution</p>
                   
                   <ul className="space-y-3 text-left mb-8">
                     <li className="flex items-center">
@@ -390,13 +408,13 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-card">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 animate-fade-in-up">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 tracking-tight">
               Loved by Parents Everywhere
             </h2>
-            <p className="text-xl text-gray-600 font-light">
+            <p className="text-xl text-muted-foreground font-light">
               Join thousands of families who've found their way to better sleep.
             </p>
           </div>
@@ -409,9 +427,9 @@ const Index = () => {
                   <div className="flex space-x-1 mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                   </div>
-                  <p className="text-gray-600 mb-6 italic font-light">"{testimonial.content}"</p>
+                  <p className="text-muted-foreground mb-6 italic font-light">"{testimonial.content}"</p>
                   <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                    <div className="font-semibold text-foreground">{testimonial.name}</div>
                     <div className="text-sm text-gray-500 font-medium">{testimonial.role}</div>
                   </div>
                 </CardContent>
@@ -421,7 +439,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary to-secondary">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight">
             Ready for Better Nights?
@@ -447,7 +465,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-muted text-foreground py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
@@ -505,6 +523,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
