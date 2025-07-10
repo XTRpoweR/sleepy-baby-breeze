@@ -49,15 +49,22 @@ export const useCamera = (): CameraHookReturn => {
       supportedConstraints: {}
     };
 
-    if (!navigator.mediaDevices?.getUserMedia) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.log('Media devices not supported');
       return defaultCapabilities;
     }
 
     try {
+      // First try to get any camera to check basic support
+      const testStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      testStream.getTracks().forEach(track => track.stop());
+
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter(device => device.kind === 'videoinput');
       
       const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+      
+      console.log('Found video devices:', videoDevices.length);
       
       return {
         hasCamera: videoDevices.length > 0,
@@ -77,98 +84,6 @@ export const useCamera = (): CameraHookReturn => {
     }
   }, []);
 
-  const getOptimalConstraints = useCallback((facingMode: 'user' | 'environment') => {
-    // Progressive fallback constraints for better compatibility
-    return [
-      // Best quality with facing mode
-      {
-        video: {
-          facingMode,
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          frameRate: { ideal: 30, max: 60 }
-        },
-        audio: true
-      },
-      // Medium quality with facing mode
-      {
-        video: {
-          facingMode,
-          width: { ideal: 854, max: 1280 },
-          height: { ideal: 480, max: 720 },
-          frameRate: { ideal: 24, max: 30 }
-        },
-        audio: true
-      },
-      // Basic quality with facing mode
-      {
-        video: {
-          facingMode,
-          width: 640,
-          height: 480
-        },
-        audio: true
-      },
-      // Fallback without facing mode
-      {
-        video: {
-          width: { ideal: 640, max: 1280 },
-          height: { ideal: 480, max: 720 }
-        },
-        audio: true
-      },
-      // Last resort - any video
-      { video: true, audio: true },
-      { video: true }
-    ];
-  }, []);
-
-  const waitForVideoReady = useCallback((video: HTMLVideoElement): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(new Error('Video ready timeout'));
-      }, 10000);
-
-      const cleanup = () => {
-        video.removeEventListener('loadedmetadata', onLoadedMetadata);
-        video.removeEventListener('canplay', onCanPlay);
-        video.removeEventListener('error', onError);
-        clearTimeout(timeout);
-      };
-
-      const onLoadedMetadata = () => {
-        console.log('Video metadata loaded:', {
-          width: video.videoWidth,
-          height: video.videoHeight,
-          duration: video.duration
-        });
-      };
-
-      const onCanPlay = () => {
-        console.log('Video can play');
-        cleanup();
-        resolve();
-      };
-
-      const onError = (event: Event) => {
-        console.error('Video error:', event);
-        cleanup();
-        reject(new Error('Video loading failed'));
-      };
-
-      video.addEventListener('loadedmetadata', onLoadedMetadata);
-      video.addEventListener('canplay', onCanPlay);
-      video.addEventListener('error', onError);
-
-      // Force a check in case the video is already ready
-      if (video.readyState >= 3) { // HAVE_FUTURE_DATA or higher
-        cleanup();
-        resolve();
-      }
-    });
-  }, []);
-
   const startCamera = useCallback(async (facingMode: 'user' | 'environment' = 'environment') => {
     console.log('Starting camera with facingMode:', facingMode);
     setIsLoading(true);
@@ -180,7 +95,7 @@ export const useCamera = (): CameraHookReturn => {
       setCapabilities(caps);
 
       if (!caps.hasCamera) {
-        throw new Error('No camera device found');
+        throw new Error('No camera device found on this device');
       }
 
       // Stop existing stream
@@ -188,39 +103,57 @@ export const useCamera = (): CameraHookReturn => {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
 
-      const constraints = getOptimalConstraints(facingMode);
+      // Try progressively simpler constraints
+      const constraints = [
+        // Try with facing mode first
+        { 
+          video: { 
+            facingMode: { ideal: facingMode },
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+          } 
+        },
+        // Fallback without facing mode
+        { 
+          video: { 
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+          } 
+        },
+        // Last resort - any video
+        { video: true }
+      ];
+
       let stream: MediaStream | null = null;
       let lastError: Error | null = null;
 
-      // Try constraints in order of preference
       for (const constraint of constraints) {
         try {
           console.log('Trying constraint:', constraint);
           stream = await navigator.mediaDevices.getUserMedia(constraint);
-          console.log('Camera access successful with constraint');
+          console.log('Camera access successful');
           break;
         } catch (err) {
-          console.warn('Constraint failed:', constraint, err);
+          console.warn('Constraint failed:', err);
           lastError = err as Error;
           continue;
         }
       }
 
       if (!stream) {
-        throw lastError || new Error('No suitable camera configuration found');
+        throw lastError || new Error('Failed to access camera');
       }
 
       // Verify stream has video tracks
       const videoTracks = stream.getVideoTracks();
       if (videoTracks.length === 0) {
         stream.getTracks().forEach(track => track.stop());
-        throw new Error('No video track in stream');
+        throw new Error('No video track available');
       }
 
       console.log('Video track info:', {
         label: videoTracks[0].label,
-        settings: videoTracks[0].getSettings(),
-        constraints: videoTracks[0].getConstraints()
+        settings: videoTracks[0].getSettings()
       });
 
       streamRef.current = stream;
@@ -229,17 +162,49 @@ export const useCamera = (): CameraHookReturn => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         
-        // Wait for video to be ready
-        await waitForVideoReady(videoRef.current);
-        
-        // Start playback
-        try {
-          await videoRef.current.play();
-          console.log('Video playback started successfully');
-        } catch (playError) {
-          console.warn('Video autoplay failed (but continuing):', playError);
-          // Don't throw here - user can manually start playback
-        }
+        // Wait for the video to load and start playing
+        await new Promise<void>((resolve, reject) => {
+          const video = videoRef.current!;
+          
+          const cleanup = () => {
+            video.removeEventListener('loadedmetadata', onLoadedMetadata);
+            video.removeEventListener('canplay', onCanPlay);
+            video.removeEventListener('error', onError);
+          };
+
+          const onLoadedMetadata = () => {
+            console.log('Video metadata loaded');
+          };
+
+          const onCanPlay = async () => {
+            console.log('Video can play');
+            try {
+              await video.play();
+              console.log('Video started playing');
+              cleanup();
+              resolve();
+            } catch (playError) {
+              console.warn('Autoplay failed, but continuing:', playError);
+              cleanup();
+              resolve(); // Still resolve as the camera is working
+            }
+          };
+
+          const onError = (event: Event) => {
+            console.error('Video error:', event);
+            cleanup();
+            reject(new Error('Video failed to load'));
+          };
+
+          video.addEventListener('loadedmetadata', onLoadedMetadata);
+          video.addEventListener('canplay', onCanPlay);
+          video.addEventListener('error', onError);
+
+          // If video is already ready
+          if (video.readyState >= 2) {
+            onCanPlay();
+          }
+        });
       }
 
       setIsActive(true);
@@ -250,7 +215,7 @@ export const useCamera = (): CameraHookReturn => {
       
       if (err instanceof Error) {
         if (err.name === 'NotAllowedError') {
-          errorMessage += 'Camera permission denied. Please allow camera access and try again.';
+          errorMessage += 'Camera permission denied. Please allow camera access in your browser settings.';
         } else if (err.name === 'NotFoundError') {
           errorMessage += 'No camera found on this device.';
         } else if (err.name === 'NotSupportedError') {
@@ -266,7 +231,7 @@ export const useCamera = (): CameraHookReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [checkCameraCapabilities, getOptimalConstraints, waitForVideoReady]);
+  }, [checkCameraCapabilities]);
 
   const stopCamera = useCallback(() => {
     console.log('Stopping camera');
@@ -325,7 +290,7 @@ export const useCamera = (): CameraHookReturn => {
       // Draw current video frame
       ctx.drawImage(video, 0, 0, width, height);
       
-      // Convert to blob
+      // Convert to blob with compression for smaller file size
       return new Promise((resolve) => {
         canvas.toBlob((blob) => {
           if (blob) {
@@ -337,7 +302,7 @@ export const useCamera = (): CameraHookReturn => {
             console.error('Failed to create photo blob');
             resolve(null);
           }
-        }, 'image/jpeg', 0.9);
+        }, 'image/jpeg', 0.8); // Compress to 80% quality
       });
     } catch (err) {
       console.error('Photo capture error:', err);
@@ -354,32 +319,9 @@ export const useCamera = (): CameraHookReturn => {
     recordedChunksRef.current = [];
 
     try {
-      // Determine best supported mime type
-      const mimeTypes = [
-        'video/webm;codecs=vp9,opus',
-        'video/webm;codecs=vp8,opus', 
-        'video/webm;codecs=h264,opus',
-        'video/webm',
-        'video/mp4;codecs=h264,aac',
-        'video/mp4'
-      ];
-      
-      let selectedMimeType = '';
-      for (const mimeType of mimeTypes) {
-        if (MediaRecorder.isTypeSupported(mimeType)) {
-          selectedMimeType = mimeType;
-          console.log('Using mime type:', mimeType);
-          break;
-        }
-      }
-      
-      if (!selectedMimeType) {
-        throw new Error('No supported video recording format found');
-      }
-      
+      // Use lower bitrate for smaller file sizes
       const mediaRecorder = new MediaRecorder(streamRef.current, {
-        mimeType: selectedMimeType,
-        videoBitsPerSecond: 2500000 // 2.5 Mbps for good quality
+        videoBitsPerSecond: 1000000 // 1 Mbps instead of 2.5 Mbps
       });
       
       mediaRecorder.ondataavailable = (event) => {
@@ -405,7 +347,7 @@ export const useCamera = (): CameraHookReturn => {
       };
 
       mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start(100); // Record in 100ms chunks
+      mediaRecorder.start(1000); // Record in 1 second chunks
       setIsRecording(true);
       setRecordingTime(0);
 
@@ -437,14 +379,18 @@ export const useCamera = (): CameraHookReturn => {
           return;
         }
 
-        const mimeType = mediaRecorderRef.current?.mimeType || 'video/webm';
-        const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+        const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
         
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
-        const file = new File([blob], `video-${timestamp}.${extension}`, { type: mimeType });
+        const file = new File([blob], `video-${timestamp}.webm`, { type: 'video/webm' });
         
-        console.log('Video file created:', file.name, 'size:', blob.size);
+        console.log('Video file created:', file.name, 'size:', blob.size, 'MB:', (blob.size / 1024 / 1024).toFixed(2));
+        
+        // Check if file is too large (>10MB)
+        if (blob.size > 10 * 1024 * 1024) {
+          console.warn('Video file is large:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
+        }
+        
         resolve(file);
       };
 

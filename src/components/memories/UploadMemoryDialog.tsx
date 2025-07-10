@@ -5,9 +5,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Calendar, Upload, X, Image, Video, Camera, Square, Loader2, AlertCircle, SwitchCamera } from 'lucide-react';
+import { Calendar, Upload, X, Image, Video, Camera, Square, Loader2, AlertCircle, SwitchCamera, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { useCamera } from '@/hooks/useCamera';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface UploadMemoryDialogProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [fileSizeWarning, setFileSizeWarning] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -51,6 +53,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     setUploading(false);
     setDragOver(false);
     setShowCamera(false);
+    setFileSizeWarning('');
     stopCamera();
   };
 
@@ -61,9 +64,22 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     }
   };
 
+  const checkFileSize = (selectedFile: File) => {
+    const sizeInMB = selectedFile.size / (1024 * 1024);
+    
+    if (sizeInMB > 50) {
+      setFileSizeWarning(`File size is ${sizeInMB.toFixed(1)}MB which may be too large for upload. Consider using a smaller file.`);
+    } else if (sizeInMB > 10) {
+      setFileSizeWarning(`File size is ${sizeInMB.toFixed(1)}MB. Large files may take longer to upload.`);
+    } else {
+      setFileSizeWarning('');
+    }
+  };
+
   const handleFileSelect = (selectedFile: File) => {
     if (selectedFile.type.startsWith('image/') || selectedFile.type.startsWith('video/')) {
       setFile(selectedFile);
+      checkFileSize(selectedFile);
       if (!title) {
         const nameWithoutExt = selectedFile.name.replace(/\.[^/.]+$/, '');
         setTitle(nameWithoutExt);
@@ -81,14 +97,20 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   };
 
   const handleStartCamera = async () => {
-    setShowCamera(true);
-    await startCamera('environment'); // Start with back camera for better photos
+    try {
+      setShowCamera(true);
+      await startCamera('environment'); // Start with back camera for better photos
+    } catch (error) {
+      console.error('Failed to start camera:', error);
+      setShowCamera(false);
+    }
   };
 
   const handleCapturePhoto = async () => {
     const photoFile = await capturePhoto();
     if (photoFile) {
       setFile(photoFile);
+      checkFileSize(photoFile);
       setTitle(`Photo ${format(new Date(), 'MMM d, yyyy')}`);
       setShowCamera(false);
       stopCamera();
@@ -107,6 +129,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     const videoFile = await stopRecording();
     if (videoFile) {
       setFile(videoFile);
+      checkFileSize(videoFile);
       setTitle(`Video ${format(new Date(), 'MMM d, yyyy')}`);
       setShowCamera(false);
       stopCamera();
@@ -191,16 +214,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                       playsInline
                       muted
                       className="w-full h-full object-cover"
-                      style={{ 
-                        transform: 'scaleX(-1)', // Mirror effect for front camera
-                        display: cameraActive ? 'block' : 'none'
-                      }}
-                      onLoadedMetadata={() => {
-                        console.log('Video metadata loaded in component');
-                      }}
-                      onCanPlay={() => {
-                        console.log('Video can play in component');
-                      }}
+                      style={{ display: cameraActive ? 'block' : 'none' }}
                     />
                     
                     <canvas ref={canvasRef} className="hidden" />
@@ -287,6 +301,14 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
 
         <ScrollArea className="max-h-[75vh] pr-4">
           <div className="space-y-4">
+            {/* File size warning */}
+            {fileSizeWarning && (
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>{fileSizeWarning}</AlertDescription>
+              </Alert>
+            )}
+
             {/* File Upload Area */}
             <div
               className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-300 ${
@@ -316,7 +338,10 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setFile(null)}
+                    onClick={() => {
+                      setFile(null);
+                      setFileSizeWarning('');
+                    }}
                     className="hover:bg-destructive/10 hover:text-destructive"
                   >
                     <X className="h-3 w-3 mr-1" />
@@ -328,7 +353,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                   <Upload className="h-12 w-12 text-muted-foreground mx-auto animate-fade-in" />
                   <div>
                     <p className="font-medium text-foreground">Drop files here or choose an option</p>
-                    <p className="text-sm text-muted-foreground">Photos and videos up to 50MB</p>
+                    <p className="text-sm text-muted-foreground">Photos and videos up to 10MB recommended</p>
                   </div>
                   <div className="flex space-x-2">
                     <Button variant="outline" asChild className="flex-1 hover:bg-primary/10">
@@ -351,7 +376,6 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                       variant="gradient"
                       onClick={handleStartCamera}
                       className="flex-1"
-                      disabled={!capabilities || !capabilities.hasCamera}
                     >
                       <Camera className="h-4 w-4 mr-2" />
                       Camera

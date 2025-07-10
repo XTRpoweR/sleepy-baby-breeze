@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -82,6 +81,23 @@ export const useBabyMemories = (babyId?: string) => {
   ) => {
     if (!user || !babyId) return false;
 
+    // Check file size before upload (10MB limit recommended, 50MB absolute max)
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    const recommendedSize = 10 * 1024 * 1024; // 10MB
+    
+    if (file.size > maxSize) {
+      toast({
+        title: "File Too Large",
+        description: `File size (${(file.size / 1024 / 1024).toFixed(1)}MB) exceeds the maximum limit of 50MB. Please choose a smaller file.`,
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (file.size > recommendedSize) {
+      console.warn(`Large file upload: ${(file.size / 1024 / 1024).toFixed(1)}MB`);
+    }
+
     setUploading(true);
     try {
       console.log('Starting memory upload:', { fileName: file.name, fileSize: file.size, fileType: file.type });
@@ -100,9 +116,17 @@ export const useBabyMemories = (babyId?: string) => {
 
       if (uploadError) {
         console.error('Error uploading file:', uploadError);
+        
+        let errorMessage = 'Failed to upload file';
+        if (uploadError.message?.includes('Payload too large') || uploadError.message?.includes('413')) {
+          errorMessage = `File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Please try a smaller file or compress the video.`;
+        } else if (uploadError.message?.includes('quota') || uploadError.message?.includes('storage')) {
+          errorMessage = 'Storage limit reached. Please contact support or free up space.';
+        }
+        
         toast({
           title: "Upload Error",
-          description: "Failed to upload file",
+          description: errorMessage,
           variant: "destructive",
         });
         return false;
