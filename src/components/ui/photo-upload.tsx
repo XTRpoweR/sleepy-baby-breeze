@@ -1,4 +1,3 @@
-
 import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -7,6 +6,7 @@ import { Camera, Upload, X, ImageIcon, Loader2, AlertCircle } from 'lucide-react
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useCamera } from '@/hooks/useCamera';
 
 interface PhotoUploadProps {
   value?: string;
@@ -19,13 +19,19 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
   const { user } = useAuth();
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
-  const [cameraLoading, setCameraLoading] = useState(false);
-  const [cameraError, setCameraError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+
+  // Use the new camera hook instead of managing camera manually
+  const {
+    isLoading: cameraLoading,
+    error: cameraError,
+    isActive: showCamera,
+    videoRef,
+    canvasRef,
+    startCamera,
+    stopCamera,
+    capturePhoto
+  } = useCamera();
 
   const uploadFile = async (file: File) => {
     if (!user) return;
@@ -80,127 +86,11 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
     }
   };
 
-  const checkCameraSupport = () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setCameraError('Camera not supported in this browser');
-      return false;
-    }
-    return true;
-  };
-
-  const startCamera = async () => {
-    if (!checkCameraSupport()) return;
-
-    setCameraError(null);
-    setCameraLoading(true);
-    
-    try {
-      // Progressive fallback for camera access
-      const constraints = [
-        { video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } },
-        { video: { width: { ideal: 640 }, height: { ideal: 480 } } },
-        { video: true }
-      ];
-
-      let stream: MediaStream | null = null;
-      let lastError: Error | null = null;
-
-      for (const constraint of constraints) {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia(constraint);
-          break;
-        } catch (error) {
-          lastError = error as Error;
-          continue;
-        }
-      }
-
-      if (!stream) {
-        throw lastError || new Error('Camera access denied');
-      }
-
-      streamRef.current = stream;
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        
-        await new Promise<void>((resolve, reject) => {
-          if (!videoRef.current) {
-            reject(new Error('Video element not available'));
-            return;
-          }
-
-          const video = videoRef.current;
-          
-          const onLoadedMetadata = () => {
-            video.removeEventListener('loadedmetadata', onLoadedMetadata);
-            video.removeEventListener('error', onError);
-            resolve();
-          };
-          
-          const onError = () => {
-            video.removeEventListener('loadedmetadata', onLoadedMetadata);
-            video.removeEventListener('error', onError);
-            reject(new Error('Video failed to load'));
-          };
-
-          video.addEventListener('loadedmetadata', onLoadedMetadata);
-          video.addEventListener('error', onError);
-        });
-
-        await videoRef.current.play();
-      }
-      
-      setShowCamera(true);
-      setCameraLoading(false);
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      setCameraLoading(false);
-      
-      let errorMessage = 'Could not access camera. ';
-      if (error instanceof Error) {
-        if (error.name === 'NotAllowedError') {
-          errorMessage += 'Please allow camera permissions.';
-        } else if (error.name === 'NotFoundError') {
-          errorMessage += 'No camera found.';
-        } else {
-          errorMessage += error.message;
-        }
-      }
-      
-      setCameraError(errorMessage);
-    }
-  };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    setShowCamera(false);
-    setCameraError(null);
-    setCameraLoading(false);
-  };
-
-  const capturePhoto = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
-      
-      if (ctx) {
-        ctx.drawImage(video, 0, 0);
-        canvas.toBlob(async (blob) => {
-          if (blob) {
-            const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
-            await uploadFile(file);
-            stopCamera();
-          }
-        }, 'image/jpeg', 0.8);
-      }
+  const handleCapturePhoto = async () => {
+    const photoFile = await capturePhoto();
+    if (photoFile) {
+      await uploadFile(photoFile);
+      stopCamera();
     }
   };
 
@@ -231,17 +121,16 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
               <div className="text-sm text-muted-foreground">{cameraError}</div>
               <Button
                 variant="outline"
-                onClick={() => {
-                  setCameraError(null);
-                  startCamera();
-                }}
+                onClick={() => startCamera()}
+                disabled={cameraLoading}
               >
+                {cameraLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                 Try Again
               </Button>
             </div>
           ) : (
             <>
-              <div className="relative bg-black rounded-lg overflow-hidden">
+              <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
                 {cameraLoading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
                     <Loader2 className="h-8 w-8 text-white animate-spin" />
@@ -251,20 +140,20 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
                   ref={videoRef}
                   autoPlay
                   playsInline
-                  className="w-full rounded-lg"
+                  className="w-full h-full object-cover rounded-lg"
                   style={{ transform: 'scaleX(-1)' }}
                 />
                 <canvas ref={canvasRef} className="hidden" />
               </div>
               <div className="flex space-x-2 mt-4">
                 <Button 
-                  onClick={capturePhoto} 
+                  onClick={handleCapturePhoto} 
                   className="flex-1" 
                   disabled={isUploading || cameraLoading}
                   variant="gradient"
                 >
                   <Camera className="h-4 w-4 mr-2" />
-                  Capture
+                  {isUploading ? 'Uploading...' : 'Capture'}
                 </Button>
                 <Button variant="outline" onClick={stopCamera}>
                   Cancel
@@ -339,7 +228,7 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
           </Button>
           <Button
             variant="gradient"
-            onClick={startCamera}
+            onClick={() => startCamera()}
             disabled={isUploading || cameraLoading}
             className="flex-1"
           >

@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,8 +5,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Calendar, Upload, X, Image, Video, Camera, Square, Loader2, AlertCircle } from 'lucide-react';
+import { Calendar, Upload, X, Image, Video, Camera, Square, Loader2, AlertCircle, SwitchCamera } from 'lucide-react';
 import { format } from 'date-fns';
+import { useCamera } from '@/hooks/useCamera';
 
 interface UploadMemoryDialogProps {
   isOpen: boolean;
@@ -24,19 +24,24 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const [cameraError, setCameraError] = useState<string | null>(null);
-  const [cameraLoading, setCameraLoading] = useState(false);
-  const [hasCamera, setHasCamera] = useState(true);
-
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const recordedChunksRef = useRef<Blob[]>([]);
+
+  const {
+    isLoading: cameraLoading,
+    error: cameraError,
+    isActive: cameraActive,
+    isRecording,
+    recordingTime,
+    capabilities,
+    videoRef,
+    canvasRef,
+    startCamera,
+    stopCamera,
+    capturePhoto,
+    startRecording,
+    stopRecording,
+    switchCamera
+  } = useCamera();
 
   const resetForm = () => {
     setFile(null);
@@ -45,11 +50,12 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     setTakenAt('');
     setUploading(false);
     setDragOver(false);
+    setShowCamera(false);
     stopCamera();
   };
 
   const handleClose = () => {
-    if (!uploading) {
+    if (!uploading && !isRecording) {
       resetForm();
       onClose();
     }
@@ -74,300 +80,36 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     }
   };
 
-  const checkCameraSupport = () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setHasCamera(false);
-      setCameraError('Camera not supported in this browser. Please use a modern browser like Chrome, Firefox, or Safari.');
-      return false;
-    }
-    return true;
+  const handleStartCamera = async () => {
+    setShowCamera(true);
+    await startCamera('environment'); // Start with back camera for better photos
   };
 
-  const startCamera = async () => {
-    if (!checkCameraSupport()) return;
+  const handleCapturePhoto = async () => {
+    const photoFile = await capturePhoto();
+    if (photoFile) {
+      setFile(photoFile);
+      setTitle(`Photo ${format(new Date(), 'MMM d, yyyy')}`);
+      setShowCamera(false);
+      stopCamera();
+    }
+  };
 
-    setCameraError(null);
-    setCameraLoading(true);
-    console.log('Starting camera...');
-    
+  const handleStartRecording = async () => {
     try {
-      // Progressive fallback for camera constraints
-      const constraints = [
-        // Try back camera first (better for capturing memories)
-        { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true },
-        // Fallback to front camera
-        { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true },
-        // Basic fallback
-        { video: { width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true },
-        // Minimal fallback
-        { video: true, audio: true },
-        // Last resort - video only
-        { video: true }
-      ];
-
-      let stream: MediaStream | null = null;
-      let lastError: Error | null = null;
-
-      for (const constraint of constraints) {
-        try {
-          console.log('Trying camera constraint:', constraint);
-          stream = await navigator.mediaDevices.getUserMedia(constraint);
-          console.log('Camera access successful with constraint:', constraint);
-          break;
-        } catch (error) {
-          console.warn('Camera constraint failed:', constraint, error);
-          lastError = error as Error;
-          continue;
-        }
-      }
-
-      if (!stream) {
-        throw lastError || new Error('No camera access available');
-      }
-      
-      streamRef.current = stream;
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        console.log('Set video srcObject');
-        
-        // Wait for video to be ready
-        await new Promise<void>((resolve, reject) => {
-          if (!videoRef.current) {
-            reject(new Error('Video element not available'));
-            return;
-          }
-
-          const video = videoRef.current;
-          
-          const onLoadedMetadata = () => {
-            console.log('Video metadata loaded, dimensions:', video.videoWidth, 'x', video.videoHeight);
-            video.removeEventListener('loadedmetadata', onLoadedMetadata);
-            video.removeEventListener('error', onError);
-            resolve();
-          };
-          
-          const onError = (event: Event) => {
-            console.error('Video loading error:', event);
-            video.removeEventListener('loadedmetadata', onLoadedMetadata);
-            video.removeEventListener('error', onError);
-            reject(new Error('Video failed to load'));
-          };
-
-          video.addEventListener('loadedmetadata', onLoadedMetadata);
-          video.addEventListener('error', onError);
-          
-          // Timeout after 10 seconds
-          setTimeout(() => {
-            video.removeEventListener('loadedmetadata', onLoadedMetadata);
-            video.removeEventListener('error', onError);
-            reject(new Error('Video loading timeout'));
-          }, 10000);
-        });
-        
-        // Play the video
-        try {
-          await videoRef.current.play();
-          console.log('Video playing successfully');
-        } catch (playError) {
-          console.warn('Video play failed, but continuing:', playError);
-          // Don't throw here, sometimes autoplay restrictions cause this but camera still works
-        }
-      }
-      
-      setShowCamera(true);
-      setCameraLoading(false);
+      await startRecording();
     } catch (error) {
-      console.error('Error accessing camera:', error);
-      setCameraLoading(false);
-      
-      let errorMessage = 'Could not access camera. ';
-      
-      if (error instanceof Error) {
-        if (error.name === 'NotAllowedError') {
-          errorMessage += 'Please allow camera permissions and try again.';
-        } else if (error.name === 'NotFoundError') {
-          errorMessage += 'No camera found on this device.';
-        } else if (error.name === 'NotSupportedError') {
-          errorMessage += 'Camera not supported in this browser.';
-        } else if (error.name === 'NotReadableError') {
-          errorMessage += 'Camera is being used by another application.';
-        } else {
-          errorMessage += error.message;
-        }
-      }
-      
-      setCameraError(errorMessage);
+      console.error('Failed to start recording:', error);
     }
   };
 
-  const stopCamera = () => {
-    console.log('Stopping camera...');
-    
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => {
-        console.log('Stopping track:', track.kind);
-        track.stop();
-      });
-      streamRef.current = null;
-    }
-    
-    if (recordingIntervalRef.current) {
-      clearInterval(recordingIntervalRef.current);
-      recordingIntervalRef.current = null;
-    }
-    
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-    }
-    
-    setShowCamera(false);
-    setIsRecording(false);
-    setRecordingTime(0);
-    setCameraError(null);
-    setCameraLoading(false);
-    recordedChunksRef.current = [];
-  };
-
-  const capturePhoto = () => {
-    console.log('Capturing photo...');
-    
-    if (!videoRef.current || !canvasRef.current) {
-      console.error('Video or canvas ref not available');
-      return;
-    }
-
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    
-    if (!ctx) {
-      console.error('Could not get canvas context');
-      return;
-    }
-
-    // Set canvas dimensions to match video
-    const width = video.videoWidth || 640;
-    const height = video.videoHeight || 480;
-    canvas.width = width;
-    canvas.height = height;
-    
-    console.log('Canvas dimensions set to:', width, 'x', height);
-    
-    // Draw the current video frame to canvas
-    ctx.drawImage(video, 0, 0, width, height);
-    
-    // Convert canvas to blob
-    canvas.toBlob((blob) => {
-      if (blob) {
-        console.log('Photo captured, blob size:', blob.size);
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const file = new File([blob], `photo-${timestamp}.jpg`, { type: 'image/jpeg' });
-        setFile(file);
-        setTitle(`Photo ${format(new Date(), 'MMM d, yyyy')}`);
-        stopCamera();
-      } else {
-        console.error('Failed to create blob from canvas');
-      }
-    }, 'image/jpeg', 0.9);
-  };
-
-  const startRecording = () => {
-    console.log('Starting video recording...');
-    
-    if (!streamRef.current) {
-      console.error('No stream available for recording');
-      return;
-    }
-
-    recordedChunksRef.current = [];
-
-    try {
-      // Try different mime types for better browser compatibility
-      const mimeTypes = [
-        'video/webm;codecs=vp9,opus',
-        'video/webm;codecs=vp8,opus', 
-        'video/webm;codecs=h264,opus',
-        'video/webm',
-        'video/mp4;codecs=h264,aac',
-        'video/mp4'
-      ];
-      
-      let selectedMimeType = '';
-      for (const mimeType of mimeTypes) {
-        if (MediaRecorder.isTypeSupported(mimeType)) {
-          selectedMimeType = mimeType;
-          break;
-        }
-      }
-      
-      if (!selectedMimeType) {
-        throw new Error('No supported video format found');
-      }
-      
-      console.log('Using mime type:', selectedMimeType);
-      
-      const mediaRecorder = new MediaRecorder(streamRef.current, {
-        mimeType: selectedMimeType
-      });
-      
-      mediaRecorder.ondataavailable = (event) => {
-        console.log('Data available, size:', event.data.size);
-        if (event.data.size > 0) {
-          recordedChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        console.log('Recording stopped, chunks:', recordedChunksRef.current.length);
-        
-        if (recordedChunksRef.current.length > 0) {
-          const blob = new Blob(recordedChunksRef.current, { type: selectedMimeType });
-          console.log('Created video blob, size:', blob.size);
-          
-          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          const extension = selectedMimeType.includes('mp4') ? 'mp4' : 'webm';
-          const file = new File([blob], `video-${timestamp}.${extension}`, { type: selectedMimeType });
-          
-          setFile(file);
-          setTitle(`Video ${format(new Date(), 'MMM d, yyyy')}`);
-          stopCamera();
-        } else {
-          console.error('No recorded data available');
-        }
-      };
-
-      mediaRecorder.onerror = (event) => {
-        console.error('MediaRecorder error:', event);
-      };
-
-      mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start(100); // Collect data every 100ms
-      setIsRecording(true);
-      setRecordingTime(0);
-
-      recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
-      
-      console.log('Recording started');
-    } catch (error) {
-      console.error('Error starting recording:', error);
-      setCameraError('Failed to start recording. Try taking a photo instead.');
-    }
-  };
-
-  const stopRecording = () => {
-    console.log('Stopping recording...');
-    
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-        recordingIntervalRef.current = null;
-      }
+  const handleStopRecording = async () => {
+    const videoFile = await stopRecording();
+    if (videoFile) {
+      setFile(videoFile);
+      setTitle(`Video ${format(new Date(), 'MMM d, yyyy')}`);
+      setShowCamera(false);
+      stopCamera();
     }
   };
 
@@ -407,87 +149,127 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                 <div className="text-center p-8 space-y-4">
                   <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
                   <div className="text-destructive font-medium">Camera Error</div>
-                  <div className="text-sm text-muted-foreground">{cameraError}</div>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setCameraError(null);
-                      startCamera();
-                    }}
-                    className="hover:bg-primary/10"
-                  >
-                    Try Again
-                  </Button>
+                  <div className="text-sm text-muted-foreground whitespace-pre-line">{cameraError}</div>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => startCamera('environment')}
+                      className="hover:bg-primary/10"
+                      disabled={cameraLoading}
+                    >
+                      {cameraLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                      Try Again
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setShowCamera(false);
+                        stopCamera();
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <>
                   <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
-                    {cameraLoading && (
+                    {(cameraLoading || !cameraActive) && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
                         <div className="text-center space-y-2">
                           <Loader2 className="h-8 w-8 text-white animate-spin mx-auto" />
-                          <p className="text-white text-sm">Starting camera...</p>
+                          <p className="text-white text-sm">
+                            {cameraLoading ? 'Starting camera...' : 'Initializing...'}
+                          </p>
                         </div>
                       </div>
                     )}
+                    
                     <video
                       ref={videoRef}
                       autoPlay
                       playsInline
                       muted
                       className="w-full h-full object-cover"
-                      style={{ transform: 'scaleX(-1)' }} // Mirror effect
+                      style={{ 
+                        transform: 'scaleX(-1)', // Mirror effect for front camera
+                        display: cameraActive ? 'block' : 'none'
+                      }}
+                      onLoadedMetadata={() => {
+                        console.log('Video metadata loaded in component');
+                      }}
+                      onCanPlay={() => {
+                        console.log('Video can play in component');
+                      }}
                     />
+                    
                     <canvas ref={canvasRef} className="hidden" />
                     
                     {isRecording && (
-                      <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center animate-pulse">
+                      <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center animate-pulse">
                         <div className="w-2 h-2 bg-white rounded-full mr-2"></div>
-                        {formatTime(recordingTime)}
+                        REC {formatTime(recordingTime)}
                       </div>
+                    )}
+                    
+                    {capabilities?.hasFrontCamera && capabilities?.hasBackCamera && cameraActive && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={switchCamera}
+                        disabled={isRecording || cameraLoading}
+                        className="absolute top-4 right-4 bg-black/50 border-white/20 text-white hover:bg-black/70"
+                      >
+                        <SwitchCamera className="h-4 w-4" />
+                      </Button>
                     )}
                   </div>
 
-                  <div className="flex justify-center space-x-4">
-                    <Button
-                      onClick={capturePhoto}
-                      disabled={isRecording || cameraLoading}
-                      variant="gradient"
-                      className="flex-1"
-                    >
-                      <Camera className="h-4 w-4 mr-2" />
-                      Take Photo
-                    </Button>
-                    
-                    {!isRecording ? (
+                  {cameraActive && (
+                    <div className="flex justify-center space-x-3">
                       <Button
-                        onClick={startRecording}
-                        disabled={cameraLoading}
-                        className="bg-red-500 hover:bg-red-600 text-white flex-1"
+                        onClick={handleCapturePhoto}
+                        disabled={isRecording || cameraLoading}
+                        variant="gradient"
+                        className="flex-1"
                       >
-                        <Video className="h-4 w-4 mr-2" />
-                        Record Video
+                        <Camera className="h-4 w-4 mr-2" />
+                        Take Photo
                       </Button>
-                    ) : (
-                      <Button
-                        onClick={stopRecording}
-                        className="bg-gray-600 hover:bg-gray-700 text-white flex-1"
-                      >
-                        <Square className="h-4 w-4 mr-2" />
-                        Stop ({formatTime(recordingTime)})
-                      </Button>
-                    )}
-                  </div>
+                      
+                      {!isRecording ? (
+                        <Button
+                          onClick={handleStartRecording}
+                          disabled={cameraLoading}
+                          className="bg-red-500 hover:bg-red-600 text-white flex-1"
+                        >
+                          <Video className="h-4 w-4 mr-2" />
+                          Record Video
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={handleStopRecording}
+                          className="bg-gray-600 hover:bg-gray-700 text-white flex-1"
+                        >
+                          <Square className="h-4 w-4 mr-2" />
+                          Stop ({formatTime(recordingTime)})
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
 
               <Button
                 variant="outline"
-                onClick={stopCamera}
+                onClick={() => {
+                  setShowCamera(false);
+                  stopCamera();
+                }}
                 className="w-full"
                 disabled={isRecording}
               >
-                Cancel
+                {isRecording ? 'Stop recording first' : 'Cancel'}
               </Button>
             </div>
           </ScrollArea>
@@ -567,9 +349,9 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                     </Button>
                     <Button
                       variant="gradient"
-                      onClick={startCamera}
+                      onClick={handleStartCamera}
                       className="flex-1"
-                      disabled={!hasCamera}
+                      disabled={!capabilities || !capabilities.hasCamera}
                     >
                       <Camera className="h-4 w-4 mr-2" />
                       Camera
