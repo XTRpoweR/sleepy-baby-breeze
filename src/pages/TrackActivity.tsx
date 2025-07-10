@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -72,10 +73,10 @@ const TrackActivity = () => {
 
   if (loading || profileLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <Baby className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600 text-sm">{t('pages.trackActivity.loading')}</p>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <Baby className="h-12 w-12 text-primary mx-auto animate-spin" />
+          <p className="text-muted-foreground text-sm animate-fade-in">{t('pages.trackActivity.loading')}</p>
         </div>
       </div>
     );
@@ -86,12 +87,12 @@ const TrackActivity = () => {
   if (profiles.length === 0) {
     return (
       <TranslationWrapper>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
           <div className="max-w-2xl mx-auto px-4 py-4 sm:py-8">
             <Button 
               variant="ghost" 
               onClick={() => navigate('/dashboard')}
-              className="mb-4 sm:mb-6"
+              className="mb-4 sm:mb-6 hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t('navigation.backToDashboard')}
@@ -105,7 +106,7 @@ const TrackActivity = () => {
 
   return (
     <TranslationWrapper>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
@@ -114,14 +115,15 @@ const TrackActivity = () => {
                 variant="ghost" 
                 onClick={() => navigate('/dashboard')}
                 size={isMobile ? "sm" : "default"}
+                className="hover:bg-primary/10"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t('navigation.back')}
               </Button>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('pages.trackActivity.title')}</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-gradient">{t('pages.trackActivity.title')}</h1>
                 {activeProfile && (
-                  <p className="text-gray-600 text-sm sm:text-base">{t('pages.trackActivity.subtitle', { name: activeProfile.name })}</p>
+                  <p className="text-muted-foreground text-sm sm:text-base">{t('pages.trackActivity.subtitle', { name: activeProfile.name })}</p>
                 )}
               </div>
             </div>
@@ -145,9 +147,9 @@ const TrackActivity = () => {
 
           {/* Role-based messaging for viewers */}
           {role === 'viewer' && (
-            <Alert className="mb-6 border-blue-200 bg-blue-50">
-              <Shield className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-800">
+            <Alert className="mb-6 border-primary/20 bg-primary/5">
+              <Shield className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-foreground">
                 You have view-only access to {activeProfile?.name}'s activities. You can see all activity logs and statistics, but cannot add, edit, or delete activities. Contact the baby's owner for caregiver access if you need to track activities.
               </AlertDescription>
             </Alert>
@@ -158,22 +160,34 @@ const TrackActivity = () => {
               {/* Activity Tracking */}
               <div className="lg:col-span-2">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} mb-6 sm:mb-8`}>
-                    <TabsTrigger value="sleep" className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3">
+                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} mb-6 sm:mb-8 bg-primary/10 border border-primary/20`}>
+                    <TabsTrigger 
+                      value="sleep" 
+                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    >
                       <Moon className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span className="hidden xs:inline">{t('activities.sleep')}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="feeding" className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3">
+                    <TabsTrigger 
+                      value="feeding" 
+                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    >
                       <Bottle className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span className="hidden xs:inline">{t('activities.feeding')}</span>
                     </TabsTrigger>
                     {!isMobile && (
                       <>
-                        <TabsTrigger value="diaper" className="flex items-center space-x-2">
+                        <TabsTrigger 
+                          value="diaper" 
+                          className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                        >
                           <Heart className="h-4 w-4" />
                           <span>{t('activities.diaper')}</span>
                         </TabsTrigger>
-                        <TabsTrigger value="custom" className="flex items-center space-x-2">
+                        <TabsTrigger 
+                          value="custom" 
+                          className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                        >
                           <Plus className="h-4 w-4" />
                           <span>{t('activities.custom')}</span>
                         </TabsTrigger>
@@ -183,12 +197,18 @@ const TrackActivity = () => {
 
                   {/* Mobile: Second row of tabs */}
                   {isMobile && (
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
-                      <TabsTrigger value="diaper" className="flex items-center space-x-1 text-xs p-2">
+                    <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/10 border border-primary/20">
+                      <TabsTrigger 
+                        value="diaper" 
+                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      >
                         <Heart className="h-3 w-3" />
                         <span>{t('activities.diaper')}</span>
                       </TabsTrigger>
-                      <TabsTrigger value="custom" className="flex items-center space-x-1 text-xs p-2">
+                      <TabsTrigger 
+                        value="custom" 
+                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      >
                         <Plus className="h-3 w-3" />
                         <span>{t('activities.custom')}</span>
                       </TabsTrigger>
@@ -234,14 +254,18 @@ const TrackActivity = () => {
               </div>
             </div>
           ) : (
-            <Card className="max-w-md mx-auto">
+            <Card className="max-w-md mx-auto bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
               <CardContent className="p-6 sm:p-8 text-center">
-                <Baby className="h-12 w-12 sm:h-16 sm:w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('pages.trackActivity.noActiveProfile')}</h3>
-                <p className="text-gray-600 mb-4 text-sm sm:text-base">
+                <Baby className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4 animate-fade-in" />
+                <h3 className="text-lg font-medium text-foreground mb-2">{t('pages.trackActivity.noActiveProfile')}</h3>
+                <p className="text-muted-foreground mb-4 text-sm sm:text-base">
                   {t('pages.trackActivity.selectProfileMessage')}
                 </p>
-                <Button onClick={handleAddProfile} className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <Button 
+                  onClick={handleAddProfile} 
+                  variant="gradient"
+                  className="w-full sm:w-auto shadow-lg hover:shadow-xl transition-shadow"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   {t('dashboard.addProfile')}
                 </Button>

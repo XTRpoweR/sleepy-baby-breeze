@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Calendar, Upload, X, Image, Video, Camera, Square } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Calendar, Upload, X, Image, Video, Camera, Square, Loader2, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface UploadMemoryDialogProps {
@@ -26,6 +27,8 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [cameraLoading, setCameraLoading] = useState(false);
+  const [hasCamera, setHasCamera] = useState(true);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -71,24 +74,56 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     }
   };
 
+  const checkCameraSupport = () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setHasCamera(false);
+      setCameraError('Camera not supported in this browser. Please use a modern browser like Chrome, Firefox, or Safari.');
+      return false;
+    }
+    return true;
+  };
+
   const startCamera = async () => {
+    if (!checkCameraSupport()) return;
+
     setCameraError(null);
+    setCameraLoading(true);
     console.log('Starting camera...');
     
     try {
-      // Request camera permissions with more specific constraints
-      const constraints = {
-        video: {
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 },
-          facingMode: 'environment'
-        },
-        audio: true
-      };
+      // Progressive fallback for camera constraints
+      const constraints = [
+        // Try back camera first (better for capturing memories)
+        { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true },
+        // Fallback to front camera
+        { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true },
+        // Basic fallback
+        { video: { width: { ideal: 1280 }, height: { ideal: 720 } }, audio: true },
+        // Minimal fallback
+        { video: true, audio: true },
+        // Last resort - video only
+        { video: true }
+      ];
 
-      console.log('Requesting user media with constraints:', constraints);
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('Got media stream:', stream);
+      let stream: MediaStream | null = null;
+      let lastError: Error | null = null;
+
+      for (const constraint of constraints) {
+        try {
+          console.log('Trying camera constraint:', constraint);
+          stream = await navigator.mediaDevices.getUserMedia(constraint);
+          console.log('Camera access successful with constraint:', constraint);
+          break;
+        } catch (error) {
+          console.warn('Camera constraint failed:', constraint, error);
+          lastError = error as Error;
+          continue;
+        }
+      }
+
+      if (!stream) {
+        throw lastError || new Error('No camera access available');
+      }
       
       streamRef.current = stream;
       
@@ -96,24 +131,56 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
         videoRef.current.srcObject = stream;
         console.log('Set video srcObject');
         
-        // Wait for video to load
-        await new Promise((resolve) => {
-          if (videoRef.current) {
-            videoRef.current.onloadedmetadata = () => {
-              console.log('Video metadata loaded');
-              resolve(true);
-            };
+        // Wait for video to be ready
+        await new Promise<void>((resolve, reject) => {
+          if (!videoRef.current) {
+            reject(new Error('Video element not available'));
+            return;
           }
+
+          const video = videoRef.current;
+          
+          const onLoadedMetadata = () => {
+            console.log('Video metadata loaded, dimensions:', video.videoWidth, 'x', video.videoHeight);
+            video.removeEventListener('loadedmetadata', onLoadedMetadata);
+            video.removeEventListener('error', onError);
+            resolve();
+          };
+          
+          const onError = (event: Event) => {
+            console.error('Video loading error:', event);
+            video.removeEventListener('loadedmetadata', onLoadedMetadata);
+            video.removeEventListener('error', onError);
+            reject(new Error('Video failed to load'));
+          };
+
+          video.addEventListener('loadedmetadata', onLoadedMetadata);
+          video.addEventListener('error', onError);
+          
+          // Timeout after 10 seconds
+          setTimeout(() => {
+            video.removeEventListener('loadedmetadata', onLoadedMetadata);
+            video.removeEventListener('error', onError);
+            reject(new Error('Video loading timeout'));
+          }, 10000);
         });
         
         // Play the video
-        await videoRef.current.play();
-        console.log('Video playing');
+        try {
+          await videoRef.current.play();
+          console.log('Video playing successfully');
+        } catch (playError) {
+          console.warn('Video play failed, but continuing:', playError);
+          // Don't throw here, sometimes autoplay restrictions cause this but camera still works
+        }
       }
       
       setShowCamera(true);
+      setCameraLoading(false);
     } catch (error) {
       console.error('Error accessing camera:', error);
+      setCameraLoading(false);
+      
       let errorMessage = 'Could not access camera. ';
       
       if (error instanceof Error) {
@@ -123,6 +190,8 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
           errorMessage += 'No camera found on this device.';
         } else if (error.name === 'NotSupportedError') {
           errorMessage += 'Camera not supported in this browser.';
+        } else if (error.name === 'NotReadableError') {
+          errorMessage += 'Camera is being used by another application.';
         } else {
           errorMessage += error.message;
         }
@@ -156,6 +225,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     setIsRecording(false);
     setRecordingTime(0);
     setCameraError(null);
+    setCameraLoading(false);
     recordedChunksRef.current = [];
   };
 
@@ -177,14 +247,15 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     }
 
     // Set canvas dimensions to match video
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    const width = video.videoWidth || 640;
+    const height = video.videoHeight || 480;
+    canvas.width = width;
+    canvas.height = height;
     
-    console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
-    console.log('Video dimensions:', video.videoWidth, 'x', video.videoHeight);
+    console.log('Canvas dimensions set to:', width, 'x', height);
     
     // Draw the current video frame to canvas
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, width, height);
     
     // Convert canvas to blob
     canvas.toBlob((blob) => {
@@ -193,7 +264,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const file = new File([blob], `photo-${timestamp}.jpg`, { type: 'image/jpeg' });
         setFile(file);
-        setTitle('Camera Photo');
+        setTitle(`Photo ${format(new Date(), 'MMM d, yyyy')}`);
         stopCamera();
       } else {
         console.error('Failed to create blob from canvas');
@@ -213,21 +284,31 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
 
     try {
       // Try different mime types for better browser compatibility
-      let mimeType = 'video/webm;codecs=vp9,opus';
-      if (!MediaRecorder.isTypeSupported(mimeType)) {
-        mimeType = 'video/webm;codecs=vp8,opus';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'video/webm';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/mp4';
-          }
+      const mimeTypes = [
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus', 
+        'video/webm;codecs=h264,opus',
+        'video/webm',
+        'video/mp4;codecs=h264,aac',
+        'video/mp4'
+      ];
+      
+      let selectedMimeType = '';
+      for (const mimeType of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(mimeType)) {
+          selectedMimeType = mimeType;
+          break;
         }
       }
       
-      console.log('Using mime type:', mimeType);
+      if (!selectedMimeType) {
+        throw new Error('No supported video format found');
+      }
+      
+      console.log('Using mime type:', selectedMimeType);
       
       const mediaRecorder = new MediaRecorder(streamRef.current, {
-        mimeType: mimeType
+        mimeType: selectedMimeType
       });
       
       mediaRecorder.ondataavailable = (event) => {
@@ -241,15 +322,15 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
         console.log('Recording stopped, chunks:', recordedChunksRef.current.length);
         
         if (recordedChunksRef.current.length > 0) {
-          const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+          const blob = new Blob(recordedChunksRef.current, { type: selectedMimeType });
           console.log('Created video blob, size:', blob.size);
           
           const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
-          const file = new File([blob], `video-${timestamp}.${extension}`, { type: mimeType });
+          const extension = selectedMimeType.includes('mp4') ? 'mp4' : 'webm';
+          const file = new File([blob], `video-${timestamp}.${extension}`, { type: selectedMimeType });
           
           setFile(file);
-          setTitle('Recorded Video');
+          setTitle(`Video ${format(new Date(), 'MMM d, yyyy')}`);
           stopCamera();
         } else {
           console.error('No recorded data available');
@@ -272,6 +353,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
       console.log('Recording started');
     } catch (error) {
       console.error('Error starting recording:', error);
+      setCameraError('Failed to start recording. Try taking a photo instead.');
     }
   };
 
@@ -314,86 +396,101 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   if (showCamera) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-hidden">
           <DialogHeader>
-            <DialogTitle>Camera</DialogTitle>
+            <DialogTitle className="text-gradient">Camera</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
-            {cameraError ? (
-              <div className="text-center p-8">
-                <div className="text-red-600 mb-4">{cameraError}</div>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setCameraError(null);
-                    startCamera();
-                  }}
-                >
-                  Try Again
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className="relative bg-black rounded-lg overflow-hidden">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    className="w-full h-64 object-cover"
-                    style={{ transform: 'scaleX(-1)' }} // Mirror effect for selfie mode
-                  />
-                  <canvas ref={canvasRef} className="hidden" />
-                  
-                  {isRecording && (
-                    <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
-                      <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-                      {formatTime(recordingTime)}
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex justify-center space-x-4">
+          <ScrollArea className="max-h-[80vh] pr-4">
+            <div className="space-y-4">
+              {cameraError ? (
+                <div className="text-center p-8 space-y-4">
+                  <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
+                  <div className="text-destructive font-medium">Camera Error</div>
+                  <div className="text-sm text-muted-foreground">{cameraError}</div>
                   <Button
-                    onClick={capturePhoto}
-                    disabled={isRecording}
-                    className="bg-blue-600 hover:bg-blue-700 flex-1"
+                    variant="outline"
+                    onClick={() => {
+                      setCameraError(null);
+                      startCamera();
+                    }}
+                    className="hover:bg-primary/10"
                   >
-                    <Camera className="h-4 w-4 mr-2" />
-                    Take Photo
+                    Try Again
                   </Button>
-                  
-                  {!isRecording ? (
-                    <Button
-                      onClick={startRecording}
-                      className="bg-red-600 hover:bg-red-700 flex-1"
-                    >
-                      <Video className="h-4 w-4 mr-2" />
-                      Record Video
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={stopRecording}
-                      className="bg-gray-600 hover:bg-gray-700 flex-1"
-                    >
-                      <Square className="h-4 w-4 mr-2" />
-                      Stop Recording
-                    </Button>
-                  )}
                 </div>
-              </>
-            )}
+              ) : (
+                <>
+                  <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
+                    {cameraLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+                        <div className="text-center space-y-2">
+                          <Loader2 className="h-8 w-8 text-white animate-spin mx-auto" />
+                          <p className="text-white text-sm">Starting camera...</p>
+                        </div>
+                      </div>
+                    )}
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="w-full h-full object-cover"
+                      style={{ transform: 'scaleX(-1)' }} // Mirror effect
+                    />
+                    <canvas ref={canvasRef} className="hidden" />
+                    
+                    {isRecording && (
+                      <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center animate-pulse">
+                        <div className="w-2 h-2 bg-white rounded-full mr-2"></div>
+                        {formatTime(recordingTime)}
+                      </div>
+                    )}
+                  </div>
 
-            <Button
-              variant="outline"
-              onClick={stopCamera}
-              className="w-full"
-              disabled={isRecording}
-            >
-              Cancel
-            </Button>
-          </div>
+                  <div className="flex justify-center space-x-4">
+                    <Button
+                      onClick={capturePhoto}
+                      disabled={isRecording || cameraLoading}
+                      variant="gradient"
+                      className="flex-1"
+                    >
+                      <Camera className="h-4 w-4 mr-2" />
+                      Take Photo
+                    </Button>
+                    
+                    {!isRecording ? (
+                      <Button
+                        onClick={startRecording}
+                        disabled={cameraLoading}
+                        className="bg-red-500 hover:bg-red-600 text-white flex-1"
+                      >
+                        <Video className="h-4 w-4 mr-2" />
+                        Record Video
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={stopRecording}
+                        className="bg-gray-600 hover:bg-gray-700 text-white flex-1"
+                      >
+                        <Square className="h-4 w-4 mr-2" />
+                        Stop ({formatTime(recordingTime)})
+                      </Button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              <Button
+                variant="outline"
+                onClick={stopCamera}
+                className="w-full"
+                disabled={isRecording}
+              >
+                Cancel
+              </Button>
+            </div>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
@@ -401,140 +498,158 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>Add Memory for {babyName}</DialogTitle>
+          <DialogTitle className="text-gradient">Add Memory for {babyName}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* File Upload Area */}
-          <div
-            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-              dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-            }`}
-            onDrop={handleDrop}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={() => setDragOver(false)}
-          >
-            {file ? (
-              <div className="space-y-3">
-                <div className="flex items-center justify-center">
-                  {isImage && <Image className="h-12 w-12 text-blue-600" />}
-                  {isVideo && <Video className="h-12 w-12 text-purple-600" />}
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{file.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {isImage ? 'Photo' : 'Video'} • {(file.size / 1024 / 1024).toFixed(1)} MB
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setFile(null)}
-                >
-                  <X className="h-3 w-3 mr-1" />
-                  Remove
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <Upload className="h-12 w-12 text-gray-400 mx-auto" />
-                <div>
-                  <p className="text-gray-900 font-medium">Drop files here or choose an option</p>
-                  <p className="text-sm text-gray-500">Photos and videos</p>
-                </div>
-                <div className="flex space-x-2">
-                  <Button variant="outline" asChild className="flex-1">
-                    <label className="cursor-pointer">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Choose File
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*,video/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const selectedFile = e.target.files?.[0];
-                          if (selectedFile) handleFileSelect(selectedFile);
-                        }}
-                      />
-                    </label>
-                  </Button>
+        <ScrollArea className="max-h-[75vh] pr-4">
+          <div className="space-y-4">
+            {/* File Upload Area */}
+            <div
+              className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-300 ${
+                dragOver 
+                  ? 'border-primary bg-primary/5 scale-105' 
+                  : 'border-border hover:border-primary/50 hover:bg-primary/5'
+              }`}
+              onDrop={handleDrop}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
+            >
+              {file ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-center">
+                    {isImage && <Image className="h-12 w-12 text-primary animate-fade-in" />}
+                    {isVideo && <Video className="h-12 w-12 text-secondary animate-fade-in" />}
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">{file.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {isImage ? 'Photo' : 'Video'} • {(file.size / 1024 / 1024).toFixed(1)} MB
+                    </p>
+                  </div>
                   <Button
                     variant="outline"
-                    onClick={startCamera}
-                    className="flex-1"
+                    size="sm"
+                    onClick={() => setFile(null)}
+                    className="hover:bg-destructive/10 hover:text-destructive"
                   >
-                    <Camera className="h-4 w-4 mr-2" />
-                    Camera
+                    <X className="h-3 w-3 mr-1" />
+                    Remove
                   </Button>
                 </div>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="space-y-3">
+                  <Upload className="h-12 w-12 text-muted-foreground mx-auto animate-fade-in" />
+                  <div>
+                    <p className="font-medium text-foreground">Drop files here or choose an option</p>
+                    <p className="text-sm text-muted-foreground">Photos and videos up to 50MB</p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button variant="outline" asChild className="flex-1 hover:bg-primary/10">
+                      <label className="cursor-pointer">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Choose File
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*,video/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const selectedFile = e.target.files?.[0];
+                            if (selectedFile) handleFileSelect(selectedFile);
+                          }}
+                        />
+                      </label>
+                    </Button>
+                    <Button
+                      variant="gradient"
+                      onClick={startCamera}
+                      className="flex-1"
+                      disabled={!hasCamera}
+                    >
+                      <Camera className="h-4 w-4 mr-2" />
+                      Camera
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
 
-          {/* Title */}
-          <div className="space-y-2">
-            <Label htmlFor="title">Title (optional)</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Give this memory a title..."
-              maxLength={100}
-            />
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description (optional)</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add a description or note about this memory..."
-              rows={3}
-              maxLength={500}
-            />
-          </div>
-
-          {/* Date Taken */}
-          <div className="space-y-2">
-            <Label htmlFor="takenAt">Date Taken (optional)</Label>
-            <div className="relative">
+            {/* Title */}
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-foreground font-medium">Title (optional)</Label>
               <Input
-                id="takenAt"
-                type="datetime-local"
-                value={takenAt}
-                onChange={(e) => setTakenAt(e.target.value)}
-                max={format(new Date(), "yyyy-MM-dd'T'HH:mm")}
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Give this memory a title..."
+                maxLength={100}
+                className="border-primary/20 focus:border-primary"
               />
-              <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-foreground font-medium">Description (optional)</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Add a description or note about this memory..."
+                rows={3}
+                maxLength={500}
+                className="border-primary/20 focus:border-primary resize-none"
+              />
+            </div>
+
+            {/* Date Taken */}
+            <div className="space-y-2">
+              <Label htmlFor="takenAt" className="text-foreground font-medium">Date Taken (optional)</Label>
+              <div className="relative">
+                <Input
+                  id="takenAt"
+                  type="datetime-local"
+                  value={takenAt}
+                  onChange={(e) => setTakenAt(e.target.value)}
+                  max={format(new Date(), "yyyy-MM-dd'T'HH:mm")}
+                  className="border-primary/20 focus:border-primary"
+                />
+                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex space-x-2 pt-4">
+              <Button
+                variant="outline"
+                onClick={handleClose}
+                disabled={uploading}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpload}
+                disabled={!file || uploading}
+                variant="gradient"
+                className="flex-1"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  'Upload Memory'
+                )}
+              </Button>
             </div>
           </div>
-
-          {/* Actions */}
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button
-              variant="outline"
-              onClick={handleClose}
-              disabled={uploading}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleUpload}
-              disabled={!file || uploading}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              {uploading ? 'Uploading...' : 'Upload Memory'}
-            </Button>
-          </div>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

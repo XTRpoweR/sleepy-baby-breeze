@@ -7,7 +7,7 @@ import { useBabyMemories } from '@/hooks/useBabyMemories';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Camera, Video, Plus, Crown } from 'lucide-react';
+import { ArrowLeft, Camera, Video, Plus, Crown, Sparkles } from 'lucide-react';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { UploadMemoryDialog } from '@/components/memories/UploadMemoryDialog';
@@ -25,10 +25,10 @@ const Memories = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <Camera className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
-          <p className="text-gray-600">Loading memories...</p>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Camera className="h-12 w-12 text-primary mx-auto animate-pulse" />
+          <p className="text-muted-foreground animate-fade-in">Loading memories...</p>
         </div>
       </div>
     );
@@ -49,7 +49,7 @@ const Memories = () => {
 
   if (!activeProfile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <DesktopHeader />
         <MobileHeader />
         
@@ -58,21 +58,24 @@ const Memories = () => {
             <Button 
               variant="ghost" 
               onClick={() => navigate('/dashboard')}
-              className="mb-4"
+              className="mb-4 hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Button>
           </div>
 
-          <Card className="text-center py-12">
+          <Card className="text-center py-12 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
             <CardContent>
-              <Camera className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Baby Profile Selected</h3>
-              <p className="text-gray-600 mb-6">
+              <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4 animate-fade-in" />
+              <h3 className="text-lg font-medium text-foreground mb-2">No Baby Profile Selected</h3>
+              <p className="text-muted-foreground mb-6">
                 Please select or create a baby profile to start capturing memories.
               </p>
-              <Button onClick={() => navigate('/dashboard')}>
+              <Button 
+                onClick={() => navigate('/dashboard')}
+                variant="gradient"
+              >
                 Go to Dashboard
               </Button>
             </CardContent>
@@ -83,7 +86,7 @@ const Memories = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <DesktopHeader />
       <MobileHeader />
       
@@ -93,7 +96,7 @@ const Memories = () => {
           <Button 
             variant="ghost" 
             onClick={() => navigate('/dashboard')}
-            className="mb-4"
+            className="mb-4 hover:bg-primary/10"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
@@ -101,25 +104,26 @@ const Memories = () => {
           
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gradient mb-2">
                 Photo & Video Memories
               </h1>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Capture and preserve precious moments with {activeProfile.name}
               </p>
             </div>
             
             <div className="flex items-center gap-2">
               {!isPremium && (
-                <div className="flex items-center text-orange-600 text-sm mr-2">
+                <div className="flex items-center text-amber-600 text-sm mr-2">
                   <Crown className="h-4 w-4 mr-1" />
                   Premium Feature
                 </div>
               )}
               <Button 
                 onClick={handleUploadClick}
-                className="bg-blue-600 hover:bg-blue-700"
+                variant="gradient"
                 disabled={uploading}
+                className="shadow-lg hover:shadow-xl transition-shadow"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 {uploading ? 'Uploading...' : 'Add Memory'}
@@ -130,25 +134,26 @@ const Memories = () => {
 
         {/* Premium Banner for Basic Users */}
         {!isPremium && (
-          <Card className="mb-6 border-2 border-dashed border-orange-200 bg-gradient-to-r from-orange-50 to-yellow-50">
+          <Card className="mb-6 border-2 border-dashed border-amber-200 bg-gradient-to-r from-amber-50/50 to-orange-50/50 overflow-hidden">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <div className="bg-orange-100 rounded-full p-3">
-                    <Crown className="h-6 w-6 text-orange-600" />
+                  <div className="bg-amber-100 rounded-full p-3">
+                    <Crown className="h-6 w-6 text-amber-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center">
                       Unlock Photo & Video Memories
+                      <Sparkles className="h-4 w-4 ml-2 text-amber-500" />
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-muted-foreground">
                       Capture unlimited photos and videos of your baby's precious moments with Premium
                     </p>
                   </div>
                 </div>
                 <Button 
                   onClick={() => navigate('/subscription')}
-                  className="bg-orange-600 hover:bg-orange-700"
+                  className="bg-amber-600 hover:bg-amber-700 text-white shadow-lg hover:shadow-xl transition-all"
                 >
                   Upgrade to Premium
                 </Button>
@@ -159,19 +164,22 @@ const Memories = () => {
 
         {/* Content */}
         {memories.length === 0 ? (
-          <Card className="text-center py-12">
+          <Card className="text-center py-12 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
             <CardContent>
-              <div className="mb-6">
-                <Camera className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <Video className="h-12 w-12 text-gray-300 mx-auto" />
+              <div className="mb-6 space-y-4">
+                <div className="flex justify-center items-center space-x-4">
+                  <Camera className="h-16 w-16 text-muted-foreground animate-fade-in" />
+                  <Video className="h-12 w-12 text-muted-foreground animate-fade-in" style={{ animationDelay: '0.2s' }} />
+                </div>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Memories Yet</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-lg font-medium text-foreground mb-2">No Memories Yet</h3>
+              <p className="text-muted-foreground mb-6">
                 Start capturing precious moments with {activeProfile.name}. Upload photos and videos to create a beautiful timeline of memories.
               </p>
               <Button 
                 onClick={handleUploadClick}
-                className="bg-blue-600 hover:bg-blue-700"
+                variant="gradient"
+                className="shadow-lg hover:shadow-xl transition-shadow"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Your First Memory

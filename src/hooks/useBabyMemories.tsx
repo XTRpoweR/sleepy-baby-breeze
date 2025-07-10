@@ -64,6 +64,11 @@ export const useBabyMemories = (babyId?: string) => {
       setMemories((data || []).map(toBabyMemory));
     } catch (error) {
       console.error('Error fetching memories:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load memories",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -79,6 +84,8 @@ export const useBabyMemories = (babyId?: string) => {
 
     setUploading(true);
     try {
+      console.log('Starting memory upload:', { fileName: file.name, fileSize: file.size, fileType: file.type });
+
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${babyId}/${Date.now()}.${fileExt}`;
@@ -86,7 +93,10 @@ export const useBabyMemories = (babyId?: string) => {
       // Upload file to storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('baby-memories')
-        .upload(fileName, file);
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) {
         console.error('Error uploading file:', uploadError);
@@ -98,10 +108,14 @@ export const useBabyMemories = (babyId?: string) => {
         return false;
       }
 
+      console.log('File uploaded successfully:', uploadData.path);
+
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('baby-memories')
         .getPublicUrl(fileName);
+
+      console.log('Generated public URL:', publicUrl);
 
       // Create memory record
       const { data, error } = await supabase
@@ -131,6 +145,8 @@ export const useBabyMemories = (babyId?: string) => {
         });
         return false;
       }
+
+      console.log('Memory record created successfully:', data.id);
 
       setMemories(prev => [toBabyMemory(data), ...prev]);
       toast({
@@ -246,4 +262,3 @@ export const useBabyMemories = (babyId?: string) => {
     refetch: fetchMemories
   };
 };
-
