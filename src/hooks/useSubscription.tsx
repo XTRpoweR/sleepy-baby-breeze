@@ -29,7 +29,7 @@ export const useSubscription = () => {
 };
 
 export const SubscriptionProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, session, loading: authLoading, refreshSession } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [subscriptionTier, setSubscriptionTier] = useState<'basic' | 'premium'>('basic');
@@ -37,6 +37,33 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [upgrading, setUpgrading] = useState(false);
+
+  const ensureValidSession = async (): Promise<string | null> => {
+    if (!user || !session) {
+      console.error('No user or session available');
+      return null;
+    }
+
+    // Check if session is expired or about to expire (within 5 minutes)
+    const expiresAt = session.expires_at || 0;
+    const now = Math.floor(Date.now() / 1000);
+    const fiveMinutes = 5 * 60;
+
+    if (expiresAt - now < fiveMinutes) {
+      console.log('Session expired or expiring soon, refreshing...');
+      const refreshed = await refreshSession();
+      if (!refreshed) {
+        console.error('Failed to refresh session');
+        return null;
+      }
+      
+      // Get the new session after refresh
+      const { data } = await supabase.auth.getSession();
+      return data.session?.access_token || null;
+    }
+
+    return session.access_token;
+  };
 
   const checkSubscription = async () => {
     if (!user) {
@@ -48,15 +75,23 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setLoading(true);
       console.log('Checking subscription status for user:', user.id);
 
+      const accessToken = await ensureValidSession();
+      if (!accessToken) {
+        console.error('No valid access token available');
+        setSubscriptionTier('basic');
+        setStatus('active');
+        setCurrentPeriodEnd(null);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('check-subscription', {
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
       if (error) {
         console.error('Error checking subscription:', error);
-        // Don't show error toast for authentication issues, just default to basic
         setSubscriptionTier('basic');
         setStatus('active');
         setCurrentPeriodEnd(null);
@@ -69,7 +104,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setCurrentPeriodEnd(data.current_period_end);
     } catch (error) {
       console.error('Error checking subscription:', error);
-      // Default to basic subscription on any error
       setSubscriptionTier('basic');
       setStatus('active');
       setCurrentPeriodEnd(null);
@@ -88,15 +122,22 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setUpgrading(true);
       console.log('Starting checkout process...');
       
-      // Always get the latest session before making the call
-      const sessionResult = await supabase.auth.getSession();
-      const accessToken = sessionResult.data.session?.access_token;
-
-      if (!user || !accessToken) {
-        console.error('User not authenticated or no access token');
+      if (!user) {
+        console.error('User not authenticated');
         toast({
           title: "Authentication Required",
           description: "Please log in to upgrade your subscription.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const accessToken = await ensureValidSession();
+      if (!accessToken) {
+        console.error('No valid access token available for checkout');
+        toast({
+          title: "Session Expired",
+          description: "Your login session has expired. Please sign in again to continue.",
           variant: "destructive",
         });
         return;
@@ -115,14 +156,20 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       if (error) {
         console.error('Checkout error:', error);
         const msg = error?.message || '';
-        if (
-          msg.includes('User not authenticated') ||
-          msg.includes('No authorization header') ||
-          msg.includes('Session from session_id claim in JWT does not exist')
-        ) {
+        
+        if (msg.includes('User not authenticated') || 
+            msg.includes('No authorization header') || 
+            msg.includes('Session from session_id claim in JWT does not exist') ||
+            msg.includes('session_not_found')) {
           toast({
-            title: "Your login session expired",
-            description: "Please sign in again to continue with subscription checkout.",
+            title: "Session Expired",
+            description: "Your login session has expired. Please sign in again to continue with checkout.",
+            variant: "destructive",
+          });
+        } else if (msg.includes('STRIPE_SECRET_KEY')) {
+          toast({
+            title: "Configuration Error",
+            description: "Payment system is not properly configured. Please contact support.",
             variant: "destructive",
           });
         } else {
@@ -146,21 +193,18 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       }
 
       console.log('Checkout URL received, redirecting:', data.url);
-
-      // Always redirect to the checkout URL - don't use popups as they're often blocked
       window.location.href = data.url;
       
     } catch (error: any) {
       console.error('Checkout exception:', error);
       const msg = error?.message || '';
-      if (
-        msg.includes('User not authenticated') ||
-        msg.includes('No authorization header') ||
-        msg.includes('Session from session_id claim in JWT does not exist')
-      ) {
+      
+      if (msg.includes('User not authenticated') || 
+          msg.includes('No authorization header') || 
+          msg.includes('Session from session_id claim in JWT does not exist')) {
         toast({
-          title: "Your login session expired",
-          description: "Please sign in again to continue with subscription checkout.",
+          title: "Session Expired",
+          description: "Your login session has expired. Please sign in again to continue with checkout.",
           variant: "destructive",
         });
       } else {
@@ -171,8 +215,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         });
       }
     } finally {
-      // Only reset upgrading state if we're not redirecting
-      // The timeout allows for redirect to happen
       setTimeout(() => {
         setUpgrading(false);
       }, 2000);
@@ -185,16 +227,25 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     try {
       console.log('Opening customer portal...');
 
+      const accessToken = await ensureValidSession();
+      if (!accessToken) {
+        toast({
+          title: "Session Expired",
+          description: "Please sign in again to access customer portal.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('customer-portal', {
         headers: {
-          Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
       if (error) {
         console.error('Error opening customer portal:', error);
         
-        // Check for specific Stripe configuration error
         if (error.message?.includes('No configuration provided') || 
             error.message?.includes('default configuration has not been created')) {
           toast({
@@ -205,7 +256,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
           return;
         }
 
-        // Generic error handling
         toast({
           title: "Portal Access Error",
           description: error.message || "Unable to access customer portal. Please try again or contact support.",
@@ -225,7 +275,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
       console.log('Portal URL received:', data.url);
       
-      // Handle mobile vs desktop differently for customer portal too
       if (isMobile) {
         window.location.href = data.url;
       } else {
@@ -246,7 +295,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     } catch (error) {
       console.error('Error opening customer portal:', error);
       
-      // More specific error handling
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       
       if (errorMessage.includes('configuration') || errorMessage.includes('portal')) {

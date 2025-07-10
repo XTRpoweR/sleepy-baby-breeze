@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Crown, X, Check, Users, BarChart3, Baby, Heart, Volume2, FileText, Bell } from 'lucide-react';
+import { Crown, X, Check, Users, BarChart3, Baby, Heart, Volume2, FileText, Bell, RefreshCw } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useAuth } from '@/hooks/useAuth';
 
 interface UpgradePromptProps {
   isOpen: boolean;
@@ -16,16 +17,33 @@ interface UpgradePromptProps {
 
 export const UpgradePrompt = ({ isOpen, onClose, feature }: UpgradePromptProps) => {
   const { createCheckout, upgrading } = useSubscription();
+  const { user, refreshSession } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleUpgrade = async () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+
     setIsUpgrading(true);
     try {
+      // Refresh session before checkout to ensure valid token
+      setIsRefreshing(true);
+      const sessionRefreshed = await refreshSession();
+      setIsRefreshing(false);
+      
+      if (!sessionRefreshed) {
+        console.warn('Failed to refresh session, proceeding with existing session');
+      }
+      
       await createCheckout();
     } catch (error) {
       console.error('Error creating checkout:', error);
+    } finally {
       setIsUpgrading(false);
     }
   };
@@ -129,6 +147,8 @@ export const UpgradePrompt = ({ isOpen, onClose, feature }: UpgradePromptProps) 
   const currentFeature = featureDetails[feature];
   const FeatureIcon = currentFeature.icon;
 
+  const isProcessing = isUpgrading || upgrading || isRefreshing;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -177,17 +197,31 @@ export const UpgradePrompt = ({ isOpen, onClose, feature }: UpgradePromptProps) 
           <div className="space-y-2">
             <Button 
               onClick={handleUpgrade}
-              disabled={isUpgrading || upgrading}
+              disabled={isProcessing || !user}
               className="w-full bg-orange-600 hover:bg-orange-700"
             >
-              <Crown className="h-4 w-4 mr-2" />
-              {isUpgrading || upgrading ? 'Processing...' : 'Upgrade Now'}
+              {isRefreshing ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Refreshing Session...
+                </>
+              ) : isProcessing ? (
+                'Processing...'
+              ) : !user ? (
+                'Sign In Required'
+              ) : (
+                <>
+                  <Crown className="h-4 w-4 mr-2" />
+                  Upgrade Now
+                </>
+              )}
             </Button>
             
             <Button 
               variant="outline" 
               onClick={handleViewPlans}
               className="w-full"
+              disabled={isProcessing}
             >
               View All Plans
             </Button>
