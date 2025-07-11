@@ -96,12 +96,12 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'nature': return <Waves className="h-4 w-4" />;
-      case 'ambient': return <Coffee className="h-4 w-4" />;
-      case 'lullaby': return <Baby className="h-4 w-4" />;
-      case 'sleep': return <BrainCircuit className="h-4 w-4" />;
-      case 'white-noise': return <Wind className="h-4 w-4" />;
-      default: return <Music className="h-4 w-4" />;
+      case 'nature': return <Waves className="h-5 w-5" />;
+      case 'ambient': return <Coffee className="h-5 w-5" />;
+      case 'lullaby': return <Baby className="h-5 w-5" />;
+      case 'sleep': return <BrainCircuit className="h-5 w-5" />;
+      case 'white-noise': return <Wind className="h-5 w-5" />;
+      default: return <Music className="h-5 w-5" />;
     }
   };
 
@@ -157,25 +157,25 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
         }`}
         onClick={() => handleTrackClick(track)}
       >
-        <CardContent className={`p-3 ${isMobile ? 'p-4' : 'p-3'}`}>
+        <CardContent className="p-4 sm:p-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <div className="text-primary">
+            <div className="flex items-center space-x-4 flex-1 min-w-0">
+              <div className="text-primary flex-shrink-0">
                 {getCategoryIcon(track.category)}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className={`font-medium truncate ${isMobile ? 'text-base' : 'text-sm'}`}>
+                <h4 className="font-medium text-base leading-tight truncate mb-1">
                   {track.name}
                 </h4>
-                <p className={`text-muted-foreground truncate ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                <p className="text-muted-foreground text-sm leading-tight truncate mb-2">
                   {track.description}
                 </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-xs">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs px-2 py-1">
                     {track.category.replace('-', ' ')}
                   </Badge>
                   {track.subcategory && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs px-2 py-1">
                       {track.subcategory}
                     </Badge>
                   )}
@@ -183,7 +183,7 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
               </div>
             </div>
             
-            <div className="flex items-center space-x-2 ml-2">
+            <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
               {!onSoundSelect && (
                 <Button
                   size="sm"
@@ -192,7 +192,7 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                     e.stopPropagation();
                     toggleFavorite(track.id);
                   }}
-                  className={`${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0 ${
+                  className={`h-9 w-9 p-0 ${
                     isFavorite ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
@@ -204,7 +204,7 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                 size="sm" 
                 variant="ghost" 
                 disabled={isLoading && isCurrentTrack}
-                className={`${isMobile ? 'h-10 w-10' : 'h-8 w-8'} p-0`}
+                className="h-9 w-9 p-0"
               >
                 {isLoading && isCurrentTrack ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -217,7 +217,7 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
             </div>
           </div>
           
-          {/* Mobile-optimized audio controls */}
+          {/* Enhanced audio controls with proper proportions */}
           {isCurrentTrack && currentTrack && !onSoundSelect && (
             <div className="mt-4 p-4 rounded-lg bg-muted/50 border">
               <div className="flex items-center justify-between mb-3">
@@ -231,7 +231,7 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-2">
                   {getNetworkIcon()}
                   <span className="text-xs text-muted-foreground">
                     {optimalQuality}
@@ -239,32 +239,32 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                 </div>
               </div>
 
-              {/* Progress Bar - Touch-friendly on mobile */}
+              {/* Progress Bar - Properly proportioned */}
               {duration > 0 && (
                 <div className="mb-4">
                   <div 
-                    className={`relative cursor-pointer ${isMobile ? 'py-2' : ''}`}
+                    className="relative cursor-pointer py-2"
                     onClick={handleProgressClick}
                   >
                     <Progress 
                       value={getProgressPercentage()} 
-                      className={isMobile ? 'h-3' : 'h-2'} 
+                      className="h-2" 
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                  <div className="flex justify-between text-sm text-muted-foreground mt-1">
                     <span>{formatTime(currentTime)}</span>
                     <span>{formatTime(duration)}</span>
                   </div>
                 </div>
               )}
 
-              {/* Playback Controls - Mobile-optimized */}
+              {/* Playback Controls - Consistently sized */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <Button
-                    size={isMobile ? "default" : "sm"}
+                    size="default"
                     onClick={() => isPlaying ? pauseAudio() : playAudio(currentTrack)}
-                    className="bg-primary hover:bg-primary/90"
+                    className="bg-primary hover:bg-primary/90 h-10 px-4"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -276,29 +276,29 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                     )}
                   </Button>
                   
-                  <Button size={isMobile ? "default" : "sm"} variant="outline" onClick={stopAudio}>
+                  <Button size="default" variant="outline" onClick={stopAudio} className="h-10 px-4">
                     <Square className="h-4 w-4" />
                   </Button>
                   
                   <Button
-                    size={isMobile ? "default" : "sm"}
+                    size="default"
                     variant={isLooping ? "default" : "outline"}
                     onClick={toggleLoop}
-                    className={isLooping ? 'bg-primary' : ''}
+                    className={`h-10 px-4 ${isLooping ? 'bg-primary' : ''}`}
                   >
                     <Repeat className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              {/* Volume Control - Touch-friendly */}
+              {/* Volume Control - Properly proportioned */}
               <div className="flex items-center space-x-3">
                 {volume === 0 ? (
-                  <VolumeX className="h-4 w-4 text-muted-foreground" />
+                  <VolumeX className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 ) : volume < 0.5 ? (
-                  <Volume1 className="h-4 w-4 text-muted-foreground" />
+                  <Volume1 className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 ) : (
-                  <Volume2 className="h-4 w-4 text-muted-foreground" />
+                  <Volume2 className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 )}
                 <Slider
                   value={[volume * 100]}
@@ -307,7 +307,7 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                   step={1}
                   className="flex-1"
                 />
-                <span className="text-sm text-muted-foreground w-10">
+                <span className="text-sm text-muted-foreground w-12 text-right flex-shrink-0">
                   {Math.round(volume * 100)}%
                 </span>
               </div>
@@ -319,16 +319,16 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
       <Card>
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Music className="h-5 w-5 text-primary" />
-              <span className={isMobile ? 'text-lg' : 'text-xl'}>Calming Sounds</span>
-              {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
+            <div className="flex items-center space-x-3">
+              <Music className="h-6 w-6 text-primary" />
+              <span className="text-xl font-semibold">Calming Sounds</span>
+              {isLoading && <Loader2 className="h-5 w-5 animate-spin text-primary" />}
             </div>
-            {isMobile && <Smartphone className="h-4 w-4 text-muted-foreground" />}
+            {isMobile && <Smartphone className="h-5 w-5 text-muted-foreground" />}
           </CardTitle>
         </CardHeader>
         
@@ -341,44 +341,44 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
             </div>
           )}
 
-          {/* Search Bar - Mobile-optimized */}
-          <div className="relative mb-4 sm:mb-6">
+          {/* Search Bar - Properly sized */}
+          <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search sounds..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`pl-10 ${isMobile ? 'h-12 text-base' : ''}`}
+              className="pl-10 h-11"
             />
           </div>
 
           {/* Tabs for organization */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className={`grid w-full grid-cols-3 ${isMobile ? 'h-12' : 'h-auto'}`}>
+            <TabsList className="grid w-full grid-cols-3 h-11">
               <TabsTrigger value="browse" className="flex items-center space-x-2">
                 <Music className="h-4 w-4" />
-                <span className={isMobile ? 'text-sm' : 'text-xs sm:text-sm'}>Browse</span>
+                <span>Browse</span>
               </TabsTrigger>
               <TabsTrigger value="favorites" className="flex items-center space-x-2">
                 <Heart className="h-4 w-4" />
-                <span className={isMobile ? 'text-sm' : 'text-xs sm:text-sm'}>Favorites</span>
+                <span>Favorites</span>
               </TabsTrigger>
               <TabsTrigger value="recent" className="flex items-center space-x-2">
                 <Clock className="h-4 w-4" />
-                <span className={isMobile ? 'text-sm' : 'text-xs sm:text-sm'}>Recent</span>
+                <span>Recent</span>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="browse" className="space-y-4">
-              {/* Category Filter - Responsive */}
-              <div className={`flex gap-2 mb-4 ${isMobile ? 'flex-wrap' : 'flex-wrap'}`}>
+              {/* Category Filter - Consistently sized buttons */}
+              <div className="flex gap-2 mb-4 flex-wrap">
                 {categories.map((category) => (
                   <Button
                     key={category.id}
                     variant={selectedCategory === category.id ? "default" : "outline"}
-                    size={isMobile ? "default" : "sm"}
+                    size="default"
                     onClick={() => setSelectedCategory(category.id)}
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-2 h-10 px-4"
                   >
                     <category.icon className="h-4 w-4" />
                     <span>{category.name}</span>
@@ -386,21 +386,21 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                 ))}
               </div>
 
-              {/* Track List - Responsive Grid */}
-              <div className="grid gap-3">
+              {/* Track List */}
+              <div className="grid gap-4">
                 {filteredTracks.map(renderTrackCard)}
               </div>
             </TabsContent>
 
             <TabsContent value="favorites" className="space-y-4">
               {favoriteTracks.length > 0 ? (
-                <div className="grid gap-3">
+                <div className="grid gap-4">
                   {favoriteTracks.map(renderTrackCard)}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Heart className="h-8 w-8 mx-auto mb-2" />
-                  <p>No favorite sounds yet</p>
+                <div className="text-center py-12 text-muted-foreground">
+                  <Heart className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No favorite sounds yet</h3>
                   <p className="text-sm">Heart sounds to add them here</p>
                 </div>
               )}
@@ -408,13 +408,13 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
 
             <TabsContent value="recent" className="space-y-4">
               {recentTracks.length > 0 ? (
-                <div className="grid gap-3">
+                <div className="grid gap-4">
                   {recentTracks.map(renderTrackCard)}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Clock className="h-8 w-8 mx-auto mb-2" />
-                  <p>No recently played sounds</p>
+                <div className="text-center py-12 text-muted-foreground">
+                  <Clock className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No recently played sounds</h3>
                   <p className="text-sm">Play a sound to see it here</p>
                 </div>
               )}
