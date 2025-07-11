@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -107,17 +106,14 @@ const Sounds = () => {
             
             {/* Profile Selector */}
             <div className="flex items-center space-x-4">
-              {/* Desktop Profile Selector */}
               <div className="hidden lg:block">
                 <ProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
               </div>
               
-              {/* Mobile Profile Selector */}
               <div className="lg:hidden w-full">
                 <MobileProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
               </div>
               
-              {/* Mobile Language Selector */}
               <div className="sm:hidden">
                 <LanguageSelector />
               </div>
@@ -127,7 +123,6 @@ const Sounds = () => {
 
         {activeProfile ? (
           <Tabs defaultValue="sounds" className="space-y-6">
-            {/* Mobile-friendly tabs */}
             <TabsList className="grid w-full grid-cols-2 h-auto p-1">
               <TabsTrigger value="sounds" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
                 <Volume2 className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -140,26 +135,14 @@ const Sounds = () => {
             </TabsList>
 
             <TabsContent value="sounds" className="space-y-6">
-              <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-                    <Music className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-                    <span>{t('pages.sounds.soothingSounds')}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveSoundsLibrary />
-                </CardContent>
-              </Card>
+              <ResponsiveSoundsLibrary />
             </TabsContent>
 
             <TabsContent value="quick-log" className="space-y-6">
-              {/* Sleep Articles Section */}
               <div className="mb-8">
                 <SleepArticles />
               </div>
 
-              {/* Activity Trackers Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                 <SleepTracker babyId={activeProfile.id} />
                 <FeedingTracker babyId={activeProfile.id} />
@@ -187,7 +170,6 @@ const Sounds = () => {
         )}
       </main>
 
-      {/* Profile Management Dialog */}
       <ProfileManagementDialog 
         isOpen={showProfileManagement} 
         onClose={() => setShowProfileManagement(false)} 
