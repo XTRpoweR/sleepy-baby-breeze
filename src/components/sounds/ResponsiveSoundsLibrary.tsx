@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,10 +27,16 @@ import {
   AlertCircle,
   Wifi,
   WifiOff,
-  Smartphone
+  Smartphone,
+  Timer,
+  SkipForward,
+  SkipBack,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useMobileAudioPlayer } from '@/hooks/useMobileAudioPlayer';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileAudioTimerDialog } from './MobileAudioTimerDialog';
 
 interface ResponsiveSoundsLibraryProps {
   onSoundSelect?: (sound: any) => void;
@@ -56,21 +61,31 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
     optimalQuality,
     searchQuery,
     favorites,
+    timer,
+    timeRemaining,
     playAudio,
     pauseAudio,
     stopAudio,
     seekTo,
     changeVolume,
     toggleLoop,
+    skipForward,
+    skipBackward,
+    playNextTrack,
+    playPreviousTrack,
     setAudioQuality,
     setSearchQuery,
     toggleFavorite,
-    formatTime
+    formatTime,
+    setAudioTimer,
+    setAudioCustomTimer,
+    clearTimer
   } = useMobileAudioPlayer();
 
   const isMobile = useIsMobile();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeTab, setActiveTab] = useState('browse');
+  const [showTimerDialog, setShowTimerDialog] = useState(false);
 
   const categories = [
     { id: 'all', name: 'All', icon: Music },
@@ -213,7 +228,7 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
           </div>
         </div>
         
-        {/* Audio Controls */}
+        {/* Enhanced Audio Controls */}
         {isCurrentTrack && currentTrack && !onSoundSelect && (
           <div className="mt-3 p-3 rounded-md bg-muted/50 border space-y-3">
             <div className="flex items-center justify-between">
@@ -224,6 +239,12 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                 {isBuffering && (
                   <Badge variant="outline" className="animate-pulse text-xs">
                     Buffering...
+                  </Badge>
+                )}
+                {timeRemaining && (
+                  <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700">
+                    <Timer className="h-3 w-3 mr-1" />
+                    {formatTime(timeRemaining)}
                   </Badge>
                 )}
               </div>
@@ -254,9 +275,29 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
               </div>
             )}
 
-            {/* Playback Controls */}
+            {/* Enhanced Playback Controls */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={playPreviousTrack}
+                  className="h-8 px-2"
+                  disabled={!isPlaying}
+                >
+                  <ChevronLeft className="h-3 w-3" />
+                </Button>
+                
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={skipBackward}
+                  disabled={!isPlaying}
+                  className="h-8 px-2"
+                >
+                  <SkipBack className="h-3 w-3" />
+                </Button>
+                
                 <Button
                   size="sm"
                   onClick={() => isPlaying ? pauseAudio() : playAudio(currentTrack)}
@@ -272,17 +313,48 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
                   )}
                 </Button>
                 
-                <Button size="sm" variant="outline" onClick={stopAudio} className="h-8 px-3">
-                  <Square className="h-3 w-3" />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={skipForward}
+                  disabled={!isPlaying}
+                  className="h-8 px-2"
+                >
+                  <SkipForward className="h-3 w-3" />
+                </Button>
+                
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={playNextTrack}
+                  className="h-8 px-2"
+                  disabled={!isPlaying}
+                >
+                  <ChevronRight className="h-3 w-3" />
                 </Button>
                 
                 <Button
                   size="sm"
                   variant={isLooping ? "default" : "outline"}
                   onClick={toggleLoop}
-                  className={`h-8 px-3 ${isLooping ? 'bg-primary' : ''}`}
+                  className={`h-8 px-2 ${isLooping ? 'bg-primary' : ''}`}
                 >
                   <Repeat className="h-3 w-3" />
+                </Button>
+              </div>
+              
+              <div className="flex items-center space-x-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowTimerDialog(true)}
+                  className="h-8 px-2"
+                >
+                  <Timer className="h-3 w-3" />
+                </Button>
+                
+                <Button size="sm" variant="outline" onClick={stopAudio} className="h-8 px-2">
+                  <Square className="h-3 w-3" />
                 </Button>
               </div>
             </div>
@@ -314,107 +386,130 @@ export const ResponsiveSoundsLibrary = ({ onSoundSelect }: ResponsiveSoundsLibra
   };
 
   return (
-    <Card className="w-full max-w-none">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Music className="h-5 w-5 text-primary" />
-            <span className="text-lg font-semibold">Calming Sounds</span>
-            {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
-          </div>
-          {isMobile && <Smartphone className="h-4 w-4 text-muted-foreground" />}
-        </CardTitle>
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
-        {/* Error Display */}
-        {error && (
-          <div className="flex items-center space-x-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-            <AlertCircle className="h-4 w-4 text-destructive" />
-            <span className="text-sm text-destructive">{error}</span>
-          </div>
-        )}
-
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search sounds..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 h-10"
-          />
-        </div>
-
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 h-10">
-            <TabsTrigger value="browse" className="flex items-center space-x-1 text-xs">
-              <Music className="h-3 w-3" />
-              <span>Browse</span>
-            </TabsTrigger>
-            <TabsTrigger value="favorites" className="flex items-center space-x-1 text-xs">
-              <Heart className="h-3 w-3" />
-              <span>Favorites</span>
-            </TabsTrigger>
-            <TabsTrigger value="recent" className="flex items-center space-x-1 text-xs">
-              <Clock className="h-3 w-3" />
-              <span>Recent</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="browse" className="space-y-4">
-            {/* Category Filter */}
-            <div className="flex gap-2 flex-wrap">
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={selectedCategory === category.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category.id)}
-                  className="flex items-center space-x-1 h-8 px-3"
-                >
-                  <category.icon className="h-3 w-3" />
-                  <span className="text-xs">{category.name}</span>
-                </Button>
-              ))}
+    <>
+      <Card className="w-full max-w-none">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Music className="h-5 w-5 text-primary" />
+              <span className="text-lg font-semibold">Calming Sounds</span>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
             </div>
-
-            {/* Track List */}
-            <div className="space-y-3">
-              {filteredTracks.map(renderTrackCard)}
+            <div className="flex items-center space-x-2">
+              {timeRemaining && (
+                <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                  <Timer className="h-3 w-3 mr-1" />
+                  {formatTime(timeRemaining)}
+                </Badge>
+              )}
+              {isMobile && <Smartphone className="h-4 w-4 text-muted-foreground" />}
             </div>
-          </TabsContent>
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          {/* Error Display */}
+          {error && (
+            <div className="flex items-center space-x-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <span className="text-sm text-destructive">{error}</span>
+            </div>
+          )}
 
-          <TabsContent value="favorites" className="space-y-4">
-            {favoriteTracks.length > 0 ? (
-              <div className="space-y-3">
-                {favoriteTracks.map(renderTrackCard)}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                <Heart className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No favorite sounds yet</h3>
-                <p className="text-sm">Heart sounds to add them here</p>
-              </div>
-            )}
-          </TabsContent>
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search sounds..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-10"
+            />
+          </div>
 
-          <TabsContent value="recent" className="space-y-4">
-            {recentTracks.length > 0 ? (
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3 h-10">
+              <TabsTrigger value="browse" className="flex items-center space-x-1 text-xs">
+                <Music className="h-3 w-3" />
+                <span>Browse</span>
+              </TabsTrigger>
+              <TabsTrigger value="favorites" className="flex items-center space-x-1 text-xs">
+                <Heart className="h-3 w-3" />
+                <span>Favorites</span>
+              </TabsTrigger>
+              <TabsTrigger value="recent" className="flex items-center space-x-1 text-xs">
+                <Clock className="h-3 w-3" />
+                <span>Recent</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="browse" className="space-y-4">
+              {/* Category Filter */}
+              <div className="flex gap-2 flex-wrap">
+                {categories.map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={selectedCategory === category.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category.id)}
+                    className="flex items-center space-x-1 h-8 px-3"
+                  >
+                    <category.icon className="h-3 w-3" />
+                    <span className="text-xs">{category.name}</span>
+                  </Button>
+                ))}
+              </div>
+
+              {/* Track List */}
               <div className="space-y-3">
-                {recentTracks.map(renderTrackCard)}
+                {filteredTracks.map(renderTrackCard)}
               </div>
-            ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                <Clock className="h-12 w-12 mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No recently played sounds</h3>
-                <p className="text-sm">Play a sound to see it here</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+            </TabsContent>
+
+            <TabsContent value="favorites" className="space-y-4">
+              {favoriteTracks.length > 0 ? (
+                <div className="space-y-3">
+                  {favoriteTracks.map(renderTrackCard)}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-muted-foreground">
+                  <Heart className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No favorite sounds yet</h3>
+                  <p className="text-sm">Heart sounds to add them here</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="recent" className="space-y-4">
+              {recentTracks.length > 0 ? (
+                <div className="space-y-3">
+                  {recentTracks.map(renderTrackCard)}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-muted-foreground">
+                  <Clock className="h-12 w-12 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No recently played sounds</h3>
+                  <p className="text-sm">Play a sound to see it here</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Timer Dialog */}
+      <MobileAudioTimerDialog
+        open={showTimerDialog}
+        onOpenChange={setShowTimerDialog}
+        onSetTimer={setAudioTimer}
+        onSetCustomTimer={setAudioCustomTimer}
+        onClearTimer={clearTimer}
+        currentTimer={timer}
+        timeRemaining={timeRemaining}
+        formatTime={formatTime}
+        isPlaying={isPlaying}
+      />
+    </>
   );
 };
