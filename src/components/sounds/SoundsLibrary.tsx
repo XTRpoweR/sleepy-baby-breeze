@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,7 +52,8 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     audioTracks,
     isPlaying,
     currentTrack,
-    currentTime,    duration,
+    currentTime,
+    duration,
     volume,
     isLooping,
     isLoading,
@@ -431,7 +433,101 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
           )}
         </CardContent>
       </Card>
+    );
+  };
 
+  return (
+    <div className="space-y-6">
+      {/* Search and Category Filters */}
+      <div className="space-y-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search sounds..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          {categories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <Button
+                key={category.id}
+                variant={selectedCategory === category.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory(category.id)}
+                className="flex items-center space-x-2"
+              >
+                <Icon className="h-4 w-4" />
+                <span>{category.name}</span>
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Audio Quality Controls */}
+      {showQualityControls && (
+        <AudioQualityControls
+          deviceCapabilities={deviceCapabilities}
+          qualitySettings={qualitySettings}
+          currentQuality={currentQuality}
+          networkAdaptive={networkAdaptive}
+          crossfadeEnabled={crossfadeEnabled}
+          preloadEnabled={preloadEnabled}
+          buffering={buffering}
+          onQualitySettingsChange={setQualitySettings}
+          onNetworkAdaptiveChange={setNetworkAdaptive}
+          onCrossfadeChange={setCrossfadeEnabled}
+          onPreloadChange={setPreloadEnabled}
+        />
+      )}
+
+      {/* Tabs for Browse, Favorites, Recently Played */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="browse">Browse</TabsTrigger>
+          <TabsTrigger value="favorites">Favorites ({favorites.length})</TabsTrigger>
+          <TabsTrigger value="recent">Recent ({recentTracks.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="browse" className="space-y-4">
+          <div className="grid gap-4">
+            {filteredTracks.map(renderTrackCard)}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="favorites" className="space-y-4">
+          <div className="grid gap-4">
+            {favoriteTracks.length > 0 ? (
+              favoriteTracks.map(renderTrackCard)
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <p>No favorite sounds yet. Tap the heart icon to add favorites!</p>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="recent" className="space-y-4">
+          <div className="grid gap-4">
+            {recentTracks.length > 0 ? (
+              recentTracks.map(renderTrackCard)
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <p>No recently played sounds. Start playing some sounds to see them here!</p>
+              </div>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Enhanced Audio Timer Dialog */}
       {!onSoundSelect && (
         <EnhancedAudioTimerDialog
           open={showTimerDialog}
