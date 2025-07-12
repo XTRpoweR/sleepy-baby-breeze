@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "SleepyBabyy",
@@ -12,7 +13,8 @@
     "dashboard": "Zum Dashboard",
     "signOut": "Abmelden",
     "backToDashboard": "Zurück zum Dashboard",
-    "back": "Zurück"
+    "back": "Zurück",
+    "tutorial": "Anleitung"
   },
   "hero": {
     "title": "Besserer Schlaf für",
@@ -24,6 +26,59 @@
     "freeTrial": "14 Tage kostenlos",
     "noCreditCard": "Keine Kreditkarte erforderlich",
     "madeByParents": "Von Eltern gemacht"
+  },
+  "tutorial": {
+    "title": "Erste Schritte mit SleepyBaby",
+    "subtitle": "Lernen Sie, wie Sie die Schlafmuster Ihres Babys mit unserer Schritt-für-Schritt-Anleitung verfolgen, verstehen und verbessern können.",
+    "progress": "Fortschritt",
+    "videoTitle": "Video-Tutorial",
+    "videoComingSoon": "Video-Tutorial kommt bald",
+    "estimatedTime": "Geschätzte Zeit",
+    "difficulty": "Schwierigkeit",
+    "beginner": "Anfänger",
+    "completedSteps": "{{completed}} von {{total}} Schritten abgeschlossen",
+    "allCompleted": "Alle Schritte abgeschlossen!",
+    "steps": {
+      "setup": {
+        "title": "Konto-Einrichtung",
+        "description": "Erstellen Sie Ihr Konto und richten Sie Ihr erstes Babyprofil ein",
+        "step1": "Registrieren Sie sich für Ihr kostenloses SleepyBaby-Konto mit Ihrer E-Mail-Adresse",
+        "step2": "Bestätigen Sie Ihre E-Mail und vervollständigen Sie Ihre Profilinformationen",
+        "step3": "Erstellen Sie Ihr erstes Babyprofil mit Name und Geburtsdatum",
+        "step4": "Machen Sie sich mit dem Dashboard-Layout und den Hauptfunktionen vertraut"
+      },
+      "tracking": {
+        "title": "Aktivitätsverfolgung",
+        "description": "Lernen Sie, wie Sie Schlaf-, Fütterungs- und Windelaktivitäten protokollieren",
+        "step1": "Starten Sie eine Live-Schlafphase oder protokollieren Sie Schlaf manuell mit Start-/Endzeiten",
+        "step2": "Zeichnen Sie Fütterungsphasen auf, einschließlich Typ (Brust/Flasche) und Dauer",
+        "step3": "Verfolgen Sie Windelwechsel mit Inhalt (nass/schmutzig) und Notizen",
+        "step4": "Fügen Sie benutzerdefinierte Aktivitäten wie Bauchzeit, Badezeit oder Spielphasen hinzu"
+      },
+      "reports": {
+        "title": "Berichte & Analysen",
+        "description": "Verstehen Sie die Muster Ihres Babys durch Diagramme und Einblicke",
+        "step1": "Betrachten Sie tägliche Schlafzusammenfassungen und Gesamtstunden pro Tag",
+        "step2": "Analysieren Sie Fütterungsmuster und Häufigkeit über die Zeit",
+        "step3": "Verwenden Sie Datumsbereiche-Filter, um Daten für bestimmte Zeiträume anzuzeigen",
+        "step4": "Identifizieren Sie Trends und Muster, um die Routine Ihres Babys zu optimieren"
+      },
+      "advanced": {
+        "title": "Erweiterte Funktionen",
+        "description": "Erkunden Sie Schlafpläne, Klänge und Familien-Sharing",
+        "step1": "Erstellen Sie personalisierte Schlafpläne basierend auf dem Alter Ihres Babys",
+        "step2": "Nutzen Sie unsere Klangbibliothek mit weißem Rauschen und Schlafliedern",
+        "step3": "Laden Sie Familienmitglieder zur Zusammenarbeit beim Tracking ein",
+        "step4": "Richten Sie Benachrichtigungen ein und passen Sie Ihre Erfahrung an"
+      }
+    },
+    "actions": {
+      "createProfile": "Babyprofil erstellen",
+      "startTracking": "Aktivitäten-Tracking starten",
+      "viewReports": "Berichte & Analysen anzeigen",
+      "exploreFeatures": "Erweiterte Funktionen erkunden",
+      "markCompleted": "Als abgeschlossen markieren"
+    }
   },
   "features": {
     "title": "Alles was Sie für besseren Schlaf brauchen",
@@ -53,41 +108,14 @@
       "description": "Nutzen Sie SleepyBabyy auf Deutsch, Englisch, Schwedisch, Spanisch, Französisch, Italienisch, Griechisch und Finnisch für eine komfortable Erfahrung in Ihrer Muttersprache."
     }
   },
-  "dashboard": {
-    "welcome": "Willkommen zurück, {{name}}! 👋",
-    "welcomeFallback": "Willkommen zurück! 👋",
-    "subtitle": "Bereit, heute die Schlafmuster und Aktivitäten Ihres Babys zu verfolgen?",
-    "childProfiles": "Kinderprofile",
-    "trackActivities": "Aktivitäten verfolgen",
-    "trackActivitiesDesc": "Schlaf, Fütterung, Windelwechsel protokollieren",
-    "sleepSchedule": "Schlafplan",
-    "sleepScheduleDesc": "Personalisierte Schlafempfehlungen erhalten",
-    "familySharing": "Familien-Sharing",
-    "familySharingDesc": "Familienmitglieder und Betreuer einladen",
-    "viewReports": "Berichte anzeigen",
-    "viewReportsDesc": "Schlaf- und Aktivitätsmuster analysieren",
-    "todaysActivity": "Heutige Aktivitätszusammenfassung",
-    "weekOverview": "Wochenübersicht",
-    "averageSleep": "Durchschnittlicher Schlaf",
-    "feedings": "Fütterungen",
-    "diaperChanges": "Windelwechsel",
-    "createProfile": "Kinderprofil erstellen",
-    "addProfile": "Kinderprofil hinzufügen",
-    "startTracking": "Tracking starten",
-    "noDataMessage": "Beginnen Sie mit der Verfolgung von {{name}}s Aktivitäten, um hier Einblicke und Muster zu sehen.",
-    "noProfileMessage": "Erstellen Sie ein Kinderprofil, um personalisierte Einblicke zu sehen",
-    "dailySleep": "Täglicher Schlaf",
-    "trackPatterns": "Muster verfolgen",
-    "feedingData": "Fütterungsdaten",
-    "monitorFrequency": "Häufigkeit überwachen",
-    "weeklyTrends": "Wöchentliche Trends",
-    "visualCharts": "Visuelle Diagramme"
-  },
   "pages": {
     "sleepSchedule": {
       "title": "Schlafplan",
       "subtitle": "Erstellen Sie personalisierte Schlafpläne und erhalten Sie Empfehlungen basierend auf dem Alter und den Mustern Ihres Babys",
-      "loading": "Schlafpläne werden geladen..."
+      "loading": "Schlafpläne werden geladen...",
+      "noProfile": "Kein Babyprofil ausgewählt",
+      "noProfileMessage": "Bitte wählen oder erstellen Sie ein Babyprofil, um die Schlafplan-Funktion zu nutzen.",
+      "addProfile": "Babyprofil hinzufügen"
     },
     "familySharing": {
       "title": "Familien-Sharing",
@@ -139,7 +167,14 @@
       "oneNap": "1 Nickerchen pro Tag",
       "twoNaps": "2 Nickerchen pro Tag",
       "threePlusNaps": "3+ Nickerchen pro Tag",
-      "sleepChallenges": "Schlafherausforderungen (Optional)",
+      "sleepChallenges": "Schlafherausforderungen",
+      "optional": "Optional",
+      "challengeDifficulty": "Schwierigkeiten beim Einschlafen",
+      "challengeNightWakings": "Häufige nächtliche Aufwachphasen",
+      "challengeEarlyWakeups": "Frühes Aufwachen",
+      "challengeShortNaps": "Kurze Nickerchen",
+      "challengeFightingNaps": "Widerstand gegen Nickerchen",
+      "challengeBedtimeResistance": "Widerstand zur Schlafenszeit",
       "createSchedule": "Personalisierten Schlafplan erstellen",
       "savedSchedules": "Gespeicherte Schlafpläne",
       "noSavedSchedules": "Noch keine gespeicherten Schlafpläne.",
@@ -268,6 +303,39 @@
       "notesPlaceholder": "Wie war die Aktivität? Irgendwelche Beobachtungen...",
       "submitButton": "Aktivität protokollieren",
       "submittingButton": "Speichern..."
+    },
+    "babyProfileSetup": {
+      "title": "Babyprofil erstellen",
+      "subtitle": "Erstellen Sie ein Profil, um mit der Aktivitätsverfolgung zu beginnen",
+      "nameLabel": "Name des Babys",
+      "nameRequired": "Name des Babys *",
+      "namePlaceholder": "Namen des Babys eingeben",
+      "birthDateLabel": "Geburtsdatum (Optional)",
+      "photoLabel": "Foto (Optional)",
+      "createButton": "Profil erstellen",
+      "creatingButton": "Erstelle..."
+    },
+    "editActivity": {
+      "title": "{{activity}} bearbeiten",
+      "startTimeLabel": "Startzeit *",
+      "endTimeLabel": "Endzeit",
+      "notesLabel": "Notizen",
+      "notesPlaceholder": "Notizen zu dieser Aktivität hinzufügen...",
+      "cancelButton": "Abbrechen",
+      "saveButton": "Änderungen speichern",
+      "savingButton": "Speichern..."
+    },
+    "common": {
+      "startTime": "Startzeit",
+      "endTime": "Endzeit",
+      "notes": "Notizen",
+      "notesOptional": "Notizen (Optional)",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "saving": "Speichern...",
+      "required": "Erforderlich"
     }
   },
   "activities": {
@@ -282,6 +350,57 @@
     "logActivity": "Aktivität protokollieren",
     "editActivity": "Aktivität bearbeiten",
     "deleteActivity": "Aktivität löschen"
+  },
+  "dashboard": {
+    "welcome": "Willkommen zurück, {{name}}! 👋",
+    "welcomeFallback": "Willkommen zurück! 👋",
+    "subtitle": "Bereit, heute die Schlafmuster und Aktivitäten Ihres Babys zu verfolgen?",
+    "childProfiles": "Kinderprofile",
+    "trackActivities": "Aktivitäten verfolgen",
+    "trackActivitiesDesc": "Schlaf, Fütterung, Windelwechsel protokollieren",
+    "sleepSchedule": "Schlafplan",
+    "sleepScheduleDesc": "Personalisierte Schlafempfehlungen erhalten",
+    "familySharing": "Familien-Sharing",
+    "familySharingDesc": "Familienmitglieder und Betreuer einladen",
+    "viewReports": "Berichte anzeigen",
+    "viewReportsDesc": "Schlaf- und Aktivitätsmuster analysieren",
+    "todaysActivity": "Heutige Aktivitätszusammenfassung",
+    "weekOverview": "Wochenübersicht",
+    "averageSleep": "Durchschnittlicher Schlaf",
+    "feedings": "Fütterungen",
+    "diaperChanges": "Windelwechsel",
+    "createProfile": "Kinderprofil erstellen",
+    "addProfile": "Kinderprofil hinzufügen",
+    "startTracking": "Tracking starten",
+    "noDataMessage": "Beginnen Sie mit der Verfolgung von {{name}}s Aktivitäten, um hier Einblicke und Muster zu sehen.",
+    "noProfileMessage": "Erstellen Sie ein Kinderprofil, um personalisierte Einblicke zu sehen",
+    "pediatricianReports": "Kinderarzt-Berichte",
+    "pediatricianReportsDesc": "Professionelle Berichte für Gesundheitsdienstleister erstellen",
+    "dailySleep": "Täglicher Schlaf",
+    "trackPatterns": "Muster verfolgen",
+    "feedingData": "Fütterungsdaten",
+    "monitorFrequency": "Häufigkeit überwachen",
+    "weeklyTrends": "Wöchentliche Trends",
+    "visualCharts": "Visuelle Diagramme"
+  },
+  "notifications": {
+    "loading": "Benachrichtigungen werden geladen...",
+    "title": "Intelligente Benachrichtigungen",
+    "subtitle": "Richten Sie intelligente Erinnerungen und Warnungen für die Routine Ihres Babys ein",
+    "sleepReminders": "Schlaf-Erinnerungen",
+    "feedingReminders": "Fütterungs-Erinnerungen",
+    "activityReminders": "Aktivitäts-Erinnerungen",
+    "scheduleNotifications": "Zeitplan-Benachrichtigungen",
+    "enableNotifications": "Benachrichtigungen aktivieren",
+    "customizeSettings": "Einstellungen anpassen",
+    "notificationSettings": "Benachrichtigungseinstellungen",
+    "soundEnabled": "Ton aktiviert",
+    "vibrationEnabled": "Vibration aktiviert",
+    "reminderFrequency": "Erinnerungshäufigkeit",
+    "quietHours": "Ruhezeiten",
+    "from": "Von",
+    "to": "Bis",
+    "saveSettings": "Einstellungen speichern"
   },
   "forms": {
     "required": "Erforderlich",

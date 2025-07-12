@@ -11,7 +11,10 @@
     "reviews": "Recensioni",
     "getStarted": "Inizia",
     "dashboard": "Vai alla Dashboard",
-    "signOut": "Esci"
+    "signOut": "Esci",
+    "back": "Indietro",
+    "backToDashboard": "Torna alla Dashboard",
+    "tutorial": "Tutorial"
   },
   "hero": {
     "title": "Sonno migliore per",
@@ -23,6 +26,59 @@
     "freeTrial": "Gratis per 14 giorni",
     "noCreditCard": "Nessuna carta di credito richiesta",
     "madeByParents": "Fatto da genitori"
+  },
+  "tutorial": {
+    "title": "Iniziare con SleepyBaby",
+    "subtitle": "Impara come tracciare, capire e migliorare i pattern di sonno del tuo bambino con la nostra guida passo-passo.",
+    "progress": "Progresso",
+    "videoTitle": "Tutorial video",
+    "videoComingSoon": "Tutorial video in arrivo",
+    "estimatedTime": "Tempo stimato",
+    "difficulty": "Difficoltà",
+    "beginner": "Principiante",
+    "completedSteps": "{{completed}} di {{total}} passi completati",
+    "allCompleted": "Tutti i passi completati!",
+    "steps": {
+      "setup": {
+        "title": "Configurazione account",
+        "description": "Crea il tuo account e configura il primo profilo bambino",
+        "step1": "Registrati per il tuo account SleepyBaby gratuito usando il tuo indirizzo email",
+        "step2": "Verifica la tua email e completa le informazioni del profilo",
+        "step3": "Crea il tuo primo profilo bambino con nome e data di nascita",
+        "step4": "Familiarizza con il layout della dashboard e le funzionalità principali"
+      },
+      "tracking": {
+        "title": "Tracciamento attività",
+        "description": "Impara come registrare attività di sonno, alimentazione e pannolini",
+        "step1": "Avvia una sessione di sonno dal vivo o registra il sonno manualmente con orari di inizio/fine",
+        "step2": "Registra sessioni di alimentazione includendo tipo (seno/formula) e durata",
+        "step3": "Traccia cambi pannolini con contenuto (bagnato/sporco) e note",
+        "step4": "Aggiungi attività personalizzate come tempo a pancia in giù, ora del bagno o sessioni di gioco"
+      },
+      "reports": {
+        "title": "Report e analisi",
+        "description": "Comprendi i pattern del tuo bambino attraverso grafici e approfondimenti",
+        "step1": "Visualizza riassunti quotidiani del sonno e ore totali dormite per giorno",
+        "step2": "Analizza pattern di alimentazione e frequenza nel tempo",
+        "step3": "Usa filtri di intervallo date per visualizzare dati per periodi specifici",
+        "step4": "Identifica tendenze e pattern per ottimizzare la routine del tuo bambino"
+      },
+      "advanced": {
+        "title": "Funzionalità avanzate",
+        "description": "Esplora orari del sonno, suoni e condivisione familiare",
+        "step1": "Crea orari del sonno personalizzati basati sull'età del tuo bambino",
+        "step2": "Usa la nostra libreria di suoni con rumore bianco e ninne nanne",
+        "step3": "Invita membri della famiglia a collaborare nel tracciamento",
+        "step4": "Configura notifiche e personalizza la tua esperienza"
+      }
+    },
+    "actions": {
+      "createProfile": "Crea profilo bambino",
+      "startTracking": "Inizia tracciamento attività",
+      "viewReports": "Visualizza report e analisi",
+      "exploreFeatures": "Esplora funzionalità avanzate",
+      "markCompleted": "Segna come completato"
+    }
   },
   "features": {
     "title": "Tutto quello che serve per un sonno migliore",
@@ -52,6 +108,249 @@
       "description": "Usa SleepyBabyy in italiano, inglese, tedesco, svedese, spagnolo, francese, greco e finlandese per un'esperienza confortevole nella tua lingua madre."
     }
   },
+  "pages": {
+    "sleepSchedule": {
+      "title": "Orario del sonno personalizzato",
+      "subtitle": "Crea e gestisci orari del sonno su misura per le esigenze del tuo bambino.",
+      "loading": "Caricamento orari del sonno...",
+      "noProfile": "Nessun profilo bambino selezionato",
+      "noProfileMessage": "Seleziona o crea un profilo bambino per usare la funzione orario del sonno.",
+      "addProfile": "Aggiungi profilo bambino"
+    },
+    "trackActivity": {
+      "loading": "Caricamento...",
+      "title": "Traccia attività",
+      "subtitle": "Tracciando le attività di {{name}} oggi",
+      "noActiveProfile": "Nessun profilo attivo",
+      "selectProfileMessage": "Seleziona o crea un profilo bambino per iniziare a tracciare attività."
+    },
+    "familySharing": {
+      "title": "Condivisione familiare",
+      "subtitle": "Invita membri della famiglia e assistenti per aiutare a tracciare attività e visualizzare report",
+      "setupFirst": "Configura prima il profilo bambino",
+      "setupMessage": "Devi creare un profilo bambino prima di poter condividere l'accesso con i membri della famiglia.",
+      "sharingFor": "Condivisione familiare per {{name}}",
+      "inviteMessage": "Invita membri della famiglia e assistenti per aiutare a tracciare le attività di {{name}} e visualizzare report."
+    },
+    "sounds": {
+      "title": "Suoni rilassanti e audio",
+      "subtitle": "Scegli dalla nostra libreria di suoni calmanti e guida utile per il sonno del tuo bambino.",
+      "loading": "Caricamento suoni...",
+      "guidesTab": "Guide e articoli",
+      "soundsTab": "Suoni"
+    },
+    "reports": {
+      "title": "Visualizza report",
+      "subtitle": "Analizza pattern di sonno e attività per capire le routine del tuo bambino.",
+      "loading": "Caricamento report...",
+      "showingData": "Mostrando dati per:",
+      "noBabyProfile": "Nessun profilo bambino trovato",
+      "createProfileMessage": "Crea un profilo bambino per iniziare a tracciare e visualizzare report."
+    }
+  },
+  "components": {
+    "profileSelector": {
+      "selectChild": "Seleziona bambino",
+      "addNewProfile": "Aggiungi nuovo profilo",
+      "manageProfiles": "Gestisci profili"
+    },
+    "sleepSchedule": {
+      "childInformation": "Informazioni bambino",
+      "childAge": "Età del bambino (in mesi)",
+      "childAgeHelper": "Inserisci l'età del tuo bambino in mesi",
+      "childAgeCalculated": "Calcolato dalla data di nascita (puoi aggiustare se necessario)",
+      "currentSleepHabits": "Abitudini del sonno attuali",
+      "currentBedtime": "Ora di andare a letto attuale",
+      "currentWakeTime": "Ora di sveglia attuale",
+      "napFrequency": "Quanti sonnellini fa attualmente il tuo bambino?",
+      "noNaps": "Nessun sonnellino",
+      "oneNap": "1 sonnellino al giorno",
+      "twoNaps": "2 sonnellini al giorno",
+      "threePlusNaps": "3+ sonnellini al giorno",
+      "sleepChallenges": "Sfide del sonno",
+      "optional": "Opzionale",
+      "challengeDifficulty": "Difficoltà ad addormentarsi",
+      "challengeNightWakings": "Risvegli notturni frequenti",
+      "challengeEarlyWakeups": "Risvegli precoci",
+      "challengeShortNaps": "Sonnellini brevi",
+      "challengeFightingNaps": "Resistenza ai sonnellini",
+      "challengeBedtimeResistance": "Resistenza all'ora di andare a letto",
+      "createSchedule": "Crea orario del sonno personalizzato",
+      "savedSchedules": "Orari del sonno salvati",
+      "noSavedSchedules": "Nessun orario salvato ancora.",
+      "createFirstSchedule": "Crea il tuo primo orario personalizzato sopra!",
+      "ageUpdate": "Aggiornamento età: {{current}} → {{new}} mesi",
+      "scheduleAdjustmentRecommended": "Aggiustamento orario raccomandato",
+      "currentSchedule": "Orario attuale",
+      "suggestedSchedule": "Orario suggerito",
+      "bedtime": "Ora di andare a letto",
+      "wakeTime": "Ora di sveglia",
+      "naps": "Sonnellini",
+      "totalSleep": "Sonno totale",
+      "napsPerDay": "al giorno",
+      "suggestedNapSchedule": "Orario sonnellini suggerito:",
+      "applyNewSchedule": "Applica nuovo orario",
+      "notNow": "Non ora",
+      "createdOn": "Creato il"
+    },
+    "sounds": {
+      "soothingSounds": "Suoni rilassanti e audio",
+      "setSleepTimer": "Imposta timer del sonno",
+      "chooseTimer": "Scegli quanto tempo l'audio verrà riprodotto prima di fermarsi automaticamente.",
+      "currentTimer": "Timer attuale",
+      "clearTimer": "Cancella timer",
+      "setTimer": "Imposta timer",
+      "minutes": "minuti",
+      "hour": "ora",
+      "hours": "ore"
+    },
+    "reports": {
+      "overview": "Panoramica",
+      "totalSleep": "Sonno totale",
+      "avgSleepDuration": "Durata media del sonno",
+      "totalFeedings": "Alimentazioni totali",
+      "totalActivities": "Attività totali",
+      "hoursOfSleep": "ore di sonno",
+      "perSleepSession": "per sessione di sonno",
+      "feedingSessions": "sessioni di alimentazione",
+      "allActivities": "tutte le attività",
+      "sleepDurationTrend": "Tendenza durata del sonno",
+      "dailySleepSessions": "Sessioni di sonno quotidiane"
+    },
+    "familySharing": {
+      "inviteMembers": "Invita membri della famiglia",
+      "pendingInvitations": "Inviti in sospeso",
+      "activeMembers": "Membri attivi della famiglia",
+      "sendInvitation": "Invia invito",
+      "emailAddress": "Indirizzo email",
+      "inviteRole": "Ruolo",
+      "admin": "Amministratore",
+      "viewer": "Visualizzatore",
+      "invitationSent": "Invito inviato con successo",
+      "removeAccess": "Rimuovi accesso",
+      "resendInvitation": "Reinvia invito"
+    }
+  },
+  "tracking": {
+    "sleepTracker": {
+      "title": "Tracciamento del sonno",
+      "sessionStarted": "Sessione di sonno iniziata",
+      "sessionStartedDesc": "Il tracciamento del sonno è ora in funzione",
+      "sessionEnded": "Sessione di sonno terminata",
+      "sleepSession": "Sessione di sonno",
+      "startSleepSession": "Inizia sessione di sonno",
+      "endSleepSession": "Termina sessione di sonno",
+      "sessionInProgress": "Sessione di sonno in corso...",
+      "logManually": "Registra sonno manualmente",
+      "sleepType": "Tipo di sonno",
+      "nap": "Sonnellino",
+      "nightSleep": "Sonno notturno",
+      "startTime": "Ora di inizio",
+      "endTime": "Ora di fine",
+      "notes": "Note",
+      "notesPlaceholder": "Com'è stato il sonno? Qualche osservazione...",
+      "logSleep": "Registra sessione di sonno",
+      "saving": "Salvando..."
+    },
+    "feedingTracker": {
+      "title": "Tracciamento alimentazione",
+      "feedingTypeLabel": "Tipo di alimentazione",
+      "breastfeedingLabel": "Allattamento al seno",
+      "formulaLabel": "Formula",
+      "bothLabel": "Entrambi",
+      "breastSideLabel": "Lato del seno",
+      "leftLabel": "Sinistro",
+      "rightLabel": "Destro",
+      "bothSidesLabel": "Entrambi i lati",
+      "startTimeRequired": "Ora di inizio *",
+      "startTimeLabel": "Ora di inizio",
+      "endTimeLabel": "Ora di fine",
+      "quantityLabel": "Quantità (ml/oz)",
+      "quantityPlaceholder": "Quantità consumata",
+      "notesLabel": "Note (Opzionale)",
+      "notesPlaceholder": "Com'è andata l'alimentazione? Qualche osservazione...",
+      "submitButton": "Registra alimentazione",
+      "submittingButton": "Salvando..."
+    },
+    "diaperTracker": {
+      "title": "Cambio pannolino",
+      "changeTimeRequired": "Ora del cambio *",
+      "contentsRequired": "Contenuto pannolino *",
+      "wetLabel": "Bagnato",
+      "soiledLabel": "Sporco",
+      "notesLabel": "Note (Opzionale)",
+      "notesPlaceholder": "Qualche osservazione sul cambio pannolino...",
+      "submitButton": "Registra cambio pannolino",
+      "submittingButton": "Salvando..."
+    },
+    "customActivityTracker": {
+      "title": "Attività personalizzate",
+      "activityTypeLabel": "Tipo di attività",
+      "activityTypeRequired": "Tipo di attività *",
+      "activityTypePlaceholder": "Seleziona un'attività",
+      "customNameLabel": "Nome attività personalizzata",
+      "customNameRequired": "Nome attività personalizzata *",
+      "customNamePlaceholder": "Inserisci nome attività",
+      "tummyTime": "Tempo a pancia in giù",
+      "bathTime": "Ora del bagno",
+      "playTime": "Tempo di gioco",
+      "walkOuting": "Passeggiata/Uscita",
+      "customActivity": "Attività personalizzata",
+      "startTimeLabel": "Ora di inizio",
+      "startTimeRequired": "Ora di inizio *",
+      "endTimeLabel": "Ora di fine",
+      "notesLabel": "Note (Opzionale)",
+      "notesPlaceholder": "Com'è andata l'attività? Qualche osservazione...",
+      "submitButton": "Registra attività",
+      "submittingButton": "Salvando..."
+    },
+    "babyProfileSetup": {
+      "title": "Crea profilo bambino",
+      "subtitle": "Crea un profilo per iniziare a tracciare attività",
+      "nameLabel": "Nome del bambino",
+      "nameRequired": "Nome del bambino *",
+      "namePlaceholder": "Inserisci nome del bambino",
+      "birthDateLabel": "Data di nascita (Opzionale)",
+      "photoLabel": "Foto (Opzionale)",
+      "createButton": "Crea profilo",
+      "creatingButton": "Creando..."
+    },
+    "editActivity": {
+      "title": "Modifica {{activity}}",
+      "startTimeLabel": "Ora di inizio *",
+      "endTimeLabel": "Ora di fine",
+      "notesLabel": "Note",
+      "notesPlaceholder": "Aggiungi note su questa attività...",
+      "cancelButton": "Annulla",
+      "saveButton": "Salva modifiche",
+      "savingButton": "Salvando..."
+    },
+    "common": {
+      "startTime": "Ora di inizio",
+      "endTime": "Ora di fine",
+      "notes": "Note",
+      "notesOptional": "Note (Opzionale)",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "saving": "Salvando...",
+      "required": "Richiesto"
+    }
+  },
+  "activities": {
+    "sleep": "Sonno",
+    "feeding": "Alimentazione",
+    "diaper": "Pannolino",
+    "custom": "Personalizzata",
+    "startTime": "Ora di inizio",
+    "endTime": "Ora di fine",
+    "duration": "Durata",
+    "notes": "Note",
+    "logActivity": "Registra attività",
+    "editActivity": "Modifica attività",
+    "deleteActivity": "Elimina attività"
+  },
   "dashboard": {
     "welcome": "Bentornato, {{name}}! 👋",
     "welcomeFallback": "Bentornato! 👋",
@@ -74,7 +373,55 @@
     "addProfile": "Aggiungi profilo bambino",
     "startTracking": "Inizia a tracciare",
     "noDataMessage": "Inizia a tracciare le attività di {{name}} per vedere approfondimenti e pattern qui.",
-    "noProfileMessage": "Crea un profilo bambino per vedere approfondimenti personalizzati"
+    "noProfileMessage": "Crea un profilo bambino per vedere approfondimenti personalizzati",
+    "pediatricianReports": "Report pediatrici",
+    "pediatricianReportsDesc": "Genera report professionali per operatori sanitari",
+    "dailySleep": "Sonno quotidiano",
+    "trackPatterns": "Traccia pattern",
+    "feedingData": "Dati alimentazione",
+    "monitorFrequency": "Monitora frequenza",
+    "weeklyTrends": "Tendenze settimanali",
+    "visualCharts": "Grafici visuali"
+  },
+  "notifications": {
+    "loading": "Caricamento notifiche...",
+    "title": "Notifiche intelligenti",
+    "subtitle": "Configura promemoria intelligenti e avvisi per la routine del tuo bambino",
+    "sleepReminders": "Promemoria del sonno",
+    "feedingReminders": "Promemoria alimentazione",
+    "activityReminders": "Promemoria attività",
+    "scheduleNotifications": "Notifiche orario",
+    "enableNotifications": "Abilita notifiche",
+    "customizeSettings": "Personalizza impostazioni",
+    "notificationSettings": "Impostazioni notifiche",
+    "soundEnabled": "Suono abilitato",
+    "vibrationEnabled": "Vibrazione abilitata",
+    "reminderFrequency": "Frequenza promemoria",
+    "quietHours": "Ore silenziose",
+    "from": "Da",
+    "to": "A",
+    "saveSettings": "Salva impostazioni"
+  },
+  "forms": {
+    "required": "Richiesto",
+    "optional": "Opzionale",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "create": "Crea",
+    "update": "Aggiorna"
+  },
+  "dates": {
+    "today": "Oggi",
+    "yesterday": "Ieri",
+    "thisWeek": "Questa settimana",
+    "lastWeek": "Settimana scorsa",
+    "thisMonth": "Questo mese",
+    "lastMonth": "Mese scorso",
+    "last7Days": "Ultimi 7 giorni",
+    "last30Days": "Ultimi 30 giorni",
+    "custom": "Intervallo personalizzato"
   },
   "common": {
     "loading": "Caricamento...",
@@ -88,7 +435,11 @@
     "previous": "Precedente",
     "confirm": "Conferma",
     "yes": "Sì",
-    "no": "No"
+    "no": "No",
+    "view": "Visualizza",
+    "add": "Aggiungi",
+    "remove": "Rimuovi",
+    "duration": "Durata"
   },
   "footer": {
     "tagline": "Aiutare le famiglie a ottenere il riposo che meritano, una notte alla volta.",

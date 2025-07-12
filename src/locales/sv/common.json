@@ -1,3 +1,4 @@
+
 {
   "app": {
     "name": "SleepyBabyy",
@@ -122,9 +123,37 @@
       "subtitle": "Spåra {{name}}s aktiviteter idag",
       "noActiveProfile": "Ingen aktiv profil",
       "selectProfileMessage": "Välj eller skapa en barnprofil för att börja spåra aktiviteter."
+    },
+    "familySharing": {
+      "title": "Familjeindelning",
+      "subtitle": "Bjud in familjemedlemmar och vårdgivare att hjälpa till med spårning av aktiviteter och visa rapporter",
+      "setupFirst": "Sätt upp barnprofil först",
+      "setupMessage": "Du behöver skapa en barnprofil innan du kan dela åtkomst med familjemedlemmar.",
+      "sharingFor": "Familjeindelning för {{name}}",
+      "inviteMessage": "Bjud in familjemedlemmar och vårdgivare att hjälpa till med att spåra {{name}}s aktiviteter och visa rapporter."
+    },
+    "sounds": {
+      "title": "Lugnande ljud & audio",
+      "subtitle": "Välj från vårt bibliotek med lugnande ljud och hjälpsam sömnvägledning för ditt barn.",
+      "loading": "Laddar ljud...",
+      "guidesTab": "Guider & artiklar",
+      "soundsTab": "Ljud"
+    },
+    "reports": {
+      "title": "Visa rapporter",
+      "subtitle": "Analysera sömn- och aktivitetsmönster för att förstå ditt barns rutiner.",
+      "loading": "Laddar rapporter...",
+      "showingData": "Visar data för:",
+      "noBabyProfile": "Ingen barnprofil hittad",
+      "createProfileMessage": "Skapa en barnprofil för att börja spåra och visa rapporter."
     }
   },
   "components": {
+    "profileSelector": {
+      "selectChild": "Välj barn",
+      "addNewProfile": "Lägg till ny profil",
+      "manageProfiles": "Hantera profiler"
+    },
     "sleepSchedule": {
       "childInformation": "Barninformation",
       "childAge": "Barnets ålder (i månader)",
@@ -146,14 +175,61 @@
       "challengeShortNaps": "Korta tupplurar",
       "challengeFightingNaps": "Motstånd till tupplur",
       "challengeBedtimeResistance": "Motstånd vid läggdags",
-      "createSchedule": "Skapa personligt sömnschema"
+      "createSchedule": "Skapa personligt sömnschema",
+      "savedSchedules": "Sparade sömnscheman",
+      "noSavedSchedules": "Inga sparade scheman än.",
+      "createFirstSchedule": "Skapa ditt första personliga schema ovan!",
+      "ageUpdate": "Åldersuppdatering: {{current}} → {{new}} månader",
+      "scheduleAdjustmentRecommended": "Schemajustering rekommenderad",
+      "currentSchedule": "Nuvarande schema",
+      "suggestedSchedule": "Föreslaget schema",
+      "bedtime": "Läggtid",
+      "wakeTime": "Uppvakningstid",
+      "naps": "Tupplurar",
+      "totalSleep": "Total sömn",
+      "napsPerDay": "per dag",
+      "suggestedNapSchedule": "Föreslaget tupplurschema:",
+      "applyNewSchedule": "Tillämpa nytt schema",
+      "notNow": "Inte nu",
+      "createdOn": "Skapad den"
+    },
+    "sounds": {
+      "soothingSounds": "Lugnande ljud & audio",
+      "setSleepTimer": "Ställ in sömntimer",
+      "chooseTimer": "Välj hur länge ljudet ska spelas innan det automatiskt stoppas.",
+      "currentTimer": "Nuvarande timer",
+      "clearTimer": "Rensa timer",
+      "setTimer": "Ställ in timer",
+      "minutes": "minuter",
+      "hour": "timme",
+      "hours": "timmar"
+    },
+    "reports": {
+      "overview": "Översikt",
+      "totalSleep": "Total sömn",
+      "avgSleepDuration": "Genomsnittlig sömnlängd",
+      "totalFeedings": "Totala matningar",
+      "totalActivities": "Totala aktiviteter",
+      "hoursOfSleep": "timmars sömn",
+      "perSleepSession": "per sömnsession",
+      "feedingSessions": "matningssessioner",
+      "allActivities": "alla aktiviteter",
+      "sleepDurationTrend": "Trend för sömnlängd",
+      "dailySleepSessions": "Dagliga sömnsessioner"
+    },
+    "familySharing": {
+      "inviteMembers": "Bjud in familjemedlemmar",
+      "pendingInvitations": "Väntande inbjudningar",
+      "activeMembers": "Aktiva familjemedlemmar",
+      "sendInvitation": "Skicka inbjudan",
+      "emailAddress": "E-postadress",
+      "inviteRole": "Roll",
+      "admin": "Administratör",
+      "viewer": "Betraktare",
+      "invitationSent": "Inbjudan skickad framgångsrikt",
+      "removeAccess": "Ta bort åtkomst",
+      "resendInvitation": "Skicka om inbjudan"
     }
-  },
-  "activities": {
-    "sleep": "Sömn",
-    "feeding": "Matning",
-    "diaper": "Blöja",
-    "custom": "Anpassad"
   },
   "tracking": {
     "sleepTracker": {
@@ -231,7 +307,7 @@
       "tummyTime": "Magläge",
       "bathTime": "Badtid",
       "playTime": "Lektid",
-      "walkOuting": "Promenad/Utflykt",
+      "walkOuting": "Promenad/Utفlykt",
       "customActivity": "Anpassad aktivitet",
       "startTimeLabel": "Starttid",
       "startTimeRequired": "Starttid *",
@@ -264,6 +340,19 @@
       "savingButton": "Sparar..."
     }
   },
+  "activities": {
+    "sleep": "Sömn",
+    "feeding": "Matning",
+    "diaper": "Blöja",
+    "custom": "Anpassad",
+    "startTime": "Starttid",
+    "endTime": "Sluttid",
+    "duration": "Varaktighet",
+    "notes": "Anteckningar",
+    "logActivity": "Logga aktivitet",
+    "editActivity": "Redigera aktivitet",
+    "deleteActivity": "Ta bort aktivitet"
+  },
   "dashboard": {
     "welcome": "Välkommen tillbaka, {{name}}! 👋",
     "welcomeFallback": "Välkommen tillbaka! 👋",
@@ -286,7 +375,34 @@
     "addProfile": "Lägg till barnprofil",
     "startTracking": "Börja spåra",
     "noDataMessage": "Börja spåra {{name}}s aktiviteter för att se insikter och mönster här.",
-    "noProfileMessage": "Skapa en barnprofil för att se personliga insikter"
+    "noProfileMessage": "Skapa en barnprofil för att se personliga insikter",
+    "pediatricianReports": "Barnläkarrapporter",
+    "pediatricianReportsDesc": "Generera professionella rapporter för vårdgivare",
+    "dailySleep": "Daglig sömn",
+    "trackPatterns": "Spåra mönster",
+    "feedingData": "Matningsdata",
+    "monitorFrequency": "Övervaka frekvens",
+    "weeklyTrends": "Veckovisa trender",
+    "visualCharts": "Visuella diagram"
+  },
+  "notifications": {
+    "loading": "Laddar aviseringar...",
+    "title": "Smarta aviseringar",
+    "subtitle": "Ställ in intelligenta påminnelser och varningar för ditt barns rutin",
+    "sleepReminders": "Sömnpåminnelser",
+    "feedingReminders": "Matningspåminnelser",
+    "activityReminders": "Aktivitetspåminnelser",
+    "scheduleNotifications": "Schemaaviseringar",
+    "enableNotifications": "Aktivera aviseringar",
+    "customizeSettings": "Anpassa inställningar",
+    "notificationSettings": "Aviseringsinställningar",
+    "soundEnabled": "Ljud aktiverat",
+    "vibrationEnabled": "Vibration aktiverad",
+    "reminderFrequency": "Påminnelsefrekvens",
+    "quietHours": "Tysta timmar",
+    "from": "Från",
+    "to": "Till",
+    "saveSettings": "Spara inställningar"
   },
   "forms": {
     "required": "Obligatorisk",
@@ -297,6 +413,17 @@
     "edit": "Redigera",
     "create": "Skapa",
     "update": "Uppdatera"
+  },
+  "dates": {
+    "today": "Idag",
+    "yesterday": "Igår",
+    "thisWeek": "Denna vecka",
+    "lastWeek": "Förra veckan",
+    "thisMonth": "Denna månad",
+    "lastMonth": "Förra månaden",
+    "last7Days": "Senaste 7 dagarna",
+    "last30Days": "Senaste 30 dagarna",
+    "custom": "Anpassat intervall"
   },
   "common": {
     "loading": "Laddar...",
@@ -311,6 +438,9 @@
     "confirm": "Bekräfta",
     "yes": "Ja",
     "no": "Nej",
+    "view": "Visa",
+    "add": "Lägg till",
+    "remove": "Ta bort",
     "duration": "Varaktighet"
   },
   "footer": {

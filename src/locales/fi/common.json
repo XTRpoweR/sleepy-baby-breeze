@@ -11,7 +11,10 @@
     "reviews": "Arvostelut",
     "getStarted": "Aloita",
     "dashboard": "Siirry hallintapaneeliin",
-    "signOut": "Kirjaudu ulos"
+    "signOut": "Kirjaudu ulos",
+    "back": "Takaisin",
+    "backToDashboard": "Takaisin hallintapaneeliin",
+    "tutorial": "Opetus"
   },
   "hero": {
     "title": "Parempi uni",
@@ -23,6 +26,59 @@
     "freeTrial": "Ilmainen 14 päivää",
     "noCreditCard": "Luottokorttia ei tarvita",
     "madeByParents": "Vanhempien tekemä"
+  },
+  "tutorial": {
+    "title": "SleepyBabyyn tutustuminen",
+    "subtitle": "Opi seuraamaan, ymmärtämään ja parantamaan vauvasi unimalleja vaiheittaisen oppaamme avulla.",
+    "progress": "Edistyminen",
+    "videoTitle": "Video-opetus",
+    "videoComingSoon": "Video-opetus tulossa pian",
+    "estimatedTime": "Arvioitu aika",
+    "difficulty": "Vaikeustaso",
+    "beginner": "Aloittelija",
+    "completedSteps": "{{completed}}/{{total}} vaihetta valmista",
+    "allCompleted": "Kaikki vaiheet valmiit!",
+    "steps": {
+      "setup": {
+        "title": "Tilin määrittäminen",
+        "description": "Luo tilisi ja määritä ensimmäinen vauvaprofiiili",
+        "step1": "Rekisteröidy ilmaiseen SleepyBaby-tiliisi sähköpostiosoitteellasi",
+        "step2": "Vahvista sähköpostisi ja täydennä profiilitietosi",
+        "step3": "Luo ensimmäinen vauvaprofiiili nimellä ja syntymäpäivällä",
+        "step4": "Tutustu hallintapaneelin asetteluun ja pääominaisuuksiin"
+      },
+      "tracking": {
+        "title": "Toimintojen seuranta",
+        "description": "Opi kirjaamaan uni-, ruokailu- ja vaippatoimintoja",
+        "step1": "Aloita live-unijakso tai kirjaa uni manuaalisesti aloitus-/lopetusajoilla",
+        "step2": "Kirjaa ruokailuistunnot mukaan lukien tyyppi (rinta/korvike) ja kesto",
+        "step3": "Seuraa vaipanvaihtoja sisällön (märkä/likainen) ja muistiinpanojen kanssa",
+        "step4": "Lisää mukautettuja toimintoja kuten vatsalleen-aika, kylpyaika tai leikkiistunnot"
+      },
+      "reports": {
+        "title": "Raportit ja analytiikka",
+        "description": "Ymmärrä vauvasi malleja kaavioiden ja näkemysten avulla",
+        "step1": "Tarkastele päivittäisiä uniyhteenvetoja ja päivittäisiä unitunteja",
+        "step2": "Analysoi ruokailumalleja ja tiheyttä ajan kuluessa",
+        "step3": "Käytä päivämäärävälin suodattimia nähdäksesi tietoja tietyiltä ajanjaksoilta",
+        "step4": "Tunnista trendit ja mallit optimoidaksesi vauvasi rutiinin"
+      },
+      "advanced": {
+        "title": "Edistyneet ominaisuudet",
+        "description": "Tutustu uniaikatauluihin, ääniin ja perheen jakamiseen",
+        "step1": "Luo henkilökohtaisia uniaikatauluja vauvasi iän perusteella",
+        "step2": "Käytä äänikirjastoamme valkoisella kohinalla ja kehtolaululle",
+        "step3": "Kutsu perheenjäseniä yhteistyöhön seurannassa",
+        "step4": "Määritä ilmoitukset ja mukauta kokemustasi"
+      }
+    },
+    "actions": {
+      "createProfile": "Luo vauvaprofii
+      "startTracking": "Aloita toimintojen seuranta",
+      "viewReports": "Näytä raportit ja analytiikka",
+      "exploreFeatures": "Tutustu edistyneisiin ominaisuuksiin",
+      "markCompleted": "Merkitse valmiiksi"
+    }
   },
   "features": {
     "title": "Kaikki mitä tarvitset parempaan uneen",
@@ -52,6 +108,249 @@
       "description": "Käytä SleepyBabyy suomeksi, englanniksi, saksaksi, ruotsiksi, espanjaksi, ranskaksi, italiaksi ja kreikaksi mukavaa kokemusta varten äidinkielelläsi."
     }
   },
+  "pages": {
+    "sleepSchedule": {
+      "title": "Henkilökohtainen uniaikataulu",
+      "subtitle": "Luo ja hallitse uniaikatauluja, jotka on räätälöity vauvasi tarpeisiin.",
+      "loading": "Ladataan uniaikatauluja...",
+      "noProfile": "Ei valittua vauvaprofiilia",
+      "noProfileMessage": "Valitse tai luo vauvaprofiiili käyttääksesi uniaikataulu-ominaisuutta.",
+      "addProfile": "Lisää vauvaprofiiili"
+    },
+    "trackActivity": {
+      "loading": "Ladataan...",
+      "title": "Seuraa toimintoja",
+      "subtitle": "Seurataan {{name}}n toimintoja tänään",
+      "noActiveProfile": "Ei aktiivista profiilia",
+      "selectProfileMessage": "Valitse tai luo vauvaprofiiili aloittaaksesi toimintojen seurannan."
+    },
+    "familySharing": {
+      "title": "Perheen jakaminen",
+      "subtitle": "Kutsu perheenjäseniä ja hoitajia auttamaan toimintojen seurannassa ja raporttien katselussa",
+      "setupFirst": "Määritä vauvaprofiiili ensin",
+      "setupMessage": "Sinun täytyy luoda vauvaprofiiili ennen kuin voit jakaa pääsyn perheenjäsenten kanssa.",
+      "sharingFor": "Perheen jakaminen {{name}}lle",
+      "inviteMessage": "Kutsu perheenjäseniä ja hoitajia auttamaan {{name}}n toimintojen seurannassa ja raporttien katselussa."
+    },
+    "sounds": {
+      "title": "Rauhoittavat äänet ja audio",
+      "subtitle": "Valitse kirjastostamme rauhoittavia ääniä ja hyödyllistä uni-ohjausta vauvallesi.",
+      "loading": "Ladataan ääniä...",
+      "guidesTab": "Oppaat ja artikkelit",
+      "soundsTab": "Äänet"
+    },
+    "reports": {
+      "title": "Näytä raportit",
+      "subtitle": "Analysoi uni- ja toimintamalleja ymmärtääksesi vauvasi rutiinit.",
+      "loading": "Ladataan raportteja...",
+      "showingData": "Näytetään tiedot:",
+      "noBabyProfile": "Vauvaprofiilia ei löytynyt",
+      "createProfileMessage": "Luo vauvaprofiiili aloittaaksesi seurannan ja raporttien katselun."
+    }
+  },
+  "components": {
+    "profileSelector": {
+      "selectChild": "Valitse lapsi",
+      "addNewProfile": "Lisää uusi profiili",
+      "manageProfiles": "Hallitse profiileja"
+    },
+    "sleepSchedule": {
+      "childInformation": "Lapsen tiedot",
+      "childAge": "Lapsen ikä (kuukausina)",
+      "childAgeHelper": "Anna lapsesi ikä kuukausina",
+      "childAgeCalculated": "Laskettu syntymäpäivästä (voit säätää tarvittaessa)",
+      "currentSleepHabits": "Nykyiset unitottumukset",
+      "currentBedtime": "Nykyinen nukkumaanmenoaika",
+      "currentWakeTime": "Nykyinen heräämisaika",
+      "napFrequency": "Kuinka monta päiväunta lapsesi tällä hetkellä pitää?",
+      "noNaps": "Ei päiväunia",
+      "oneNap": "1 päiväuni päivässä",
+      "twoNaps": "2 päiväunta päivässä",
+      "threePlusNaps": "3+ päiväunta päivässä",
+      "sleepChallenges": "Unihaasteet",
+      "optional": "Valinnainen",
+      "challengeDifficulty": "Nukahtamisvaikeudet",
+      "challengeNightWakings": "Toistuvat yöheräilyt",
+      "challengeEarlyWakeups": "Varhaiset heräilyt",
+      "challengeShortNaps": "Lyhyet päiväunet",
+      "challengeFightingNaps": "Päiväunien vastustaminen",
+      "challengeBedtimeResistance": "Nukkumaanmenon vastustaminen",
+      "createSchedule": "Luo henkilökohtainen uniaikataulu",
+      "savedSchedules": "Tallennetut uniaikataulut",
+      "noSavedSchedules": "Ei vielä tallennettuja aikatauluja.",
+      "createFirstSchedule": "Luo ensimmäinen henkilökohtainen aikataulusi yllä!",
+      "ageUpdate": "Ikäpäivitys: {{current}} → {{new}} kuukautta",
+      "scheduleAdjustmentRecommended": "Aikataulun säätö suositeltu",
+      "currentSchedule": "Nykyinen aikataulu",
+      "suggestedSchedule": "Ehdotettu aikataulu",
+      "bedtime": "Nukkumaanmenoaika",
+      "wakeTime": "Heräämisaika",
+      "naps": "Päiväunet",
+      "totalSleep": "Kokonaisuni",
+      "napsPerDay": "päivässä",
+      "suggestedNapSchedule": "Ehdotettu päiväuniaikataulu:",
+      "applyNewSchedule": "Käytä uutta aikataulua",
+      "notNow": "Ei nyt",
+      "createdOn": "Luotu"
+    },
+    "sounds": {
+      "soothingSounds": "Rauhoittavat äänet ja audio",
+      "setSleepTimer": "Aseta unitajmer",
+      "chooseTimer": "Valitse kuinka kauan ääni toistetaan ennen automaattista pysähtymistä.",
+      "currentTimer": "Nykyinen ajastin",
+      "clearTimer": "Tyhjennä ajastin",
+      "setTimer": "Aseta ajastin",
+      "minutes": "minuuttia",
+      "hour": "tunti",
+      "hours": "tuntia"
+    },
+    "reports": {
+      "overview": "Yleiskatsaus",
+      "totalSleep": "Kokonaisuni",
+      "avgSleepDuration": "Keskimääräinen unin kesto",
+      "totalFeedings": "Ruokailut yhteensä",
+      "totalActivities": "Toiminnot yhteensä",
+      "hoursOfSleep": "tuntia unta",
+      "perSleepSession": "unijakso kohden",
+      "feedingSessions": "ruokailuistuntoa",
+      "allActivities": "kaikki toiminnot",
+      "sleepDurationTrend": "Unin keston trendi",
+      "dailySleepSessions": "Päivittäiset uniistunnot"
+    },
+    "familySharing": {
+      "inviteMembers": "Kutsu perheenjäseniä",
+      "pendingInvitations": "Odottavat kutsut",
+      "activeMembers": "Aktiiviset perheenjäsenet",
+      "sendInvitation": "Lähetä kutsu",
+      "emailAddress": "Sähköpostiosoite",
+      "inviteRole": "Rooli",
+      "admin": "Järjestelmänvalvoja",
+      "viewer": "Katsoja",
+      "invitationSent": "Kutsu lähetetty onnistuneesti",
+      "removeAccess": "Poista käyttöoikeus",
+      "resendInvitation": "Lähetä kutsu uudelleen"
+    }
+  },
+  "tracking": {
+    "sleepTracker": {
+      "title": "Uniseuranta",
+      "sessionStarted": "Uniistunto aloitettu",
+      "sessionStartedDesc": "Uniseuranta on nyt käynnissä",
+      "sessionEnded": "Uniistunto päättynyt",
+      "sleepSession": "Uniistunto",
+      "startSleepSession": "Aloita uniistunto",
+      "endSleepSession": "Lopeta uniistunto",
+      "sessionInProgress": "Uniistunto käynnissä...",
+      "logManually": "Kirjaa uni manuaalisesti",
+      "sleepType": "Unityyppi",
+      "nap": "Päiväuni",
+      "nightSleep": "Yöuni",
+      "startTime": "Aloitusaika",
+      "endTime": "Lopetusaika",
+      "notes": "Muistiinpanot",
+      "notesPlaceholder": "Millainen uni oli? Havaintoja...",
+      "logSleep": "Kirjaa uniistunto",
+      "saving": "Tallennetaan..."
+    },
+    "feedingTracker": {
+      "title": "Ruokailuseuranta",
+      "feedingTypeLabel": "Ruokailun tyyppi",
+      "breastfeedingLabel": "Imetys",
+      "formulaLabel": "Korvike",
+      "bothLabel": "Molemmat",
+      "breastSideLabel": "Rinnan puoli",
+      "leftLabel": "Vasen",
+      "rightLabel": "Oikea",
+      "bothSidesLabel": "Molemmat puolet",
+      "startTimeRequired": "Aloitusaika *",
+      "startTimeLabel": "Aloitusaika",
+      "endTimeLabel": "Lopetusaika",
+      "quantityLabel": "Määrä (ml/oz)",
+      "quantityPlaceholder": "Kulutettu määrä",
+      "notesLabel": "Muistiinpanot (Valinnainen)",
+      "notesPlaceholder": "Miten ruokailu sujui? Havaintoja...",
+      "submitButton": "Kirjaa ruokailu",
+      "submittingButton": "Tallennetaan..."
+    },
+    "diaperTracker": {
+      "title": "Vaipanvaihto",
+      "changeTimeRequired": "Vaihtoaika *",
+      "contentsRequired": "Vaipan sisältö *",
+      "wetLabel": "Märkä",
+      "soiledLabel": "Likainen",
+      "notesLabel": "Muistiinpanot (Valinnainen)",
+      "notesPlaceholder": "Havaintoja vaipanvaihdosta...",
+      "submitButton": "Kirjaa vaipanvaihto",
+      "submittingButton": "Tallennetaan..."
+    },
+    "customActivityTracker": {
+      "title": "Mukautetut toiminnot",
+      "activityTypeLabel": "Toiminnon tyyppi",
+      "activityTypeRequired": "Toiminnon tyyppi *",
+      "activityTypePlaceholder": "Valitse toiminto",
+      "customNameLabel": "Mukautetun toiminnon nimi",
+      "customNameRequired": "Mukautetun toiminnon nimi *",
+      "customNamePlaceholder": "Anna toiminnon nimi",
+      "tummyTime": "Vatsalleen-aika",
+      "bathTime": "Kylpyaika",
+      "playTime": "Leikkiaika",
+      "walkOuting": "Kävely/Retki",
+      "customActivity": "Mukautettu toiminto",
+      "startTimeLabel": "Aloitusaika",
+      "startTimeRequired": "Aloitusaika *",
+      "endTimeLabel": "Lopetusaika",
+      "notesLabel": "Muistiinpanot (Valinnainen)",
+      "notesPlaceholder": "Miten toiminto sujui? Havaintoja...",
+      "submitButton": "Kirjaa toiminto",
+      "submittingButton": "Tallennetaan..."
+    },
+    "babyProfileSetup": {
+      "title": "Luo vauvaprofiiili",
+      "subtitle": "Luo profiili aloittaaksesi toimintojen seurannan",
+      "nameLabel": "Vauvan nimi",
+      "nameRequired": "Vauvan nimi *",
+      "namePlaceholder": "Anna vauvan nimi",
+      "birthDateLabel": "Syntymäpäivä (Valinnainen)",
+      "photoLabel": "Kuva (Valinnainen)",
+      "createButton": "Luo profiili",
+      "creatingButton": "Luodaan..."
+    },
+    "editActivity": {
+      "title": "Muokkaa {{activity}}",
+      "startTimeLabel": "Aloitusaika *",
+      "endTimeLabel": "Lopetusaika",
+      "notesLabel": "Muistiinpanot",
+      "notesPlaceholder": "Lisää muistiinpanoja tästä toiminnosta...",
+      "cancelButton": "Peruuta",
+      "saveButton": "Tallenna muutokset",
+      "savingButton": "Tallennetaan..."
+    },
+    "common": {
+      "startTime": "Aloitusaika",
+      "endTime": "Lopetusaika",
+      "notes": "Muistiinpanot",
+      "notesOptional": "Muistiinpanot (Valinnainen)",
+      "save": "Tallenna",
+      "cancel": "Peruuta",
+      "edit": "Muokkaa",
+      "delete": "Poista",
+      "saving": "Tallennetaan...",
+      "required": "Pakollinen"
+    }
+  },
+  "activities": {
+    "sleep": "Uni",
+    "feeding": "Ruokailu",
+    "diaper": "Vaippa",
+    "custom": "Mukautettu",
+    "startTime": "Aloitusaika",
+    "endTime": "Lopetusaika",
+    "duration": "Kesto",
+    "notes": "Muistiinpanot",
+    "logActivity": "Kirjaa toiminto",
+    "editActivity": "Muokkaa toimintoa",
+    "deleteActivity": "Poista toiminto"
+  },
   "dashboard": {
     "welcome": "Tervetuloa takaisin, {{name}}! 👋",
     "welcomeFallback": "Tervetuloa takaisin! 👋",
@@ -74,7 +373,55 @@
     "addProfile": "Lisää lapsiprofiili",
     "startTracking": "Aloita seuranta",
     "noDataMessage": "Aloita {{name}}n toimintojen seuranta nähdäksesi näkemyksiä ja malleja tässä.",
-    "noProfileMessage": "Luo lapsiprofiili nähdäksesi henkilökohtaisia näkemyksiä"
+    "noProfileMessage": "Luo lapsiprofiili nähdäksesi henkilökohtaisia näkemyksiä",
+    "pediatricianReports": "Lastenlääkärin raportit",
+    "pediatricianReportsDesc": "Luo ammattimaisia raportteja terveydenhuollon tarjoajille",
+    "dailySleep": "Päivittäinen uni",
+    "trackPatterns": "Seuraa malleja",
+    "feedingData": "Ruokailutiedot",
+    "monitorFrequency": "Seuraa tiheyttä",
+    "weeklyTrends": "Viikoittaiset trendit",
+    "visualCharts": "Visuaaliset kaaviot"
+  },
+  "notifications": {
+    "loading": "Ladataan ilmoituksia...",
+    "title": "Älykkäät ilmoitukset",
+    "subtitle": "Aseta älykkäitä muistutuksia ja hälytyksiä vauvasi rutiinille",
+    "sleepReminders": "Unimuistutukset",
+    "feedingReminders": "Ruokailumuistutukset",
+    "activityReminders": "Toimintomuistutukset",
+    "scheduleNotifications": "Aikatauluistutukset",
+    "enableNotifications": "Ota ilmoitukset käyttöön",
+    "customizeSettings": "Mukauta asetuksia",
+    "notificationSettings": "Ilmoitusasetukset",
+    "soundEnabled": "Ääni käytössä",
+    "vibrationEnabled": "Värinä käytössä",
+    "reminderFrequency": "Muistutustiheys",
+    "quietHours": "Hiljaiset tunnit",
+    "from": "Alkaen",
+    "to": "Päättyen",
+    "saveSettings": "Tallenna asetukset"
+  },
+  "forms": {
+    "required": "Pakollinen",
+    "optional": "Valinnainen",
+    "save": "Tallenna",
+    "cancel": "Peruuta",
+    "delete": "Poista",
+    "edit": "Muokkaa",
+    "create": "Luo",
+    "update": "Päivitä"
+  },
+  "dates": {
+    "today": "Tänään",
+    "yesterday": "Eilen",
+    "thisWeek": "Tällä viikolla",
+    "lastWeek": "Viime viikolla",
+    "thisMonth": "Tässä kuussa",
+    "lastMonth": "Viime kuussa",
+    "last7Days": "Viimeiset 7 päivää",
+    "last30Days": "Viimeiset 30 päivää",
+    "custom": "Mukautettu väli"
   },
   "common": {
     "loading": "Ladataan...",
@@ -88,7 +435,11 @@
     "previous": "Edellinen",
     "confirm": "Vahvista",
     "yes": "Kyllä",
-    "no": "Ei"
+    "no": "Ei",
+    "view": "Näytä",
+    "add": "Lisää",
+    "remove": "Poista",
+    "duration": "Kesto"
   },
   "footer": {
     "tagline": "Auttamassa perheitä saamaan ansaitsemansa levon, yksi yö kerrallaan.",
