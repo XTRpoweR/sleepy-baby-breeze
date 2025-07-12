@@ -1,4 +1,3 @@
-
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { History, Trash2, Eye, Calendar } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
+import { useState } from 'react';
+import { SleepScheduleReportDialog } from './SleepScheduleReportDialog';
 
 interface SavedSchedulesProps {
   babyId: string;
@@ -25,6 +26,8 @@ export const SavedSchedules = ({
   onScheduleDeleted 
 }: SavedSchedulesProps) => {
   const { t } = useTranslation();
+  const [selectedScheduleForReport, setSelectedScheduleForReport] = useState<Tables<'sleep_schedules'> | null>(null);
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
@@ -47,6 +50,15 @@ export const SavedSchedules = ({
     if (success) {
       onScheduleDeleted();
     }
+  };
+
+  const handleViewScheduleReport = (schedule: Tables<'sleep_schedules'>) => {
+    setSelectedScheduleForReport(schedule);
+    setIsReportDialogOpen(true);
+  };
+
+  const handleViewScheduleInline = (schedule: Tables<'sleep_schedules'>) => {
+    onViewSchedule(schedule);
   };
 
   if (loading) {
@@ -80,84 +92,95 @@ export const SavedSchedules = ({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <History className="h-5 w-5 text-purple-600" />
-          <span>{t('components.sleepSchedule.savedSchedules')}</span>
-          <Badge variant="secondary">{schedules.length}</Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {schedules.map((schedule) => (
-            <div
-              key={schedule.id}
-              className="border rounded-lg p-4 bg-gradient-to-r from-purple-50 to-blue-50"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-3">
-                  <div>
-                    <div className="font-medium text-gray-900">
-                      Age: {schedule.child_age} months
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <History className="h-5 w-5 text-purple-600" />
+            <span>{t('components.sleepSchedule.savedSchedules')}</span>
+            <Badge variant="secondary">{schedules.length}</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {schedules.map((schedule) => (
+              <div
+                key={schedule.id}
+                className="border rounded-lg p-4 bg-gradient-to-r from-purple-50 to-blue-50"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        Age: {schedule.child_age} months
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {t('components.sleepSchedule.createdOn')} {formatDate(schedule.created_at)}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      {t('components.sleepSchedule.createdOn')} {formatDate(schedule.created_at)}
-                    </div>
+                    <Badge variant="outline" className="bg-purple-100 text-purple-800">
+                      {schedule.total_sleep_hours}h {t('components.sleepSchedule.totalSleep').toLowerCase()}
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="bg-purple-100 text-purple-800">
-                    {schedule.total_sleep_hours}h {t('components.sleepSchedule.totalSleep').toLowerCase()}
-                  </Badge>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewSchedule(schedule)}
-                    className="flex items-center space-x-1"
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span>{t('common.view')}</span>
-                  </Button>
-                  
-                  {/* Delete button - Only for users with delete permissions */}
-                  <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                  <div className="flex space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDeleteSchedule(schedule.id)}
-                      className="flex items-center space-x-1 text-red-600 hover:text-red-700"
+                      onClick={() => handleViewScheduleReport(schedule)}
+                      className="flex items-center space-x-1"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Eye className="h-4 w-4" />
+                      <span>{t('common.view')}</span>
                     </Button>
-                  </PermissionAwareActions>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div>
-                  <div className="font-medium text-gray-700">{t('components.sleepSchedule.bedtime')}</div>
-                  <div className="text-blue-600">{formatTime(schedule.recommended_bedtime)}</div>
-                </div>
-                <div>
-                  <div className="font-medium text-gray-700">{t('components.sleepSchedule.wakeTime')}</div>
-                  <div className="text-yellow-600">{formatTime(schedule.recommended_wake_time)}</div>
-                </div>
-                <div>
-                  <div className="font-medium text-gray-700">{t('components.sleepSchedule.naps')}</div>
-                  <div className="text-green-600">
-                    {Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps.length : 0} {t('components.sleepSchedule.naps').toLowerCase()}
+                    
+                    {/* Delete button - Only for users with delete permissions */}
+                    <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteSchedule(schedule.id)}
+                        className="flex items-center space-x-1 text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </PermissionAwareActions>
                   </div>
                 </div>
-                <div>
-                  <div className="font-medium text-gray-700">Challenges</div>
-                  <div className="text-gray-600">{schedule.sleep_challenges?.length || 0} noted</div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <div className="font-medium text-gray-700">{t('components.sleepSchedule.bedtime')}</div>
+                    <div className="text-blue-600">{formatTime(schedule.recommended_bedtime)}</div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-700">{t('components.sleepSchedule.wakeTime')}</div>
+                    <div className="text-yellow-600">{formatTime(schedule.recommended_wake_time)}</div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-700">{t('components.sleepSchedule.naps')}</div>
+                    <div className="text-green-600">
+                      {Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps.length : 0} {t('components.sleepSchedule.naps').toLowerCase()}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-700">Challenges</div>
+                    <div className="text-gray-600">{schedule.sleep_challenges?.length || 0} noted</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <SleepScheduleReportDialog
+        isOpen={isReportDialogOpen}
+        onClose={() => {
+          setIsReportDialogOpen(false);
+          setSelectedScheduleForReport(null);
+        }}
+        schedule={selectedScheduleForReport}
+      />
+    </>
   );
 };

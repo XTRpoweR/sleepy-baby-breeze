@@ -3,6 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Moon, Sun, Clock, RotateCcw, Download, Calendar, CheckCircle } from 'lucide-react';
 import { ScheduleRecommendation } from '@/types/sleepSchedule';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { exportSleepScheduleAsPDF } from '@/utils/exportSleepSchedule';
 
 interface SleepScheduleDisplayProps {
   recommendation: ScheduleRecommendation;
@@ -11,6 +14,9 @@ interface SleepScheduleDisplayProps {
 }
 
 export const SleepScheduleDisplay = ({ recommendation, onReset, savedSchedule }: SleepScheduleDisplayProps) => {
+  const [isExporting, setIsExporting] = useState(false);
+  const { toast } = useToast();
+
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
@@ -33,6 +39,32 @@ export const SleepScheduleDisplay = ({ recommendation, onReset, savedSchedule }:
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleExportSchedule = async () => {
+    setIsExporting(true);
+    try {
+      const childAge = savedSchedule?.child_age;
+      const filename = childAge 
+        ? `sleep-schedule-${childAge}months.pdf`
+        : 'sleep-schedule.pdf';
+      
+      await exportSleepScheduleAsPDF(recommendation, childAge, filename);
+      
+      toast({
+        title: "Export Successful!",
+        description: "Sleep schedule has been downloaded as PDF",
+      });
+    } catch (error) {
+      console.error('Error exporting schedule:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export sleep schedule. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -185,9 +217,13 @@ export const SleepScheduleDisplay = ({ recommendation, onReset, savedSchedule }:
           <RotateCcw className="h-4 w-4" />
           <span>Create New Schedule</span>
         </Button>
-        <Button className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700">
+        <Button 
+          onClick={handleExportSchedule}
+          disabled={isExporting}
+          className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700"
+        >
           <Download className="h-4 w-4" />
-          <span>Export Schedule</span>
+          <span>{isExporting ? 'Exporting...' : 'Export Schedule'}</span>
         </Button>
       </div>
     </div>
