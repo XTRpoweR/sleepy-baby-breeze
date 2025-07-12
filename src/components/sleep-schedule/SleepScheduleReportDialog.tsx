@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Download, Moon, Sun, Clock, X } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
-import { ScheduleRecommendation } from '@/types/sleepSchedule';
+import { ScheduleRecommendation, Nap } from '@/types/sleepSchedule';
 import { exportSleepScheduleAsPDF } from '@/utils/exportSleepSchedule';
 import { useToast } from '@/hooks/use-toast';
 
@@ -46,10 +46,11 @@ export const SleepScheduleReportDialog = ({ isOpen, onClose, schedule }: SleepSc
   const handleExport = async () => {
     setIsExporting(true);
     try {
+      const naps = Array.isArray(schedule.recommended_naps) ? (schedule.recommended_naps as Nap[]) : [];
       const recommendation: ScheduleRecommendation = {
         bedtime: schedule.recommended_bedtime,
         wakeTime: schedule.recommended_wake_time,
-        naps: Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps : [],
+        naps: naps,
         totalSleepHours: schedule.total_sleep_hours
       };
 
@@ -72,7 +73,8 @@ export const SleepScheduleReportDialog = ({ isOpen, onClose, schedule }: SleepSc
     }
   };
 
-  const naps = Array.isArray(schedule.recommended_naps) ? schedule.recommended_naps : [];
+  // Cast the Json type to Nap array with proper type checking
+  const naps = Array.isArray(schedule.recommended_naps) ? (schedule.recommended_naps as Nap[]) : [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
