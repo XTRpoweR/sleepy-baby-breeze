@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -68,10 +67,12 @@ export const useFamilyMembers = (babyId: string | null) => {
     }
   }, [user, babyId]);
 
-  // Retry function for profile fetching
+  // Enhanced profile fetching with better error handling
   const fetchProfilesWithRetry = async (memberIds: string[], maxRetries = 3) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
+        console.log(`Fetching profiles for member IDs: ${memberIds.join(', ')} (attempt ${attempt})`);
+        
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
           .select('id, email, full_name')
@@ -87,6 +88,7 @@ export const useFamilyMembers = (babyId: string | null) => {
           continue;
         }
 
+        console.log(`Profiles fetched successfully:`, profilesData);
         return profilesData || [];
       } catch (error) {
         console.error(`Profile fetch attempt ${attempt} error:`, error);
@@ -133,7 +135,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         return;
       }
 
-      console.log('Family members found:', familyMembers?.length || 0);
+      console.log('Family members found:', familyMembers?.length || 0, familyMembers);
 
       // Fetch profile data for each member with retry logic
       const memberIds = familyMembers?.map(m => m.user_id) || [];
@@ -150,25 +152,38 @@ export const useFamilyMembers = (babyId: string | null) => {
         }
       }
 
-      // Merge the data
+      // Merge the data with better fallbacks
       const membersWithProfiles = familyMembers?.map(member => {
         const profile = profiles?.find(p => p.id === member.user_id);
+        
+        // Better fallback logic for email display
+        let displayEmail = 'Unknown Email';
+        let displayName = null;
+        
+        if (profile) {
+          displayEmail = profile.email || 'Unknown Email';
+          displayName = profile.full_name;
+        }
+        
         const result = {
           ...member,
-          email: profile?.email || 'Unknown Email',
-          full_name: profile?.full_name || null
+          email: displayEmail,
+          full_name: displayName
         };
         
         console.log('Member profile mapping:', {
           user_id: member.user_id,
           found_profile: !!profile,
-          email: result.email,
-          full_name: result.full_name
+          profile_email: profile?.email,
+          profile_full_name: profile?.full_name,
+          final_email: result.email,
+          final_full_name: result.full_name
         });
         
         return result;
       }) || [];
 
+      console.log('Final members with profiles:', membersWithProfiles);
       setMembers(membersWithProfiles);
 
       // Fetch family invitations
