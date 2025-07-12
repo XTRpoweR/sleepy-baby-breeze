@@ -23,19 +23,26 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('VideoPlayerDialog isOpen:', isOpen, 'videoUrl:', videoUrl);
+  }, [isOpen, videoUrl]);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const handleLoadedData = () => {
+      console.log('Video loaded successfully');
       setIsLoading(false);
       setDuration(video.duration);
+      setError(null);
     };
 
     const handleTimeUpdate = () => {
       setCurrentTime(video.currentTime);
     };
 
-    const handleError = () => {
+    const handleError = (e: Event) => {
+      console.error('Video error:', e);
       setIsLoading(false);
       setError('Failed to load video');
     };
@@ -44,29 +51,42 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
       setIsPlaying(false);
     };
 
+    const handleLoadStart = () => {
+      console.log('Video loading started');
+      setIsLoading(true);
+      setError(null);
+    };
+
     video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('error', handleError);
     video.addEventListener('ended', handleEnded);
+    video.addEventListener('loadstart', handleLoadStart);
 
     return () => {
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('error', handleError);
       video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('loadstart', handleLoadStart);
     };
   }, [videoUrl]);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     const video = videoRef.current;
     if (!video) return;
 
-    if (isPlaying) {
-      video.pause();
-    } else {
-      video.play();
+    try {
+      if (isPlaying) {
+        video.pause();
+        setIsPlaying(false);
+      } else {
+        await video.play();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.error('Error playing video:', error);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const toggleMute = () => {
@@ -122,8 +142,21 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  const handleDialogOpenChange = (open: boolean) => {
+    console.log('Dialog open change:', open);
+    if (!open) {
+      // Pause video when closing
+      const video = videoRef.current;
+      if (video && !video.paused) {
+        video.pause();
+        setIsPlaying(false);
+      }
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-0">
           <DialogTitle className="text-lg font-semibold">
@@ -138,7 +171,7 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
           {error ? (
             <Card className="p-8 text-center">
               <p className="text-destructive mb-4">Failed to load video</p>
-              <Button onClick={onClose} variant="outline">
+              <Button onClick={() => handleDialogOpenChange(false)} variant="outline">
                 Close
               </Button>
             </Card>
@@ -152,16 +185,17 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
                   className="w-full aspect-video"
                   preload="metadata"
                   onClick={togglePlay}
+                  crossOrigin="anonymous"
                 />
                 
                 {isLoading && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <div className="text-white">Loading...</div>
+                    <div className="text-white">Loading video...</div>
                   </div>
                 )}
 
                 {/* Play/Pause Overlay */}
-                {!isLoading && (
+                {!isLoading && !error && (
                   <div 
                     className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer bg-black/20"
                     onClick={togglePlay}

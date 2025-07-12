@@ -83,7 +83,6 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
       console.log('Download completed:', filename);
     } catch (error) {
       console.error('Download failed:', error);
-      // You might want to show a toast notification here
     }
   };
 
@@ -105,7 +104,10 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
     }
   };
 
-  const handleVideoClick = (memory: Memory) => {
+  const handleVideoClick = (memory: Memory, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log('Video clicked:', memory.title, memory.media_url);
     setSelectedVideoMemory(memory);
     setShowVideoPlayer(true);
   };
@@ -163,16 +165,19 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
                     src={memory.media_url}
                     className="w-full h-full object-cover"
                     preload="metadata"
+                    muted
                   />
+                  {/* Video overlay that handles clicks */}
                   <div 
                     className="absolute inset-0 bg-black/20 flex items-center justify-center cursor-pointer hover:bg-black/30 transition-colors"
-                    onClick={() => handleVideoClick(memory)}
+                    onClick={(e) => handleVideoClick(memory, e)}
                   >
                     <div className="bg-white/90 rounded-full p-3 hover:bg-white transition-colors">
-                      <Play className="h-6 w-6 text-primary" />
+                      <Play className="h-6 w-6 text-primary fill-primary" />
                     </div>
                   </div>
-                  <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center">
+                  {/* Video label */}
+                  <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center pointer-events-none">
                     <FileVideo className="h-3 w-3 mr-1" />
                     Video
                   </div>
@@ -188,6 +193,7 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
                         variant="outline"
                         size="sm"
                         className="bg-white/90 border-white/20 hover:bg-white"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical className="h-4 w-4" />
                       </Button>
@@ -280,6 +286,7 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
         <VideoPlayerDialog
           isOpen={showVideoPlayer}
           onClose={() => {
+            console.log('Closing video player');
             setShowVideoPlayer(false);
             setSelectedVideoMemory(null);
           }}
