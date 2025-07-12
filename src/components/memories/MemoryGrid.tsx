@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
 import { EditMemoryDialog } from '@/components/memories/EditMemoryDialog';
+import { VideoPlayerDialog } from '@/components/memories/VideoPlayerDialog';
 
 interface Memory {
   id: string;
@@ -43,6 +44,8 @@ interface MemoryGridProps {
 export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGridProps) => {
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+  const [selectedVideoMemory, setSelectedVideoMemory] = useState<Memory | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDownload = async (memory: Memory) => {
@@ -102,6 +105,11 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
     }
   };
 
+  const handleVideoClick = (memory: Memory) => {
+    setSelectedVideoMemory(memory);
+    setShowVideoPlayer(true);
+  };
+
   const formatFileSize = (bytes: number | null) => {
     if (!bytes) return '';
     const mb = bytes / (1024 * 1024);
@@ -156,8 +164,11 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
                     className="w-full h-full object-cover"
                     preload="metadata"
                   />
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <div className="bg-white/90 rounded-full p-3">
+                  <div 
+                    className="absolute inset-0 bg-black/20 flex items-center justify-center cursor-pointer hover:bg-black/30 transition-colors"
+                    onClick={() => handleVideoClick(memory)}
+                  >
+                    <div className="bg-white/90 rounded-full p-3 hover:bg-white transition-colors">
                       <Play className="h-6 w-6 text-primary" />
                     </div>
                   </div>
@@ -261,6 +272,20 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
           }}
           memory={selectedMemory}
           onUpdate={onUpdate}
+        />
+      )}
+
+      {/* Video Player Dialog */}
+      {selectedVideoMemory && (
+        <VideoPlayerDialog
+          isOpen={showVideoPlayer}
+          onClose={() => {
+            setShowVideoPlayer(false);
+            setSelectedVideoMemory(null);
+          }}
+          videoUrl={selectedVideoMemory.media_url}
+          title={selectedVideoMemory.title || undefined}
+          description={selectedVideoMemory.description || undefined}
         />
       )}
     </>
