@@ -113,9 +113,7 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
     }
   };
 
-  const handleVideoClick = (memory: Memory, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleVideoClick = (memory: Memory) => {
     console.log('Video clicked:', memory.title, memory.media_url);
     
     const format = detectVideoFormat(memory.media_url);
@@ -189,7 +187,7 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
                     />
                     <div 
                       className="absolute inset-0 bg-black/20 flex items-center justify-center cursor-pointer hover:bg-black/30 transition-colors"
-                      onClick={(e) => handleVideoClick(memory, e)}
+                      onClick={() => handleVideoClick(memory)}
                     >
                       <div className="bg-white/90 rounded-full p-3 hover:bg-white transition-colors">
                         <Play className="h-6 w-6 text-primary fill-primary" />
