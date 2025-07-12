@@ -82,77 +82,23 @@ export const useFamilyMembers = (babyId: string | null) => {
     console.log('Fetching family members for baby:', babyId, 'user:', user.id, 'forceRefresh:', forceRefresh);
 
     try {
-      // Use a custom query to get family members with their profile information
-      // This approach works better with RLS policies
-      const { data: familyMembersRaw, error: membersError } = await supabase
-        .from('family_members')
-        .select(`
-          *,
-          profiles!inner(
-            email,
-            full_name
-          )
-        `)
-        .eq('baby_id', babyId);
+      // Use the new PostgreSQL function to get family members with profiles
+      const { data: familyMembersData, error: membersError } = await supabase.rpc('get_family_members_with_profiles', {
+        baby_uuid: babyId
+      });
 
       if (membersError) {
-        console.error('Error fetching family members with profiles:', membersError);
-        
-        // Fallback: Try to fetch family members without profiles
-        const { data: familyMembersOnly, error: fallbackError } = await supabase
-          .from('family_members')
-          .select('*')
-          .eq('baby_id', babyId);
-
-        if (fallbackError) {
-          console.error('Fallback query also failed:', fallbackError);
-          if (!forceRefresh) {
-            toast({
-              title: "Error",
-              description: `Failed to load family members: ${fallbackError.message}`,
-              variant: "destructive",
-            });
-          }
-          setLoading(false);
-          return;
-        }
-
-        // Map without profile data as fallback
-        const membersWithoutProfiles = familyMembersOnly?.map(member => ({
-          ...member,
-          email: 'Email not available',
-          full_name: null
-        })) || [];
-
-        console.log('Using fallback data without profiles:', membersWithoutProfiles);
-        setMembers(membersWithoutProfiles);
-      } else {
-        // Successfully got family members with profiles
-        const membersWithProfiles = familyMembersRaw?.map(member => {
-          const profilesArray = Array.isArray(member.profiles) ? member.profiles : [member.profiles];
-          const profile = profilesArray[0]; // Get the first (and should be only) profile
-          
-          const result = {
-            ...member,
-            email: profile?.email || 'Email not available',
-            full_name: profile?.full_name || null
-          };
-          
-          // Remove the profiles property from the final object
-          delete result.profiles;
-          
-          console.log('Member with profile:', {
-            user_id: member.user_id,
-            profile_data: profile,
-            final_email: result.email,
-            final_full_name: result.full_name
+        console.error('Error fetching family members:', membersError);
+        if (!forceRefresh) {
+          toast({
+            title: "Error",
+            description: `Failed to load family members: ${membersError.message}`,
+            variant: "destructive",
           });
-          
-          return result;
-        }) || [];
-
-        console.log('Final members with profiles:', membersWithProfiles);
-        setMembers(membersWithProfiles);
+        }
+      } else {
+        console.log('Successfully fetched family members:', familyMembersData);
+        setMembers(familyMembersData || []);
       }
 
       // Fetch family invitations

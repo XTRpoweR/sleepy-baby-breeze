@@ -432,6 +432,23 @@ export type Database = {
         Args: { user_uuid: string; baby_uuid: string }
         Returns: string
       }
+      get_family_members_with_profiles: {
+        Args: { baby_uuid: string }
+        Returns: {
+          id: string
+          user_id: string
+          baby_id: string
+          role: string
+          status: string
+          permissions: Json
+          invited_at: string
+          joined_at: string
+          invited_by: string
+          created_at: string
+          email: string
+          full_name: string
+        }[]
+      }
       get_user_subscription_tier: {
         Args: { user_uuid: string }
         Returns: string
