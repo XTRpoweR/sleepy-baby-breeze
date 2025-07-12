@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -47,6 +46,16 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
   const [showVideoPlayer, setShowVideoPlayer] = useState(false);
   const [selectedVideoMemory, setSelectedVideoMemory] = useState<Memory | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const detectVideoFormat = (url: string) => {
+    const extension = url.split('.').pop()?.toLowerCase();
+    return extension;
+  };
+
+  const isUnsupportedFormat = (format: string) => {
+    const unsupportedFormats = ['mov', 'avi', 'wmv', 'flv', 'mkv'];
+    return unsupportedFormats.includes(format || '');
+  };
 
   const handleDownload = async (memory: Memory) => {
     try {
@@ -108,6 +117,12 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
     event.preventDefault();
     event.stopPropagation();
     console.log('Video clicked:', memory.title, memory.media_url);
+    
+    const format = detectVideoFormat(memory.media_url);
+    if (format && isUnsupportedFormat(format)) {
+      console.warn(`Video format ${format} may not be supported in all browsers`);
+    }
+    
     setSelectedVideoMemory(memory);
     setShowVideoPlayer(true);
   };
@@ -149,123 +164,132 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {memories.map((memory) => (
-          <Card key={memory.id} className="group overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="relative aspect-square bg-gradient-to-br from-primary/5 to-secondary/5">
-              {memory.media_type === 'photo' ? (
-                <img
-                  src={memory.media_url}
-                  alt={memory.title || 'Memory'}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="relative w-full h-full">
-                  <video
+        {memories.map((memory) => {
+          const videoFormat = memory.media_type === 'video' ? detectVideoFormat(memory.media_url) : null;
+          const isVideoUnsupported = videoFormat && isUnsupportedFormat(videoFormat);
+          
+          return (
+            <Card key={memory.id} className="group overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="relative aspect-square bg-gradient-to-br from-primary/5 to-secondary/5">
+                {memory.media_type === 'photo' ? (
+                  <img
                     src={memory.media_url}
+                    alt={memory.title || 'Memory'}
                     className="w-full h-full object-cover"
-                    preload="metadata"
-                    muted
+                    loading="lazy"
                   />
-                  {/* Video overlay that handles clicks */}
-                  <div 
-                    className="absolute inset-0 bg-black/20 flex items-center justify-center cursor-pointer hover:bg-black/30 transition-colors"
-                    onClick={(e) => handleVideoClick(memory, e)}
-                  >
-                    <div className="bg-white/90 rounded-full p-3 hover:bg-white transition-colors">
-                      <Play className="h-6 w-6 text-primary fill-primary" />
+                ) : (
+                  <div className="relative w-full h-full">
+                    <video
+                      src={memory.media_url}
+                      className="w-full h-full object-cover"
+                      preload="metadata"
+                      muted
+                      playsInline
+                    />
+                    <div 
+                      className="absolute inset-0 bg-black/20 flex items-center justify-center cursor-pointer hover:bg-black/30 transition-colors"
+                      onClick={(e) => handleVideoClick(memory, e)}
+                    >
+                      <div className="bg-white/90 rounded-full p-3 hover:bg-white transition-colors">
+                        <Play className="h-6 w-6 text-primary fill-primary" />
+                      </div>
+                    </div>
+                    <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center pointer-events-none">
+                      <FileVideo className="h-3 w-3 mr-1" />
+                      Video
+                      {isVideoUnsupported && (
+                        <span className="ml-1 text-yellow-300" title={`${videoFormat?.toUpperCase()} format may need conversion`}>
+                          ⚠️
+                        </span>
+                      )}
                     </div>
                   </div>
-                  {/* Video label */}
-                  <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs flex items-center pointer-events-none">
-                    <FileVideo className="h-3 w-3 mr-1" />
-                    Video
+                )}
+                
+                {/* Action buttons overlay */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors">
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-white/90 border-white/20 hover:bg-white"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleDownload(memory)}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Download
+                        </DropdownMenuItem>
+                        {canEdit && (
+                          <>
+                            <DropdownMenuItem onClick={() => handleEdit(memory)}>
+                              <Edit className="h-4 w-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleDelete(memory)}
+                              className="text-destructive focus:text-destructive"
+                              disabled={deletingId === memory.id}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              {deletingId === memory.id ? 'Deleting...' : 'Delete'}
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                </div>
-              )}
-              
-              {/* Action buttons overlay */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors">
-                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="bg-white/90 border-white/20 hover:bg-white"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleDownload(memory)}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </DropdownMenuItem>
-                      {canEdit && (
-                        <>
-                          <DropdownMenuItem onClick={() => handleEdit(memory)}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleDelete(memory)}
-                            className="text-destructive focus:text-destructive"
-                            disabled={deletingId === memory.id}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            {deletingId === memory.id ? 'Deleting...' : 'Delete'}
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                 </div>
               </div>
-            </div>
-            
-            <CardContent className="p-4">
-              <div className="space-y-2">
-                {memory.title && (
-                  <h3 className="font-medium text-foreground line-clamp-2">
-                    {memory.title}
-                  </h3>
-                )}
-                
-                {memory.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {memory.description}
-                  </p>
-                )}
-                
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center space-x-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>
-                      {formatDate(memory.taken_at || memory.created_at)}
-                    </span>
+              
+              <CardContent className="p-4">
+                <div className="space-y-2">
+                  {memory.title && (
+                    <h3 className="font-medium text-foreground line-clamp-2">
+                      {memory.title}
+                    </h3>
+                  )}
+                  
+                  {memory.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {memory.description}
+                    </p>
+                  )}
+                  
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="h-3 w-3" />
+                      <span>
+                        {formatDate(memory.taken_at || memory.created_at)}
+                      </span>
+                    </div>
+                    
+                    {formatTime(memory.taken_at || memory.created_at) && (
+                      <div className="flex items-center space-x-1">
+                        <Clock className="h-3 w-3" />
+                        <span>
+                          {formatTime(memory.taken_at || memory.created_at)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   
-                  {formatTime(memory.taken_at || memory.created_at) && (
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-3 w-3" />
-                      <span>
-                        {formatTime(memory.taken_at || memory.created_at)}
-                      </span>
+                  {memory.file_size && (
+                    <div className="text-xs text-muted-foreground">
+                      {formatFileSize(memory.file_size)}
                     </div>
                   )}
                 </div>
-                
-                {memory.file_size && (
-                  <div className="text-xs text-muted-foreground">
-                    {formatFileSize(memory.file_size)}
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Edit Dialog */}

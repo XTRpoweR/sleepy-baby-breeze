@@ -1,9 +1,9 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Volume2, VolumeX, Maximize, Download } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize, Download, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
 
 interface VideoPlayerDialogProps {
   isOpen: boolean;
@@ -15,20 +15,71 @@ interface VideoPlayerDialogProps {
 
 export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, description }: VideoPlayerDialogProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { toast } = useToast();
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
+  const [convertedUrl, setConvertedUrl] = useState<string | null>(null);
 
   useEffect(() => {
     console.log('VideoPlayerDialog isOpen:', isOpen, 'videoUrl:', videoUrl);
   }, [isOpen, videoUrl]);
 
+  const detectVideoFormat = (url: string) => {
+    const extension = url.split('.').pop()?.toLowerCase();
+    return extension;
+  };
+
+  const isUnsupportedFormat = (format: string) => {
+    const unsupportedFormats = ['mov', 'avi', 'wmv', 'flv', 'mkv'];
+    return unsupportedFormats.includes(format || '');
+  };
+
+  const convertVideo = async () => {
+    setIsConverting(true);
+    try {
+      const response = await fetch('/api/convert-video', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ videoUrl }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Video conversion failed');
+      }
+
+      const data = await response.json();
+      setConvertedUrl(data.convertedUrl);
+      setError(null);
+      
+      toast({
+        title: "Video converted successfully",
+        description: "The video has been converted to a compatible format.",
+      });
+    } catch (error) {
+      console.error('Video conversion error:', error);
+      toast({
+        title: "Conversion failed",
+        description: "Unable to convert video. Please try downloading and converting manually.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsConverting(false);
+    }
+  };
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    const currentVideoUrl = convertedUrl || videoUrl;
+    const format = detectVideoFormat(currentVideoUrl);
 
     const handleLoadedData = () => {
       console.log('Video loaded successfully');
@@ -44,7 +95,12 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
     const handleError = (e: Event) => {
       console.error('Video error:', e);
       setIsLoading(false);
-      setError('Failed to load video');
+      
+      if (format && isUnsupportedFormat(format)) {
+        setError(`Unsupported video format: ${format.toUpperCase()}. This format may not play in all browsers.`);
+      } else {
+        setError('Failed to load video. The file may be corrupted or in an unsupported format.');
+      }
     };
 
     const handleEnded = () => {
@@ -70,7 +126,7 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
       video.removeEventListener('ended', handleEnded);
       video.removeEventListener('loadstart', handleLoadStart);
     };
-  }, [videoUrl]);
+  }, [videoUrl, convertedUrl]);
 
   const togglePlay = async () => {
     const video = videoRef.current;
@@ -86,6 +142,11 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
       }
     } catch (error) {
       console.error('Error playing video:', error);
+      toast({
+        title: "Playback error",
+        description: "Unable to play video. Try converting to a compatible format.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -119,7 +180,7 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
 
   const handleDownload = async () => {
     try {
-      const response = await fetch(videoUrl);
+      const response = await fetch(convertedUrl || videoUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       
@@ -145,7 +206,6 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
   const handleDialogOpenChange = (open: boolean) => {
     console.log('Dialog open change:', open);
     if (!open) {
-      // Pause video when closing
       const video = videoRef.current;
       if (video && !video.paused) {
         video.pause();
@@ -154,6 +214,10 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
       onClose();
     }
   };
+
+  const currentVideoUrl = convertedUrl || videoUrl;
+  const format = detectVideoFormat(currentVideoUrl);
+  const showConvertOption = format && isUnsupportedFormat(format) && !convertedUrl;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
@@ -170,22 +234,44 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
         <div className="px-6 pb-6">
           {error ? (
             <Card className="p-8 text-center">
-              <p className="text-destructive mb-4">Failed to load video</p>
-              <Button onClick={() => handleDialogOpenChange(false)} variant="outline">
-                Close
-              </Button>
+              <p className="text-destructive mb-4">{error}</p>
+              <div className="space-y-3">
+                {showConvertOption && (
+                  <Button 
+                    onClick={convertVideo} 
+                    disabled={isConverting}
+                    className="mr-2"
+                  >
+                    {isConverting ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Converting...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Convert to MP4
+                      </>
+                    )}
+                  </Button>
+                )}
+                <Button onClick={() => handleDialogOpenChange(false)} variant="outline">
+                  Close
+                </Button>
+              </div>
             </Card>
           ) : (
             <div className="space-y-4">
-              {/* Video Container */}
               <div className="relative bg-black rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
-                  src={videoUrl}
+                  src={currentVideoUrl}
                   className="w-full aspect-video"
                   preload="metadata"
                   onClick={togglePlay}
                   crossOrigin="anonymous"
+                  playsInline
+                  controls={false}
                 />
                 
                 {isLoading && (
@@ -194,7 +280,6 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
                   </div>
                 )}
 
-                {/* Play/Pause Overlay */}
                 {!isLoading && !error && (
                   <div 
                     className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer bg-black/20"
@@ -214,7 +299,6 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
               {/* Video Controls */}
               {!isLoading && !error && (
                 <div className="space-y-2">
-                  {/* Progress Bar */}
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                     <span>{formatTime(currentTime)}</span>
                     <input
@@ -228,49 +312,22 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
                     <span>{formatTime(duration)}</span>
                   </div>
 
-                  {/* Control Buttons */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={togglePlay}
-                      >
-                        {isPlaying ? (
-                          <Pause className="h-4 w-4" />
-                        ) : (
-                          <Play className="h-4 w-4" />
-                        )}
+                      <Button variant="outline" size="sm" onClick={togglePlay}>
+                        {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                       </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={toggleMute}
-                      >
-                        {isMuted ? (
-                          <VolumeX className="h-4 w-4" />
-                        ) : (
-                          <Volume2 className="h-4 w-4" />
-                        )}
+                      <Button variant="outline" size="sm" onClick={toggleMute}>
+                        {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                       </Button>
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleDownload}
-                      >
+                      <Button variant="outline" size="sm" onClick={handleDownload}>
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={toggleFullscreen}
-                      >
+                      <Button variant="outline" size="sm" onClick={toggleFullscreen}>
                         <Maximize className="h-4 w-4" />
                       </Button>
                     </div>
