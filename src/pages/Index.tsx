@@ -7,7 +7,6 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
 const Index = () => {
   const navigate = useNavigate();
   const {
@@ -16,7 +15,9 @@ const Index = () => {
   const {
     t
   } = useTranslation();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -34,7 +35,7 @@ const Index = () => {
   const handleDownloadComingSoon = () => {
     toast({
       title: "Coming Soon",
-      description: "The Download feature is not available yet. Stay tuned!",
+      description: "The Download feature is not available yet. Stay tuned!"
     });
   };
   const features = [{
@@ -90,11 +91,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 group">
-              <img 
-                src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                alt="SleepyBaby Logo" 
-                className="h-12 w-auto transition-transform duration-300 group-hover:scale-110"
-              />
+              <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBaby Logo" className="overflow-y-auto h-1/2 overflow-x-auto overflow-auto group-hover:-scale-110 " />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -203,10 +200,10 @@ const Index = () => {
 
            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
              {features.map((feature, index) => {
-             const IconComponent = feature.icon;
-             return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-fade-in-up card-glow" style={{
-               animationDelay: `${index * 100}ms`
-             }}>
+            const IconComponent = feature.icon;
+            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-fade-in-up card-glow" style={{
+              animationDelay: `${index * 100}ms`
+            }}>
                    <CardContent className="p-8">
                      <div className={`inline-flex p-3 rounded-2xl gradient-dynamic-slow mb-6 transition-all duration-300 group-hover:scale-110`}>
                        <IconComponent className={`h-8 w-8 text-white`} />
@@ -303,7 +300,7 @@ const Index = () => {
                 <CardContent className="p-8 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-4">
                     <Baby className="h-6 w-6 text-blue-600" />
-                    <h3 className="text-2xl font-bold">SleepyBaby Basic</h3>
+                    <h3 className="text-2xl font-bold">SleepyBabyy Basic</h3>
                   </div>
                   <div className="text-4xl font-bold text-gray-900 mb-2">Free</div>
                   <p className="text-gray-600 mb-6">Perfect for getting started</p>
@@ -338,7 +335,7 @@ const Index = () => {
                 <CardContent className="p-8 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-4">
                     <Crown className="h-6 w-6 text-orange-600" />
-                    <h3 className="text-2xl font-bold">SleepyBaby Premium</h3>
+                    <h3 className="text-2xl font-bold">SleepyBabyy Premium</h3>
                   </div>
                   
                   {/* Discount Badge */}
@@ -452,11 +449,7 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-2 group">
-                <img 
-                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                  alt="SleepyBaby Logo" 
-                  className="h-8 w-auto transition-transform duration-300 group-hover:scale-110"
-                />
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBaby Logo" className="h-8 w-auto transition-transform duration-300 group-hover:scale-110" />
                 <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>
               <p className="text-gray-400 font-light">
@@ -470,12 +463,9 @@ const Index = () => {
                 <Link to="/features" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('navigation.features')}</Link>
                 <Link to="/pricing" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</Link>
                 {/* Replace Download link with a button that shows "Coming Soon" */}
-                <button
-                  type="button"
-                  onClick={handleDownloadComingSoon}
-                  className="block w-full text-left text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0"
-                  style={{ font: 'inherit' }}
-                >
+                <button type="button" onClick={handleDownloadComingSoon} className="block w-full text-left text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0" style={{
+                font: 'inherit'
+              }}>
                   {t('footer.download')}
                 </button>
               </div>
