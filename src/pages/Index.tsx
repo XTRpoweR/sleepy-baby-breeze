@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
@@ -90,8 +91,8 @@ const Index = () => {
       <nav className="bg-white/90 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2 group">
-              <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBaby Logo" className="overflow-y-auto h-1/2 overflow-x-auto overflow-auto group-hover:-scale-110 " />
+            <div className="flex items-center space-x-3 group">
+              <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-10 w-auto transition-transform duration-300 group-hover:scale-110" />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
@@ -449,7 +450,7 @@ const Index = () => {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-2 group">
-                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBaby Logo" className="h-8 w-auto transition-transform duration-300 group-hover:scale-110" />
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-8 w-auto transition-transform duration-300 group-hover:scale-110" />
                 <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
               </div>
               <p className="text-gray-400 font-light">
