@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -283,14 +284,19 @@ export const InvitationAccept = () => {
       await refetchProfiles();
       setSharedBabyAsActive(invitation.baby_id);
 
+      // Clear any cached family data to ensure fresh data is loaded
+      // This helps with the name display issue
+      localStorage.removeItem(`family_members_${invitation.baby_id}`);
+      
       toast({
         title: "Welcome to the family!",
         description: `You've successfully joined ${invitation.baby_name}'s family sharing as a ${invitation.role}.`,
       });
 
+      // Add a small delay to ensure data is properly refreshed
       setTimeout(() => {
         navigate('/dashboard');
-      }, 1000);
+      }, 1500);
     } catch (error) {
       console.error('Error accepting invitation:', error);
       toast({

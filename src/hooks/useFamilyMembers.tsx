@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -41,34 +42,76 @@ export const useFamilyMembers = (babyId: string | null) => {
   const [members, setMembers] = useState<FamilyMember[]>([]);
   const [invitations, setInvitations] = useState<FamilyInvitation[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [ownerCheck, setOwnerCheck] = useState(false);
 
   // Only allow baby owners to fetch/manipulate family/invitations
-  const checkOwnerPermission = async () => {
+  const checkOwnerPermission = useCallback(async () => {
     if (!user || !babyId) {
       setOwnerCheck(false);
       return false;
     }
-    const { data, error } = await supabase.rpc('get_family_member_role', {
-      user_uuid: user.id,
-      baby_uuid: babyId
-    });
-    if (error || !data || data !== 'owner') {
+    try {
+      const { data, error } = await supabase.rpc('get_family_member_role', {
+        user_uuid: user.id,
+        baby_uuid: babyId
+      });
+      if (error || !data || data !== 'owner') {
+        setOwnerCheck(false);
+        return false;
+      }
+      setOwnerCheck(true);
+      return true;
+    } catch (error) {
+      console.error('Error checking owner permission:', error);
       setOwnerCheck(false);
       return false;
     }
-    setOwnerCheck(true);
-    return true;
+  }, [user, babyId]);
+
+  // Retry function for profile fetching
+  const fetchProfilesWithRetry = async (memberIds: string[], maxRetries = 3) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, email, full_name')
+          .in('id', memberIds);
+
+        if (profilesError) {
+          console.error(`Profile fetch attempt ${attempt} failed:`, profilesError);
+          if (attempt === maxRetries) {
+            throw profilesError;
+          }
+          // Wait before retry (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+          continue;
+        }
+
+        return profilesData || [];
+      } catch (error) {
+        console.error(`Profile fetch attempt ${attempt} error:`, error);
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+      }
+    }
+    return [];
   };
 
-  const fetchFamilyMembers = async () => {
+  const fetchFamilyMembers = useCallback(async (forceRefresh = false) => {
     if (!user || !babyId) {
       setLoading(false);
       return;
     }
+
+    // Only set loading to true if this is not a background refresh
+    if (!forceRefresh) {
+      setLoading(true);
+    }
+
     await checkOwnerPermission();
-    console.log('Fetching family members for baby:', babyId, 'user:', user.id);
+    console.log('Fetching family members for baby:', babyId, 'user:', user.id, 'forceRefresh:', forceRefresh);
 
     try {
       // Fetch family members
@@ -79,43 +122,51 @@ export const useFamilyMembers = (babyId: string | null) => {
 
       if (membersError) {
         console.error('Error fetching family members:', membersError);
-        toast({
-          title: "Error",
-          description: `Failed to load family members: ${membersError.message}`,
-          variant: "destructive",
-        });
+        if (!forceRefresh) {
+          toast({
+            title: "Error",
+            description: `Failed to load family members: ${membersError.message}`,
+            variant: "destructive",
+          });
+        }
         setLoading(false);
         return;
       }
 
       console.log('Family members found:', familyMembers?.length || 0);
 
-      // Fetch profile data for each member
+      // Fetch profile data for each member with retry logic
       const memberIds = familyMembers?.map(m => m.user_id) || [];
       let profiles: any[] = [];
       
       if (memberIds.length > 0) {
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, email, full_name')
-          .in('id', memberIds);
-
-        if (profilesError) {
-          console.error('Error fetching profiles:', profilesError);
+        try {
+          profiles = await fetchProfilesWithRetry(memberIds);
+          console.log('Profiles fetched:', profiles.length, 'for members:', memberIds.length);
+        } catch (profilesError) {
+          console.error('Failed to fetch profiles after retries:', profilesError);
+          // Don't fail the whole operation if profiles can't be fetched
           profiles = [];
-        } else {
-          profiles = profilesData || [];
         }
       }
 
       // Merge the data
       const membersWithProfiles = familyMembers?.map(member => {
         const profile = profiles?.find(p => p.id === member.user_id);
-        return {
+        const result = {
           ...member,
-          email: profile?.email,
-          full_name: profile?.full_name
+          email: profile?.email || 'Unknown Email',
+          full_name: profile?.full_name || null
         };
+        
+        console.log('Member profile mapping:', {
+          user_id: member.user_id,
+          found_profile: !!profile,
+          email: result.email,
+          full_name: result.full_name
+        });
+        
+        return result;
       }) || [];
 
       setMembers(membersWithProfiles);
@@ -136,15 +187,23 @@ export const useFamilyMembers = (babyId: string | null) => {
       }
     } catch (error) {
       console.error('Unexpected error in fetchFamilyMembers:', error);
-      toast({
-        title: "Error",
-        description: "Unexpected error loading family data",
-        variant: "destructive",
-      });
+      if (!forceRefresh) {
+        toast({
+          title: "Error",
+          description: "Unexpected error loading family data",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, babyId, checkOwnerPermission, toast]);
+
+  // Auto-refresh function that can be called after invitation acceptance
+  const refreshFamilyData = useCallback(() => {
+    console.log('Refreshing family data...');
+    return fetchFamilyMembers(true);
+  }, [fetchFamilyMembers]);
 
   const inviteFamilyMember = async (email: string, role: string = 'caregiver') => {
     if (!user || !babyId) return false;
@@ -296,7 +355,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         });
       }
 
-      await fetchFamilyMembers();
+      await refreshFamilyData();
       return true;
     } catch (error) {
       console.error('Error inviting family member:', error);
@@ -343,7 +402,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         description: "Family member removed successfully",
       });
 
-      await fetchFamilyMembers();
+      await refreshFamilyData();
       return true;
     } catch (error) {
       console.error('Error removing family member:', error);
@@ -390,7 +449,7 @@ export const useFamilyMembers = (babyId: string | null) => {
         description: "The invitation has been cancelled successfully",
       });
 
-      await fetchFamilyMembers();
+      await refreshFamilyData();
       return true;
     } catch (error) {
       console.error('Error canceling invitation:', error);
@@ -405,7 +464,7 @@ export const useFamilyMembers = (babyId: string | null) => {
 
   useEffect(() => {
     fetchFamilyMembers();
-  }, [user, babyId]);
+  }, [fetchFamilyMembers]);
 
   return {
     members,
@@ -415,6 +474,7 @@ export const useFamilyMembers = (babyId: string | null) => {
     removeFamilyMember,
     cancelInvitation,
     refetch: fetchFamilyMembers,
+    refreshFamilyData,
     ownerCheck
   };
 };

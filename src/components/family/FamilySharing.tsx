@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +36,9 @@ import {
   Crown,
   Heart,
   Shield,
-  Eye
+  Eye,
+  Info,
+  RefreshCw
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
@@ -57,11 +60,12 @@ const ROLE_COLORS = {
 };
 
 export const FamilySharing = ({ babyId }: FamilySharingProps) => {
-  const { members, invitations, loading, inviteFamilyMember, removeFamilyMember, cancelInvitation } = useFamilyMembers(babyId);
+  const { members, invitations, loading, inviteFamilyMember, removeFamilyMember, cancelInvitation, refreshFamilyData } = useFamilyMembers(babyId);
   const { permissions } = useProfilePermissions(babyId);
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('caregiver');
   const [isInviting, setIsInviting] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +78,12 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
       setRole('caregiver');
     }
     setIsInviting(false);
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refreshFamilyData();
+    setIsRefreshing(false);
   };
 
   if (loading) {
@@ -97,6 +107,16 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Subscription Information */}
+      <Alert className="mx-2 sm:mx-0 border-blue-200 bg-blue-50">
+        <Info className="h-4 w-4 text-blue-600" />
+        <AlertDescription className="text-blue-800">
+          <strong>About Premium Features:</strong> Family members have their own individual subscriptions. 
+          Premium features (like advanced reports and sleep schedules) require each user to have their own premium subscription. 
+          Baby access and basic tracking are shared regardless of subscription level.
+        </AlertDescription>
+      </Alert>
+
       {/* Invite New Member - Only for owners */}
       <PermissionAwareActions requiredPermission="canInvite" showMessage={false}>
         <Card className="mx-2 sm:mx-0 shadow-sm">
@@ -158,10 +178,21 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
       {/* Current Family Members */}
       <Card className="mx-2 sm:mx-0 shadow-sm">
         <CardHeader className="pb-4 sm:pb-6">
-          <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-            <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-            <span>Family Members ({members.length})</span>
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+              <span>Family Members ({members.length})</span>
+            </CardTitle>
+            <Button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              variant="ghost"
+              size="sm"
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {members.length === 0 ? (
@@ -174,6 +205,8 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
             <div className="space-y-3 sm:space-y-4">
               {members.map((member) => {
                 const RoleIcon = ROLE_ICONS[member.role as keyof typeof ROLE_ICONS];
+                const displayName = member.full_name || member.email?.split('@')[0] || 'Family Member';
+                
                 return (
                   <div key={member.id} className="flex items-center justify-between p-3 sm:p-4 border rounded-lg bg-white">
                     <div className="flex items-center space-x-3 min-w-0 flex-1">
@@ -182,7 +215,7 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="font-medium text-sm sm:text-base truncate">
-                          {member.full_name || 'Unknown User'}
+                          {displayName}
                         </p>
                         <p className="text-xs sm:text-sm text-gray-600 truncate">{member.email}</p>
                         {member.joined_at && (
@@ -208,7 +241,7 @@ export const FamilySharing = ({ babyId }: FamilySharingProps) => {
                               <AlertDialogHeader>
                                 <AlertDialogTitle className="text-base sm:text-lg">Remove Family Member</AlertDialogTitle>
                                 <AlertDialogDescription className="text-sm sm:text-base">
-                                  Are you sure you want to remove {member.full_name || member.email} from family sharing? 
+                                  Are you sure you want to remove {displayName} from family sharing? 
                                   They will no longer be able to access baby activities.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
