@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
 import { EditMemoryDialog } from '@/components/memories/EditMemoryDialog';
+import { FullScreenImageDialog } from '@/components/memories/FullScreenImageDialog';
 
 interface Memory {
   id: string;
@@ -41,6 +41,7 @@ interface MemoryGridProps {
 export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGridProps) => {
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showFullScreenDialog, setShowFullScreenDialog] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Filter out any video entries that might still exist in the database
@@ -101,6 +102,11 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
     }
   };
 
+  const handleImageClick = (memory: Memory) => {
+    setSelectedMemory(memory);
+    setShowFullScreenDialog(true);
+  };
+
   const formatFileSize = (bytes: number | null) => {
     if (!bytes) return '';
     const mb = bytes / (1024 * 1024);
@@ -144,8 +150,9 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
               <img
                 src={memory.media_url}
                 alt={memory.title || 'Memory'}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer"
                 loading="lazy"
+                onClick={() => handleImageClick(memory)}
               />
               
               {/* Action buttons overlay */}
@@ -242,6 +249,19 @@ export const MemoryGrid = ({ memories, onDelete, onUpdate, canEdit }: MemoryGrid
           }}
           memory={selectedMemory}
           onUpdate={onUpdate}
+        />
+      )}
+
+      {/* Full Screen Image Dialog */}
+      {selectedMemory && (
+        <FullScreenImageDialog
+          isOpen={showFullScreenDialog}
+          onClose={() => {
+            setShowFullScreenDialog(false);
+            setSelectedMemory(null);
+          }}
+          memory={selectedMemory}
+          onDownload={handleDownload}
         />
       )}
     </>
