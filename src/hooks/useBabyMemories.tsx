@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -21,7 +22,7 @@ interface BabyMemory {
 // Helper to convert a raw Supabase row to the correct BabyMemory type
 const toBabyMemory = (row: any): BabyMemory => ({
   ...row,
-  media_type: row.media_type === 'video' ? 'video' : 'photo',
+  media_type: 'photo', // Force all entries to be photos
 });
 
 export const useBabyMemories = (babyId?: string) => {
@@ -47,6 +48,7 @@ export const useBabyMemories = (babyId?: string) => {
         .from('baby_memories')
         .select('*')
         .eq('baby_id', babyId)
+        .eq('media_type', 'photo') // Only fetch photos
         .order('taken_at', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false });
 
@@ -54,7 +56,7 @@ export const useBabyMemories = (babyId?: string) => {
         console.error('Error fetching memories:', error);
         toast({
           title: "Error",
-          description: "Failed to load memories",
+          description: "Failed to load photos",
           variant: "destructive",
         });
         return;
@@ -65,7 +67,7 @@ export const useBabyMemories = (babyId?: string) => {
       console.error('Error fetching memories:', error);
       toast({
         title: "Error",
-        description: "Failed to load memories",
+        description: "Failed to load photos",
         variant: "destructive",
       });
     } finally {
@@ -81,14 +83,24 @@ export const useBabyMemories = (babyId?: string) => {
   ) => {
     if (!user || !babyId) return false;
 
-    // Check file size before upload (10MB limit recommended, 50MB absolute max)
+    // Only accept image files
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid File Type",
+        description: "Only image files are allowed.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Check file size (10MB limit recommended, 50MB absolute max)
     const maxSize = 50 * 1024 * 1024; // 50MB
     const recommendedSize = 10 * 1024 * 1024; // 10MB
     
     if (file.size > maxSize) {
       toast({
         title: "File Too Large",
-        description: `File size (${(file.size / 1024 / 1024).toFixed(1)}MB) exceeds the maximum limit of 50MB. Please choose a smaller file.`,
+        description: `File size (${(file.size / 1024 / 1024).toFixed(1)}MB) exceeds the maximum limit of 50MB. Please choose a smaller image.`,
         variant: "destructive",
       });
       return false;
@@ -100,7 +112,7 @@ export const useBabyMemories = (babyId?: string) => {
 
     setUploading(true);
     try {
-      console.log('Starting memory upload:', { fileName: file.name, fileSize: file.size, fileType: file.type });
+      console.log('Starting photo upload:', { fileName: file.name, fileSize: file.size, fileType: file.type });
 
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
@@ -117,9 +129,9 @@ export const useBabyMemories = (babyId?: string) => {
       if (uploadError) {
         console.error('Error uploading file:', uploadError);
         
-        let errorMessage = 'Failed to upload file';
+        let errorMessage = 'Failed to upload photo';
         if (uploadError.message?.includes('Payload too large') || uploadError.message?.includes('413')) {
-          errorMessage = `File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Please try a smaller file or compress the video.`;
+          errorMessage = `Photo is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Please try a smaller image.`;
         } else if (uploadError.message?.includes('quota') || uploadError.message?.includes('storage')) {
           errorMessage = 'Storage limit reached. Please contact support or free up space.';
         }
@@ -132,7 +144,7 @@ export const useBabyMemories = (babyId?: string) => {
         return false;
       }
 
-      console.log('File uploaded successfully:', uploadData.path);
+      console.log('Photo uploaded successfully:', uploadData.path);
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
@@ -150,7 +162,7 @@ export const useBabyMemories = (babyId?: string) => {
           title: title || null,
           description: description || null,
           media_url: publicUrl,
-          media_type: file.type.startsWith('video/') ? 'video' : 'photo',
+          media_type: 'photo',
           file_size: file.size,
           mime_type: file.type,
           taken_at: takenAt ? takenAt.toISOString() : null,
@@ -164,25 +176,25 @@ export const useBabyMemories = (babyId?: string) => {
         await supabase.storage.from('baby-memories').remove([fileName]);
         toast({
           title: "Error",
-          description: "Failed to save memory",
+          description: "Failed to save photo",
           variant: "destructive",
         });
         return false;
       }
 
-      console.log('Memory record created successfully:', data.id);
+      console.log('Photo memory record created successfully:', data.id);
 
       setMemories(prev => [toBabyMemory(data), ...prev]);
       toast({
         title: "Success!",
-        description: "Memory uploaded successfully",
+        description: "Photo uploaded successfully",
       });
       return true;
     } catch (error) {
-      console.error('Error uploading memory:', error);
+      console.error('Error uploading photo:', error);
       toast({
         title: "Error",
-        description: "Failed to upload memory",
+        description: "Failed to upload photo",
         variant: "destructive",
       });
       return false;
@@ -209,7 +221,7 @@ export const useBabyMemories = (babyId?: string) => {
         console.error('Error deleting memory:', error);
         toast({
           title: "Error",
-          description: "Failed to delete memory",
+          description: "Failed to delete photo",
           variant: "destructive",
         });
         return false;
@@ -225,7 +237,7 @@ export const useBabyMemories = (babyId?: string) => {
       setMemories(prev => prev.filter(m => m.id !== memoryId));
       toast({
         title: "Success!",
-        description: "Memory deleted successfully",
+        description: "Photo deleted successfully",
       });
       return true;
     } catch (error) {
@@ -258,7 +270,7 @@ export const useBabyMemories = (babyId?: string) => {
         console.error('Error updating memory:', error);
         toast({
           title: "Error",
-          description: "Failed to update memory",
+          description: "Failed to update photo",
           variant: "destructive",
         });
         return false;
@@ -267,7 +279,7 @@ export const useBabyMemories = (babyId?: string) => {
       setMemories(prev => prev.map(m => m.id === memoryId ? toBabyMemory(data) : m));
       toast({
         title: "Success!",
-        description: "Memory updated successfully",
+        description: "Photo updated successfully",
       });
       return true;
     } catch (error) {

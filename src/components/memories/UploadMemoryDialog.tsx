@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -5,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Calendar, Upload, X, Image, Video, Camera, Square, Loader2, AlertCircle, SwitchCamera, Info } from 'lucide-react';
+import { Calendar, Upload, X, Image, Camera, Loader2, AlertCircle, SwitchCamera, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { useCamera } from '@/hooks/useCamera';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -32,16 +33,12 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     isLoading: cameraLoading,
     error: cameraError,
     isActive: cameraActive,
-    isRecording,
-    recordingTime,
     capabilities,
     videoRef,
     canvasRef,
     startCamera,
     stopCamera,
     capturePhoto,
-    startRecording,
-    stopRecording,
     switchCamera
   } = useCamera();
 
@@ -58,7 +55,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   };
 
   const handleClose = () => {
-    if (!uploading && !isRecording) {
+    if (!uploading) {
       resetForm();
       onClose();
     }
@@ -67,17 +64,17 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   const checkFileSize = (selectedFile: File) => {
     const sizeInMB = selectedFile.size / (1024 * 1024);
     
-    if (sizeInMB > 50) {
-      setFileSizeWarning(`File size is ${sizeInMB.toFixed(1)}MB which may be too large for upload. Consider using a smaller file.`);
-    } else if (sizeInMB > 10) {
-      setFileSizeWarning(`File size is ${sizeInMB.toFixed(1)}MB. Large files may take longer to upload.`);
+    if (sizeInMB > 10) {
+      setFileSizeWarning(`File size is ${sizeInMB.toFixed(1)}MB which may be too large for upload. Consider using a smaller image.`);
+    } else if (sizeInMB > 5) {
+      setFileSizeWarning(`File size is ${sizeInMB.toFixed(1)}MB. Large images may take longer to upload.`);
     } else {
       setFileSizeWarning('');
     }
   };
 
   const handleFileSelect = (selectedFile: File) => {
-    if (selectedFile.type.startsWith('image/') || selectedFile.type.startsWith('video/')) {
+    if (selectedFile.type.startsWith('image/')) {
       setFile(selectedFile);
       checkFileSize(selectedFile);
       if (!title) {
@@ -117,31 +114,6 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     }
   };
 
-  const handleStartRecording = async () => {
-    try {
-      await startRecording();
-    } catch (error) {
-      console.error('Failed to start recording:', error);
-    }
-  };
-
-  const handleStopRecording = async () => {
-    const videoFile = await stopRecording();
-    if (videoFile) {
-      setFile(videoFile);
-      checkFileSize(videoFile);
-      setTitle(`Video ${format(new Date(), 'MMM d, yyyy')}`);
-      setShowCamera(false);
-      stopCamera();
-    }
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
   const handleUpload = async () => {
     if (!file) return;
 
@@ -155,7 +127,6 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     setUploading(false);
   };
 
-  const isVideo = file?.type.startsWith('video/');
   const isImage = file?.type.startsWith('image/');
 
   if (showCamera) {
@@ -219,19 +190,12 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                     
                     <canvas ref={canvasRef} className="hidden" />
                     
-                    {isRecording && (
-                      <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center animate-pulse">
-                        <div className="w-2 h-2 bg-white rounded-full mr-2"></div>
-                        REC {formatTime(recordingTime)}
-                      </div>
-                    )}
-                    
                     {capabilities?.hasFrontCamera && capabilities?.hasBackCamera && cameraActive && (
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={switchCamera}
-                        disabled={isRecording || cameraLoading}
+                        disabled={cameraLoading}
                         className="absolute top-4 right-4 bg-black/50 border-white/20 text-white hover:bg-black/70"
                       >
                         <SwitchCamera className="h-4 w-4" />
@@ -240,35 +204,16 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                   </div>
 
                   {cameraActive && (
-                    <div className="flex justify-center space-x-3">
+                    <div className="flex justify-center">
                       <Button
                         onClick={handleCapturePhoto}
-                        disabled={isRecording || cameraLoading}
+                        disabled={cameraLoading}
                         variant="gradient"
-                        className="flex-1"
+                        className="w-full"
                       >
                         <Camera className="h-4 w-4 mr-2" />
                         Take Photo
                       </Button>
-                      
-                      {!isRecording ? (
-                        <Button
-                          onClick={handleStartRecording}
-                          disabled={cameraLoading}
-                          className="bg-red-500 hover:bg-red-600 text-white flex-1"
-                        >
-                          <Video className="h-4 w-4 mr-2" />
-                          Record Video
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={handleStopRecording}
-                          className="bg-gray-600 hover:bg-gray-700 text-white flex-1"
-                        >
-                          <Square className="h-4 w-4 mr-2" />
-                          Stop ({formatTime(recordingTime)})
-                        </Button>
-                      )}
                     </div>
                   )}
                 </>
@@ -281,9 +226,8 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                   stopCamera();
                 }}
                 className="w-full"
-                disabled={isRecording}
               >
-                {isRecording ? 'Stop recording first' : 'Cancel'}
+                Cancel
               </Button>
             </div>
           </ScrollArea>
@@ -296,7 +240,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-gradient">Add Memory for {babyName}</DialogTitle>
+          <DialogTitle className="text-gradient">Add Photo Memory for {babyName}</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="max-h-[75vh] pr-4">
@@ -327,12 +271,11 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                 <div className="space-y-3">
                   <div className="flex items-center justify-center">
                     {isImage && <Image className="h-12 w-12 text-primary animate-fade-in" />}
-                    {isVideo && <Video className="h-12 w-12 text-secondary animate-fade-in" />}
                   </div>
                   <div>
                     <p className="font-medium text-foreground">{file.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {isImage ? 'Photo' : 'Video'} • {(file.size / 1024 / 1024).toFixed(1)} MB
+                      Photo • {(file.size / 1024 / 1024).toFixed(1)} MB
                     </p>
                   </div>
                   <Button
@@ -352,18 +295,18 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                 <div className="space-y-3">
                   <Upload className="h-12 w-12 text-muted-foreground mx-auto animate-fade-in" />
                   <div>
-                    <p className="font-medium text-foreground">Drop files here or choose an option</p>
-                    <p className="text-sm text-muted-foreground">Photos and videos up to 10MB recommended</p>
+                    <p className="font-medium text-foreground">Drop photos here or choose an option</p>
+                    <p className="text-sm text-muted-foreground">Images up to 10MB</p>
                   </div>
                   <div className="flex space-x-2">
                     <Button variant="outline" asChild className="flex-1 hover:bg-primary/10">
                       <label className="cursor-pointer">
                         <Upload className="h-4 w-4 mr-2" />
-                        Choose File
+                        Choose Photo
                         <input
                           ref={fileInputRef}
                           type="file"
-                          accept="image/*,video/*"
+                          accept="image/*"
                           className="hidden"
                           onChange={(e) => {
                             const selectedFile = e.target.files?.[0];
@@ -450,7 +393,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
                     Uploading...
                   </>
                 ) : (
-                  'Upload Memory'
+                  'Upload Photo'
                 )}
               </Button>
             </div>

@@ -7,7 +7,7 @@ import { useBabyMemories } from '@/hooks/useBabyMemories';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Camera, Video, Plus, Crown, Sparkles } from 'lucide-react';
+import { ArrowLeft, Camera, Plus, Crown, Sparkles } from 'lucide-react';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { UploadMemoryDialog } from '@/components/memories/UploadMemoryDialog';
@@ -28,7 +28,7 @@ const Memories = () => {
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
         <div className="text-center space-y-4">
           <Camera className="h-12 w-12 text-primary mx-auto animate-pulse" />
-          <p className="text-muted-foreground animate-fade-in">Loading memories...</p>
+          <p className="text-muted-foreground animate-fade-in">Loading photos...</p>
         </div>
       </div>
     );
@@ -70,7 +70,7 @@ const Memories = () => {
               <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4 animate-fade-in" />
               <h3 className="text-lg font-medium text-foreground mb-2">No Baby Profile Selected</h3>
               <p className="text-muted-foreground mb-6">
-                Please select or create a baby profile to start capturing memories.
+                Please select or create a baby profile to start capturing photo memories.
               </p>
               <Button 
                 onClick={() => navigate('/dashboard')}
@@ -105,7 +105,7 @@ const Memories = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-gradient mb-2">
-                Photo & Video Memories
+                Photo Memories
               </h1>
               <p className="text-muted-foreground">
                 Capture and preserve precious moments with {activeProfile.name}
@@ -126,7 +126,7 @@ const Memories = () => {
                 className="shadow-lg hover:shadow-xl transition-shadow"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                {uploading ? 'Uploading...' : 'Add Memory'}
+                {uploading ? 'Uploading...' : 'Add Photo'}
               </Button>
             </div>
           </div>
@@ -143,11 +143,11 @@ const Memories = () => {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-foreground mb-1 flex items-center">
-                      Unlock Photo & Video Memories
+                      Unlock Photo Memories
                       <Sparkles className="h-4 w-4 ml-2 text-amber-500" />
                     </h3>
                     <p className="text-muted-foreground">
-                      Capture unlimited photos and videos of your baby's precious moments with Premium
+                      Capture unlimited photos of your baby's precious moments with Premium
                     </p>
                   </div>
                 </div>
@@ -167,14 +167,13 @@ const Memories = () => {
           <Card className="text-center py-12 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
             <CardContent>
               <div className="mb-6 space-y-4">
-                <div className="flex justify-center items-center space-x-4">
+                <div className="flex justify-center">
                   <Camera className="h-16 w-16 text-muted-foreground animate-fade-in" />
-                  <Video className="h-12 w-12 text-muted-foreground animate-fade-in" style={{ animationDelay: '0.2s' }} />
                 </div>
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No Memories Yet</h3>
+              <h3 className="text-lg font-medium text-foreground mb-2">No Photos Yet</h3>
               <p className="text-muted-foreground mb-6">
-                Start capturing precious moments with {activeProfile.name}. Upload photos and videos to create a beautiful timeline of memories.
+                Start capturing precious moments with {activeProfile.name}. Upload photos to create a beautiful timeline of memories.
               </p>
               <Button 
                 onClick={handleUploadClick}
@@ -182,7 +181,7 @@ const Memories = () => {
                 className="shadow-lg hover:shadow-xl transition-shadow"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Your First Memory
+                Add Your First Photo
               </Button>
             </CardContent>
           </Card>

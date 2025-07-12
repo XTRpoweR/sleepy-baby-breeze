@@ -12,16 +12,12 @@ interface CameraHookReturn {
   isLoading: boolean;
   error: string | null;
   isActive: boolean;
-  isRecording: boolean;
-  recordingTime: number;
   capabilities: CameraCapabilities | null;
   videoRef: React.RefObject<HTMLVideoElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   startCamera: (facingMode?: 'user' | 'environment') => Promise<void>;
   stopCamera: () => void;
   capturePhoto: () => Promise<File | null>;
-  startRecording: () => Promise<void>;
-  stopRecording: () => Promise<File | null>;
   switchCamera: () => Promise<void>;
 }
 
@@ -29,17 +25,12 @@ export const useCamera = (): CameraHookReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isActive, setIsActive] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
   const [currentFacingMode, setCurrentFacingMode] = useState<'user' | 'environment'>('environment');
   const [capabilities, setCapabilities] = useState<CameraCapabilities | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const recordedChunksRef = useRef<Blob[]>([]);
 
   const checkCameraCapabilities = useCallback(async (): Promise<CameraCapabilities> => {
     const defaultCapabilities: CameraCapabilities = {
@@ -236,15 +227,6 @@ export const useCamera = (): CameraHookReturn => {
   const stopCamera = useCallback(() => {
     console.log('Stopping camera');
     
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-    }
-    
-    if (recordingIntervalRef.current) {
-      clearInterval(recordingIntervalRef.current);
-      recordingIntervalRef.current = null;
-    }
-    
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => {
         console.log('Stopping track:', track.kind, track.label);
@@ -258,11 +240,8 @@ export const useCamera = (): CameraHookReturn => {
     }
     
     setIsActive(false);
-    setIsRecording(false);
-    setRecordingTime(0);
     setError(null);
-    recordedChunksRef.current = [];
-  }, [isRecording]);
+  }, []);
 
   const capturePhoto = useCallback(async (): Promise<File | null> => {
     if (!videoRef.current || !canvasRef.current || !streamRef.current) {
@@ -310,95 +289,6 @@ export const useCamera = (): CameraHookReturn => {
     }
   }, []);
 
-  const startRecording = useCallback(async (): Promise<void> => {
-    if (!streamRef.current) {
-      throw new Error('No camera stream available for recording');
-    }
-
-    console.log('Starting video recording');
-    recordedChunksRef.current = [];
-
-    try {
-      // Use lower bitrate for smaller file sizes
-      const mediaRecorder = new MediaRecorder(streamRef.current, {
-        videoBitsPerSecond: 1000000 // 1 Mbps instead of 2.5 Mbps
-      });
-      
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunksRef.current.push(event.data);
-          console.log('Recording data chunk:', event.data.size, 'bytes');
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        console.log('Recording stopped, total chunks:', recordedChunksRef.current.length);
-        setIsRecording(false);
-        if (recordingIntervalRef.current) {
-          clearInterval(recordingIntervalRef.current);
-          recordingIntervalRef.current = null;
-        }
-      };
-
-      mediaRecorder.onerror = (event) => {
-        console.error('MediaRecorder error:', event);
-        setError('Recording failed');
-        setIsRecording(false);
-      };
-
-      mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start(1000); // Record in 1 second chunks
-      setIsRecording(true);
-      setRecordingTime(0);
-
-      // Start recording timer
-      recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
-      }, 1000);
-      
-      console.log('Recording started successfully');
-    } catch (err) {
-      console.error('Failed to start recording:', err);
-      throw new Error('Failed to start video recording');
-    }
-  }, []);
-
-  const stopRecording = useCallback(async (): Promise<File | null> => {
-    return new Promise((resolve) => {
-      if (!mediaRecorderRef.current || !isRecording) {
-        resolve(null);
-        return;
-      }
-
-      console.log('Stopping recording');
-      
-      const handleStop = () => {
-        if (recordedChunksRef.current.length === 0) {
-          console.error('No recorded data available');
-          resolve(null);
-          return;
-        }
-
-        const blob = new Blob(recordedChunksRef.current, { type: 'video/webm' });
-        
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const file = new File([blob], `video-${timestamp}.webm`, { type: 'video/webm' });
-        
-        console.log('Video file created:', file.name, 'size:', blob.size, 'MB:', (blob.size / 1024 / 1024).toFixed(2));
-        
-        // Check if file is too large (>10MB)
-        if (blob.size > 10 * 1024 * 1024) {
-          console.warn('Video file is large:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
-        }
-        
-        resolve(file);
-      };
-
-      mediaRecorderRef.current.addEventListener('stop', handleStop, { once: true });
-      mediaRecorderRef.current.stop();
-    });
-  }, [isRecording]);
-
   const switchCamera = useCallback(async (): Promise<void> => {
     if (!isActive) return;
     
@@ -410,16 +300,12 @@ export const useCamera = (): CameraHookReturn => {
     isLoading,
     error,
     isActive,
-    isRecording,
-    recordingTime,
     capabilities,
     videoRef,
     canvasRef,
     startCamera,
     stopCamera,
     capturePhoto,
-    startRecording,
-    stopRecording,
     switchCamera
   };
 };
