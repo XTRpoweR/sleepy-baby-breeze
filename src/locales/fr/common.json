@@ -1,7 +1,7 @@
 
 {
   "app": {
-    "name": "SleepyBaby",
+    "name": "SleepyBabyy",
     "tagline": "Un meilleur sommeil pour bébé et vous",
     "description": "Suivez, comprenez et améliorez les habitudes de sommeil de votre bébé avec des conseils doux conçus pour de vrais parents."
   },
@@ -49,7 +49,7 @@
     },
     "multilingual": {
       "title": "Disponible en 8 langues",
-      "description": "Utilisez SleepyBaby en français, anglais, allemand, suédois, espagnol, italien, grec et finnois pour une expérience confortable dans votre langue maternelle."
+      "description": "Utilisez SleepyBabyy en français, anglais, allemand, suédois, espagnol, italien, grec et finnois pour une expérience confortable dans votre langue maternelle."
     }
   },
   "dashboard": {
@@ -103,6 +103,6 @@
     "about": "À propos",
     "blog": "Blog",
     "careers": "Carrières",
-    "copyright": "© 2024 SleepyBaby. Fait avec ❤️ par des parents, pour des parents."
+    "copyright": "© 2024 SleepyBabyy. Fait avec ❤️ par des parents, pour des parents."
   }
 }

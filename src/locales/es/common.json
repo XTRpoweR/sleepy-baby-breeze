@@ -1,7 +1,7 @@
 
 {
   "app": {
-    "name": "SleepyBaby",
+    "name": "SleepyBabyy",
     "tagline": "Mejor sueño para bebé y ti",
     "description": "Rastrea, comprende y mejora los patrones de sueño de tu bebé con orientación suave diseñada para padres reales."
   },
@@ -49,7 +49,7 @@
     },
     "multilingual": {
       "title": "Disponible en 8 idiomas",
-      "description": "Usa SleepyBaby en español, inglés, alemán, sueco, francés, italiano, griego y finlandés para una experiencia cómoda en tu idioma nativo."
+      "description": "Usa SleepyBabyy en español, inglés, alemán, sueco, francés, italiano, griego y finlandés para una experiencia cómoda en tu idioma nativo."
     }
   },
   "dashboard": {
@@ -103,6 +103,6 @@
     "about": "Acerca de",
     "blog": "Blog",
     "careers": "Carreras",
-    "copyright": "© 2024 SleepyBaby. Hecho con ❤️ por padres, para padres."
+    "copyright": "© 2024 SleepyBabyy. Hecho con ❤️ por padres, para padres."
   }
 }

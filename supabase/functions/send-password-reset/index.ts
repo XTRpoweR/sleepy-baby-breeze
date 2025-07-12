@@ -93,7 +93,7 @@ serve(async (req) => {
     // Send clean, professional password reset email matching the screenshot
     console.log('Sending password reset email to:', email)
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'SleepyBaby <noreply@sleepybabyy.com>',
+      from: 'SleepyBabyy <noreply@sleepybabyy.com>',
       to: [email],
       subject: 'Reset your password',
       html: `
@@ -102,7 +102,7 @@ serve(async (req) => {
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Reset your password - SleepyBaby</title>
+          <title>Reset your password - SleepyBabyy</title>
           <style>
             body { 
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
@@ -190,14 +190,14 @@ serve(async (req) => {
         <body>
           <div class="container">
             <div class="header">
-              <div class="logo">🍼 SleepyBaby</div>
+              <div class="logo">🍼 SleepyBabyy</div>
               <p class="tagline">Your trusted baby tracking companion</p>
             </div>
             
             <div class="content">
               <h1 class="title">Reset your password</h1>
               <p class="message">
-                You recently requested to reset your password for your SleepyBaby account. 
+                You recently requested to reset your password for your SleepyBabyy account. 
                 Click the button below to reset it.
               </p>
               
@@ -209,7 +209,7 @@ serve(async (req) => {
             </div>
             
             <div class="footer">
-              <p class="footer-text">This email was sent by SleepyBaby</p>
+              <p class="footer-text">This email was sent by SleepyBabyy</p>
               <p class="help-text">
                 If you didn't request this password reset, you can safely ignore this email.
               </p>

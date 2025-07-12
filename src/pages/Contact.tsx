@@ -119,7 +119,7 @@ const Contact = () => {
             <span className="text-blue-600 block">We're Here to Help</span>
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-2 sm:px-0">
-            Have questions about SleepyBaby? Need support with your account? 
+            Have questions about SleepyBabyy? Need support with your account? 
             Want to share feedback? We'd love to hear from you.
           </p>
         </div>

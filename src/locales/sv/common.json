@@ -1,12 +1,12 @@
 {
   "app": {
-    "name": "SleepyBaby",
+    "name": "SleepyBabyy",
     "tagline": "Bättre sömn för baby & dig",
     "description": "Spåra, förstå och förbättra ditt barns sömnmönster med mild vägledning utformad för riktiga föräldrar."
   },
   "navigation": {
     "features": "Funktioner",
-    "insights": "Insikter",
+    "insights": "Insikter", 
     "reviews": "Recensioner",
     "getStarted": "Kom igång",
     "dashboard": "Till instrumentpanel",
@@ -104,7 +104,7 @@
     },
     "multilingual": {
       "title": "Tillgänglig på 8 språk",
-      "description": "Använd SleepyBaby på svenska, engelska, tyska, spanska, franska, italienska, grekiska och finska för en bekväm upplevelse på ditt modersmål."
+      "description": "Använd SleepyBabyy på svenska, engelska, tyska, spanska, franska, italienska, grekiska och finska för en bekväm upplevelse på ditt modersmål."
     }
   },
   "pages": {
@@ -326,6 +326,6 @@
     "about": "Om oss",
     "blog": "Blogg",
     "careers": "Karriär",
-    "copyright": "© 2024 SleepyBaby. Gjort med ❤️ av föräldrar, för föräldrar."
+    "copyright": "© 2024 SleepyBabyy. Gjort med ❤️ av föräldrar, för föräldrar."
   }
 }

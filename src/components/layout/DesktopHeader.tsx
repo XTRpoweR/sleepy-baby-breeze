@@ -45,7 +45,7 @@ export const DesktopHeader = () => {
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-              alt="SleepyBaby Logo" 
+              alt="SleepyBabyy Logo" 
               className="h-12 w-auto"
             />
             <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>

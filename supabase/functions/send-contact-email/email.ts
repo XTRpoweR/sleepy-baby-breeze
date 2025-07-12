@@ -11,7 +11,7 @@ export async function sendSupportEmail(formData: ContactFormData): Promise<Email
   try {
     // Try to send to primary email addresses first
     const supportEmailResponse = await resend.emails.send({
-      from: "SleepyBaby Contact <noreply@sleepybabyy.com>",
+      from: "SleepyBabyy Contact <noreply@sleepybabyy.com>",
       to: primaryEmails,
       subject: `New Contact Form: ${formData.subject}`,
       html: `
@@ -49,7 +49,7 @@ export async function sendSupportEmail(formData: ContactFormData): Promise<Email
     // Try fallback email addresses
     try {
       const fallbackEmailResponse = await resend.emails.send({
-        from: "SleepyBaby Contact <onboarding@resend.dev>",
+        from: "SleepyBabyy Contact <onboarding@resend.dev>",
         to: fallbackEmails,
         subject: `[FALLBACK] New Contact Form: ${formData.subject}`,
         html: `
@@ -101,12 +101,12 @@ export async function sendSupportEmail(formData: ContactFormData): Promise<Email
 export async function sendUserConfirmationEmail(formData: ContactFormData): Promise<EmailResponse> {
   try {
     const userEmailResponse = await resend.emails.send({
-      from: "SleepyBaby Support <onboarding@resend.dev>",
+      from: "SleepyBabyy Support <onboarding@resend.dev>",
       to: [formData.email],
-      subject: "We received your message - SleepyBaby Support",
+      subject: "We received your message - SleepyBabyy Support",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">Thank you for contacting SleepyBaby!</h2>
+          <h2 style="color: #2563eb;">Thank you for contacting SleepyBabyy!</h2>
           
           <p>Hi ${formData.name},</p>
           
@@ -129,11 +129,11 @@ export async function sendUserConfirmationEmail(formData: ContactFormData): Prom
           </div>
           
           <p>Best regards,<br>
-          The SleepyBaby Support Team</p>
+          The SleepyBabyy Support Team</p>
           
           <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
           <p style="font-size: 14px; color: #64748b;">
-            SleepyBaby - Helping families get the rest they deserve, one night at a time.
+            SleepyBabyy - Helping families get the rest they deserve, one night at a time.
           </p>
         </div>
       `,

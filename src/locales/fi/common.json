@@ -1,7 +1,7 @@
 
 {
   "app": {
-    "name": "SleepyBaby",
+    "name": "SleepyBabyy",
     "tagline": "Parempi uni vauvalle ja sinulle",
     "description": "Seuraa, ymmärrä ja paranna vauvasi unimalleja lempeällä ohjauksella, joka on suunniteltu oikeille vanhemmille."
   },
@@ -49,7 +49,7 @@
     },
     "multilingual": {
       "title": "Saatavilla 8 kielellä",
-      "description": "Käytä SleepyBabyä suomeksi, englanniksi, saksaksi, ruotsiksi, espanjaksi, ranskaksi, italiaksi ja kreikaksi mukavaa kokemusta varten äidinkielelläsi."
+      "description": "Käytä SleepyBabyy suomeksi, englanniksi, saksaksi, ruotsiksi, espanjaksi, ranskaksi, italiaksi ja kreikaksi mukavaa kokemusta varten äidinkielelläsi."
     }
   },
   "dashboard": {
@@ -103,6 +103,6 @@
     "about": "Tietoja",
     "blog": "Blogi",
     "careers": "Urat",
-    "copyright": "© 2024 SleepyBaby. Tehty ❤️:lla vanhempien toimesta, vanhemmille."
+    "copyright": "© 2024 SleepyBabyy. Tehty ❤️:lla vanhempien toimesta, vanhemmille."
   }
 }
