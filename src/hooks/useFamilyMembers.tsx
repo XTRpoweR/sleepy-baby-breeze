@@ -67,40 +67,6 @@ export const useFamilyMembers = (babyId: string | null) => {
     }
   }, [user, babyId]);
 
-  // Enhanced profile fetching with better error handling
-  const fetchProfilesWithRetry = async (memberIds: string[], maxRetries = 3) => {
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        console.log(`Fetching profiles for member IDs: ${memberIds.join(', ')} (attempt ${attempt})`);
-        
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, email, full_name')
-          .in('id', memberIds);
-
-        if (profilesError) {
-          console.error(`Profile fetch attempt ${attempt} failed:`, profilesError);
-          if (attempt === maxRetries) {
-            throw profilesError;
-          }
-          // Wait before retry (exponential backoff)
-          await new Promise(resolve => setTimeout(resolve, attempt * 1000));
-          continue;
-        }
-
-        console.log(`Profiles fetched successfully:`, profilesData);
-        return profilesData || [];
-      } catch (error) {
-        console.error(`Profile fetch attempt ${attempt} error:`, error);
-        if (attempt === maxRetries) {
-          throw error;
-        }
-        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
-      }
-    }
-    return [];
-  };
-
   const fetchFamilyMembers = useCallback(async (forceRefresh = false) => {
     if (!user || !babyId) {
       setLoading(false);
@@ -116,75 +82,78 @@ export const useFamilyMembers = (babyId: string | null) => {
     console.log('Fetching family members for baby:', babyId, 'user:', user.id, 'forceRefresh:', forceRefresh);
 
     try {
-      // Fetch family members
-      const { data: familyMembers, error: membersError } = await supabase
+      // Use a custom query to get family members with their profile information
+      // This approach works better with RLS policies
+      const { data: familyMembersRaw, error: membersError } = await supabase
         .from('family_members')
-        .select('*')
+        .select(`
+          *,
+          profiles!inner(
+            email,
+            full_name
+          )
+        `)
         .eq('baby_id', babyId);
 
       if (membersError) {
-        console.error('Error fetching family members:', membersError);
-        if (!forceRefresh) {
-          toast({
-            title: "Error",
-            description: `Failed to load family members: ${membersError.message}`,
-            variant: "destructive",
-          });
-        }
-        setLoading(false);
-        return;
-      }
-
-      console.log('Family members found:', familyMembers?.length || 0, familyMembers);
-
-      // Fetch profile data for each member with retry logic
-      const memberIds = familyMembers?.map(m => m.user_id) || [];
-      let profiles: any[] = [];
-      
-      if (memberIds.length > 0) {
-        try {
-          profiles = await fetchProfilesWithRetry(memberIds);
-          console.log('Profiles fetched:', profiles.length, 'for members:', memberIds.length);
-        } catch (profilesError) {
-          console.error('Failed to fetch profiles after retries:', profilesError);
-          // Don't fail the whole operation if profiles can't be fetched
-          profiles = [];
-        }
-      }
-
-      // Merge the data with better fallbacks
-      const membersWithProfiles = familyMembers?.map(member => {
-        const profile = profiles?.find(p => p.id === member.user_id);
+        console.error('Error fetching family members with profiles:', membersError);
         
-        // Better fallback logic for email display
-        let displayEmail = 'Unknown Email';
-        let displayName = null;
-        
-        if (profile) {
-          displayEmail = profile.email || 'Unknown Email';
-          displayName = profile.full_name;
+        // Fallback: Try to fetch family members without profiles
+        const { data: familyMembersOnly, error: fallbackError } = await supabase
+          .from('family_members')
+          .select('*')
+          .eq('baby_id', babyId);
+
+        if (fallbackError) {
+          console.error('Fallback query also failed:', fallbackError);
+          if (!forceRefresh) {
+            toast({
+              title: "Error",
+              description: `Failed to load family members: ${fallbackError.message}`,
+              variant: "destructive",
+            });
+          }
+          setLoading(false);
+          return;
         }
-        
-        const result = {
+
+        // Map without profile data as fallback
+        const membersWithoutProfiles = familyMembersOnly?.map(member => ({
           ...member,
-          email: displayEmail,
-          full_name: displayName
-        };
-        
-        console.log('Member profile mapping:', {
-          user_id: member.user_id,
-          found_profile: !!profile,
-          profile_email: profile?.email,
-          profile_full_name: profile?.full_name,
-          final_email: result.email,
-          final_full_name: result.full_name
-        });
-        
-        return result;
-      }) || [];
+          email: 'Email not available',
+          full_name: null
+        })) || [];
 
-      console.log('Final members with profiles:', membersWithProfiles);
-      setMembers(membersWithProfiles);
+        console.log('Using fallback data without profiles:', membersWithoutProfiles);
+        setMembers(membersWithoutProfiles);
+      } else {
+        // Successfully got family members with profiles
+        const membersWithProfiles = familyMembersRaw?.map(member => {
+          const profilesArray = Array.isArray(member.profiles) ? member.profiles : [member.profiles];
+          const profile = profilesArray[0]; // Get the first (and should be only) profile
+          
+          const result = {
+            ...member,
+            email: profile?.email || 'Email not available',
+            full_name: profile?.full_name || null
+          };
+          
+          // Remove the profiles property from the final object
+          delete result.profiles;
+          
+          console.log('Member with profile:', {
+            user_id: member.user_id,
+            profile_data: profile,
+            final_email: result.email,
+            final_full_name: result.full_name
+          });
+          
+          return result;
+        }) || [];
+
+        console.log('Final members with profiles:', membersWithProfiles);
+        setMembers(membersWithProfiles);
+      }
 
       // Fetch family invitations
       const { data: familyInvitations, error: invitationsError } = await supabase
