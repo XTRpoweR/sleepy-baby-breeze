@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Play, Pause, Volume2, VolumeX, Maximize, Download, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface VideoPlayerDialogProps {
   isOpen: boolean;
@@ -42,20 +43,14 @@ export const VideoPlayerDialog = ({ isOpen, onClose, videoUrl, title, descriptio
   const convertVideo = async () => {
     setIsConverting(true);
     try {
-      const response = await fetch('/api/convert-video', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ videoUrl }),
+      const { data, error } = await supabase.functions.invoke('convert-video', {
+        body: { videoUrl }
       });
 
-      if (!response.ok) {
-        throw new Error('Video conversion failed');
+      if (error) {
+        throw new Error(error.message || 'Video conversion failed');
       }
-
-      const data = await response.json();
-      setConvertedUrl(data.convertedUrl);
+      setConvertedUrl(data?.convertedUrl);
       setError(null);
       
       toast({
