@@ -57,10 +57,6 @@ const Sounds = () => {
     setShowProfileManagement(true);
   };
 
-  const handleGoToTracking = () => {
-    navigate('/track-activity');
-  };
-
   if (loading || profileLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
@@ -141,24 +137,6 @@ const Sounds = () => {
 
             <TabsContent value="sleep-tips" className="space-y-6">
               <SleepArticles />
-              
-              {/* Call-to-action to direct users to the tracking page */}
-              <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-                <CardContent className="p-6 text-center">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {t('pages.sounds.trackActivitiesTitle', { default: 'Ready to Track Activities?' })}
-                  </h3>
-                  <p className="text-gray-600 mb-4 text-sm sm:text-base">
-                    {t('pages.sounds.trackActivitiesDesc', { default: 'Log sleep, feeding, diaper changes, and custom activities for your baby.' })}
-                  </p>
-                  <Button 
-                    onClick={handleGoToTracking}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    {t('pages.sounds.goToTracking', { default: 'Go to Activity Tracking' })}
-                  </Button>
-                </CardContent>
-              </Card>
             </TabsContent>
           </Tabs>
         ) : (
