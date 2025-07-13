@@ -5,14 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Baby, Calendar } from 'lucide-react';
+import { Baby, Calendar, ArrowLeft } from 'lucide-react';
 import { PhotoUpload } from '@/components/ui/photo-upload';
 
 interface BabyProfileSetupProps {
   onProfileCreated: (profileData: { name: string; birth_date?: string; photo_url?: string }) => Promise<boolean>;
+  showBackButton?: boolean;
+  onBack?: () => void;
 }
 
-export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) => {
+export const BabyProfileSetup = ({ onProfileCreated, showBackButton = false, onBack }: BabyProfileSetupProps) => {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
@@ -41,6 +43,16 @@ export const BabyProfileSetup = ({ onProfileCreated }: BabyProfileSetupProps) =>
   return (
     <Card className="max-w-md mx-auto">
       <CardHeader className="text-center">
+        {showBackButton && onBack && (
+          <Button 
+            variant="ghost" 
+            onClick={onBack}
+            className="mb-2 self-start flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
+          </Button>
+        )}
         <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
           <Baby className="h-8 w-8 text-blue-600" />
         </div>

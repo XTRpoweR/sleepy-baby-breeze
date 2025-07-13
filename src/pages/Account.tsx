@@ -93,22 +93,38 @@ const Account = () => {
         
         console.log('Family memberships:', familyMemberships?.length || 0);
         
-        // User is a viewer-only if:
-        // 1. They have NO owned babies AND
-        // 2. They have family memberships (they were invited)
+        // Check if user has any pending invitations (they might be in the process of accepting)
+        const { data: pendingInvitations } = await supabase
+          .from('family_invitations')
+          .select('id')
+          .eq('email', user.email || '')
+          .eq('status', 'pending')
+          .gt('expires_at', new Date().toISOString());
+        
+        console.log('Pending invitations:', pendingInvitations?.length || 0);
+        
         const hasOwnedBabies = (ownedBabies?.length || 0) > 0;
         const hasFamilyMemberships = (familyMemberships?.length || 0) > 0;
+        const hasPendingInvitations = (pendingInvitations?.length || 0) > 0;
         
-        // A user is viewer-only if they were invited but don't own any babies
-        const isViewerOnlyUser = !hasOwnedBabies && hasFamilyMemberships;
+        // A user is viewer-only if:
+        // 1. They have NO owned babies AND
+        // 2. They have active family memberships (they were invited and accepted) OR have pending invitations
+        // New users (no babies, no memberships, no invitations) should NOT be viewer-only
+        const isActuallyViewerOnly = !hasOwnedBabies && (hasFamilyMemberships || hasPendingInvitations);
         
         console.log('User role analysis:', {
           hasOwnedBabies,
           hasFamilyMemberships,
-          isViewerOnlyUser
+          hasPendingInvitations,
+          isActuallyViewerOnly,
+          userEmail: user.email,
+          userId: user.id
         });
         
-        setIsViewerOnly(isViewerOnlyUser);
+        // Default to false (full account owner permissions) for edge cases
+        // This ensures new users get full access unless we're certain they're invited viewers
+        setIsViewerOnly(isActuallyViewerOnly);
       } catch (error) {
         console.error('Error checking user role:', error);
         // Default to allowing full access on error (safer for new users)
@@ -453,7 +469,6 @@ const Account = () => {
               </CardContent>
             </Card>
 
-            {/* Subscription Features */}
             <Card>
               <CardHeader>
                 <CardTitle>Plan Features</CardTitle>

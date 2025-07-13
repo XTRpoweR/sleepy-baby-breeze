@@ -131,9 +131,9 @@ export const useBabyProfile = () => {
       const isBasicUser = !subscriptionData || subscriptionData.subscription_tier === 'basic';
       console.log('Is basic user:', isBasicUser);
       
-      // Fixed logic: Allow first profile for basic users (changed from >= 1 to > 1)
-      if (isBasicUser && ownedProfiles.length > 1) {
-        console.log('Profile limit reached for basic user');
+      // Fixed logic: Allow first profile for basic users (0 profiles is allowed, 1+ is blocked)
+      if (isBasicUser && ownedProfiles.length >= 1) {
+        console.log('Profile limit reached for basic user - they already have', ownedProfiles.length, 'profile(s)');
         toast({
           title: "Profile Limit Reached",
           description: "Basic plan allows only 1 baby profile. Upgrade to Premium for unlimited profiles.",
