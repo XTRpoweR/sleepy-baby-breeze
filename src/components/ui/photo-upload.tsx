@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -121,7 +122,7 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
               <div className="text-sm text-muted-foreground">{cameraError}</div>
               <Button
                 variant="outline"
-                onClick={() => startCamera()}
+                onClick={() => startCamera('environment')}
                 disabled={cameraLoading}
               >
                 {cameraLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
@@ -130,7 +131,7 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
             </div>
           ) : (
             <>
-              <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
+              <div className="relative rounded-lg overflow-hidden aspect-video bg-black">
                 {cameraLoading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
                     <Loader2 className="h-8 w-8 text-white animate-spin" />
@@ -140,8 +141,12 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
                   ref={videoRef}
                   autoPlay
                   playsInline
-                  className="w-full h-full object-cover rounded-lg"
-                  style={{ transform: 'scaleX(-1)' }}
+                  muted
+                  className="w-full h-full object-cover"
+                  style={{ 
+                    transform: 'scaleX(-1)',
+                    backgroundColor: 'black'
+                  }}
                 />
                 <canvas ref={canvasRef} className="hidden" />
               </div>
@@ -228,7 +233,7 @@ export const PhotoUpload = ({ value, onChange, fallbackText = 'B', className }: 
           </Button>
           <Button
             variant="gradient"
-            onClick={() => startCamera()}
+            onClick={() => startCamera('environment')}
             disabled={isUploading || cameraLoading}
             className="flex-1"
           >
