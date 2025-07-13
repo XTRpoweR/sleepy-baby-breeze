@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Baby, ChevronDown, Plus, Settings, Loader2, Users, Crown, Heart, Shield } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 
 interface ProfileSelectorProps {
   onAddProfile: () => void;
@@ -39,6 +40,7 @@ const getRoleColor = (role: string) => {
 
 export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelectorProps) => {
   const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
+  const { role } = useProfilePermissions(activeProfile?.id || null);
 
   const calculateAge = (birthDate: string | null) => {
     if (!birthDate) return null;
@@ -163,10 +165,13 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
         
         <DropdownMenuSeparator />
         
-        <DropdownMenuItem onClick={onAddProfile} className="p-3 cursor-pointer" disabled={switching}>
-          <Plus className="h-4 w-4 mr-3" />
-          Add New Profile
-        </DropdownMenuItem>
+        {/* Add New Profile - Only show for owners */}
+        {role === 'owner' && (
+          <DropdownMenuItem onClick={onAddProfile} className="p-3 cursor-pointer" disabled={switching}>
+            <Plus className="h-4 w-4 mr-3" />
+            Add New Profile
+          </DropdownMenuItem>
+        )}
         
         <DropdownMenuItem onClick={onManageProfiles} className="p-3 cursor-pointer" disabled={switching}>
           <Settings className="h-4 w-4 mr-3" />

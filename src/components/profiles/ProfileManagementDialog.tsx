@@ -85,18 +85,42 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Role-based messaging for viewers */}
-          {role === 'viewer' && (
+          {/* Role-based messaging for non-owners */}
+          {role !== 'owner' && (
             <Alert className="border-blue-200 bg-blue-50">
               <Shield className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-800">
-                You have view-only access to baby profiles. You can see profile information but cannot create, edit, or delete profiles. Contact the baby's owner for management permissions if needed.
+                {role === 'viewer' 
+                  ? "You have view-only access to baby profiles. You can see profile information but cannot create, edit, or delete profiles. Contact the baby's owner for management permissions if needed."
+                  : "As a caregiver, you can track activities but cannot create new profiles or manage account settings. Only the account owner can create new child profiles."
+                }
               </AlertDescription>
             </Alert>
           )}
 
-          {/* Create New Profile - Only for users with edit permissions */}
-          <PermissionAwareActions requiredPermission="canEdit" showMessage={false}>
+          {/* Create New Profile - Only for account owners */}
+          <PermissionAwareActions 
+            requiredPermission="canInvite" 
+            showMessage={false}
+            fallback={
+              role !== 'owner' ? (
+                <Card className="opacity-60">
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2 text-lg text-gray-500">
+                      <Plus className="h-4 w-4" />
+                      <span>{t('profiles.addNew')}</span>
+                      <Shield className="h-4 w-4 ml-2" />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center py-4">
+                      <p className="text-gray-600">Only account owners can create new child profiles.</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : null
+            }
+          >
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2 text-lg">
@@ -201,7 +225,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
                             </Button>
                           )}
                           
-                          {/* Edit and delete actions - Only for users with permissions */}
+                          {/* Delete action - Only for account owners */}
                           <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
