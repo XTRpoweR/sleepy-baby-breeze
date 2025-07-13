@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Shield, Clock } from 'lucide-react';
+import { Mail, Shield, Clock, AlertCircle } from 'lucide-react';
 
 interface EmailVerificationDialogProps {
   isOpen: boolean;
@@ -28,19 +28,27 @@ export const EmailVerificationDialog = ({
   const [loading, setLoading] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
   const [codeSent, setCodeSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const sendVerificationCode = async () => {
     setSendingCode(true);
+    setError(null);
+    
     try {
-      const { error } = await supabase.functions.invoke('send-email-verification', {
+      console.log('Sending verification code to:', invitedEmail);
+      
+      const { data, error } = await supabase.functions.invoke('send-email-verification', {
         body: {
           email: invitedEmail,
           invitationToken: invitationToken
         }
       });
 
+      console.log('Email verification response:', { data, error });
+
       if (error) {
         console.error('Error sending verification code:', error);
+        setError('Failed to send verification code. Please check your email address and try again.');
         toast({
           title: "Error",
           description: "Failed to send verification code. Please try again.",
@@ -48,16 +56,18 @@ export const EmailVerificationDialog = ({
         });
       } else {
         setCodeSent(true);
+        setError(null);
         toast({
           title: "Verification code sent",
-          description: `A 6-digit code has been sent to ${invitedEmail}`,
+          description: `A 6-digit code has been sent to ${invitedEmail}. Please check your inbox and spam folder.`,
         });
       }
     } catch (error) {
       console.error('Error sending verification code:', error);
+      setError('Network error occurred. Please check your connection and try again.');
       toast({
         title: "Error",
-        description: "Failed to send verification code. Please try again.",
+        description: "Network error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -67,15 +77,13 @@ export const EmailVerificationDialog = ({
 
   const verifyCode = async () => {
     if (!verificationCode || verificationCode.length !== 6) {
-      toast({
-        title: "Invalid code",
-        description: "Please enter a 6-digit verification code.",
-        variant: "destructive",
-      });
+      setError('Please enter a 6-digit verification code.');
       return;
     }
 
     setLoading(true);
+    setError(null);
+    
     try {
       // Verify the code by checking against the stored code in family_invitations
       const { data, error } = await supabase
@@ -86,40 +94,24 @@ export const EmailVerificationDialog = ({
 
       if (error) {
         console.error('Error verifying code:', error);
-        toast({
-          title: "Error",
-          description: "Failed to verify code. Please try again.",
-          variant: "destructive",
-        });
+        setError('Failed to verify code. Please try again.');
         return;
       }
 
       if (!data || !data.verification_code) {
-        toast({
-          title: "No verification code",
-          description: "Please request a new verification code.",
-          variant: "destructive",
-        });
+        setError('No verification code found. Please request a new code.');
         return;
       }
 
       // Check if code has expired
       if (new Date() > new Date(data.verification_expires_at)) {
-        toast({
-          title: "Code expired",
-          description: "The verification code has expired. Please request a new one.",
-          variant: "destructive",
-        });
+        setError('The verification code has expired. Please request a new one.');
         return;
       }
 
       // Check if code matches
       if (data.verification_code !== verificationCode) {
-        toast({
-          title: "Invalid code",
-          description: "The verification code is incorrect. Please try again.",
-          variant: "destructive",
-        });
+        setError('The verification code is incorrect. Please try again.');
         return;
       }
 
@@ -141,11 +133,7 @@ export const EmailVerificationDialog = ({
       onVerified();
     } catch (error) {
       console.error('Error verifying code:', error);
-      toast({
-        title: "Error",
-        description: "Failed to verify code. Please try again.",
-        variant: "destructive",
-      });
+      setError('Failed to verify code. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -169,10 +157,17 @@ export const EmailVerificationDialog = ({
             </AlertDescription>
           </Alert>
 
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
           {!codeSent ? (
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
-                We'll send a 6-digit verification code to the invited email address.
+                We'll send a 6-digit verification code to the invited email address. Please check your inbox and spam folder.
               </p>
               <Button 
                 onClick={sendVerificationCode} 
@@ -228,7 +223,7 @@ export const EmailVerificationDialog = ({
               </div>
               
               <p className="text-xs text-gray-500 text-center">
-                The code expires in 10 minutes
+                The code expires in 10 minutes. Check your spam folder if you don't see the email.
               </p>
             </div>
           )}

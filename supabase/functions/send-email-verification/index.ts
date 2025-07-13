@@ -49,22 +49,87 @@ serve(async (req) => {
       )
     }
 
-    // Send verification email using Supabase Auth email (simpler approach)
-    const { error } = await supabaseClient.auth.admin.inviteUserByEmail(email, {
-      data: {
-        verification_code: verificationCode,
-        email_type: 'verification'
+    // Get invitation details for email content
+    const { data: invitationData, error: invitationError } = await supabaseClient
+      .from('family_invitations')
+      .select(`
+        *,
+        baby_profiles!inner(name),
+        profiles!family_invitations_invited_by_fkey(full_name)
+      `)
+      .eq('invitation_token', invitationToken)
+      .single()
+
+    if (invitationError) {
+      console.error('Error fetching invitation details:', invitationError)
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch invitation details' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const babyName = invitationData.baby_profiles?.name || 'Baby'
+    const inviterName = invitationData.profiles?.full_name || 'Someone'
+
+    // Send verification email using Resend
+    const resendApiKey = Deno.env.get('RESEND_API_KEY')
+    if (!resendApiKey) {
+      console.error('RESEND_API_KEY not configured')
+      return new Response(
+        JSON.stringify({ error: 'Email service not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const emailResponse = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
       },
-      redirectTo: `https://sleepy-baby-breeze.lovable.app/invitation?token=${invitationToken}&verified=true`
+      body: JSON.stringify({
+        from: 'SleepyBabyy <noreply@sleepybabyy.com>',
+        to: [email],
+        subject: `Email Verification for ${babyName}'s Family Sharing`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #3b82f6; text-align: center;">Email Verification Required</h2>
+            
+            <p>Hello,</p>
+            
+            <p><strong>${inviterName}</strong> has invited you to join the family sharing for <strong>${babyName}</strong> on SleepyBabyy.</p>
+            
+            <p>To complete your invitation acceptance, please use this verification code:</p>
+            
+            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;">
+              <h1 style="font-size: 36px; letter-spacing: 8px; margin: 0; color: #1f2937;">${verificationCode}</h1>
+            </div>
+            
+            <p><strong>Important:</strong> This code will expire in 10 minutes for security reasons.</p>
+            
+            <p>If you didn't expect this invitation, you can safely ignore this email.</p>
+            
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+            
+            <p style="font-size: 14px; color: #6b7280;">
+              This email was sent from SleepyBabyy family sharing system. 
+              <br>Do not reply to this email as it's automatically generated.
+            </p>
+          </div>
+        `,
+      }),
     })
 
-    if (error) {
-      console.error('Error sending verification email:', error)
+    if (!emailResponse.ok) {
+      const errorText = await emailResponse.text()
+      console.error('Resend API error:', errorText)
       return new Response(
         JSON.stringify({ error: 'Failed to send verification email' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    console.log('Verification email sent successfully to:', email)
 
     return new Response(
       JSON.stringify({ success: true, message: 'Verification code sent' }),
