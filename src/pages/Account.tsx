@@ -60,23 +60,61 @@ const Account = () => {
   // Check user role and permissions
   const { activeProfile } = useBabyProfile();
   const { role, permissions, loading: permissionsLoading } = useProfilePermissions(activeProfile?.id || null);
-  const [isOnlyViewer, setIsOnlyViewer] = useState(false);
+  const [isViewerOnly, setIsViewerOnly] = useState(false);
+  const [userRoleLoading, setUserRoleLoading] = useState(true);
 
-  // Check if user is only a viewer (not an owner of any babies)
+  // Enhanced user role detection to distinguish between new users and family viewers
   useEffect(() => {
     const checkUserRole = async () => {
-      if (!user) return;
+      if (!user) {
+        setUserRoleLoading(false);
+        return;
+      }
+      
+      setUserRoleLoading(true);
       
       try {
+        console.log('Checking user role for:', user.id);
+        
+        // Check if user owns any babies
         const { data: ownedBabies } = await supabase
           .from('baby_profiles')
           .select('id')
           .eq('user_id', user.id);
         
-        setIsOnlyViewer(!ownedBabies || ownedBabies.length === 0);
+        console.log('Owned babies:', ownedBabies?.length || 0);
+        
+        // Check if user is a family member (invited by someone else)
+        const { data: familyMemberships } = await supabase
+          .from('family_members')
+          .select('id, role')
+          .eq('user_id', user.id)
+          .eq('status', 'active');
+        
+        console.log('Family memberships:', familyMemberships?.length || 0);
+        
+        // User is a viewer-only if:
+        // 1. They have NO owned babies AND
+        // 2. They have family memberships (they were invited)
+        const hasOwnedBabies = (ownedBabies?.length || 0) > 0;
+        const hasFamilyMemberships = (familyMemberships?.length || 0) > 0;
+        
+        // A user is viewer-only if they were invited but don't own any babies
+        const isViewerOnlyUser = !hasOwnedBabies && hasFamilyMemberships;
+        
+        console.log('User role analysis:', {
+          hasOwnedBabies,
+          hasFamilyMemberships,
+          isViewerOnlyUser
+        });
+        
+        setIsViewerOnly(isViewerOnlyUser);
       } catch (error) {
         console.error('Error checking user role:', error);
-        setIsOnlyViewer(false);
+        // Default to allowing full access on error (safer for new users)
+        setIsViewerOnly(false);
+      } finally {
+        setUserRoleLoading(false);
       }
     };
     
@@ -224,7 +262,7 @@ const Account = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  if (loading) {
+  if (loading || userRoleLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="text-center">
@@ -328,7 +366,7 @@ const Account = () => {
 
           {/* Subscription Tab */}
           <TabsContent value="subscription" className="space-y-6">
-            {isOnlyViewer && (
+            {isViewerOnly && (
               <Alert className="border-blue-200 bg-blue-50">
                 <Info className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-800">
@@ -377,7 +415,7 @@ const Account = () => {
                   </div>
                 </div>
 
-                {!isOnlyViewer && (
+                {!isViewerOnly && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {!isPremium && (
                       <Button 
@@ -467,7 +505,7 @@ const Account = () => {
 
           {/* Security Tab */}
           <TabsContent value="security" className="space-y-6">
-            {isOnlyViewer && (
+            {isViewerOnly && (
               <Alert className="border-amber-200 bg-amber-50">
                 <Info className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-amber-800">
@@ -477,7 +515,7 @@ const Account = () => {
               </Alert>
             )}
             
-            {!isOnlyViewer && (
+            {!isViewerOnly && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2 text-red-700">

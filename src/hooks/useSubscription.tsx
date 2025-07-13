@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +36,50 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [upgrading, setUpgrading] = useState(false);
+
+  // Initialize subscription record for new users
+  useEffect(() => {
+    const initializeSubscriptionRecord = async () => {
+      if (!user?.email) return;
+
+      try {
+        // Check if subscription record exists
+        const { data: existingSubscription } = await supabase
+          .from('subscriptions')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+
+        // Create basic subscription record if none exists
+        if (!existingSubscription) {
+          console.log('Creating initial subscription record for user:', user.id);
+          
+          const { error } = await supabase
+            .from('subscriptions')
+            .insert({
+              user_id: user.id,
+              email: user.email,
+              subscription_tier: 'basic',
+              status: 'active',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            });
+
+          if (error) {
+            console.error('Error creating initial subscription:', error);
+          } else {
+            console.log('Successfully created initial subscription record');
+          }
+        }
+      } catch (error) {
+        console.error('Error initializing subscription:', error);
+      }
+    };
+
+    if (user && !authLoading) {
+      initializeSubscriptionRecord();
+    }
+  }, [user, authLoading]);
 
   const ensureValidSession = async (): Promise<string | null> => {
     if (!user || !session) {
@@ -78,6 +121,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       const accessToken = await ensureValidSession();
       if (!accessToken) {
         console.error('No valid access token available');
+        // Fallback to basic subscription for new users
         setSubscriptionTier('basic');
         setStatus('active');
         setCurrentPeriodEnd(null);
@@ -92,6 +136,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
       if (error) {
         console.error('Error checking subscription:', error);
+        // Fallback to basic subscription
         setSubscriptionTier('basic');
         setStatus('active');
         setCurrentPeriodEnd(null);
@@ -104,6 +149,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setCurrentPeriodEnd(data.current_period_end);
     } catch (error) {
       console.error('Error checking subscription:', error);
+      // Fallback to basic subscription
       setSubscriptionTier('basic');
       setStatus('active');
       setCurrentPeriodEnd(null);

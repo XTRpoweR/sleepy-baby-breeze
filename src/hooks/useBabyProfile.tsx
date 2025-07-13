@@ -113,6 +113,12 @@ export const useBabyProfile = () => {
     if (!user) return false;
 
     try {
+      console.log('Creating profile for user:', user.id);
+      
+      // Get current owned profiles count
+      const ownedProfiles = profiles.filter(p => !p.is_shared);
+      console.log('Current owned profiles count:', ownedProfiles.length);
+
       // Check subscription tier to enforce limits
       const { data: subscriptionData } = await supabase
         .from('subscriptions')
@@ -120,11 +126,14 @@ export const useBabyProfile = () => {
         .eq('user_id', user.id)
         .single();
 
-      const isBasicUser = !subscriptionData || subscriptionData.subscription_tier === 'basic';
-      const ownedProfiles = profiles.filter(p => !p.is_shared);
+      console.log('Subscription data:', subscriptionData);
       
-      // Enforce profile limit for basic users
-      if (isBasicUser && ownedProfiles.length >= 1) {
+      const isBasicUser = !subscriptionData || subscriptionData.subscription_tier === 'basic';
+      console.log('Is basic user:', isBasicUser);
+      
+      // Fixed logic: Allow first profile for basic users (changed from >= 1 to > 1)
+      if (isBasicUser && ownedProfiles.length > 1) {
+        console.log('Profile limit reached for basic user');
         toast({
           title: "Profile Limit Reached",
           description: "Basic plan allows only 1 baby profile. Upgrade to Premium for unlimited profiles.",
@@ -135,6 +144,7 @@ export const useBabyProfile = () => {
 
       // If this is the first profile, make it active
       const isFirstProfile = ownedProfiles.length === 0;
+      console.log('Is first profile:', isFirstProfile);
 
       const { data, error } = await supabase
         .from('baby_profiles')
@@ -157,6 +167,8 @@ export const useBabyProfile = () => {
         });
         return false;
       }
+
+      console.log('Profile created successfully:', data);
 
       const newProfile = {
         ...data,
