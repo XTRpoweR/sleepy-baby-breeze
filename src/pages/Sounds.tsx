@@ -1,17 +1,14 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Moon, User, LogOut, ArrowLeft, Volume2, Clock, Music, Baby, Plus } from 'lucide-react';
+import { Volume2, ArrowLeft, Baby, Plus, BookOpen } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { ResponsiveSoundsLibrary } from '@/components/sounds/ResponsiveSoundsLibrary';
-import { SleepTracker } from '@/components/tracking/SleepTracker';
-import { FeedingTracker } from '@/components/tracking/FeedingTracker';
-import { DiaperTracker } from '@/components/tracking/DiaperTracker';
-import { CustomActivityTracker } from '@/components/tracking/CustomActivityTracker';
 import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
@@ -58,6 +55,10 @@ const Sounds = () => {
 
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
+  };
+
+  const handleGoToTracking = () => {
+    navigate('/track-activity');
   };
 
   if (loading || profileLoading) {
@@ -128,9 +129,9 @@ const Sounds = () => {
                 <Volume2 className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>{t('pages.sounds.soundsTab')}</span>
               </TabsTrigger>
-              <TabsTrigger value="quick-log" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
-                <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>{t('pages.sounds.quickLogTab')}</span>
+              <TabsTrigger value="sleep-tips" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
+                <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span>{t('pages.sounds.sleepTipsTab', { default: 'Sleep Tips' })}</span>
               </TabsTrigger>
             </TabsList>
 
@@ -138,17 +139,26 @@ const Sounds = () => {
               <ResponsiveSoundsLibrary />
             </TabsContent>
 
-            <TabsContent value="quick-log" className="space-y-6">
-              <div className="mb-8">
-                <SleepArticles />
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                <SleepTracker babyId={activeProfile.id} />
-                <FeedingTracker babyId={activeProfile.id} />
-                <DiaperTracker babyId={activeProfile.id} />
-                <CustomActivityTracker babyId={activeProfile.id} />
-              </div>
+            <TabsContent value="sleep-tips" className="space-y-6">
+              <SleepArticles />
+              
+              {/* Call-to-action to direct users to the tracking page */}
+              <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                <CardContent className="p-6 text-center">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {t('pages.sounds.trackActivitiesTitle', { default: 'Ready to Track Activities?' })}
+                  </h3>
+                  <p className="text-gray-600 mb-4 text-sm sm:text-base">
+                    {t('pages.sounds.trackActivitiesDesc', { default: 'Log sleep, feeding, diaper changes, and custom activities for your baby.' })}
+                  </p>
+                  <Button 
+                    onClick={handleGoToTracking}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    {t('pages.sounds.goToTracking', { default: 'Go to Activity Tracking' })}
+                  </Button>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         ) : (
