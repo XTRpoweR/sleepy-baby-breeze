@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,8 @@ import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
+import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
+import { NewUserOnboarding } from '@/components/onboarding/NewUserOnboarding';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
@@ -25,7 +28,8 @@ const Dashboard = () => {
   } = useAuth();
   const {
     activeProfile,
-    profiles
+    profiles,
+    createProfile
   } = useBabyProfile();
   const {
     subscriptionTier,
@@ -43,8 +47,13 @@ const Dashboard = () => {
     t
   } = useTranslation();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
+  const [showProfileCreation, setShowProfileCreation] = useState(false);
+  const [showNewUserOnboarding, setShowNewUserOnboarding] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician' | 'notifications'>('profiles');
+
+  // Check if user is truly new (no profiles and no family memberships)
+  const isNewUser = profiles.length === 0;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -103,16 +112,37 @@ const Dashboard = () => {
   };
 
   const handleAddProfile = () => {
-    if (!isPremium && profiles.length >= 1) {
+    console.log('Add profile clicked - Current profiles:', profiles.length, 'isPremium:', isPremium);
+    
+    // Check if user has reached profile limit
+    const ownedProfiles = profiles.filter(p => !p.is_shared);
+    if (!isPremium && ownedProfiles.length >= 1) {
+      console.log('Profile limit reached for basic user');
       setUpgradeFeature('profiles');
       setShowUpgradePrompt(true);
       return;
     }
-    setShowProfileManagement(true);
+
+    // Show profile creation form
+    setShowProfileCreation(true);
   };
 
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
+  };
+
+  const handleProfileCreated = async (profileData: { name: string; birth_date?: string; photo_url?: string }) => {
+    console.log('Creating profile with data:', profileData);
+    const success = await createProfile(profileData);
+    if (success) {
+      setShowProfileCreation(false);
+      setShowNewUserOnboarding(false);
+    }
+    return success;
+  };
+
+  const handleSkipOnboarding = () => {
+    setShowNewUserOnboarding(false);
   };
 
   const handleManageSubscription = () => {
@@ -156,6 +186,35 @@ const Dashboard = () => {
 
   if (!user) {
     return null;
+  }
+
+  // Show new user onboarding if requested
+  if (showNewUserOnboarding && isNewUser) {
+    return <div className="min-h-screen bg-soft gradient-dynamic-slow">
+        <DesktopHeader />
+        <MobileHeader />
+        <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4">
+          <NewUserOnboarding 
+            onProfileCreated={handleProfileCreated}
+            onSkip={handleSkipOnboarding}
+          />
+        </main>
+      </div>;
+  }
+
+  // Show profile creation form if requested
+  if (showProfileCreation) {
+    return <div className="min-h-screen bg-soft gradient-dynamic-slow">
+        <DesktopHeader />
+        <MobileHeader />
+        <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4">
+          <BabyProfileSetup 
+            onProfileCreated={handleProfileCreated}
+            showBackButton={true}
+            onBack={() => setShowProfileCreation(false)}
+          />
+        </main>
+      </div>;
   }
 
   const userName = user.user_metadata?.full_name?.split(' ')[0];
