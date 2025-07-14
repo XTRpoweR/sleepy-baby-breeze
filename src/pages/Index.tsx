@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
@@ -6,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
+import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 const Index = () => {
   const navigate = useNavigate();
@@ -154,11 +153,20 @@ const Index = () => {
             </div>
 
             <div className="relative animate-scale-in">
-               <div className="gradient-dynamic rounded-3xl p-8 shadow-2xl animate-float card-glow">
-                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+              <div className="gradient-dynamic rounded-3xl p-8 shadow-2xl animate-float card-glow">
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-900">Tonight's Sleep</h3>
-                     <Baby className="h-6 w-6 text-primary color-shift" />
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary rounded-full animate-spin opacity-75 blur-sm" style={{ animationDuration: '3s' }}></div>
+                      <div className="relative bg-white rounded-full p-2">
+                        <img 
+                          src="/lovable-uploads/4dd75cc1-7cc9-4aee-927b-ee53abfd75c3.png" 
+                          alt="SleepyBabyy Sleep Illustration" 
+                          className="h-12 w-12 object-contain transition-all duration-300 hover:scale-110 animate-pulse" 
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
