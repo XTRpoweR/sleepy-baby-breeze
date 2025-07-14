@@ -7,6 +7,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
 const Index = () => {
   const navigate = useNavigate();
   const {
@@ -18,6 +19,7 @@ const Index = () => {
   const {
     toast
   } = useToast();
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -25,6 +27,7 @@ const Index = () => {
       navigate('/auth');
     }
   };
+
   const handleViewPricing = () => {
     if (user) {
       navigate('/subscription');
@@ -32,12 +35,14 @@ const Index = () => {
       navigate('/auth');
     }
   };
+
   const handleDownloadComingSoon = () => {
     toast({
       title: "Coming Soon",
       description: "The Download feature is not available yet. Stay tuned!"
     });
   };
+
   const features = [{
     icon: Clock,
     title: t('features.trackEverything.title'),
@@ -69,6 +74,7 @@ const Index = () => {
     description: t('features.multilingual.description'),
     color: "text-pink-500"
   }];
+
   const testimonials = [{
     name: "Sarah M.",
     role: "New Mom",
@@ -85,6 +91,7 @@ const Index = () => {
     content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
     rating: 5
   }];
+
   return <div className="min-h-screen gradient-dynamic-slow font-sans">
       {/* Navigation */}
       <nav className="bg-white/90 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in">
@@ -308,7 +315,7 @@ const Index = () => {
               <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-8 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-4">
-                    <Baby className="h-6 w-6 text-blue-600" />
+                    <Heart className="h-6 w-6 text-blue-600" />
                     <h3 className="text-2xl font-bold">SleepyBabyy Basic</h3>
                   </div>
                   <div className="text-4xl font-bold text-gray-900 mb-2">Free</div>
@@ -506,4 +513,5 @@ const Index = () => {
       </footer>
     </div>;
 };
+
 export default Index;
