@@ -300,7 +300,7 @@ const Index = () => {
               <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-8 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-4">
-                    <Baby className="h-6 w-6 text-blue-600" />
+                    <Moon className="h-6 w-6 text-blue-600" />
                     <h3 className="text-2xl font-bold">SleepyBabyy Basic</h3>
                   </div>
                   <div className="text-4xl font-bold text-gray-900 mb-2">Free</div>
