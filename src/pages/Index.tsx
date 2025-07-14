@@ -165,11 +165,23 @@ const Index = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl animate-spin opacity-75 blur-sm" style={{ animationDuration: '3s' }}></div>
                   <div className="relative bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
                     <img 
-                      src="/lovable-uploads/acc4f5be-d08d-4a1a-9917-fb45cc5e25c9.png" 
+                      src="/lovable-uploads/56fb3ed1-8f9d-4585-9f6d-1bdbad1d3ef8.png" 
                       alt="SleepyBabyy Sleep Tracking Card" 
                       className="w-full h-auto object-contain transition-all duration-300 hover:scale-105 rounded-xl" 
                     />
                   </div>
+                </div>
+              </div>
+              
+              {/* Additional beautiful baby illustration */}
+              <div className="mt-8 flex justify-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full animate-pulse opacity-50 blur-lg" style={{ animationDuration: '4s' }}></div>
+                  <img 
+                    src="/lovable-uploads/25527a71-38de-439d-a66e-76d9a1f506e0.png" 
+                    alt="SleepyBabyy - Baby sleeping on moon" 
+                    className="relative w-48 h-48 object-contain transition-all duration-300 hover:scale-110 animate-float rounded-2xl" 
+                  />
                 </div>
               </div>
             </div>
