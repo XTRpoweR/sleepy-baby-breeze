@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
@@ -5,9 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Clock, Calendar, Volume2, Users, BarChart3, Star, Moon, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
+import { Clock, Calendar, Volume2, Users, BarChart3, Star, Baby, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
 const Index = () => {
   const navigate = useNavigate();
   const {
@@ -158,7 +158,7 @@ const Index = () => {
                  <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-gray-900">Tonight's Sleep</h3>
-                     <Moon className="h-6 w-6 text-primary color-shift" />
+                     <Baby className="h-6 w-6 text-primary color-shift" />
                   </div>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
@@ -300,7 +300,7 @@ const Index = () => {
               <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-8 text-center">
                   <div className="flex items-center justify-center space-x-2 mb-4">
-                    <Moon className="h-6 w-6 text-blue-600" />
+                    <Baby className="h-6 w-6 text-blue-600" />
                     <h3 className="text-2xl font-bold">SleepyBabyy Basic</h3>
                   </div>
                   <div className="text-4xl font-bold text-gray-900 mb-2">Free</div>
