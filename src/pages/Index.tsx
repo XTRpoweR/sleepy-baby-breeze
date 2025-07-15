@@ -161,41 +161,11 @@ const Index = () => {
 
             <div className="relative animate-scale-in">
               <div className="gradient-dynamic rounded-3xl p-8 shadow-2xl animate-float card-glow">
-                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-gray-900">Tonight's Sleep</h3>
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary rounded-full animate-spin opacity-75 blur-sm" style={{ animationDuration: '3s' }}></div>
-                      <div className="relative bg-white rounded-full p-2">
-                        <img 
-                          src="/lovable-uploads/4dd75cc1-7cc9-4aee-927b-ee53abfd75c3.png" 
-                          alt="SleepyBabyy Sleep Illustration" 
-                          className="h-12 w-12 object-contain transition-all duration-300 hover:scale-110 animate-pulse" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Bedtime</span>
-                      <span className="font-semibold">7:30 PM</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Total Sleep</span>
-                      <span className="font-semibold text-green-600">11h 20m</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600 font-medium">Wake-ups</span>
-                      <span className="font-semibold">2 times</span>
-                    </div>
-                    <div className="bg-green-50 rounded-lg p-3 mt-4">
-                      <div className="flex items-center space-x-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-green-800 font-medium">Great progress! Sleep improved 15% this week.</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <img 
+                  src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" 
+                  alt="SleepyBabyy - Baby sleeping peacefully on moon" 
+                  className="w-full h-auto rounded-2xl transition-all duration-300 hover:scale-105" 
+                />
               </div>
             </div>
           </div>
