@@ -161,27 +161,40 @@ const Index = () => {
 
             <div className="relative animate-scale-in">
               <div className="gradient-dynamic rounded-3xl p-8 shadow-2xl animate-float card-glow">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl animate-spin opacity-75 blur-sm" style={{ animationDuration: '3s' }}></div>
-                  <div className="relative bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg">
-                    <img 
-                      src="/lovable-uploads/56fb3ed1-8f9d-4585-9f6d-1bdbad1d3ef8.png" 
-                      alt="SleepyBabyy Sleep Tracking Card" 
-                      className="w-full h-auto object-contain transition-all duration-300 hover:scale-105 rounded-xl" 
-                    />
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-gray-900">Tonight's Sleep</h3>
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary rounded-full animate-spin opacity-75 blur-sm" style={{ animationDuration: '3s' }}></div>
+                      <div className="relative bg-white rounded-full p-2">
+                        <img 
+                          src="/lovable-uploads/4dd75cc1-7cc9-4aee-927b-ee53abfd75c3.png" 
+                          alt="SleepyBabyy Sleep Illustration" 
+                          className="h-12 w-12 object-contain transition-all duration-300 hover:scale-110 animate-pulse" 
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              
-              {/* Additional beautiful baby illustration */}
-              <div className="mt-8 flex justify-center">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-full animate-pulse opacity-50 blur-lg" style={{ animationDuration: '4s' }}></div>
-                  <img 
-                    src="/lovable-uploads/25527a71-38de-439d-a66e-76d9a1f506e0.png" 
-                    alt="SleepyBabyy - Baby sleeping on moon" 
-                    className="relative w-48 h-48 object-contain transition-all duration-300 hover:scale-110 animate-float rounded-2xl" 
-                  />
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">Bedtime</span>
+                      <span className="font-semibold">7:30 PM</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">Total Sleep</span>
+                      <span className="font-semibold text-green-600">11h 20m</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 font-medium">Wake-ups</span>
+                      <span className="font-semibold">2 times</span>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-3 mt-4">
+                      <div className="flex items-center space-x-2">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <span className="text-sm text-green-800 font-medium">Great progress! Sleep improved 15% this week.</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
