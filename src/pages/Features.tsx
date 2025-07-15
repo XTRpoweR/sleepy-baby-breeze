@@ -1,4 +1,4 @@
-
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +30,11 @@ const Features = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { t } = useTranslation();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleGetStarted = () => {
     if (user) {
