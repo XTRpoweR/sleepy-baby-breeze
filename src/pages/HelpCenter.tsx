@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -29,7 +28,7 @@ const HelpCenter = () => {
     },
     {
       icon: Users,
-      title: "Family Sharing",
+      title: "Family Sharing", 
       description: "Add family members and caregivers",
       articles: 8,
       color: "text-green-600"
@@ -106,55 +105,42 @@ const HelpCenter = () => {
       <DesktopHeader />
       <MobileHeader />
 
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-12 md:h-16">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Back</span>
-              </Button>
-              <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                  alt="SleepyBabyy Logo" 
-                  className="h-8 md:h-10 w-auto"
-                />
-                <span className="text-lg md:text-xl font-semibold text-gray-900">{t('app.name')}</span>
-              </div>
-            </div>
-            <div className="hidden md:flex items-center space-x-4">
-              <Button onClick={() => navigate('/tutorial')} className="bg-blue-600 hover:bg-blue-700">
-                Start Tutorial
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
+      {/* Hero Section with integrated navigation */}
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
-            Help Center
-            <span className="text-blue-600 block">How can we help you?</span>
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8 leading-relaxed">
-            Find answers to common questions, learn how to use SleepyBaby effectively, 
-            and get the most out of your baby tracking experience.
-          </p>
-          
-          {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input 
-              type="text" 
-              placeholder="Search for help articles..." 
-              className="pl-12 pr-4 py-4 md:py-6 text-base md:text-lg border-2 border-blue-200 focus:border-blue-500" 
-              value={searchQuery} 
-              onChange={(e) => setSearchQuery(e.target.value)} 
-            />
+        <div className="max-w-4xl mx-auto">
+          {/* Back button and tutorial button */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Home</span>
+            </Button>
+            <Button onClick={() => navigate('/tutorial')} className="bg-blue-600 hover:bg-blue-700">
+              Start Tutorial
+            </Button>
+          </div>
+
+          {/* Hero content */}
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
+              Help Center
+              <span className="text-blue-600 block">How can we help you?</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8 leading-relaxed">
+              Find answers to common questions, learn how to use SleepyBaby effectively, 
+              and get the most out of your baby tracking experience.
+            </p>
+            
+            {/* Search Bar */}
+            <div className="relative max-w-2xl mx-auto">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input 
+                type="text" 
+                placeholder="Search for help articles..." 
+                className="pl-12 pr-4 py-4 md:py-6 text-base md:text-lg border-2 border-blue-200 focus:border-blue-500" 
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
+              />
+            </div>
           </div>
         </div>
       </section>
