@@ -245,18 +245,6 @@ const HelpCenter = () => {
                 <Card className="border-0 shadow-lg">
                   <CardContent className="p-4 md:p-6">
                     <div className="flex items-center space-x-3 md:space-x-4">
-                      <Video className="h-6 w-6 md:h-8 md:w-8 text-green-600 flex-shrink-0" />
-                      <div>
-                        <h3 className="font-bold text-base md:text-lg">Video Tutorials</h3>
-                        <p className="text-sm md:text-base text-gray-600">Step-by-step guides for all features</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-0 shadow-lg">
-                  <CardContent className="p-4 md:p-6">
-                    <div className="flex items-center space-x-3 md:space-x-4">
                       <Download className="h-6 w-6 md:h-8 md:w-8 text-purple-600 flex-shrink-0" />
                       <div>
                         <h3 className="font-bold text-base md:text-lg">User Manual</h3>
