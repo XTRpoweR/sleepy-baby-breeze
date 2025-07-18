@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
-import { ArrowLeft, Search, Book, MessageCircle, Download, Users, Settings, CreditCard, Baby, BarChart3, Volume2, Calendar, PlayCircle, GraduationCap, ArrowRight } from "lucide-react";
+import { ArrowLeft, Search, Book, MessageCircle, Video, Download, Users, Settings, CreditCard, Baby, BarChart3, Volume2, Calendar, PlayCircle, GraduationCap, ArrowRight } from "lucide-react";
 
 const HelpCenter = () => {
   const navigate = useNavigate();
@@ -24,48 +24,42 @@ const HelpCenter = () => {
       title: "Getting Started",
       description: "Learn the basics of SleepyBaby",
       articles: 12,
-      color: "text-blue-600",
-      route: "/help/getting-started"
+      color: "text-blue-600"
     },
     {
       icon: Users,
       title: "Family Sharing", 
       description: "Add family members and caregivers",
       articles: 8,
-      color: "text-green-600",
-      route: "/help/family-sharing"
+      color: "text-green-600"
     },
     {
       icon: BarChart3,
       title: "Reports & Analytics",
       description: "Understanding your baby's patterns",
       articles: 10,
-      color: "text-purple-600",
-      route: "/help/reports-analytics"
+      color: "text-purple-600"
     },
     {
       icon: CreditCard,
       title: "Billing & Subscriptions",
       description: "Manage your premium subscription",
       articles: 6,
-      color: "text-orange-600",
-      route: "/help/billing-subscriptions"
+      color: "text-orange-600"
     },
     {
       icon: Volume2,
       title: "Sounds & Sleep",
       description: "Using our sound library effectively",
       articles: 5,
-      color: "text-pink-600",
-      route: "/help/sounds-sleep"
+      color: "text-pink-600"
     },
     {
       icon: Settings,
       title: "Account Settings",
       description: "Customize your app experience",
       articles: 7,
-      color: "text-indigo-600",
-      route: "/help/account-settings"
+      color: "text-indigo-600"
     }
   ];
 
@@ -96,12 +90,6 @@ const HelpCenter = () => {
     "Exporting your baby's data",
     "Troubleshooting sync issues"
   ];
-
-  const handleCategoryClick = (route: string) => {
-    // For now, navigate to the tutorial page as a placeholder
-    // In a real implementation, these would be separate help category pages
-    navigate('/tutorial');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -190,13 +178,9 @@ const HelpCenter = () => {
             {categories.map((category, index) => {
               const IconComponent = category.icon;
               return (
-                <Card 
-                  key={index} 
-                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                  onClick={() => handleCategoryClick(category.route)}
-                >
+                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
                   <CardHeader className="pb-4">
-                    <div className={`inline-flex p-2 md:p-3 rounded-2xl bg-gray-50 mb-3 md:mb-4 w-fit group-hover:scale-110 transition-transform`}>
+                    <div className={`inline-flex p-2 md:p-3 rounded-2xl bg-gray-50 mb-3 md:mb-4 w-fit`}>
                       <IconComponent className={`h-6 w-6 md:h-8 md:w-8 ${category.color}`} />
                     </div>
                     <CardTitle className="text-lg md:text-xl">{category.title}</CardTitle>
@@ -205,10 +189,9 @@ const HelpCenter = () => {
                   <CardContent>
                     <div className="flex items-center justify-between">
                       <Badge variant="secondary" className="text-xs md:text-sm">{category.articles} articles</Badge>
-                      <div className="flex items-center text-blue-600 group-hover:text-blue-700">
-                        <span className="mr-2 text-sm">Browse</span>
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
+                      <Button variant="ghost" size="sm" className="text-sm">
+                        Browse →
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
