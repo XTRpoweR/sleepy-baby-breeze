@@ -73,14 +73,6 @@ const HelpCenter = () => {
       bgColor: "bg-blue-50"
     },
     {
-      title: "Video Guides",
-      description: "Watch how to use key features",
-      icon: PlayCircle,
-      action: () => {},
-      color: "text-green-600",
-      bgColor: "bg-green-50"
-    },
-    {
       title: "Quick Setup",
       description: "Get started in under 5 minutes",
       icon: Baby,
