@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -181,9 +180,9 @@ const Tutorial = () => {
         </div>
 
         {/* Current Step Content */}
-        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-12">
-          {/* Step Details */}
-          <Card className="border-0 shadow-lg">
+        <div className="mb-8 md:mb-12">
+          {/* Step Details - Now using full width */}
+          <Card className="border-0 shadow-lg max-w-4xl mx-auto">
             <CardHeader>
               <CardTitle className="flex items-center space-x-3">
                 <div className={`p-3 rounded-full ${currentTutorial.bgColor}`}>
@@ -223,22 +222,6 @@ const Tutorial = () => {
                   {t('tutorial.actions.markCompleted')}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Video Tutorial Placeholder */}
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6 md:p-8 text-center">
-              <div className="bg-gray-100 rounded-lg aspect-video flex items-center justify-center mb-4">
-                <div className="text-gray-500">
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-300 rounded-full flex items-center justify-center mb-3">
-                    <div className="w-0 h-0 border-l-4 md:border-l-6 border-l-gray-600 border-t-3 md:border-t-4 border-t-transparent border-b-3 md:border-b-4 border-b-transparent ml-1"></div>
-                  </div>
-                  <p className="text-sm md:text-base">Video tutorial coming soon</p>
-                </div>
-              </div>
-              <h3 className="font-semibold text-base md:text-lg mb-2">Watch & Learn</h3>
-              <p className="text-gray-600 text-sm md:text-base">Follow along with our step-by-step video guide for this tutorial section.</p>
             </CardContent>
           </Card>
         </div>
