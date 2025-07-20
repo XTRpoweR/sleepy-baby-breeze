@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +36,7 @@ const Pricing = () => {
   };
 
   const monthlyPrice = 9.99;
-  const annualPrice = 79.99;
+  const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
 
@@ -64,7 +63,7 @@ const Pricing = () => {
             <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold">LIMITED TIME</Badge>
             <span className="text-base md:text-lg text-gray-600 line-through">$14.99/month</span>
             <span className="text-xl md:text-2xl font-bold text-red-600">$9.99/month</span>
-            <span className="text-red-600 font-semibold text-sm md:text-base">(40% OFF)</span>
+            <span className="text-red-600 font-semibold text-sm md:text-base">(33% OFF)</span>
           </div>
         </div>
       </section>
@@ -123,7 +122,7 @@ const Pricing = () => {
                 {/* Discount Badge */}
                 <div className="mb-3 md:mb-4">
                   <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold px-2 md:px-3 py-1">
-                    40% OFF LIMITED TIME
+                    33% OFF LIMITED TIME
                   </Badge>
                 </div>
                 
@@ -133,7 +132,7 @@ const Pricing = () => {
                     <span className="text-lg md:text-xl text-gray-500 line-through font-medium">${originalPrice.toFixed(2)}</span>
                     <div className="flex items-center space-x-1">
                       <span className="text-3xl md:text-4xl font-bold text-gray-900">
-                        ${isAnnual ? (annualPrice / 12).toFixed(2) : monthlyPrice.toFixed(2)}
+                        $9.99
                       </span>
                       <span className="text-gray-600 text-sm md:text-base">/month</span>
                     </div>
