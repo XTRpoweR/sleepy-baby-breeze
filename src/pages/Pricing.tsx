@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,20 +11,18 @@ import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart } from "lucide-react";
+
 const Pricing = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-  const {
-    t
-  } = useTranslation();
+  const { user } = useAuth();
+  const { t } = useTranslation();
   const [isAnnual, setIsAnnual] = useState(true);
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -31,15 +30,39 @@ const Pricing = () => {
       navigate('/auth');
     }
   };
+
   const features = {
-    basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
-    premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo & video memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
+    basic: [
+      "1 baby profile",
+      "Current day tracking", 
+      "Basic sleep reports",
+      "Essential sound library",
+      "Mobile app access",
+      "Basic customer support"
+    ],
+    premium: [
+      "Unlimited baby profiles",
+      "Extended activity history",
+      "Family sharing & collaboration", 
+      "Advanced analytics & trends",
+      "Premium sound library",
+      "Photo & video memories",
+      "Smart notifications",
+      "Pediatrician reports",
+      "Data backup & export",
+      "Priority customer support",
+      "Sleep coaching resources",
+      "Custom activity types"
+    ]
   };
+
   const monthlyPrice = 9.99;
   const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <DesktopHeader />
       <MobileHeader />
@@ -92,10 +115,12 @@ const Pricing = () => {
                 <div className="space-y-3 md:space-y-4">
                   <h4 className="font-semibold text-gray-900">What's included:</h4>
                   <ul className="space-y-2 md:space-y-3">
-                    {features.basic.map((feature, index) => <li key={index} className="flex items-center space-x-3">
+                    {features.basic.map((feature, index) => (
+                      <li key={index} className="flex items-center space-x-3">
                         <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                         <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </CardContent>
@@ -110,14 +135,16 @@ const Pricing = () => {
                 </Badge>
               </div>
               <CardHeader className="text-center pb-4 md:pb-6">
+                {/* 40% OFF LIMITED TIME Badge */}
+                <div className="mb-4">
+                  <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-1">
+                    40% OFF LIMITED TIME
+                  </Badge>
+                </div>
+                
                 <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
                   <Crown className="h-6 w-6 md:h-8 md:w-8 text-orange-600" />
                   <CardTitle className="text-xl md:text-2xl">SleepyBaby Premium</CardTitle>
-                </div>
-                
-                {/* Discount Badge */}
-                <div className="mb-3 md:mb-4">
-                  <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold px-2 md:px-3 py-1">40% OFF LIMITED TIME</Badge>
                 </div>
                 
                 <div className="space-y-2">
@@ -145,10 +172,12 @@ const Pricing = () => {
                 <div className="space-y-3 md:space-y-4">
                   <h4 className="font-semibold text-gray-900">Everything in Basic, plus:</h4>
                   <ul className="space-y-2 md:space-y-3">
-                    {features.premium.map((feature, index) => <li key={index} className="flex items-center space-x-3">
+                    {features.premium.map((feature, index) => (
+                      <li key={index} className="flex items-center space-x-3">
                         <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                         <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </CardContent>
@@ -179,55 +208,44 @@ const Pricing = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {[{
-                feature: "Baby Profiles",
-                basic: "1",
-                premium: "Unlimited"
-              }, {
-                feature: "Activity History",
-                basic: "Current day",
-                premium: "Extended history"
-              }, {
-                feature: "Family Sharing",
-                basic: false,
-                premium: true
-              }, {
-                feature: "Advanced Analytics",
-                basic: false,
-                premium: true
-              }, {
-                feature: "Photo & Video Storage",
-                basic: false,
-                premium: true
-              }, {
-                feature: "Smart Notifications",
-                basic: false,
-                premium: true
-              }, {
-                feature: "Pediatrician Reports",
-                basic: false,
-                premium: true
-              }, {
-                feature: "Data Export",
-                basic: false,
-                premium: true
-              }, {
-                feature: "Priority Support",
-                basic: false,
-                premium: true
-              }, {
-                feature: "Sleep Coaching",
-                basic: false,
-                premium: true
-              }].map((row, index) => <tr key={index} className="hover:bg-gray-50">
+                {[
+                  { feature: "Baby Profiles", basic: "1", premium: "Unlimited" },
+                  { feature: "Activity History", basic: "Current day", premium: "Extended history" },
+                  { feature: "Family Sharing", basic: false, premium: true },
+                  { feature: "Advanced Analytics", basic: false, premium: true },
+                  { feature: "Photo & Video Storage", basic: false, premium: true },
+                  { feature: "Smart Notifications", basic: false, premium: true },
+                  { feature: "Pediatrician Reports", basic: false, premium: true },
+                  { feature: "Data Export", basic: false, premium: true },
+                  { feature: "Priority Support", basic: false, premium: true },
+                  { feature: "Sleep Coaching", basic: false, premium: true }
+                ].map((row, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
                     <td className="py-3 md:py-4 pr-4 md:pr-8 font-medium text-gray-900 text-sm md:text-base">{row.feature}</td>
                     <td className="text-center py-3 md:py-4 px-2 md:px-4">
-                      {typeof row.basic === 'boolean' ? row.basic ? <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" /> : <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" /> : <span className="text-gray-700 text-sm md:text-base">{row.basic}</span>}
+                      {typeof row.basic === 'boolean' ? (
+                        row.basic ? (
+                          <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" />
+                        ) : (
+                          <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-gray-700 text-sm md:text-base">{row.basic}</span>
+                      )}
                     </td>
                     <td className="text-center py-3 md:py-4 px-2 md:px-4">
-                      {typeof row.premium === 'boolean' ? row.premium ? <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" /> : <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" /> : <span className="text-gray-700 text-sm md:text-base">{row.premium}</span>}
+                      {typeof row.premium === 'boolean' ? (
+                        row.premium ? (
+                          <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" />
+                        ) : (
+                          <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-gray-700 text-sm md:text-base">{row.premium}</span>
+                      )}
                     </td>
-                  </tr>)}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -242,30 +260,39 @@ const Pricing = () => {
           </h2>
           
           <div className="grid gap-6 md:gap-8 md:grid-cols-2">
-            {[{
-            question: "Can I switch plans anytime?",
-            answer: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately."
-          }, {
-            question: "Is there a free trial?",
-            answer: "Yes, Premium comes with a 7-day free trial. No credit card required to start."
-          }, {
-            question: "What if I have multiple babies?",
-            answer: "Basic includes 1 baby profile. Premium includes unlimited baby profiles for your growing family."
-          }, {
-            question: "Do you offer refunds?",
-            answer: "Yes, we offer a 30-day money-back guarantee if you're not completely satisfied."
-          }, {
-            question: "Is my data secure?",
-            answer: "Absolutely. We use enterprise-grade encryption and never share your personal data."
-          }, {
-            question: "Can I cancel anytime?",
-            answer: "Yes, you can cancel your subscription at any time. Your data remains accessible during your billing period."
-          }].map((faq, index) => <Card key={index} className="border-0 shadow-sm">
+            {[
+              {
+                question: "Can I switch plans anytime?",
+                answer: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately."
+              },
+              {
+                question: "Is there a free trial?",
+                answer: "Yes, Premium comes with a 7-day free trial. No credit card required to start."
+              },
+              {
+                question: "What if I have multiple babies?",
+                answer: "Basic includes 1 baby profile. Premium includes unlimited baby profiles for your growing family."
+              },
+              {
+                question: "Do you offer refunds?",
+                answer: "Yes, we offer a 30-day money-back guarantee if you're not completely satisfied."
+              },
+              {
+                question: "Is my data secure?",
+                answer: "Absolutely. We use enterprise-grade encryption and never share your personal data."
+              },
+              {
+                question: "Can I cancel anytime?",
+                answer: "Yes, you can cancel your subscription at any time. Your data remains accessible during your billing period."
+              }
+            ].map((faq, index) => (
+              <Card key={index} className="border-0 shadow-sm">
                 <CardContent className="p-4 md:p-6">
                   <h3 className="font-semibold text-gray-900 mb-2 text-sm md:text-base">{faq.question}</h3>
                   <p className="text-gray-600 text-sm md:text-base">{faq.answer}</p>
                 </CardContent>
-              </Card>)}
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -292,6 +319,8 @@ const Pricing = () => {
           </p>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 };
+
 export default Pricing;
