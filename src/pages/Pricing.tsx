@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,8 +13,12 @@ import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart } f
 
 const Pricing = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { t } = useTranslation();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useTranslation();
   const [isAnnual, setIsAnnual] = useState(true);
 
   // Scroll to top when component mounts
@@ -32,28 +35,8 @@ const Pricing = () => {
   };
 
   const features = {
-    basic: [
-      "1 baby profile",
-      "Current day tracking", 
-      "Basic sleep reports",
-      "Essential sound library",
-      "Mobile app access",
-      "Basic customer support"
-    ],
-    premium: [
-      "Unlimited baby profiles",
-      "Extended activity history",
-      "Family sharing & collaboration", 
-      "Advanced analytics & trends",
-      "Premium sound library",
-      "Photo & video memories",
-      "Smart notifications",
-      "Pediatrician reports",
-      "Data backup & export",
-      "Priority customer support",
-      "Sleep coaching resources",
-      "Custom activity types"
-    ]
+    basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
+    premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo & video memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
   };
 
   const monthlyPrice = 9.99;
@@ -61,8 +44,7 @@ const Pricing = () => {
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <DesktopHeader />
       <MobileHeader />
@@ -84,7 +66,7 @@ const Pricing = () => {
             <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold">LIMITED TIME</Badge>
             <span className="text-base md:text-lg text-gray-600 line-through">$14.99/month</span>
             <span className="text-xl md:text-2xl font-bold text-red-600">$9.99/month</span>
-            <span className="text-red-600 font-semibold text-sm md:text-base">(40% OFF)</span>
+            <span className="text-red-600 font-semibold text-sm md:text-base">(33% OFF)</span>
           </div>
         </div>
       </section>
@@ -135,16 +117,16 @@ const Pricing = () => {
                 </Badge>
               </div>
               <CardHeader className="text-center pb-4 md:pb-6">
-                {/* 40% OFF LIMITED TIME Badge */}
-                <div className="mb-4">
-                  <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-1">
-                    40% OFF LIMITED TIME
-                  </Badge>
-                </div>
-                
                 <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
                   <Crown className="h-6 w-6 md:h-8 md:w-8 text-orange-600" />
                   <CardTitle className="text-xl md:text-2xl">SleepyBaby Premium</CardTitle>
+                </div>
+                
+                {/* 40% OFF LIMITED TIME Badge */}
+                <div className="mb-3 md:mb-4">
+                  <Badge className="bg-coral-500 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-1 rounded-full">
+                    40% OFF LIMITED TIME
+                  </Badge>
                 </div>
                 
                 <div className="space-y-2">
@@ -153,7 +135,7 @@ const Pricing = () => {
                     <span className="text-lg md:text-xl text-gray-500 line-through font-medium">${originalPrice.toFixed(2)}</span>
                     <div className="flex items-center space-x-1">
                       <span className="text-3xl md:text-4xl font-bold text-gray-900">
-                        $9.99
+                        ${monthlyPrice.toFixed(2)}
                       </span>
                       <span className="text-gray-600 text-sm md:text-base">/month</span>
                     </div>
@@ -319,8 +301,7 @@ const Pricing = () => {
           </p>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
 
 export default Pricing;
