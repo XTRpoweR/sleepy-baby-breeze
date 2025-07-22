@@ -10,18 +10,20 @@ import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart } from "lucide-react";
-
 const Pricing = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { t } = useTranslation();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useTranslation();
   const [isAnnual, setIsAnnual] = useState(true);
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -29,39 +31,15 @@ const Pricing = () => {
       navigate('/auth');
     }
   };
-
   const features = {
-    basic: [
-      "1 baby profile",
-      "Current day tracking", 
-      "Basic sleep reports",
-      "Essential sound library",
-      "Mobile app access",
-      "Basic customer support"
-    ],
-    premium: [
-      "Unlimited baby profiles",
-      "Extended activity history",
-      "Family sharing & collaboration", 
-      "Advanced analytics & trends",
-      "Premium sound library",
-      "Photo & video memories",
-      "Smart notifications",
-      "Pediatrician reports",
-      "Data backup & export",
-      "Priority customer support",
-      "Sleep coaching resources",
-      "Custom activity types"
-    ]
+    basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
+    premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo & video memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
   };
-
   const monthlyPrice = 9.99;
   const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <DesktopHeader />
       <MobileHeader />
@@ -114,12 +92,10 @@ const Pricing = () => {
                 <div className="space-y-3 md:space-y-4">
                   <h4 className="font-semibold text-gray-900">What's included:</h4>
                   <ul className="space-y-2 md:space-y-3">
-                    {features.basic.map((feature, index) => (
-                      <li key={index} className="flex items-center space-x-3">
+                    {features.basic.map((feature, index) => <li key={index} className="flex items-center space-x-3">
                         <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                         <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </div>
               </CardContent>
@@ -127,25 +103,21 @@ const Pricing = () => {
 
             {/* Premium Plan */}
             <Card className="border-2 border-orange-500 hover:shadow-xl transition-all duration-300 relative">
-              {/* 40% OFF LIMITED TIME Badge at the very top */}
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                <Badge className="bg-red-500 text-white px-4 py-2 text-sm font-bold shadow-lg">
-                  40% OFF LIMITED TIME
-                </Badge>
-              </div>
-              
-              {/* Most Popular Badge */}
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 mt-6">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-orange-500 text-white px-3 md:px-4 py-1">
                   <Crown className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   Most Popular
                 </Badge>
               </div>
-
-              <CardHeader className="text-center pb-4 md:pb-6 pt-12">
+              <CardHeader className="text-center pb-4 md:pb-6">
                 <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
                   <Crown className="h-6 w-6 md:h-8 md:w-8 text-orange-600" />
                   <CardTitle className="text-xl md:text-2xl">SleepyBaby Premium</CardTitle>
+                </div>
+                
+                {/* Discount Badge */}
+                <div className="mb-3 md:mb-4">
+                  <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold px-2 md:px-3 py-1">40% OFF LIMITED TIME</Badge>
                 </div>
                 
                 <div className="space-y-2">
@@ -173,12 +145,10 @@ const Pricing = () => {
                 <div className="space-y-3 md:space-y-4">
                   <h4 className="font-semibold text-gray-900">Everything in Basic, plus:</h4>
                   <ul className="space-y-2 md:space-y-3">
-                    {features.premium.map((feature, index) => (
-                      <li key={index} className="flex items-center space-x-3">
+                    {features.premium.map((feature, index) => <li key={index} className="flex items-center space-x-3">
                         <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                         <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </div>
               </CardContent>
@@ -322,8 +292,6 @@ const Pricing = () => {
           </p>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Pricing;
