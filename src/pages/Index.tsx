@@ -4,21 +4,50 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { memo, useMemo } from "react";
+
+// Memoized components for better performance
+const FeatureCard = memo(({ feature, index }: { feature: any; index: number }) => {
+  const IconComponent = feature.icon;
+  return (
+    <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group animate-fade-in-up card-glow gpu-accelerated" 
+          style={{ animationDelay: `${index * 50}ms` }}>
+      <CardContent className="p-8">
+        <div className="inline-flex p-3 rounded-2xl gradient-dynamic-slow mb-6 transition-transform duration-300 group-hover:scale-110">
+          <IconComponent className="h-8 w-8 text-white" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-4 tracking-tight">{feature.title}</h3>
+        <p className="text-gray-600 leading-relaxed font-light">{feature.description}</p>
+      </CardContent>
+    </Card>
+  );
+});
+
+const TestimonialCard = memo(({ testimonial, index }: { testimonial: any; index: number }) => (
+  <Card key={index} className="border-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-up gpu-accelerated" 
+        style={{ animationDelay: `${index * 100}ms` }}>
+    <CardContent className="p-8">
+      <div className="flex space-x-1 mb-4">
+        {[...Array(testimonial.rating)].map((_, i) => (
+          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+        ))}
+      </div>
+      <p className="text-gray-600 mb-6 italic font-light">"{testimonial.content}"</p>
+      <div>
+        <div className="font-semibold text-gray-900">{testimonial.name}</div>
+        <div className="text-sm text-gray-500 font-medium">{testimonial.role}</div>
+      </div>
+    </CardContent>
+  </Card>
+));
 
 const Index = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-  const {
-    t
-  } = useTranslation();
-  const {
-    toast
-  } = useToast();
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const { toast } = useToast();
 
   const handleGetStarted = () => {
     if (user) {
@@ -43,75 +72,93 @@ const Index = () => {
     });
   };
 
-  const features = [{
-    icon: Clock,
-    title: t('features.trackEverything.title'),
-    description: t('features.trackEverything.description'),
-    color: "text-blue-500"
-  }, {
-    icon: Calendar,
-    title: t('features.customSchedules.title'),
-    description: t('features.customSchedules.description'),
-    color: "text-purple-500"
-  }, {
-    icon: Volume2,
-    title: t('features.soothingSounds.title'),
-    description: t('features.soothingSounds.description'),
-    color: "text-green-500"
-  }, {
-    icon: Users,
-    title: t('features.multiCaregiver.title'),
-    description: t('features.multiCaregiver.description'),
-    color: "text-orange-500"
-  }, {
-    icon: BarChart3,
-    title: t('features.insights.title'),
-    description: t('features.insights.description'),
-    color: "text-indigo-500"
-  }, {
-    icon: Globe,
-    title: t('features.multilingual.title'),
-    description: t('features.multilingual.description'),
-    color: "text-pink-500"
-  }];
+  // Memoized data to prevent recalculation
+  const features = useMemo(() => [
+    {
+      icon: Clock,
+      title: t('features.trackEverything.title'),
+      description: t('features.trackEverything.description'),
+    },
+    {
+      icon: Calendar,
+      title: t('features.customSchedules.title'),
+      description: t('features.customSchedules.description'),
+    },
+    {
+      icon: Volume2,
+      title: t('features.soothingSounds.title'),
+      description: t('features.soothingSounds.description'),
+    },
+    {
+      icon: Users,
+      title: t('features.multiCaregiver.title'),
+      description: t('features.multiCaregiver.description'),
+    },
+    {
+      icon: BarChart3,
+      title: t('features.insights.title'),
+      description: t('features.insights.description'),
+    },
+    {
+      icon: Globe,
+      title: t('features.multilingual.title'),
+      description: t('features.multilingual.description'),
+    }
+  ], [t]);
 
-  const testimonials = [{
-    name: "Sarah M.",
-    role: "New Mom",
-    content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
-    rating: 5
-  }, {
-    name: "Mike & Jessica",
-    role: "First-time Parents",
-    content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
-    rating: 5
-  }, {
-    name: "Dr. Emily Chen",
-    role: "Pediatric Sleep Specialist",
-    content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
-    rating: 5
-  }];
+  const testimonials = useMemo(() => [
+    {
+      name: "Sarah M.",
+      role: "New Mom",
+      content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
+      rating: 5
+    },
+    {
+      name: "Mike & Jessica",
+      role: "First-time Parents",
+      content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
+      rating: 5
+    },
+    {
+      name: "Dr. Emily Chen",
+      role: "Pediatric Sleep Specialist",
+      content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
+      rating: 5
+    }
+  ], []);
 
-  return <div className="min-h-screen gradient-dynamic-slow font-sans">
+  return (
+    <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
       {/* Navigation */}
-      <nav className="bg-white/90 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in">
+      <nav className="bg-white/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3 group">
-              <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-10 w-auto transition-transform duration-300 group-hover:scale-110" />
+              <img 
+                src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                alt="SleepyBabyy Logo" 
+                className="h-10 w-auto transition-transform duration-300 group-hover:scale-110"
+                loading="eager"
+                width="40"
+                height="40"
+              />
               <span className="text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-               <a href="#features" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">{t('navigation.features')}</a>
-               <a href="#insights" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">{t('navigation.insights')}</a>
-               <a href="#pricing" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">Pricing</a>
-               <a href="#testimonials" className="text-gray-700 hover:text-primary transition-all duration-300 font-medium hover:scale-105 color-shift">{t('navigation.reviews')}</a>
+              <a href="#features" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">{t('navigation.features')}</a>
+              <a href="#insights" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">{t('navigation.insights')}</a>
+              <a href="#pricing" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">Pricing</a>
+              <a href="#testimonials" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium">{t('navigation.reviews')}</a>
               <LanguageSelector />
-               {user ? <Button onClick={() => navigate('/dashboard')} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0">
-                   {t('navigation.dashboard')}
-                 </Button> : <Button onClick={handleGetStarted} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0">
-                   {t('navigation.getStarted')}
-                 </Button>}
+              {user ? (
+                <Button onClick={() => navigate('/dashboard')} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0">
+                  {t('navigation.dashboard')}
+                </Button>
+              ) : (
+                <Button onClick={handleGetStarted} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0">
+                  {t('navigation.getStarted')}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -123,10 +170,10 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 animate-fade-in-up">
               <div className="space-y-4">
-                 <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-                   {t('hero.title')}
-                   <span className="text-gradient block">{t('hero.titleHighlight')}</span>
-                 </h1>
+                <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+                  {t('hero.title')}
+                  <span className="text-gradient block">{t('hero.titleHighlight')}</span>
+                </h1>
                 <p className="text-xl text-gray-600 leading-relaxed font-light">
                   {t('hero.subtitle')}
                   <span className="block mt-2 font-medium text-gray-700">{t('hero.subtitleExtra')}</span>
@@ -134,13 +181,13 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                 <Button size="lg" className="gradient-dynamic text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-white border-0" onClick={handleGetStarted}>
-                   <Play className="h-5 w-5 mr-2" />
-                   {t('hero.startTracking')}
-                 </Button>
-                 <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-dynamic hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary">
-                   {t('hero.exploreFeatures')}
-                 </Button>
+                <Button size="lg" className="gradient-dynamic text-lg px-8 py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-white border-0" onClick={handleGetStarted}>
+                  <Play className="h-5 w-5 mr-2" />
+                  {t('hero.startTracking')}
+                </Button>
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-dynamic hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary">
+                  {t('hero.exploreFeatures')}
+                </Button>
               </div>
 
               <div className="flex items-center space-x-6 text-sm text-gray-600">
@@ -160,11 +207,14 @@ const Index = () => {
             </div>
 
             <div className="relative animate-scale-in">
-              <div className="gradient-dynamic rounded-3xl p-8 shadow-2xl animate-float card-glow">
+              <div className="gradient-dynamic rounded-3xl p-8 shadow-2xl animate-float card-glow gpu-accelerated">
                 <img 
                   src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" 
                   alt="SleepyBabyy - Baby sleeping peacefully on moon" 
-                  className="w-full h-auto rounded-2xl transition-all duration-300 hover:scale-105" 
+                  className="w-full h-auto rounded-2xl transition-all duration-300 hover:scale-105"
+                  loading="lazy"
+                  width="400"
+                  height="300"
                 />
               </div>
             </div>
@@ -184,21 +234,10 @@ const Index = () => {
             </p>
           </div>
 
-           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-             {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 group animate-fade-in-up card-glow" style={{
-              animationDelay: `${index * 100}ms`
-            }}>
-                   <CardContent className="p-8">
-                     <div className={`inline-flex p-3 rounded-2xl gradient-dynamic-slow mb-6 transition-all duration-300 group-hover:scale-110`}>
-                       <IconComponent className={`h-8 w-8 text-white`} />
-                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 tracking-tight">{feature.title}</h3>
-                    <p className="text-gray-600 leading-relaxed font-light">{feature.description}</p>
-                  </CardContent>
-                </Card>;
-          })}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <FeatureCard key={index} feature={feature} index={index} />
+            ))}
           </div>
         </div>
       </section>
@@ -385,20 +424,9 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => <Card key={index} className="border-0 shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-1 animate-fade-in-up" style={{
-            animationDelay: `${index * 150}ms`
-          }}>
-                <CardContent className="p-8">
-                  <div className="flex space-x-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
-                  </div>
-                  <p className="text-gray-600 mb-6 italic font-light">"{testimonial.content}"</p>
-                  <div>
-                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-gray-500 font-medium">{testimonial.role}</div>
-                  </div>
-                </CardContent>
-              </Card>)}
+            {testimonials.map((testimonial, index) => (
+              <TestimonialCard key={index} testimonial={testimonial} index={index} />
+            ))}
           </div>
         </div>
       </section>
@@ -481,7 +509,8 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
 
 export default Index;
