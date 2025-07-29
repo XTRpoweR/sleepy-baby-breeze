@@ -6,7 +6,7 @@
   },
   "navigation": {
     "features": "Caratteristiche",
-    "insights": "Approfondimenti",
+    "insights": "Approfondimenti", 
     "reviews": "Recensioni",
     "getStarted": "Inizia",
     "dashboard": "Vai alla Dashboard",
@@ -478,6 +478,6 @@
     "about": "Chi siamo",
     "blog": "Blog",
     "careers": "Carriere",
-    "copyright": "© 2024 SleepyBabyy. Fatto con ❤️ da genitori, per genitori."
+    "copyright": "© 2025 SleepyBabyy. Tutti i diritti riservati."
   }
 }
