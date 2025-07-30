@@ -10,10 +10,10 @@ const HelpArticle = () => {
 
   // Sample article data - in a real app, this would come from an API or database
   const getArticleContent = () => {
-    // Fix the URL parameter matching
+    // Getting Started Articles
     if (category === "getting-started" && id === "1") {
       return {
-        title: "Getting Started with SleepyBaby",
+        title: "How to create your first baby profile",
         content: `
 ## Account Setup and Baby Profile Creation
 
@@ -31,8 +31,6 @@ Start by creating a detailed profile for your baby:
 ### Setting Up Sleep Tracking
 
 Learn how to effectively track your baby's sleep:
-
-**Getting started with sleep tracking:**
 
 - **Start a live sleep session** or log sleep manually with precise start and end times
 - **Choose the sleep type** - distinguish between naps and night sleep for better insights
@@ -81,46 +79,244 @@ Try refreshing the page or clearing your browser cache. Make sure you have a sta
         `
       };
     }
-    
-    // Add more articles as needed
-    if (category === "sleep-tips" && id === "1") {
+
+    // Family Sharing Articles
+    if (category === "family-sharing" && id === "1") {
       return {
-        title: "Sleep Tips for Better Rest",
+        title: "Inviting family members to collaborate",
         content: `
-## Creating the Perfect Sleep Environment
+## Getting Started with Family Sharing
 
-A comfortable sleep environment is crucial for your baby's rest and development.
+Family sharing allows multiple caregivers to track and monitor your baby's activities together.
 
-### Room Setup
+### How to Invite Family Members
 
-**Essential elements for good sleep:**
+**Step-by-step invitation process:**
 
-- **Temperature control**: Keep the room between 68-70°F (20-21°C)
-- **Darkness**: Use blackout curtains or shades to minimize light
-- **Sound management**: Consider white noise to mask household sounds
-- **Safety first**: Ensure the crib meets current safety standards
+1. **Navigate to Family Sharing** - Go to your account settings and select "Family Sharing"
+2. **Enter email addresses** - Add the email addresses of family members you want to invite
+3. **Set permissions** - Choose what each family member can view and edit
+4. **Send invitations** - Family members will receive an email invitation to join
 
-## Age-Appropriate Sleep Schedules
+### Managing Family Access
 
-Different ages require different approaches to sleep timing and duration.
+**Control what family members can do:**
 
-### Newborn to 3 Months
+- **View Only**: Can see baby's data but cannot make changes
+- **Editor**: Can add new activities and edit existing ones
+- **Admin**: Full access including inviting other family members
 
-**Sleep patterns at this stage:**
+### Best Practices for Family Collaboration
 
-- **Total sleep needed**: 14-17 hours per day
-- **Night sleep**: 8-9 hours (with frequent wakings)
-- **Daytime naps**: 4-5 short naps throughout the day
-- **Feeding schedule**: Every 2-3 hours around the clock
+**Tips for successful family sharing:**
 
-### 3 to 6 Months
+- **Communicate regularly** about who is logging what activities
+- **Use consistent naming** for activities and notes
+- **Review permissions** periodically to ensure appropriate access levels
+- **Train all users** on how to use the app effectively
 
-**Developing more regular patterns:**
+## Troubleshooting Family Sharing
 
-- **Total sleep needed**: 12-15 hours per day
-- **Night sleep**: 10-11 hours (longer stretches developing)
-- **Daytime naps**: 3-4 naps, becoming more predictable
-- **Sleep training**: Can begin gentle methods if desired
+**Common issues and solutions:**
+
+**Invitation not received?**
+Check spam folders and ensure the email address is correct. Resend the invitation if needed.
+
+**Cannot see family member's entries?**
+Verify that permissions are set correctly and that both users are logged into the correct account.
+
+**Conflicts in data entry?**
+Use the activity notes to communicate who logged what and when to avoid duplicate entries.
+        `
+      };
+    }
+
+    if (category === "family-sharing" && id === "2") {
+      return {
+        title: "Managing family member permissions",
+        content: `
+## Understanding Permission Levels
+
+Control exactly what each family member can access and modify in your baby's profile.
+
+### Permission Types
+
+**Available permission levels:**
+
+- **Owner**: Full control over all aspects of the baby profile
+- **Admin**: Can invite others, manage permissions, and edit all data
+- **Editor**: Can add and edit activities but cannot manage family members
+- **Viewer**: Can only view data, cannot make any changes
+
+### Setting Up Permissions
+
+**How to assign permissions:**
+
+1. **Access family settings** from your dashboard
+2. **Select the family member** whose permissions you want to change
+3. **Choose permission level** from the dropdown menu
+4. **Save changes** to apply the new permissions
+
+### Permission Best Practices
+
+**Recommended permission assignments:**
+
+- **Co-parents**: Admin level for full collaboration
+- **Grandparents**: Editor level for when they babysit
+- **Babysitters**: Viewer or limited Editor access
+- **Daycare providers**: Editor access during care hours
+
+## Managing Changes Over Time
+
+**Adjusting permissions as needs change:**
+
+- **Regular reviews** of who has access and at what level
+- **Temporary permissions** for short-term caregivers
+- **Removing access** when no longer needed
+- **Emergency contacts** with appropriate access levels
+        `
+      };
+    }
+
+    if (category === "family-sharing" && id === "3") {
+      return {
+        title: "Setting up caregiver access",
+        content: `
+## Caregiver Access Setup
+
+Give babysitters, daycare providers, and other caregivers the right level of access to help care for your baby.
+
+### Types of Caregivers
+
+**Different caregivers need different access:**
+
+- **Regular babysitters**: Editor access for activity logging
+- **Daycare providers**: Editor access with schedule visibility
+- **Emergency contacts**: Viewer access for essential information
+- **Temporary caregivers**: Limited time access
+
+### Setting Up Temporary Access
+
+**For short-term caregivers:**
+
+1. **Create temporary invitations** with expiration dates
+2. **Set limited permissions** for only necessary features
+3. **Provide clear instructions** on what to log and how
+4. **Review and revoke access** after the caregiving period
+
+### Communication Guidelines
+
+**Best practices for caregiver communication:**
+
+- **Clear expectations** about what information to record
+- **Contact information** for parents in case of questions
+- **Emergency procedures** and important medical information
+- **Regular check-ins** to ensure proper app usage
+
+## Monitoring Caregiver Activity
+
+**Keep track of caregiver entries:**
+
+- **Review activity logs** regularly to see what was recorded
+- **Check for completeness** of information entered
+- **Provide feedback** to improve data quality
+- **Adjust permissions** based on caregiver reliability and needs
+        `
+      };
+    }
+
+    // Reports & Analytics Articles
+    if (category === "reports-analytics" && id === "1") {
+      return {
+        title: "Understanding sleep pattern charts",
+        content: `
+## Reading Your Baby's Sleep Analytics
+
+Learn how to interpret the visual data and charts that show your baby's sleep patterns over time.
+
+### Chart Types and What They Show
+
+**Different chart formats available:**
+
+- **Timeline charts**: Show sleep and wake periods throughout the day
+- **Duration charts**: Display how long each sleep session lasted
+- **Pattern charts**: Reveal trends over weeks and months
+- **Comparison charts**: Compare different time periods
+
+### Key Metrics to Monitor
+
+**Important sleep indicators:**
+
+- **Total sleep time**: How many hours your baby sleeps per day
+- **Sleep efficiency**: Percentage of time spent actually sleeping vs. in bed
+- **Night wakings**: Frequency and duration of nighttime awakenings
+- **Nap patterns**: Number, timing, and length of daytime naps
+
+### Identifying Healthy Patterns
+
+**What to look for in the charts:**
+
+- **Consistent bedtimes** and wake times
+- **Age-appropriate total sleep duration**
+- **Gradual consolidation** of nighttime sleep
+- **Regular nap schedules** that support nighttime rest
+
+## Using Data to Improve Sleep
+
+**How to act on what you learn:**
+
+- **Adjust bedtime** based on natural sleep onset patterns
+- **Optimize nap timing** to support nighttime sleep
+- **Identify sleep disruptors** like growth spurts or schedule changes
+- **Track improvements** after making changes to routine
+        `
+      };
+    }
+
+    // Add more articles for other categories...
+    if (category === "sounds-sleep" && id === "1") {
+      return {
+        title: "Choosing the right sounds for sleep",
+        content: `
+## Understanding Sleep Sounds
+
+Different types of sounds can help your baby fall asleep and stay asleep longer.
+
+### Types of Sleep Sounds
+
+**Available sound categories:**
+
+- **White noise**: Consistent, steady sound that masks other noises
+- **Nature sounds**: Rain, ocean waves, forest sounds for a calming environment
+- **Lullabies**: Gentle melodies designed specifically for babies
+- **Instrumental music**: Soft classical or ambient music
+
+### Choosing the Right Sound
+
+**Factors to consider:**
+
+- **Baby's age**: Newborns often prefer white noise, older babies may enjoy nature sounds
+- **Time of day**: Different sounds for naps vs. nighttime sleep
+- **Environment**: Louder sounds for noisy environments, softer for quiet rooms
+- **Personal preference**: Every baby is different - experiment to find favorites
+
+### Volume and Safety Guidelines
+
+**Safe sound practices:**
+
+- **Keep volume moderate**: Not too loud to damage hearing
+- **Place speakers away** from baby's crib or bassinet
+- **Use timers**: Sounds don't need to play all night
+- **Monitor baby's response**: Stop if sounds seem to disturb rather than soothe
+
+## Creating Effective Sound Routines
+
+**Building sound into sleep routine:**
+
+- **Start sounds before** putting baby down for sleep
+- **Use consistently** for all sleep periods
+- **Gradually reduce volume** as baby falls asleep
+- **Create associations** between specific sounds and sleep time
         `
       };
     }
