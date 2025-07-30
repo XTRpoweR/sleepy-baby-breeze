@@ -9,7 +9,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
-import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart } from "lucide-react";
+import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
+
 const Pricing = () => {
   const navigate = useNavigate();
   const {
@@ -24,6 +25,7 @@ const Pricing = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -31,21 +33,38 @@ const Pricing = () => {
       navigate('/auth');
     }
   };
+
   const features = {
     basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
     premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo & video memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
   };
+
   const monthlyPrice = 9.99;
   const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
+
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <DesktopHeader />
       <MobileHeader />
 
+      {/* Back Button */}
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
+        <div className="max-w-6xl mx-auto">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/dashboard')}
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
+          >
+            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>{t('navigation.backToDashboard')}</span>
+          </Button>
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-8 md:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
             Simple, Transparent
@@ -294,4 +313,5 @@ const Pricing = () => {
       </section>
     </div>;
 };
+
 export default Pricing;
