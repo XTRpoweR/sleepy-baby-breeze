@@ -113,9 +113,9 @@ const HelpCenter = () => {
   ];
 
   const handleCategoryClick = (route: string) => {
-    // For now, navigate to the tutorial page as a placeholder
-    // In a real implementation, these would be separate help category pages
-    navigate('/tutorial');
+    // Extract category name from route and navigate to dynamic help articles page
+    const categoryName = route.split('/').pop(); // Extract the last part of the route
+    navigate(`/help/category/${categoryName}`);
   };
 
   return (
