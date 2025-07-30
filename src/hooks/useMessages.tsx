@@ -37,20 +37,15 @@ export const useMessages = (babyId: string | null) => {
     }
 
     try {
-      const { data, error } = await supabase
+      // First fetch messages
+      const { data: messagesData, error: messagesError } = await supabase
         .from('family_messages')
-        .select(`
-          *,
-          profiles:sender_id (
-            full_name,
-            email
-          )
-        `)
+        .select('*')
         .eq('baby_id', babyId)
         .order('created_at', { ascending: true });
 
-      if (error) {
-        console.error('Error fetching messages:', error);
+      if (messagesError) {
+        console.error('Error fetching messages:', messagesError);
         toast({
           title: "Error",
           description: "Failed to load messages",
@@ -59,12 +54,35 @@ export const useMessages = (babyId: string | null) => {
         return;
       }
 
-      const messagesWithSender: MessageWithSender[] = (data || []).map(msg => ({
-        ...msg,
-        sender_name: msg.profiles?.full_name || msg.profiles?.email?.split('@')[0] || 'Unknown',
-        sender_email: msg.profiles?.email || '',
-        is_own_message: msg.sender_id === user.id
-      }));
+      // Then fetch profiles for all unique sender IDs
+      const senderIds = [...new Set(messagesData?.map(msg => msg.sender_id) || [])];
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .in('id', senderIds);
+
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+        toast({
+          title: "Error",
+          description: "Failed to load sender information",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create a map of profiles for quick lookup
+      const profilesMap = new Map(profilesData?.map(profile => [profile.id, profile]) || []);
+
+      const messagesWithSender: MessageWithSender[] = (messagesData || []).map(msg => {
+        const profile = profilesMap.get(msg.sender_id);
+        return {
+          ...msg,
+          sender_name: profile?.full_name || profile?.email?.split('@')[0] || 'Unknown',
+          sender_email: profile?.email || '',
+          is_own_message: msg.sender_id === user.id
+        };
+      });
 
       setMessages(messagesWithSender);
     } catch (error) {
