@@ -2,14 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { ArrowLeft, Book, Clock, User, ChevronRight } from "lucide-react";
+import { ArrowLeft, Book, Clock, User } from "lucide-react";
 
 const HelpArticle = () => {
   const navigate = useNavigate();
@@ -32,9 +31,9 @@ const HelpArticle = () => {
     }
   };
 
-  // Article content data
-  const getArticleContent = (category: string, id: string) => {
-    const articlesContent = {
+  // Article data structure
+  const getArticleData = (categoryKey: string, articleIdStr: string) => {
+    const articlesData = {
       'getting-started': {
         title: 'Getting Started',
         color: 'text-blue-600',
@@ -42,281 +41,268 @@ const HelpArticle = () => {
         articles: {
           '1': {
             title: 'How to create your first baby profile',
+            content: `Creating your baby's profile is the first step to getting the most out of SleepyBabyy. Here's how to set it up properly:
+
+## Step 1: Basic Information
+Start by entering your baby's basic details:
+- **Name**: Choose a name that's easy for all family members to recognize
+- **Date of Birth**: This helps us calculate age-appropriate sleep recommendations
+- **Gender**: Optional, but helps personalize the experience
+- **Current Weight**: Useful for tracking growth over time
+
+## Step 2: Sleep Preferences
+Set up your baby's current sleep patterns:
+- **Typical bedtime**: When does your baby usually go to sleep?
+- **Wake-up time**: What time do they typically wake up?
+- **Number of naps**: How many naps does your baby take per day?
+- **Sleep environment**: Room temperature, lighting preferences, etc.
+
+## Step 3: Feeding Schedule
+If you're tracking feeding:
+- **Feeding type**: Breastfeeding, bottle feeding, or mixed
+- **Typical feeding intervals**: How often does your baby eat?
+- **Amount per feeding**: For bottle feeding
+
+## Step 4: Photo and Personalization
+- Add a cute profile photo of your baby
+- Choose a theme color for their profile
+- Set up any special notes or medical considerations
+
+## Tips for Success:
+- Keep information updated as your baby grows
+- Add multiple photos to track growth
+- Use the notes section for important reminders
+- Share the profile with family members who help with care
+
+Once your profile is complete, you'll have access to personalized recommendations and tracking features tailored to your baby's needs.`,
             readTime: '3 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Setting Up Your Baby's Profile</h2>
-              <p>Creating your baby's profile is the first step to getting the most out of SleepyBabyy. This profile will be the foundation for all tracking, scheduling, and reporting features.</p>
-              
-              <h3>Step 1: Basic Information</h3>
-              <p>Start by entering your baby's essential details:</p>
-              <ul>
-                <li><strong>Baby's Name:</strong> Enter your little one's full name</li>
-                <li><strong>Date of Birth:</strong> This helps us calculate age-appropriate sleep recommendations</li>
-                <li><strong>Gender:</strong> Optional, but helps personalize the experience</li>
-                <li><strong>Profile Photo:</strong> Add a cute photo to make the profile more personal</li>
-              </ul>
-
-              <h3>Step 2: Sleep Preferences</h3>
-              <p>Tell us about your baby's current sleep patterns:</p>
-              <ul>
-                <li>Typical bedtime and wake-up time</li>
-                <li>Number of naps per day</li>
-                <li>Preferred sleep environment (sounds, lighting)</li>
-                <li>Any specific sleep challenges</li>
-              </ul>
-
-              <h3>Step 3: Feeding Information</h3>
-              <p>Add feeding details to get comprehensive tracking:</p>
-              <ul>
-                <li>Feeding method (breastfeeding, bottle, or mixed)</li>
-                <li>Typical feeding schedule</li>
-                <li>Any dietary restrictions or notes</li>
-              </ul>
-
-              <h3>Step 4: Family Settings</h3>
-              <p>Configure who can access and edit your baby's information:</p>
-              <ul>
-                <li>Add partner or co-parent</li>
-                <li>Set permission levels for grandparents</li>
-                <li>Configure caregiver access</li>
-              </ul>
-
-              <h3>Tips for Success</h3>
-              <ul>
-                <li>Keep information updated as your baby grows</li>
-                <li>Use the photo upload feature regularly</li>
-                <li>Review and adjust settings monthly</li>
-                <li>Enable notifications for important milestones</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '2': {
             title: 'Quick setup guide for new parents',
+            content: `Welcome to SleepyBabyy! This quick setup guide will have you tracking your baby's activities in under 5 minutes.
+
+## Before You Start
+Make sure you have:
+- Your baby's basic information ready
+- Your phone or device handy for the mobile app
+- A few minutes of quiet time to focus
+
+## Quick Setup Steps
+
+### 1. Create Your Account (30 seconds)
+- Download the SleepyBabyy app or visit our website
+- Sign up with your email address
+- Verify your email when prompted
+
+### 2. Set Up Baby Profile (2 minutes)
+- Enter baby's name and date of birth
+- Add a profile photo (optional but recommended)
+- Choose your primary tracking goals (sleep, feeding, diapers)
+
+### 3. Configure Basic Settings (1 minute)
+- Set your timezone
+- Choose your preferred units (metric/imperial)
+- Enable push notifications for reminders
+
+### 4. Add Family Members (1 minute)
+- Invite your partner or other caregivers
+- Set permission levels for each family member
+- Share the invitation link
+
+### 5. Start Your First Log (30 seconds)
+- Try logging a diaper change or feeding
+- Explore the quick-log buttons on your dashboard
+- Familiarize yourself with the interface
+
+## Pro Tips for New Users:
+- Start with just one or two activity types to avoid overwhelm
+- Use the quick-log feature for faster entries
+- Set up smart notifications to remind you to log activities
+- Check out the tutorial section for detailed walkthroughs
+
+## What's Next?
+After setup, consider:
+- Exploring sleep schedule features
+- Setting up your first sleep routine
+- Checking out our sounds library
+- Reading about family sharing features
+
+Remember, you don't need to track everything at once. Start with what matters most to you and gradually add more features as you get comfortable with the app.`,
             readTime: '5 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Get Started in Under 5 Minutes</h2>
-              <p>Welcome to SleepyBabyy! This quick setup guide will get you tracking your baby's activities in no time.</p>
-              
-              <h3>Step 1: Create Your Account (1 minute)</h3>
-              <ul>
-                <li>Sign up with email or Google account</li>
-                <li>Verify your email address</li>
-                <li>Choose your preferred language and timezone</li>
-              </ul>
-
-              <h3>Step 2: Add Your Baby's Profile (2 minutes)</h3>
-              <ul>
-                <li>Enter baby's name and birth date</li>
-                <li>Upload a profile photo</li>
-                <li>Set basic preferences (feeding method, sleep environment)</li>
-              </ul>
-
-              <h3>Step 3: Start Your First Activity Log (1 minute)</h3>
-              <ul>
-                <li>Tap the "Track Activity" button</li>
-                <li>Log your baby's current status (sleeping, feeding, or playing)</li>
-                <li>Add any notes about mood or behavior</li>
-              </ul>
-
-              <h3>Step 4: Explore Key Features (1 minute)</h3>
-              <ul>
-                <li>Check out the sleep sounds library</li>
-                <li>Review the dashboard overview</li>
-                <li>Set up your first smart notification</li>
-              </ul>
-
-              <h3>Pro Tips for New Users</h3>
-              <ul>
-                <li>Start simple - don't try to track everything at once</li>
-                <li>Use the timer features for feeding and tummy time</li>
-                <li>Take advantage of the quick-log buttons</li>
-                <li>Check reports after your first week of tracking</li>
-              </ul>
-
-              <h3>What's Next?</h3>
-              <p>Once you've completed the basic setup:</p>
-              <ul>
-                <li>Invite your partner to collaborate</li>
-                <li>Set up your first sleep schedule</li>
-                <li>Explore the premium features with a free trial</li>
-                <li>Join our community forum for tips and support</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '3': {
             title: 'Understanding the dashboard layout',
+            content: `Your SleepyBabyy dashboard is designed to give you a quick overview of your baby's day. Here's how to navigate and customize it effectively.
+
+## Dashboard Overview
+The dashboard is divided into several key sections:
+
+### Quick Stats Section
+At the top, you'll see:
+- **Last feeding time and amount**
+- **Current sleep status** (awake/asleep)
+- **Time since last diaper change**
+- **Today's total sleep hours**
+
+### Quick Log Buttons
+Large, easy-to-tap buttons for common activities:
+- Sleep (start/end sleep tracking)
+- Feeding (log feeding sessions)
+- Diaper (record diaper changes)
+- Custom activities (medicine, tummy time, etc.)
+
+### Recent Activity Feed
+A chronological list showing:
+- Today's logged activities
+- Time stamps for each entry
+- Quick edit options
+- Visual icons for easy identification
+
+### Weekly Summary Cards
+- Sleep patterns overview
+- Feeding trends
+- Growth tracking
+- Milestone achievements
+
+## Customizing Your Dashboard
+
+### Widget Arrangement
+- Long-press any widget to move it
+- Drag to reorder based on your priorities
+- Hide widgets you don't use regularly
+
+### Quick Actions Setup
+- Customize quick-log buttons
+- Add shortcuts to frequently used features
+- Set up one-tap actions for common routines
+
+### Notification Preferences
+- Choose which activities trigger alerts
+- Set reminder intervals
+- Customize quiet hours for notifications
+
+## Navigation Tips
+
+### Mobile Navigation
+- Swipe left/right between baby profiles (if you have multiple)
+- Pull down to refresh data
+- Long-press for context menus
+
+### Desktop Features
+- Use keyboard shortcuts for quick logging
+- Multiple windows for detailed analysis
+- Larger charts and detailed views
+
+## Making the Most of Your Dashboard
+1. **Start simple**: Focus on 2-3 key metrics initially
+2. **Regular updates**: Keep information current for accurate insights
+3. **Use favorites**: Pin most-used features to the top
+4. **Check daily summaries**: Review patterns at the end of each day
+
+The dashboard learns from your usage patterns and will suggest optimizations to make tracking even easier over time.`,
             readTime: '4 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Navigate Your SleepyBabyy Dashboard</h2>
-              <p>Your dashboard is command center for all your baby's activities. Here's how to make the most of every section.</p>
-              
-              <h3>Top Navigation Bar</h3>
-              <ul>
-                <li><strong>Profile Selector:</strong> Switch between multiple babies</li>
-                <li><strong>Quick Actions:</strong> Fast access to common tasks</li>
-                <li><strong>Notifications:</strong> Stay updated on important events</li>
-                <li><strong>Settings:</strong> Customize your experience</li>
-              </ul>
-
-              <h3>Main Dashboard Widgets</h3>
-              
-              <h4>Today's Overview</h4>
-              <p>Get a snapshot of your baby's current day:</p>
-              <ul>
-                <li>Total sleep hours and nap count</li>
-                <li>Feeding sessions and amounts</li>
-                <li>Diaper changes and types</li>
-                <li>Mood and activity highlights</li>
-              </ul>
-
-              <h4>Quick Log Cards</h4>
-              <p>One-tap logging for common activities:</p>
-              <ul>
-                <li>Sleep (start/stop timer)</li>
-                <li>Feeding (bottle, breast, or solid food)</li>
-                <li>Diaper changes (wet, dirty, or both)</li>
-                <li>Play time and tummy time</li>
-              </ul>
-
-              <h4>Recent Activity Feed</h4>
-              <p>Timeline view of recent logs with options to:</p>
-              <ul>
-                <li>Edit entries by tapping on them</li>
-                <li>Add notes or photos to activities</li>
-                <li>View patterns and trends</li>
-              </ul>
-
-              <h3>Sidebar Navigation</h3>
-              <ul>
-                <li><strong>Track:</strong> Detailed activity logging</li>
-                <li><strong>Reports:</strong> Analytics and insights</li>
-                <li><strong>Sleep Schedule:</strong> Manage routines</li>
-                <li><strong>Family:</strong> Collaborate with others</li>
-                <li><strong>Sounds:</strong> Sleep and play audio</li>
-                <li><strong>Memories:</strong> Photos and milestones</li>
-              </ul>
-
-              <h3>Customization Options</h3>
-              <p>Make the dashboard work for you:</p>
-              <ul>
-                <li>Rearrange widgets by dragging</li>
-                <li>Hide or show specific sections</li>
-                <li>Choose between light and dark themes</li>
-                <li>Set your preferred units (metric/imperial)</li>
-              </ul>
-
-              <h3>Mobile vs Desktop Views</h3>
-              <p>The dashboard adapts to your device:</p>
-              <ul>
-                <li><strong>Mobile:</strong> Stacked layout with swipe navigation</li>
-                <li><strong>Tablet:</strong> Dual-column view with more widgets</li>
-                <li><strong>Desktop:</strong> Full three-column layout with all features</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '4': {
             title: 'Setting up your first sleep schedule',
+            content: `Creating a consistent sleep schedule is one of the most valuable features in SleepyBabyy. Here's how to set up your first schedule that works for your family.
+
+## Understanding Sleep Schedules
+A good sleep schedule includes:
+- **Consistent bedtime and wake-up time**
+- **Appropriate nap times and durations**
+- **Buffer time for routines**
+- **Flexibility for growth spurts and changes**
+
+## Step-by-Step Schedule Creation
+
+### 1. Assess Current Patterns (Week 1)
+Before creating a schedule, track your baby's natural patterns:
+- Note when they naturally get sleepy
+- Record current nap and bedtime patterns
+- Observe sleep duration preferences
+- Track feeding relationships to sleep
+
+### 2. Choose a Schedule Template
+SleepyBabyy offers several evidence-based templates:
+- **Newborn (0-3 months)**: Frequent, shorter sleep periods
+- **Infant (3-6 months)**: Transitioning to longer stretches
+- **Baby (6-12 months)**: 2-3 naps plus overnight sleep
+- **Toddler (12+ months)**: 1-2 naps plus overnight sleep
+
+### 3. Customize for Your Baby
+Adjust the template based on:
+- Your baby's natural rhythms
+- Family schedule constraints
+- Childcare or work requirements
+- Individual sleep needs
+
+### 4. Set Up Sleep Environment
+Configure environmental factors:
+- **Room temperature**: 68-70°F (20-21°C)
+- **Lighting**: Dim for naps, dark for nighttime
+- **Sounds**: White noise or lullabies
+- **Comfort items**: Sleep sacks, pacifiers, etc.
+
+## Schedule Implementation Tips
+
+### Week 1-2: Gradual Introduction
+- Start with one consistent element (like bedtime)
+- Gradually adjust other sleep times
+- Be patient with resistance
+- Track progress and adjust as needed
+
+### Week 3-4: Refinement
+- Fine-tune timing based on observed patterns
+- Address any persistent issues
+- Celebrate small victories
+- Maintain consistency even when traveling
+
+## Common Challenges and Solutions
+
+### Early Wake-ups
+- Gradually push bedtime later
+- Ensure room is dark enough
+- Check for hunger or discomfort
+
+### Nap Resistance
+- Watch for overtiredness signs
+- Adjust nap timing
+- Create consistent pre-nap routine
+- Use soothing sounds or activities
+
+### Schedule Disruptions
+- Maintain core elements when possible
+- Return to schedule as soon as feasible
+- Don't abandon progress due to temporary setbacks
+
+## Advanced Features
+
+### Smart Adjustments
+- Enable automatic schedule suggestions
+- Use growth milestone adaptations
+- Set up seasonal time changes
+- Configure sick day modifications
+
+### Family Coordination
+- Share schedules with all caregivers
+- Set up notification reminders
+- Create backup caregiver instructions
+- Sync with partner's devices
+
+## Measuring Success
+Track improvements in:
+- Sleep quality and duration
+- Ease of falling asleep
+- Reduced night wakings
+- Better daytime mood and alertness
+- Family stress levels
+
+Remember, every baby is unique. Use our schedule as a starting point and adapt it to work best for your family's needs.`,
             readTime: '6 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Create the Perfect Sleep Schedule</h2>
-              <p>A consistent sleep schedule is key to better nights for both baby and parents. Here's how to set one up that works for your family.</p>
-              
-              <h3>Before You Begin</h3>
-              <p>Track your baby's natural patterns for 3-5 days to understand their current rhythm:</p>
-              <ul>
-                <li>Note natural wake-up times</li>
-                <li>Observe when they get sleepy</li>
-                <li>Track nap lengths and frequency</li>
-                <li>Record bedtime resistance or ease</li>
-              </ul>
-
-              <h3>Step 1: Choose a Schedule Template</h3>
-              <p>SleepyBabyy offers age-appropriate templates:</p>
-              <ul>
-                <li><strong>Newborn (0-3 months):</strong> Flexible feeding-based schedule</li>
-                <li><strong>Infant (3-6 months):</strong> 3-4 naps with consistent bedtime</li>
-                <li><strong>Older Baby (6-12 months):</strong> 2 naps with earlier bedtime</li>
-                <li><strong>Toddler (12+ months):</strong> 1 nap with structured routine</li>
-              </ul>
-
-              <h3>Step 2: Customize Your Schedule</h3>
-              
-              <h4>Set Core Times</h4>
-              <ul>
-                <li><strong>Wake-up time:</strong> Choose a consistent morning start</li>
-                <li><strong>Nap times:</strong> Plan 1-3 naps based on age</li>
-                <li><strong>Bedtime:</strong> Select an age-appropriate evening time</li>
-                <li><strong>Feeding windows:</strong> Coordinate with sleep periods</li>
-              </ul>
-
-              <h4>Add Flexibility</h4>
-              <ul>
-                <li>Set 15-30 minute windows for timing</li>
-                <li>Allow for growth spurts and sick days</li>
-                <li>Build in adjustment periods</li>
-              </ul>
-
-              <h3>Step 3: Implement Gradually</h3>
-              <p>Don't change everything at once:</p>
-              <ul>
-                <li><strong>Week 1:</strong> Focus on consistent wake-up time</li>
-                <li><strong>Week 2:</strong> Add structured nap times</li>
-                <li><strong>Week 3:</strong> Establish bedtime routine</li>
-                <li><strong>Week 4:</strong> Fine-tune and adjust</li>
-              </ul>
-
-              <h3>Step 4: Use SleepyBabyy Tools</h3>
-              
-              <h4>Smart Notifications</h4>
-              <ul>
-                <li>Bedtime reminders 30 minutes before</li>
-                <li>Nap time alerts</li>
-                <li>Wake window warnings</li>
-              </ul>
-
-              <h4>Sleep Sounds</h4>
-              <ul>
-                <li>White noise for naps</li>
-                <li>Lullabies for bedtime</li>
-                <li>Nature sounds for relaxation</li>
-              </ul>
-
-              <h4>Progress Tracking</h4>
-              <ul>
-                <li>Monitor schedule adherence</li>
-                <li>Track sleep quality improvements</li>
-                <li>Identify needed adjustments</li>
-              </ul>
-
-              <h3>Troubleshooting Common Issues</h3>
-              
-              <h4>Schedule Resistance</h4>
-              <ul>
-                <li>Move times by 15 minutes gradually</li>
-                <li>Ensure adequate wake windows</li>
-                <li>Check room environment (temperature, light)</li>
-              </ul>
-
-              <h4>Inconsistent Results</h4>
-              <ul>
-                <li>Give changes 1-2 weeks to settle</li>
-                <li>Adjust for daylight saving time</li>
-                <li>Account for developmental leaps</li>
-              </ul>
-
-              <h3>Success Indicators</h3>
-              <p>You'll know your schedule is working when:</p>
-              <ul>
-                <li>Baby falls asleep within 10-15 minutes</li>
-                <li>Fewer night wakings occur</li>
-                <li>Naps become more predictable</li>
-                <li>Overall mood improves during wake times</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           }
         }
       },
@@ -327,417 +313,484 @@ const HelpArticle = () => {
         articles: {
           '1': {
             title: 'Inviting family members to collaborate',
+            content: `Family sharing makes caring for your baby a team effort. Here's how to invite and manage family members in SleepyBabyy.
+
+## Why Family Sharing Matters
+- **Consistent tracking**: All caregivers can log activities
+- **Real-time updates**: Everyone stays informed
+- **Reduced communication gaps**: Less "Did you feed the baby?" questions
+- **Shared responsibility**: Multiple people can contribute to care
+
+## Getting Started with Invitations
+
+### Step 1: Access Family Settings
+- Go to your baby's profile
+- Tap on "Family Sharing" or "Manage Family"
+- Select "Invite Family Member"
+
+### Step 2: Choose Invitation Method
+**Email Invitation** (Recommended)
+- Enter the family member's email address
+- Add a personal message
+- Choose their permission level
+- Send the invitation
+
+**Invitation Link**
+- Generate a shareable link
+- Copy and send via text, messaging app, or email
+- Set expiration date for security
+- Monitor who uses the link
+
+### Step 3: Set Permission Levels
+**Full Access**
+- View and edit all baby data
+- Invite other family members
+- Modify baby profile settings
+- Access premium features (if subscribed)
+
+**Caregiver Access**
+- Log daily activities (feeding, sleep, diapers)
+- View baby's schedules and routines
+- Receive notifications and reminders
+- Cannot modify major settings
+
+**View Only**
+- See baby's activities and progress
+- Access reports and analytics
+- Receive important notifications
+- Cannot log or edit information
+
+## Best Practices for Family Invitations
+
+### Who to Invite
+- **Primary caregivers**: Parents, guardians
+- **Regular helpers**: Grandparents, nannies, babysitters
+- **Occasional caregivers**: Relatives, close friends
+- **Healthcare providers**: Pediatricians (view-only)
+
+### Setting Expectations
+Before inviting, discuss:
+- Who logs what activities
+- Preferred notification settings
+- Privacy boundaries
+- How to handle disagreements about data
+
+### Managing Multiple Caregivers
+- Assign primary responsibilities to avoid duplicate logging
+- Use the activity feed to see who logged what
+- Set up smart notifications to prevent over-notification
+- Regular family meetings to review baby's progress
+
+## Troubleshooting Common Issues
+
+### Invitation Not Received
+- Check spam/junk folders
+- Verify email address is correct
+- Try sending invitation link instead
+- Contact support if issues persist
+
+### Permission Conflicts
+- Clearly define roles and responsibilities
+- Use appropriate permission levels
+- Regular check-ins about access needs
+- Adjust permissions as needed
+
+### Over-logging Activities
+- Assign specific activities to specific people
+- Use the "Who logged this?" feature
+- Set up notifications to prevent duplicates
+- Create a family logging schedule
+
+## Advanced Family Features
+
+### Multiple Baby Profiles
+- Each family member can be added to multiple babies
+- Different permission levels per baby
+- Separate notification settings
+- Individual access to premium features
+
+### Family Analytics
+- See which family member logs most activities
+- Track caregiver patterns and preferences
+- Identify who's most active during different times
+- Generate family contribution reports
+
+### Communication Tools
+- Leave notes for other caregivers
+- Send quick messages through the app
+- Share photos and milestones
+- Create shared to-do lists
+
+## Privacy and Security
+- All family members must create their own accounts
+- Data is encrypted and secure
+- Remove family members instantly if needed
+- Audit trail shows all account access
+- Regular security updates and monitoring
+
+Family sharing transforms baby care from a solo effort into a coordinated team approach, ensuring your baby gets consistent, well-documented care from everyone involved.`,
             readTime: '4 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Building Your Baby Care Team</h2>
-              <p>Caring for a baby is a team effort. SleepyBabyy makes it easy to include partners, grandparents, and caregivers in your baby's tracking journey.</p>
-              
-              <h3>Who Can You Invite?</h3>
-              <ul>
-                <li><strong>Co-parents:</strong> Full access to all features and data</li>
-                <li><strong>Grandparents:</strong> View access with optional editing permissions</li>
-                <li><strong>Babysitters:</strong> Limited access for specific timeframes</li>
-                <li><strong>Daycare Providers:</strong> Professional caregiver access</li>
-                <li><strong>Pediatricians:</strong> Medical professional view-only access</li>
-              </ul>
-
-              <h3>Step-by-Step Invitation Process</h3>
-              
-              <h4>1. Access Family Settings</h4>
-              <ul>
-                <li>Navigate to the Family tab from your dashboard</li>
-                <li>Click "Invite Family Member" button</li>
-                <li>Choose from pre-set roles or create custom permissions</li>
-              </ul>
-
-              <h4>2. Enter Contact Information</h4>
-              <ul>
-                <li>Add email address (required)</li>
-                <li>Include full name for identification</li>
-                <li>Select their relationship to baby</li>
-                <li>Add phone number for notifications (optional)</li>
-              </ul>
-
-              <h4>3. Set Permission Levels</h4>
-              <ul>
-                <li><strong>Full Access:</strong> Can add, edit, and delete all activities</li>
-                <li><strong>Editor:</strong> Can add and edit but not delete</li>
-                <li><strong>Contributor:</strong> Can add activities but not edit existing ones</li>
-                <li><strong>Viewer:</strong> Can view all data but not make changes</li>
-              </ul>
-
-              <h4>4. Customize Access Areas</h4>
-              <p>Fine-tune what each person can access:</p>
-              <ul>
-                <li>Daily activity tracking</li>
-                <li>Sleep schedule management</li>
-                <li>Medical information and appointments</li>
-                <li>Photos and milestone memories</li>
-                <li>Reports and analytics</li>
-                <li>Account and billing settings</li>
-              </ul>
-
-              <h3>Managing Invitations</h3>
-              
-              <h4>Pending Invitations</h4>
-              <ul>
-                <li>Track who hasn't accepted yet</li>
-                <li>Resend invitations if needed</li>
-                <li>Cancel pending invitations</li>
-                <li>Set expiration dates for security</li>
-              </ul>
-
-              <h4>Active Family Members</h4>
-              <ul>
-                <li>See who's currently online</li>
-                <li>View recent activity by each member</li>
-                <li>Modify permissions at any time</li>
-                <li>Remove members if needed</li>
-              </ul>
-
-              <h3>Best Practices for Family Collaboration</h3>
-              
-              <h4>Communication Guidelines</h4>
-              <ul>
-                <li>Establish who logs what activities</li>
-                <li>Use the notes feature for important details</li>
-                <li>Create group chats for coordination</li>
-                <li>Regular check-ins about baby's needs</li>
-              </ul>
-
-              <h4>Data Consistency</h4>
-              <ul>
-                <li>Agree on units of measurement</li>
-                <li>Use consistent timing for activities</li>
-                <li>Establish clear routines everyone follows</li>
-                <li>Review and sync regularly</li>
-              </ul>
-
-              <h3>Privacy and Security</h3>
-              <ul>
-                <li>All invitations are encrypted and secure</li>
-                <li>Members can only access what you allow</li>
-                <li>Audit trails show who made what changes</li>
-                <li>Easy removal process if relationships change</li>
-              </ul>
-
-              <h3>Troubleshooting Common Issues</h3>
-              
-              <h4>Invitation Not Received</h4>
-              <ul>
-                <li>Check spam/junk folders</li>
-                <li>Verify email address is correct</li>
-                <li>Try alternative email if available</li>
-                <li>Use the direct link sharing option</li>
-              </ul>
-
-              <h4>Permission Conflicts</h4>
-              <ul>
-                <li>Review and adjust access levels</li>
-                <li>Communicate expectations clearly</li>
-                <li>Use temporary permissions for short-term help</li>
-                <li>Regular permission audits</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '2': {
             title: 'Managing family member permissions',
+            content: `Understanding and managing family member permissions ensures everyone has the right level of access while maintaining privacy and control.
+
+## Permission Levels Explained
+
+### Owner Level
+**Who gets this**: Primary account holder (usually main parent)
+- Full control over all settings and data
+- Can delete baby profiles
+- Manages subscription and billing
+- Can remove any family member
+- Access to all premium features
+
+### Admin Level
+**Who gets this**: Co-parents, primary caregivers
+- View and edit all baby activities
+- Invite and remove other family members (except Owner)
+- Modify baby profile information
+- Adjust notification settings
+- Cannot delete profiles or manage billing
+
+### Caregiver Level
+**Who gets this**: Babysitters, nannies, regular helpers
+- Log daily activities (feeding, sleep, diapers, etc.)
+- View schedules and current baby status
+- Receive care-related notifications
+- Cannot invite others or change major settings
+- Time-limited access options available
+
+### Viewer Level
+**Who gets this**: Grandparents, extended family, healthcare providers
+- View baby's progress and activities
+- Access reports and milestones
+- Receive milestone notifications
+- Cannot log activities or make changes
+- Perfect for those who want to stay informed
+
+## Setting Up Permissions
+
+### During Invitation
+1. Choose the appropriate level based on involvement
+2. Consider the person's technical comfort level
+3. Think about privacy preferences
+4. Set expectations about responsibilities
+
+### Adjusting Permissions Later
+- Access Family Settings from baby profile
+- Select the family member to modify
+- Change permission level instantly
+- Changes take effect immediately
+- Notify the family member of changes
+
+## Permission-Specific Features
+
+### What Caregivers Can Do
+**Daily Logging**
+- Record feeding times and amounts
+- Track sleep start/end times
+- Log diaper changes and details
+- Add notes about baby's mood or behavior
+
+**Schedule Access**
+- View upcoming nap times
+- See feeding schedules
+- Check medication reminders
+- Access bedtime routines
+
+**Limited Customization**
+- Adjust personal notification preferences
+- Choose which activities they want to be notified about
+- Set quiet hours for their device
+- Customize quick-log buttons for their use
+
+### What Viewers Can See
+**Progress Tracking**
+- Growth charts and milestones
+- Sleep pattern summaries
+- Feeding trend analysis
+- Photo galleries and memories
+
+**Reports Access**
+- Weekly and monthly summaries
+- Pediatrician-ready reports
+- Activity timelines
+- Statistical overviews
+
+## Advanced Permission Management
+
+### Temporary Access
+**Babysitter Mode**
+- Grant temporary caregiver access
+- Set automatic expiration dates
+- Limit to specific timeframes
+- Revoke access instantly when needed
+
+**Emergency Access**
+- Provide temporary full access during emergencies
+- Include emergency contact information
+- Access to medical information and allergies
+- Automatic notifications to primary caregivers
+
+### Time-Based Restrictions
+- Set active hours for different permission levels
+- Restrict access during nighttime hours
+- Allow access only during scheduled care times
+- Weekend vs. weekday different permissions
+
+### Activity-Specific Permissions
+**Granular Control**
+- Allow feeding logs but not sleep tracking
+- Grant access to diaper changes only
+- Permit photo uploads but not profile edits
+- Custom combinations based on caregiver role
+
+## Privacy Considerations
+
+### What to Share
+**Always Consider**
+- Baby's safety and security
+- Family privacy preferences
+- Sensitive medical information
+- Personal family routines
+
+**Best Practices**
+- Regular permission audits
+- Remove inactive family members
+- Update permissions as relationships change
+- Clear communication about data use
+
+### Protecting Sensitive Information
+- Medical conditions and allergies (limited to trusted caregivers)
+- Sleep location and security details
+- Family schedule and location patterns
+- Personal family photos and videos
+
+## Troubleshooting Permission Issues
+
+### Common Problems
+**"I can't log activities"**
+- Check if user has Caregiver level or above
+- Verify account is active and confirmed
+- Ensure app is updated to latest version
+
+**"Family member can see too much"**
+- Review and adjust their permission level
+- Consider moving to Viewer level
+- Check if they were accidentally given Admin access
+
+**"Notifications aren't working"**
+- Verify permission level includes notification rights
+- Check individual notification preferences
+- Ensure app permissions are enabled on their device
+
+### Regular Maintenance
+- Monthly permission reviews
+- Remove family members who are no longer involved
+- Update permissions as baby's needs change
+- Check for any unauthorized access
+
+Remember, permission management is about finding the right balance between collaboration and privacy. Start with more restrictive permissions and gradually increase access as trust and need develop.`,
             readTime: '3 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Control Who Sees and Edits What</h2>
-              <p>Not every family member needs the same level of access to your baby's information. Learn how to set appropriate permissions for each person on your care team.</p>
-              
-              <h3>Understanding Permission Levels</h3>
-              
-              <h4>Owner (You)</h4>
-              <ul>
-                <li>Complete control over all settings</li>
-                <li>Can invite and remove family members</li>
-                <li>Access to billing and subscription management</li>
-                <li>Can delete the baby profile</li>
-              </ul>
-
-              <h4>Co-Parent</h4>
-              <ul>
-                <li>Full editing access to all activities</li>
-                <li>Can modify sleep schedules and routines</li>
-                <li>Access to all reports and analytics</li>
-                <li>Can invite other family members</li>
-                <li>Cannot access billing or delete profile</li>
-              </ul>
-
-              <h4>Family Member</h4>
-              <ul>
-                <li>Can view all activities and reports</li>
-                <li>Can add new activity logs</li>
-                <li>Can edit activities they created</li>
-                <li>Cannot modify schedules or invite others</li>
-              </ul>
-
-              <h4>Caregiver</h4>
-              <ul>
-                <li>Can log activities during their care time</li>
-                <li>Access to relevant schedules and routines</li>
-                <li>Can view recent feeding and sleep patterns</li>
-                <li>Limited to essential information only</li>
-              </ul>
-
-              <h4>Viewer</h4>
-              <ul>
-                <li>Read-only access to basic information</li>
-                <li>Can view recent activities and photos</li>
-                <li>Cannot make any changes or additions</li>
-                <li>Perfect for distant relatives</li>
-              </ul>
-
-              <h3>Customizing Access Areas</h3>
-              
-              <h4>Activity Tracking</h4>
-              <ul>
-                <li><strong>Full Access:</strong> Can log, edit, and delete any activity</li>
-                <li><strong>Add Only:</strong> Can create new logs but not modify existing ones</li>
-                <li><strong>Own Edits:</strong> Can only edit activities they created</li>
-                <li><strong>View Only:</strong> Can see activity history but not change it</li>
-              </ul>
-
-              <h4>Medical Information</h4>
-              <ul>
-                <li><strong>Full Medical:</strong> Access to all health data and appointments</li>
-                <li><strong>Basic Health:</strong> General wellness info, no sensitive data</li>
-                <li><strong>Emergency Only:</strong> Critical medical information only</li>
-                <li><strong>No Access:</strong> Cannot view any medical information</li>
-              </ul>
-
-              <h4>Photos and Memories</h4>
-              <ul>
-                <li><strong>Full Gallery:</strong> Can add, view, and organize all photos</li>
-                <li><strong>Add Photos:</strong> Can upload but not delete others' photos</li>
-                <li><strong>View All:</strong> Can see all photos but not add new ones</li>
-                <li><strong>Limited View:</strong> Only sees photos shared with them</li>
-              </ul>
-
-              <h3>Managing Permissions Over Time</h3>
-              
-              <h4>Temporary Access</h4>
-              <ul>
-                <li>Set expiration dates for babysitter access</li>
-                <li>Grant temporary full access during emergencies</li>
-                <li>Create time-limited viewer access for visits</li>
-                <li>Automatically revoke access after set periods</li>
-              </ul>
-
-              <h4>Permission Changes</h4>
-              <ul>
-                <li>Upgrade grandparents from viewer to family member</li>
-                <li>Reduce access if relationships change</li>
-                <li>Seasonal adjustments for varying care needs</li>
-                <li>Emergency permission escalation</li>
-              </ul>
-
-              <h3>Security Best Practices</h3>
-              
-              <h4>Regular Reviews</h4>
-              <ul>
-                <li>Monthly permission audits</li>
-                <li>Remove unused or unnecessary access</li>
-                <li>Update permissions as baby grows</li>
-                <li>Verify active family members regularly</li>
-              </ul>
-
-              <h4>Communication</h4>
-              <ul>
-                <li>Explain permission levels to family members</li>
-                <li>Set clear expectations about access</li>
-                <li>Provide alternative ways to share updates</li>
-                <li>Address concerns about limited access</li>
-              </ul>
-
-              <h3>Common Permission Scenarios</h3>
-              
-              <h4>Divorced or Separated Parents</h4>
-              <ul>
-                <li>Equal co-parent access when sharing custody</li>
-                <li>Limited access during transition periods</li>
-                <li>Separate communication channels if needed</li>
-                <li>Professional mediation through the app</li>
-              </ul>
-
-              <h4>Professional Caregivers</h4>
-              <ul>
-                <li>Work-hours-only access for daycare providers</li>
-                <li>Activity-specific permissions for specialists</li>
-                <li>Temporary elevated access for medical visits</li>
-                <li>Easy permission transfer between providers</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '3': {
             title: 'Setting up caregiver access',
+            content: `Whether you're working with a babysitter, nanny, or daycare provider, setting up proper caregiver access ensures continuity of care and peace of mind.
+
+## Types of Caregiver Arrangements
+
+### Professional Caregivers
+**Nannies and Au Pairs**
+- Full-time care providers
+- Need comprehensive access to daily routines
+- Should be able to log all activities
+- May need emergency contact information
+
+**Babysitters**
+- Part-time or occasional care
+- Limited access during specific hours
+- Quick reference to important information
+- Temporary access that can be easily revoked
+
+**Daycare Providers**
+- Group care settings
+- May need to track multiple children
+- Often have their own systems to integrate
+- Focus on sharing rather than logging
+
+### Family-Based Caregivers
+**Grandparents**
+- Regular or occasional care
+- May need simpler interface
+- Often want to see progress over time
+- Varying comfort levels with technology
+
+**Other Family Members**
+- Siblings, aunts, uncles, close friends
+- Occasional care providers
+- May only need basic information
+- Focus on safety and emergency info
+
+## Setting Up Professional Caregiver Access
+
+### Pre-Setup Preparation
+**Information to Gather**
+- Caregiver's email address and phone number
+- Days and times they'll be providing care
+- Specific responsibilities they'll handle
+- Their experience with similar apps
+
+**Privacy Discussion**
+- What information they need vs. want to see
+- How data will be used and protected
+- Expectations about logging activities
+- Communication preferences with parents
+
+### Step-by-Step Setup Process
+
+**1. Create Caregiver Profile**
+- Send invitation to caregiver's email
+- Set initial permission level to "Caregiver"
+- Include welcome message with expectations
+- Provide tutorial resources if needed
+
+**2. Configure Access Hours**
+- Set active hours matching their care schedule
+- Enable/disable access for weekends or holidays
+- Configure automatic activation/deactivation
+- Set up notifications for schedule changes
+
+**3. Customize Available Features**
+- Choose which activities they can log
+- Provide access to relevant schedules
+- Share emergency contact information
+- Include any special care instructions
+
+### Essential Information for Caregivers
+
+**Daily Care Basics**
+- Current feeding schedule and preferences
+- Nap times and sleep routines
+- Diaper changing supplies and procedures
+- Favorite activities and soothing techniques
+
+**Safety Information**
+- Emergency contact numbers
+- Pediatrician contact information
+- Location of first aid supplies
+- Any allergies or medical conditions
+
+**House Rules**
+- Screen time policies
+- Allowed activities and locations
+- Meal and snack guidelines
+- Visitors and outing policies
+
+## Managing Multiple Caregivers
+
+### Coordination Strategies
+**Shift Handoffs**
+- Use activity log to communicate what happened
+- Leave notes about baby's mood and needs
+- Update any schedule changes or concerns
+- Confirm next caregiver has been notified
+
+**Avoiding Duplicate Entries**
+- Assign specific logging responsibilities
+- Use timestamps to identify overlaps
+- Set up notifications to prevent double-logging
+- Regular review of activity logs for accuracy
+
+### Communication Tools
+**In-App Messaging**
+- Quick updates about baby's day
+- Questions about routines or procedures
+- Photo sharing of activities or concerns
+- Coordination of schedule changes
+
+**Daily Summaries**
+- Automatic reports of caregiver's time
+- Activity summaries for parent review
+- Any notes or concerns raised
+- Photos and milestone moments captured
+
+## Specialized Caregiver Situations
+
+### Overnight Care
+**Extended Access Needs**
+- Full access to nighttime routines
+- Emergency medical information
+- Contact information for parents
+- Clear instructions for urgent situations
+
+**Night Nanny Setup**
+- Access limited to nighttime hours
+- Focus on sleep tracking and feeding logs
+- Minimal daytime access needed
+- Integration with daytime caregiver logs
+
+### Medical Care Needs
+**Special Circumstances**
+- Access to medication schedules
+- Permission to log medical activities
+- Direct communication with healthcare providers
+- Documentation requirements for medical needs
+
+### Temporary Care (Date Nights, etc.)
+**Quick Setup Options**
+- Generate temporary access codes
+- Provide essential information only
+- Time-limited access (2-6 hours)
+- Emergency contacts and procedures
+
+## Training and Support for Caregivers
+
+### Initial Orientation
+**App Tutorial**
+- Walk through basic logging procedures
+- Show how to access schedules and information
+- Practice with sample entries
+- Ensure comfort with core features
+
+**Baby-Specific Training**
+- Review baby's current routines
+- Discuss preferences and dislikes
+- Share successful soothing techniques
+- Explain any unique needs or behaviors
+
+### Ongoing Support
+**Regular Check-ins**
+- Weekly reviews of logged activities
+- Address any questions or concerns
+- Update access as needs change
+- Provide additional training if needed
+
+**Feedback Integration**
+- Ask for caregiver input on routines
+- Incorporate their observations into planning
+- Value their professional experience
+- Adjust access based on their suggestions
+
+## Ending Caregiver Access
+
+### Planned Transitions
+- Give notice about access ending
+- Export any important data they contributed
+- Thank them for their care and documentation
+- Provide references or recommendations as appropriate
+
+### Immediate Removal
+- Instantly revoke access if needed
+- Secure any shared information
+- Review logs for any concerns
+- Update emergency contacts and procedures
+
+Setting up proper caregiver access creates a seamless care environment where your baby receives consistent, well-documented care regardless of who's providing it.`,
             readTime: '5 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Professional Caregiver Integration</h2>
-              <p>Whether it's a babysitter, daycare provider, or nanny, giving caregivers the right level of access ensures continuity in your baby's care while maintaining your privacy.</p>
-              
-              <h3>Types of Professional Caregivers</h3>
-              
-              <h4>Babysitters</h4>
-              <ul>
-                <li><strong>Occasional care:</strong> Evening or weekend sitting</li>
-                <li><strong>Regular sitters:</strong> Weekly or bi-weekly care</li>
-                <li><strong>Emergency contacts:</strong> Last-minute care providers</li>
-                <li><strong>Date night sitters:</strong> Short-term evening care</li>
-              </ul>
-
-              <h4>Daycare Providers</h4>
-              <ul>
-                <li><strong>Center directors:</strong> Oversight and communication</li>
-                <li><strong>Primary teachers:</strong> Daily care and activities</li>
-                <li><strong>Assistant teachers:</strong> Support and backup care</li>
-                <li><strong>Specialized staff:</strong> Nurses, nutritionists, etc.</li>
-              </ul>
-
-              <h4>Nannies and Au Pairs</h4>
-              <ul>
-                <li><strong>Full-time nannies:</strong> 40+ hours per week</li>
-                <li><strong>Part-time nannies:</strong> Regular but limited hours</li>
-                <li><strong>Au pairs:</strong> Live-in cultural exchange caregivers</li>
-                <li><strong>Shared nannies:</strong> Split between multiple families</li>
-              </ul>
-
-              <h3>Setting Up Caregiver Profiles</h3>
-              
-              <h4>Essential Information</h4>
-              <ul>
-                <li>Full name and contact information</li>
-                <li>Role and relationship to your family</li>
-                <li>Schedule and availability</li>
-                <li>Emergency contact details</li>
-                <li>Certifications (CPR, First Aid, etc.)</li>
-              </ul>
-
-              <h4>Care-Specific Details</h4>
-              <ul>
-                <li>Which activities they're responsible for</li>
-                <li>Feeding permissions and restrictions</li>
-                <li>Sleep routine authority</li>
-                <li>Medical care limitations</li>
-                <li>Discipline and boundary guidelines</li>
-              </ul>
-
-              <h3>Configuring Access Levels</h3>
-              
-              <h4>Time-Based Access</h4>
-              <ul>
-                <li><strong>Work Hours Only:</strong> Access during scheduled care time</li>
-                <li><strong>Extended Hours:</strong> Includes prep and wrap-up time</li>
-                <li><strong>On-Call Access:</strong> Available during emergency situations</li>
-                <li><strong>24/7 Access:</strong> For live-in or full-time caregivers</li>
-              </ul>
-
-              <h4>Activity Permissions</h4>
-              <ul>
-                <li><strong>Feeding Logs:</strong> Can record what and when baby ate</li>
-                <li><strong>Sleep Tracking:</strong> Log naps and sleep quality</li>
-                <li><strong>Diaper Changes:</strong> Track frequency and type</li>
-                <li><strong>Play Activities:</strong> Record games, outings, learning</li>
-                <li><strong>Medical Notes:</strong> Limited to basic observations</li>
-              </ul>
-
-              <h3>Communication Tools</h3>
-              
-              <h4>Daily Reports</h4>
-              <ul>
-                <li>Automated summary of baby's day</li>
-                <li>Custom notes from caregiver</li>
-                <li>Photo and video sharing</li>
-                <li>Milestone and achievement alerts</li>
-              </ul>
-
-              <h4>Real-Time Updates</h4>
-              <ul>
-                <li>Live activity notifications to parents</li>
-                <li>Emergency alert system</li>
-                <li>Schedule change communications</li>
-                <li>Direct messaging between caregiver and parents</li>
-              </ul>
-
-              <h3>Professional Boundaries</h3>
-              
-              <h4>Information Limits</h4>
-              <ul>
-                <li>No access to family financial information</li>
-                <li>Limited medical history viewing</li>
-                <li>Cannot invite other family members</li>
-                <li>No permanent data deletion rights</li>
-              </ul>
-
-              <h4>Privacy Protections</h4>
-              <ul>
-                <li>Cannot view historical data before their start date</li>
-                <li>No access to parent private notes</li>
-                <li>Cannot see other caregiver information</li>
-                <li>Limited photo and video access</li>
-              </ul>
-
-              <h3>Onboarding New Caregivers</h3>
-              
-              <h4>Initial Setup Process</h4>
-              <ol>
-                <li>Create caregiver profile with basic information</li>
-                <li>Set appropriate permission levels</li>
-                <li>Send invitation email with login instructions</li>
-                <li>Schedule orientation call to review app features</li>
-                <li>Provide written guidelines for data entry</li>
-                <li>Test run with supervised access</li>
-              </ol>
-
-              <h4>Training Resources</h4>
-              <ul>
-                <li>Video tutorials for basic app navigation</li>
-                <li>Written guides for common activities</li>
-                <li>Quick reference cards for emergency situations</li>
-                <li>Contact information for technical support</li>
-              </ul>
-
-              <h3>Managing Multiple Caregivers</h3>
-              
-              <h4>Coordination Strategies</h4>
-              <ul>
-                <li>Shared calendar for scheduling</li>
-                <li>Handoff notes between caregivers</li>
-                <li>Group messaging for team updates</li>
-                <li>Regular team meetings via app</li>
-              </ul>
-
-              <h4>Preventing Conflicts</h4>
-              <ul>
-                <li>Clear role definitions for each caregiver</li>
-                <li>Established hierarchy for decision-making</li>
-                <li>Consistent guidelines across all caregivers</li>
-                <li>Regular performance reviews and feedback</li>
-              </ul>
-
-              <h3>Ending Caregiver Relationships</h3>
-              
-              <h4>Planned Transitions</h4>
-              <ul>
-                <li>Gradual reduction of access permissions</li>
-                <li>Data export for caregiver's records</li>
-                <li>Thank you message and final report</li>
-                <li>Reference letter generation if requested</li>
-              </ul>
-
-              <h4>Emergency Removals</h4>
-              <ul>
-                <li>Immediate access revocation</li>
-                <li>Account activity audit</li>
-                <li>Data security verification</li>
-                <li>Backup caregiver activation</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           }
         }
       },
@@ -748,517 +801,618 @@ const HelpArticle = () => {
         articles: {
           '1': {
             title: 'Understanding sleep pattern charts',
+            content: `SleepyBabyy's sleep analytics provide valuable insights into your baby's sleep patterns. Here's how to read and interpret these powerful visualizations.
+
+## Types of Sleep Charts
+
+### Sleep Timeline Chart
+**What it shows**: Hour-by-hour sleep/wake periods
+- **Blue bars**: Sleep periods
+- **White spaces**: Awake periods
+- **Darker blue**: Deeper sleep phases
+- **Lighter blue**: Light sleep or restless periods
+
+**How to read it**:
+- Horizontal axis shows time (24-hour view)
+- Vertical bars show sleep duration
+- Gaps indicate wake periods
+- Multiple days can be overlaid for pattern comparison
+
+### Weekly Sleep Summary
+**Visual Elements**:
+- **Total sleep bars**: Daily sleep totals
+- **Average line**: Weekly sleep average
+- **Nap vs. night breakdown**: Color-coded segments
+- **Consistency indicators**: Pattern stability metrics
+
+### Sleep Quality Metrics
+**Sleep Efficiency**: Percentage of time in bed actually sleeping
+- **90-100%**: Excellent sleep efficiency
+- **80-89%**: Good sleep efficiency  
+- **70-79%**: Fair sleep efficiency
+- **Below 70%**: May need attention
+
+**Sleep Latency**: Time taken to fall asleep
+- **0-15 minutes**: Normal range
+- **15-30 minutes**: Slightly elevated
+- **30+ minutes**: May indicate overtiredness or other issues
+
+## Reading Your Baby's Patterns
+
+### Healthy Sleep Patterns by Age
+
+**Newborn (0-3 months)**
+- 14-18 hours total sleep per day
+- 2-4 hour sleep stretches
+- No clear day/night distinction initially
+- Frequent feeding interruptions
+
+**Infant (3-6 months)**
+- 12-15 hours total sleep per day
+- Longer nighttime stretches (4-6 hours)
+- 3-4 naps during the day
+- Beginning to show circadian rhythm
+
+**Baby (6-12 months)**
+- 11-14 hours total sleep per day
+- 6-8 hour nighttime stretches
+- 2-3 regular naps
+- More predictable schedule
+
+**Toddler (12+ months)**
+- 10-13 hours total sleep per day
+- 10-12 hour nighttime sleep
+- 1-2 naps (transitioning to one)
+- Consistent schedule important
+
+### Identifying Patterns and Trends
+
+**Positive Indicators**
+- Consistent bedtime and wake-up times
+- Gradual increase in nighttime sleep duration
+- Decreasing number of night wakings
+- Regular nap times and durations
+
+**Areas for Attention**
+- Frequent night wakings increasing over time
+- Very early morning wake-ups (before 6 AM)
+- Difficulty falling asleep (long sleep latency)
+- Irregular nap schedules
+
+**Red Flags**
+- Sudden dramatic changes in sleep patterns
+- Consistently getting much less sleep than age-appropriate
+- Signs of sleep regression lasting more than 2-3 weeks
+- Sleep difficulties affecting daytime mood significantly
+
+## Using Analytics for Improvements
+
+### Correlation Analysis
+**Sleep vs. Feeding**
+- Look for patterns between feeding times and sleep quality
+- Identify optimal timing for last feeding before bed
+- Notice if certain foods affect sleep (for older babies)
+
+**Sleep vs. Activity**
+- Compare active days with sleep quality
+- Find optimal balance of stimulation and rest
+- Identify activities that promote better sleep
+
+**Environmental Factors**
+- Track room temperature, noise levels, lighting
+- Correlate environmental changes with sleep quality
+- Identify optimal sleep environment conditions
+
+### Making Data-Driven Adjustments
+
+**Bedtime Optimization**
+- Use sleep latency data to find optimal bedtime
+- Adjust gradually based on falling asleep patterns
+- Monitor impact of changes over 1-2 weeks
+
+**Nap Schedule Refinement**
+- Analyze nap timing vs. nighttime sleep quality
+- Identify if naps are too long, too short, or poorly timed
+- Adjust based on total sleep needs and night sleep priority
+
+**Wake Window Analysis**
+- Track time between sleep periods
+- Identify optimal wake windows for your baby's age
+- Adjust activities and timing to match natural rhythms
+
+## Advanced Analytics Features
+
+### Predictive Insights
+**Sleep Trend Forecasting**
+- Algorithms predict likely sleep patterns based on history
+- Identify approaching developmental sleep changes
+- Suggest proactive schedule adjustments
+
+**Optimal Schedule Suggestions**
+- AI-powered recommendations based on your baby's data
+- Personalized schedule modifications
+- Integration with growth spurts and developmental leaps
+
+### Comparative Analytics
+**Peer Comparisons** (Anonymous)
+- See how your baby's sleep compares to others of same age
+- Identify if patterns are within normal ranges
+- Access evidence-based recommendations
+
+**Historical Comparisons**
+- Track improvements over time
+- Compare different time periods
+- Celebrate progress and identify successful strategies
+
+## Sharing Analytics with Healthcare Providers
+
+### Pediatrician Reports
+**What to Include**:
+- 2-4 week sleep pattern summaries
+- Any concerning trends or changes
+- Questions about sleep development
+- Correlation with growth and feeding
+
+**Report Features**:
+- Professional formatting for medical review
+- Key metrics highlighted
+- Trend analysis and concerns noted
+- Recommendations requested from data
+
+### Family Sharing
+**What Family Members See**:
+- Simplified charts focusing on key metrics
+- Progress celebrations and milestones
+- Easy-to-understand summaries
+- Options to share specific insights
+
+Remember, every baby is unique. Use these analytics as a guide to understand your baby's individual patterns and needs, not as rigid standards they must meet. The goal is to optimize sleep for your family's wellbeing and your baby's healthy development.`,
             readTime: '7 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Decode Your Baby's Sleep Patterns</h2>
-              <p>Sleep pattern charts are powerful tools that reveal insights into your baby's rest cycles, helping you optimize their sleep schedule and identify potential issues.</p>
-              
-              <h3>Types of Sleep Charts</h3>
-              
-              <h4>Daily Sleep Timeline</h4>
-              <ul>
-                <li><strong>Horizontal bars:</strong> Show sleep periods throughout 24 hours</li>
-                <li><strong>Color coding:</strong> Different colors for naps vs. night sleep</li>
-                <li><strong>Activity markers:</strong> Feeding, diaper changes, and wake periods</li>
-                <li><strong>Quality indicators:</strong> Peaceful vs. restless sleep periods</li>
-              </ul>
-
-              <h4>Weekly Sleep Summary</h4>
-              <ul>
-                <li><strong>Total sleep hours:</strong> Average and daily variations</li>
-                <li><strong>Nap frequency:</strong> Number of naps per day</li>
-                <li><strong>Night wakings:</strong> Frequency and duration trends</li>
-                <li><strong>Bedtime consistency:</strong> How regular sleep times are</li>
-              </ul>
-
-              <h4>Monthly Progress View</h4>
-              <ul>
-                <li><strong>Long-term trends:</strong> Gradual improvements or regressions</li>
-                <li><strong>Developmental impacts:</strong> Sleep changes during growth spurts</li>
-                <li><strong>Seasonal variations:</strong> How daylight changes affect sleep</li>
-                <li><strong>Milestone correlations:</strong> Sleep disruptions during new skills</li>
-              </ul>
-
-              <h3>Reading the Charts</h3>
-              
-              <h4>Color Meanings</h4>
-              <ul>
-                <li><strong>Deep Blue:</strong> Night sleep (10pm-6am typically)</li>
-                <li><strong>Light Blue:</strong> Day naps</li>
-                <li><strong>Green:</strong> Quiet/calm awake periods</li>
-                <li><strong>Yellow:</strong> Active/stimulated awake time</li>
-                <li><strong>Red:</strong> Fussy or crying periods</li>
-                <li><strong>Gray:</strong> Feeding times</li>
-              </ul>
-
-              <h4>Pattern Indicators</h4>
-              <ul>
-                <li><strong>Solid blocks:</strong> Continuous sleep periods</li>
-                <li><strong>Dotted lines:</strong> Light sleep or frequent stirring</li>
-                <li><strong>Jagged edges:</strong> Difficulty falling asleep or frequent wakings</li>
-                <li><strong>Thickness:</strong> Sleep quality (thicker = better quality)</li>
-              </ul>
-
-              <h3>Identifying Healthy Patterns</h3>
-              
-              <h4>Age-Appropriate Sleep Totals</h4>
-              <ul>
-                <li><strong>Newborn (0-3 months):</strong> 14-17 hours per day</li>
-                <li><strong>Infant (3-6 months):</strong> 12-15 hours per day</li>
-                <li><strong>Older infant (6-12 months):</strong> 12-14 hours per day</li>
-                <li><strong>Toddler (12+ months):</strong> 11-14 hours per day</li>
-              </ul>
-
-              <h4>Positive Pattern Indicators</h4>
-              <ul>
-                <li>Consistent bedtime within 30-minute window</li>
-                <li>Gradually longer sleep stretches at night</li>
-                <li>Predictable nap times and durations</li>
-                <li>Quick sleep onset (under 20 minutes)</li>
-                <li>Minimal night wakings for age</li>
-                <li>Happy mood upon waking</li>
-              </ul>
-
-              <h3>Spotting Concerning Patterns</h3>
-              
-              <h4>Sleep Issues to Watch For</h4>
-              <ul>
-                <li><strong>Irregular bedtimes:</strong> Varying by more than 1 hour nightly</li>
-                <li><strong>Frequent night wakings:</strong> More than expected for age</li>
-                <li><strong>Short naps:</strong> Consistently under 45 minutes</li>
-                <li><strong>Early morning wakings:</strong> Before 6am regularly</li>
-                <li><strong>Sleep resistance:</strong> Taking over 30 minutes to fall asleep</li>
-                <li><strong>Total sleep deficiency:</strong> Consistently below age recommendations</li>
-              </ul>
-
-              <h4>When to Consult Your Pediatrician</h4>
-              <ul>
-                <li>Sudden changes in established patterns</li>
-                <li>Excessive daytime sleepiness</li>
-                <li>Loud snoring or breathing difficulties</li>
-                <li>Night terrors or frequent nightmares</li>
-                <li>Persistent early morning wakings</li>
-                <li>Regression after months of good sleep</li>
-              </ul>
-
-              <h3>Using Charts to Optimize Sleep</h3>
-              
-              <h4>Identifying Optimal Bedtime</h4>
-              <ul>
-                <li>Look for natural sleepy periods in the evening</li>
-                <li>Note when baby falls asleep easily vs. struggles</li>
-                <li>Track mood and behavior leading up to sleep</li>
-                <li>Adjust bedtime based on total sleep needs</li>
-              </ul>
-
-              <h4>Nap Schedule Optimization</h4>
-              <ul>
-                <li>Find natural low-energy periods for naps</li>
-                <li>Balance nap length with nighttime sleep</li>
-                <li>Adjust timing based on previous night's sleep</li>
-                <li>Gradually transition between nap schedules as baby grows</li>
-              </ul>
-
-              <h3>Advanced Chart Features</h3>
-              
-              <h4>Overlay Options</h4>
-              <ul>
-                <li><strong>Feeding overlay:</strong> See how meals affect sleep timing</li>
-                <li><strong>Growth tracking:</strong> Correlate sleep with weight/height gains</li>
-                <li><strong>Weather data:</strong> Understand environmental impacts</li>
-                <li><strong>Activity overlay:</strong> See how stimulation affects rest</li>
-              </ul>
-
-              <h4>Comparison Views</h4>
-              <ul>
-                <li><strong>Week-over-week:</strong> Track gradual improvements</li>
-                <li><strong>Before/after:</strong> Measure schedule change impacts</li>
-                <li><strong>Sibling comparison:</strong> See family sleep patterns</li>
-                <li><strong>Developmental stages:</strong> Compare across growth periods</li>
-              </ul>
-
-              <h3>Sharing Charts with Healthcare Providers</h3>
-              
-              <h4>Export Options</h4>
-              <ul>
-                <li>PDF reports for pediatrician visits</li>
-                <li>Email summaries to share with partners</li>
-                <li>Print-friendly formats for medical records</li>
-                <li>Data export for sleep specialists</li>
-              </ul>
-
-              <h4>Key Information to Highlight</h4>
-              <ul>
-                <li>Recent changes in sleep patterns</li>
-                <li>Persistent issues or concerns</li>
-                <li>Successful interventions or strategies</li>
-                <li>Questions about normal development</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '2': {
             title: 'Exporting your baby\'s data',
+            content: `Exporting your baby's data from SleepyBabyy allows you to share comprehensive reports with pediatricians, backup your information, or analyze patterns in other tools.
+
+## Why Export Data?
+
+### Medical Appointments
+- **Pediatrician visits**: Comprehensive activity summaries
+- **Specialist consultations**: Sleep, feeding, or growth concerns
+- **Medical records**: Personal health documentation
+- **Insurance claims**: Activity-based medical needs
+
+### Personal Use
+- **Data backup**: Secure copy of baby's information
+- **Scrapbooking**: Print-friendly formats for baby books
+- **Extended analysis**: Use in spreadsheets or other tools
+- **Family sharing**: Send to relatives who don't use the app
+
+### Transition Periods
+- **Childcare providers**: Detailed routines and preferences
+- **Moving or traveling**: Portable care information
+- **App changes**: Backup before switching services
+- **Emergency situations**: Quick access to critical information
+
+## Export Formats Available
+
+### PDF Reports
+**Professional Medical Reports**
+- Formatted for healthcare provider review
+- Includes charts, trends, and statistical analysis
+- Medical terminology and standard metrics
+- Ready to print or share digitally
+
+**Family-Friendly Summaries**
+- Easy-to-read format for family members
+- Visual charts and milestone celebrations
+- Photo integration when available
+- Personalized messaging and notes
+
+### Excel/CSV Spreadsheets
+**Raw Data Export**
+- Complete activity logs with timestamps
+- All tracked metrics and measurements
+- Notes and observations included
+- Customizable for further analysis
+
+**Filtered Data Sets**
+- Specific date ranges or activity types
+- Custom fields and measurements
+- Analysis-ready formatting
+- Integration with other tools
+
+### Photo and Video Archives
+**Memory Collections**
+- Organized by date or milestone
+- High-resolution image downloads
+- Video compilation options
+- Shareable formats for family
+
+## Step-by-Step Export Process
+
+### Accessing Export Features
+1. **Navigate to Reports Section**
+   - From dashboard, select "Reports & Analytics"
+   - Choose "Data Export" or "Generate Report"
+   - Select your baby's profile if multiple babies
+
+2. **Choose Export Type**
+   - Medical report for healthcare providers
+   - Personal summary for family use
+   - Raw data for detailed analysis
+   - Photo/memory collection
+
+### Customizing Your Export
+
+**Date Range Selection**
+- **Last week**: Recent patterns for immediate concerns
+- **Last month**: Comprehensive recent overview
+- **Last 3 months**: Developmental trend analysis
+- **All time**: Complete history since starting app
+- **Custom range**: Specific periods of interest
+
+**Activity Type Selection**
+- **All activities**: Comprehensive overview
+- **Sleep only**: Focus on sleep patterns and issues
+- **Feeding only**: Nutrition and feeding analysis
+- **Growth tracking**: Weight, height, development
+- **Medical**: Symptoms, medications, appointments
+
+**Detail Level Options**
+- **Summary**: High-level trends and averages
+- **Detailed**: All logged activities and notes
+- **Analytics**: Statistical analysis and insights
+- **Raw data**: Every data point collected
+
+### Report Customization Features
+
+**Medical Report Customization**
+- **Healthcare provider information**: Include doctor details
+- **Specific concerns**: Highlight areas of interest
+- **Comparison periods**: Before/after changes
+- **Recommendations requested**: Specific questions for provider
+
+**Personal Report Options**
+- **Include photos**: Visual documentation
+- **Family notes**: Personal observations and milestones
+- **Growth celebrations**: Positive achievements
+- **Future goals**: Plans and aspirations
+
+## Export Quality and Security
+
+### Data Security
+**Privacy Protection**
+- All exports are encrypted during transfer
+- No data stored on external servers during export
+- Personal information can be anonymized if requested
+- Secure deletion of temporary export files
+
+**Access Control**
+- Only account holders can export data
+- Family member permissions apply to exports
+- Audit trail of all export activities
+- Notification to primary account holder
+
+### Quality Assurance
+**Data Accuracy**
+- All exported data matches app database exactly
+- Timestamps preserved in original timezone
+- Photos and videos maintain original quality
+- Notes and observations included verbatim
+
+**Format Reliability**
+- PDF reports are printer-friendly
+- Spreadsheets open correctly in all major programs
+- Photos maintain metadata and organization
+- Charts and graphs remain readable
+
+## Using Exported Data
+
+### For Medical Appointments
+**Preparation Tips**
+- Export 2-4 weeks before appointment
+- Highlight specific concerns or questions
+- Include both summary and detailed views
+- Bring both digital and printed copies
+
+**During Appointments**
+- Use charts to illustrate patterns
+- Reference specific dates and incidents
+- Show progress or concerning trends
+- Ask for interpretation and recommendations
+
+### Personal Analysis
+**Spreadsheet Analysis**
+- Create pivot tables for pattern recognition
+- Calculate custom averages and trends
+- Compare different time periods
+- Identify correlations between activities
+
+**Backup Storage**
+- Save to cloud storage for accessibility
+- Organize by date and baby
+- Include export date in file names
+- Regular backup schedule (monthly recommended)
+
+## Advanced Export Features
+
+### Automated Exports
+**Scheduled Reports**
+- Weekly summaries sent to email
+- Monthly comprehensive reports
+- Pediatrician appointment prep (configurable timing)
+- Family update distributions
+
+**Trigger-Based Exports**
+- Milestone achievement reports
+- Concerning pattern alerts
+- Growth tracking updates
+- Medical event documentation
+
+### Integration Options
+**Healthcare Systems**
+- Compatible formats for medical record systems
+- HL7 FHIR standard compliance for interoperability
+- Direct sharing with healthcare provider portals
+- Integration with popular medical apps
+
+**Third-Party Tools**
+- Import formats for other baby tracking apps
+- Compatibility with health monitoring platforms
+- Nutrition analysis tool integration
+- Sleep study data preparation
+
+## Troubleshooting Export Issues
+
+### Common Problems
+**Large File Sizes**
+- Consider shorter date ranges
+- Exclude photos/videos if not needed
+- Choose summary instead of detailed format
+- Split exports by activity type
+
+**Missing Data**
+- Verify date range includes desired period
+- Check family member permissions
+- Ensure all activity types are selected
+- Contact support for data recovery if needed
+
+**Format Issues**
+- Try different export formats
+- Update apps that will open the files
+- Check device storage and compatibility
+- Use web browser for download if app fails
+
+Your baby's data is valuable information that can provide insights for years to come. Regular exports ensure you always have access to this precious record of your baby's growth and development.`,
             readTime: '3 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Share Your Baby's Data Safely</h2>
-              <p>Whether for pediatrician visits, family sharing, or personal records, exporting your baby's data from SleepyBabyy is simple and secure.</p>
-              
-              <h3>Export Options Available</h3>
-              
-              <h4>PDF Reports</h4>
-              <ul>
-                <li><strong>Comprehensive summary:</strong> All activities for selected timeframe</li>
-                <li><strong>Sleep-focused report:</strong> Detailed sleep patterns and analytics</li>
-                <li><strong>Feeding analysis:</strong> Nutrition intake and growth correlation</li>
-                <li><strong>Medical summary:</strong> Health-related activities and milestones</li>
-                <li><strong>Custom reports:</strong> Choose specific data points to include</li>
-              </ul>
-
-              <h4>Spreadsheet Formats</h4>
-              <ul>
-                <li><strong>CSV files:</strong> Raw data for analysis in Excel or Google Sheets</li>
-                <li><strong>Formatted Excel:</strong> Pre-organized with charts and summaries</li>
-                <li><strong>Google Sheets:</strong> Cloud-based sharing and collaboration</li>
-                <li><strong>Numbers format:</strong> Optimized for Mac users</li>
-              </ul>
-
-              <h4>Photo Collections</h4>
-              <ul>
-                <li><strong>ZIP archives:</strong> All photos from selected date range</li>
-                <li><strong>Monthly albums:</strong> Organized by month with metadata</li>
-                <li><strong>Milestone collections:</strong> Photos tagged with developmental markers</li>
-                <li><strong>High-resolution exports:</strong> Original quality for printing</li>
-              </ul>
-
-              <h3>Step-by-Step Export Process</h3>
-              
-              <h4>1. Navigate to Reports</h4>
-              <ul>
-                <li>Go to the Reports section of your dashboard</li>
-                <li>Click on "Export Data" in the top right corner</li>
-                <li>Choose your export type from the dropdown menu</li>
-              </ul>
-
-              <h4>2. Select Date Range</h4>
-              <ul>
-                <li><strong>Last 7 days:</strong> Recent activity summary</li>
-                <li><strong>Last 30 days:</strong> Monthly progress report</li>
-                <li><strong>Last 3 months:</strong> Quarterly development summary</li>
-                <li><strong>Custom range:</strong> Pick specific start and end dates</li>
-                <li><strong>All data:</strong> Complete history since account creation</li>
-              </ul>
-
-              <h4>3. Choose Data Categories</h4>
-              <ul>
-                <li><strong>Sleep tracking:</strong> Naps, night sleep, and quality metrics</li>
-                <li><strong>Feeding logs:</strong> Times, amounts, and types of feeding</li>
-                <li><strong>Diaper changes:</strong> Frequency and type tracking</li>
-                <li><strong>Growth data:</strong> Weight, height, and head circumference</li>
-                <li><strong>Developmental milestones:</strong> Skills and achievements</li>
-                <li><strong>Medical information:</strong> Symptoms, medications, appointments</li>
-                <li><strong>Photos and videos:</strong> Visual memories and documentation</li>
-              </ul>
-
-              <h4>4. Customize Report Format</h4>
-              <ul>
-                <li>Add your baby's name and photo to headers</li>
-                <li>Include or exclude specific family member contributions</li>
-                <li>Choose chart and graph styles</li>
-                <li>Select privacy level for shared reports</li>
-              </ul>
-
-              <h3>Export Formats Explained</h3>
-              
-              <h4>Medical Professional Report (PDF)</h4>
-              <ul>
-                <li>Formal layout suitable for medical records</li>
-                <li>Summary statistics and trend analysis</li>
-                <li>Growth charts and percentile tracking</li>
-                <li>Medication and symptom logging</li>
-                <li>Sleep quality assessment</li>
-              </ul>
-
-              <h4>Family Sharing Report (PDF)</h4>
-              <ul>
-                <li>Photo-rich format with highlights</li>
-                <li>Milestone celebrations and achievements</li>
-                <li>Fun facts and statistics</li>
-                <li>Growth progress in easy-to-read format</li>
-                <li>Shareable via email or social media</li>
-              </ul>
-
-              <h4>Data Analysis Export (CSV)</h4>
-              <ul>
-                <li>Raw timestamps and measurements</li>
-                <li>Suitable for advanced analysis</li>
-                <li>Compatible with statistical software</li>
-                <li>No formatting - pure data</li>
-                <li>Ideal for researchers or data enthusiasts</li>
-              </ul>
-
-              <h3>Security and Privacy</h3>
-              
-              <h4>Data Protection</h4>
-              <ul>
-                <li>All exports are encrypted during transmission</li>
-                <li>Downloads expire after 24 hours for security</li>
-                <li>No personal data stored on SleepyBabyy servers after export</li>
-                <li>HIPAA-compliant formatting for medical reports</li>
-              </ul>
-
-              <h4>Sharing Safely</h4>
-              <ul>
-                <li>Use secure email services for sensitive reports</li>
-                <li>Password-protect files containing medical information</li>
-                <li>Only share relevant sections with each recipient</li>
-                <li>Consider removing identifying information for research</li>
-              </ul>
-
-              <h3>Common Export Scenarios</h3>
-              
-              <h4>Pediatrician Visits</h4>
-              <ul>
-                <li>Export 2-4 weeks of comprehensive data</li>
-                <li>Focus on concerning patterns or questions</li>
-                <li>Include growth measurements and milestones</li>
-                <li>Print backup copy in case of technology issues</li>
-              </ul>
-
-              <h4>Childcare Provider Handoffs</h4>
-              <ul>
-                <li>Weekly routine summaries</li>
-                <li>Recent schedule changes or preferences</li>
-                <li>Emergency contact information</li>
-                <li>Simple format focusing on daily needs</li>
-              </ul>
-
-              <h4>Family History Documentation</h4>
-              <ul>
-                <li>Monthly or quarterly milestone reports</li>
-                <li>Photo-rich formats for grandparents</li>
-                <li>Growth progress celebrations</li>
-                <li>Achievement and development highlights</li>
-              </ul>
-
-              <h3>Troubleshooting Export Issues</h3>
-              
-              <h4>Large File Problems</h4>
-              <ul>
-                <li>Reduce date range for shorter periods</li>
-                <li>Export data categories separately</li>
-                <li>Use compression for photo collections</li>
-                <li>Consider cloud storage for large files</li>
-              </ul>
-
-              <h4>Format Compatibility</h4>
-              <ul>
-                <li>Test file opening before important meetings</li>
-                <li>Have backup formats ready (PDF + Excel)</li>
-                <li>Use universal formats for maximum compatibility</li>
-                <li>Contact support for custom format needs</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '3': {
             title: 'Weekly and monthly report summaries',
+            content: `SleepyBabyy's automated report summaries provide valuable insights into your baby's patterns and progress over time. Here's how to understand and use these comprehensive overviews.
+
+## Understanding Report Types
+
+### Weekly Summary Reports
+**Generated**: Every Monday morning for the previous week
+**Key Metrics Include**:
+- Total sleep hours and sleep efficiency
+- Feeding frequency and volume trends
+- Diaper change patterns and consistency
+- Growth measurements (if logged)
+- Milestone achievements and developments
+- Notable pattern changes from previous weeks
+
+**Visual Elements**:
+- Day-by-day activity charts
+- Sleep/wake pattern visualization
+- Feeding trend graphs
+- Weekly averages with comparison to previous week
+- Progress indicators and achievements
+
+### Monthly Comprehensive Reports
+**Generated**: First day of each month for the previous month
+**Detailed Analysis**:
+- Monthly sleep pattern evolution
+- Feeding development and changes
+- Growth tracking and percentile progress
+- Developmental milestone tracking
+- Health and wellness indicators
+- Month-over-month comparisons
+
+**Advanced Analytics**:
+- Seasonal pattern recognition
+- Growth velocity calculations
+- Sleep maturation indicators
+- Feeding efficiency improvements
+- Pattern consistency scoring
+
+## Reading Your Weekly Reports
+
+### Sleep Analysis Section
+**Total Sleep Hours**
+- Daily totals with weekly average
+- Comparison to age-appropriate recommendations
+- Night sleep vs. daytime nap breakdown
+- Sleep consistency score (how regular patterns are)
+
+**Sleep Quality Indicators**
+- **Sleep efficiency**: Time asleep vs. time in bed
+- **Sleep latency**: Average time to fall asleep
+- **Night wakings**: Frequency and duration
+- **Early wake-ups**: Consistency of morning wake times
+
+### Feeding Progress Tracking
+**Volume and Frequency**
+- Average feeding amounts per session
+- Feeding intervals and timing patterns
+- Growth in appetite and intake
+- Feeding duration trends (for breastfeeding)
+
+**Nutritional Milestones**
+- Introduction of new foods
+- Reaction tracking and tolerance
+- Feeding independence development
+- Mealtime behavior and preferences
+
+### Development Highlights
+**Physical Development**
+- Growth measurements and trends
+- Motor skill achievements
+- Physical activity levels
+- Coordination improvements
+
+**Cognitive and Social Development**
+- Communication milestones
+- Social interaction patterns
+- Learning and recognition skills
+- Emotional regulation development
+
+## Monthly Report Deep Dive
+
+### Growth and Development Analysis
+**Growth Trajectory**
+- Weight, height, and head circumference tracking
+- Growth percentile trends
+- Comparison to standardized growth charts
+- Velocity of growth over time
+
+**Developmental Progression**
+- Milestone achievement timeline
+- Age-appropriate skill development
+- Areas of strength and areas needing attention
+- Recommendations for stimulation activities
+
+### Pattern Recognition and Trends
+**Long-term Pattern Analysis**
+- Seasonal sleep variations
+- Growth spurt correlations with behavior
+- Feeding pattern maturation
+- Environmental factor impacts
+
+**Predictive Insights**
+- Upcoming developmental windows
+- Potential schedule adjustment needs
+- Growth spurt predictions
+- Sleep transition preparations
+
+## Customizing Your Reports
+
+### Personalization Options
+**Focus Areas**
+- Emphasize specific concerns (sleep, feeding, growth)
+- Include or exclude certain activities
+- Highlight positive achievements
+- Address specific questions or worries
+
+**Report Recipients**
+- Customize for different audiences (parents, grandparents, pediatrician)
+- Adjust detail level based on recipient needs
+- Include or exclude personal notes and observations
+- Format for specific uses (medical, family sharing, personal)
+
+### Notification Preferences
+**Report Delivery**
+- Email delivery timing and frequency
+- Push notification for important insights
+- Shared access with family members
+- Integration with calendar reminders
+
+**Alert Thresholds**
+- Notify when patterns change significantly
+- Alert for missed milestones or concerning trends
+- Celebrate achievements and positive progress
+- Warning for potential health or development concerns
+
+## Using Reports for Better Care
+
+### Identifying Opportunities
+**Schedule Optimization**
+- Use sleep data to refine nap and bedtime schedules
+- Adjust feeding times based on hunger patterns
+- Plan activities during optimal alert periods
+- Coordinate care routines with natural rhythms
+
+**Development Support**
+- Focus activities on areas showing readiness
+- Provide appropriate challenges for growing skills
+- Support areas that may need extra attention
+- Celebrate and build on strengths
+
+### Problem-Solving with Data
+**Pattern Disruptions**
+- Identify what might be causing sleep regressions
+- Understand feeding challenges or changes
+- Recognize environmental factors affecting behavior
+- Track the impact of interventions or changes
+
+**Medical Consultation Preparation**
+- Use reports to prepare specific questions for pediatrician
+- Highlight concerning trends or sudden changes
+- Provide comprehensive data for medical assessment
+- Track progress on medical recommendations
+
+## Advanced Report Features
+
+### Comparative Analytics
+**Peer Comparisons** (Anonymous)
+- Compare your baby's patterns to others of similar age
+- Understand normal variation ranges
+- Identify if patterns warrant attention
+- Access evidence-based recommendations
+
+**Historical Comparisons**
+- Track improvement over time
+- Compare similar periods (month-to-month, season-to-season)
+- Celebrate progress and identify successful strategies
+- Learn from past experiences and patterns
+
+### Family Insights
+**Caregiver Analysis**
+- Track which caregivers are most successful with different activities
+- Identify patterns based on caregiver involvement
+- Optimize care team coordination
+- Recognize individual caregiver strengths
+
+**Family Pattern Recognition**
+- Understand how family schedules affect baby's routines
+- Identify optimal times for family activities
+- Coordinate care responsibilities based on patterns
+- Plan family time around baby's natural rhythms
+
+## Acting on Report Insights
+
+### Immediate Actions
+**This Week Improvements**
+- Adjust one element of daily routine based on insights
+- Try a recommended schedule modification
+- Focus on one area showing opportunity for improvement
+- Implement a suggested environmental change
+
+### Long-term Planning
+**Monthly Goals**
+- Set specific, measurable targets based on trends
+- Plan for anticipated developmental changes
+- Prepare for seasonal adjustments
+- Build on positive patterns and achievements
+
+### Sharing with Healthcare Providers
+**Medical Appointments**
+- Bring relevant monthly reports to pediatrician visits
+- Highlight specific concerns or questions raised by data
+- Use visual charts to illustrate patterns or problems
+- Request professional interpretation of concerning trends
+
+**Specialist Consultations**
+- Provide specialized reports for sleep consultants, nutritionists, or developmental specialists
+- Focus on specific areas of concern
+- Include detailed data relevant to their expertise
+- Ask for professional recommendations based on your baby's patterns
+
+Regular review of these reports helps you stay informed about your baby's development and ensures you're providing the best possible care based on actual data rather than just memory or perception.`,
             readTime: '5 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Track Progress with Automated Summaries</h2>
-              <p>Weekly and monthly reports help you see the big picture of your baby's development, identify trends, and celebrate achievements.</p>
-              
-              <h3>Weekly Summary Reports</h3>
-              
-              <h4>Key Metrics Tracked</h4>
-              <ul>
-                <li><strong>Sleep totals:</strong> Average hours per night and day</li>
-                <li><strong>Feeding frequency:</strong> Number of sessions and total intake</li>
-                <li><strong>Growth indicators:</strong> Weight gain and development progress</li>
-                <li><strong>Mood patterns:</strong> Happy vs. fussy periods throughout the week</li>
-                <li><strong>Activity highlights:</strong> New skills, play time, and social interactions</li>
-              </ul>
-
-              <h4>Week-over-Week Comparisons</h4>
-              <ul>
-                <li>Sleep quality improvements or regressions</li>
-                <li>Feeding pattern changes</li>
-                <li>Growth velocity tracking</li>
-                <li>Behavioral development markers</li>
-                <li>Schedule adherence success rates</li>
-              </ul>
-
-              <h4>Weekly Achievements Section</h4>
-              <ul>
-                <li>New milestones reached</li>
-                <li>Successful schedule adjustments</li>
-                <li>Improved sleep stretches</li>
-                <li>Social and cognitive developments</li>
-                <li>Family bonding moments</li>
-              </ul>
-
-              <h3>Monthly Progress Reports</h3>
-              
-              <h4>Developmental Overview</h4>
-              <ul>
-                <li><strong>Physical growth:</strong> Weight, height, and head circumference trends</li>
-                <li><strong>Motor skills:</strong> Rolling, sitting, crawling, walking progress</li>
-                <li><strong>Cognitive development:</strong> Recognition, communication, problem-solving</li>
-                <li><strong>Social skills:</strong> Smiling, laughing, interaction preferences</li>
-                <li><strong>Sleep evolution:</strong> Pattern maturation and quality improvements</li>
-              </ul>
-
-              <h4>Health and Wellness Summary</h4>
-              <ul>
-                <li>Illness frequency and recovery times</li>
-                <li>Vaccination schedule compliance</li>
-                <li>Nutrition adequacy and variety</li>
-                <li>Activity level and exercise patterns</li>
-                <li>Overall mood and temperament assessment</li>
-              </ul>
-
-              <h4>Monthly Milestones</h4>
-              <ul>
-                <li>Age-appropriate developmental achievements</li>
-                <li>Early or late milestone notifications</li>
-                <li>Skills progression timeline</li>
-                <li>Comparative development tracking</li>
-                <li>Next month's expected milestones</li>
-              </ul>
-
-              <h3>Understanding Your Reports</h3>
-              
-              <h4>Color-Coded Progress Indicators</h4>
-              <ul>
-                <li><strong>Green:</strong> Meeting or exceeding expectations</li>
-                <li><strong>Yellow:</strong> Slight variations but within normal range</li>
-                <li><strong>Orange:</strong> Worth monitoring, possible adjustments needed</li>
-                <li><strong>Red:</strong> Significant deviation, consider professional consultation</li>
-              </ul>
-
-              <h4>Trend Analysis</h4>
-              <ul>
-                <li><strong>Upward trends:</strong> Positive progress indicators</li>
-                <li><strong>Stable patterns:</strong> Consistent healthy behaviors</li>
-                <li><strong>Fluctuating cycles:</strong> Normal developmental variations</li>
-                <li><strong>Concerning drops:</strong> Areas needing attention or intervention</li>
-              </ul>
-
-              <h3>Customizing Your Reports</h3>
-              
-              <h4>Priority Focus Areas</h4>
-              <ul>
-                <li><strong>Sleep-focused:</strong> Emphasize rest patterns and quality</li>
-                <li><strong>Growth-centered:</strong> Highlight physical development</li>
-                <li><strong>Development-oriented:</strong> Focus on milestones and skills</li>
-                <li><strong>Health-primary:</strong> Prioritize medical and wellness data</li>
-                <li><strong>Balanced view:</strong> Equal weight to all areas</li>
-              </ul>
-
-              <h4>Report Frequency Options</h4>
-              <ul>
-                <li><strong>Weekly delivery:</strong> Every Sunday evening summary</li>
-                <li><strong>Bi-weekly reports:</strong> Every other week for busy parents</li>
-                <li><strong>Monthly only:</strong> Comprehensive monthly overviews</li>
-                <li><strong>On-demand:</strong> Generate reports when needed</li>
-                <li><strong>Before appointments:</strong> Automatic pre-visit summaries</li>
-              </ul>
-
-              <h3>Sharing Reports with Family</h3>
-              
-              <h4>Grandparent-Friendly Versions</h4>
-              <ul>
-                <li>Photo-rich layouts with highlights</li>
-                <li>Simplified language and explanations</li>
-                <li>Focus on positive achievements</li>
-                <li>Growth comparisons to family members</li>
-                <li>Upcoming milestone predictions</li>
-              </ul>
-
-              <h4>Partner Collaboration</h4>
-              <ul>
-                <li>Joint progress reviews and planning</li>
-                <li>Shared goal setting for next period</li>
-                <li>Division of responsibilities tracking</li>
-                <li>Celebrate successes together</li>
-                <li>Address concerns collaboratively</li>
-              </ul>
-
-              <h3>Professional Use Cases</h3>
-              
-              <h4>Pediatrician Visits</h4>
-              <ul>
-                <li>Comprehensive health overview</li>
-                <li>Growth chart integration</li>
-                <li>Vaccination and appointment history</li>
-                <li>Concern areas highlighted</li>
-                <li>Questions for discussion prepared</li>
-              </ul>
-
-              <h4>Childcare Coordination</h4>
-              <ul>
-                <li>Schedule effectiveness summaries</li>
-                <li>Behavioral pattern sharing</li>
-                <li>Successful routine documentation</li>
-                <li>Areas needing caregiver attention</li>
-                <li>Home-to-daycare consistency tracking</li>
-              </ul>
-
-              <h3>Using Reports for Decision Making</h3>
-              
-              <h4>Schedule Adjustments</h4>
-              <ul>
-                <li>Identify optimal sleep and feeding times</li>
-                <li>Recognize pattern disruptions</li>
-                <li>Plan gradual routine transitions</li>
-                <li>Measure adjustment success rates</li>
-              </ul>
-
-              <h4>Development Support</h4>
-              <ul>
-                <li>Focus activities on lagging areas</li>
-                <li>Celebrate and build on strengths</li>
-                <li>Plan age-appropriate stimulation</li>
-                <li>Seek professional help when indicated</li>
-              </ul>
-
-              <h3>Troubleshooting Report Issues</h3>
-              
-              <h4>Missing Data Problems</h4>
-              <ul>
-                <li>Incomplete tracking affects accuracy</li>
-                <li>Encourage consistent logging</li>
-                <li>Use estimation features for missing periods</li>
-                <li>Focus on trends rather than absolute numbers</li>
-              </ul>
-
-              <h4>Unexpected Results</h4>
-              <ul>
-                <li>Review data entry for errors</li>
-                <li>Consider external factors (illness, travel)</li>
-                <li>Compare with previous months</li>
-                <li>Consult healthcare provider if concerning</li>
-              </ul>
-
-              <h3>Advanced Report Features</h3>
-              
-              <h4>Predictive Analytics</h4>
-              <ul>
-                <li>Next milestone timing predictions</li>
-                <li>Growth trajectory forecasting</li>
-                <li>Sleep pattern maturation estimates</li>
-                <li>Developmental readiness indicators</li>
-              </ul>
-
-              <h4>Comparative Analysis</h4>
-              <ul>
-                <li>Anonymous peer comparisons</li>
-                <li>Sibling development tracking</li>
-                <li>Cultural and regional benchmarks</li>
-                <li>Historical family pattern analysis</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           }
         }
       },
@@ -1269,572 +1423,697 @@ const HelpArticle = () => {
         articles: {
           '1': {
             title: 'Understanding premium features',
+            content: `SleepyBabyy's premium subscription unlocks advanced features designed to provide deeper insights and enhanced functionality for your baby's care.
+
+## Premium Features Overview
+
+### Advanced Analytics and Reports
+**Comprehensive Sleep Analysis**
+- Detailed sleep pattern recognition and trends
+- Sleep quality scoring and improvement recommendations
+- Predictive sleep pattern insights
+- Advanced correlation analysis (sleep vs. feeding, growth, etc.)
+- Sleep regression detection and guidance
+
+**Growth and Development Tracking**
+- Growth percentile tracking with WHO/CDC standards
+- Developmental milestone predictions and guidance
+- Photo-based growth comparison tools
+- Pediatrician-ready growth reports
+- Early intervention recommendations when appropriate
+
+**Custom Report Generation**
+- Detailed reports for any date range
+- Customizable report templates
+- Medical-grade reports for healthcare providers
+- Family-friendly progress summaries
+- Automated weekly and monthly insights
+
+### Enhanced Family Collaboration
+**Unlimited Family Members**
+- Add as many caregivers as needed
+- Granular permission controls
+- Individual notification preferences
+- Family activity analytics
+- Caregiver performance insights
+
+**Advanced Communication Tools**
+- In-app messaging between family members
+- Photo and video sharing with automatic organization
+- Collaborative note-taking
+- Shared calendar for appointments and activities
+- Real-time activity notifications
+
+### Smart Scheduling and Automation
+**AI-Powered Schedule Optimization**
+- Personalized sleep schedule recommendations
+- Automatic schedule adjustments based on growth
+- Smart nap time predictions
+- Feeding schedule optimization
+- Travel and time zone adjustment assistance
+
+**Intelligent Notifications**
+- Context-aware reminders
+- Predictive notifications (hunger, tiredness, etc.)
+- Smart quiet hours that learn your preferences
+- Emergency alert systems
+- Integration with smart home devices
+
+### Premium Data and Storage
+**Unlimited Photo and Video Storage**
+- High-resolution photo storage
+- Video milestone documentation
+- Automatic backup and organization
+- Advanced search and filtering
+- Memory timeline creation
+
+**Extended Data Retention**
+- Unlimited historical data storage
+- Advanced data export options
+- Multiple backup formats
+- Priority data recovery support
+- Cross-platform synchronization
+
+## Premium vs. Free Comparison
+
+### Free Account Features
+**Basic Tracking**
+- Sleep, feeding, and diaper logging
+- Simple charts and summaries
+- 3 family members maximum
+- 30-day data retention
+- Basic photo storage (50 photos)
+
+**Limited Analytics**
+- Weekly summary reports
+- Basic sleep pattern recognition
+- Simple growth tracking
+- Standard notification system
+
+### Premium Account Benefits
+**Advanced Tracking**
+- All basic features plus custom activities
+- Detailed analytics and predictions
+- Unlimited family members
+- Unlimited data retention
+- Unlimited photo/video storage
+
+**Professional Tools**
+- Medical-grade reports
+- Advanced pattern recognition
+- Predictive insights
+- Priority customer support
+- Beta feature access
+
+## Subscription Plans
+
+### Monthly Premium ($9.99/month)
+**Best for**: Trying premium features or short-term needs
+- All premium features included
+- Cancel anytime
+- No long-term commitment
+- Immediate feature activation
+
+### Annual Premium ($79.99/year - Save 33%)
+**Best for**: Long-term users wanting maximum value
+- All premium features included
+- 2 months free compared to monthly
+- Priority customer support
+- Early access to new features
+
+### Family Plan ($119.99/year - Up to 3 babies)
+**Best for**: Families with multiple children
+- All premium features for up to 3 baby profiles
+- Shared family member access across all profiles
+- Bulk reporting and analytics
+- Family milestone timeline
+
+## Getting the Most from Premium
+
+### Optimization Strategies
+**Sleep Enhancement**
+- Use AI recommendations to optimize sleep schedules
+- Track sleep regressions with detailed analytics
+- Export sleep data for pediatric consultations
+- Utilize predictive insights for schedule planning
+
+**Growth Monitoring**
+- Regular growth percentile tracking
+- Photo-based progress documentation
+- Medical report generation for checkups
+- Early milestone identification
+
+**Family Coordination**
+- Set up all caregivers with appropriate permissions
+- Use advanced notifications to coordinate care
+- Share reports with extended family
+- Utilize messaging for seamless communication
+
+### Advanced Features Usage
+**Custom Analytics**
+- Create reports focusing on specific concerns
+- Track correlations between activities and behaviors
+- Monitor intervention effectiveness
+- Identify patterns for different caregivers
+
+**Smart Automation**
+- Set up intelligent reminder systems
+- Use predictive notifications to stay ahead of needs
+- Automate routine documentation
+- Integration with smart home systems
+
+## Premium Support Benefits
+
+### Priority Customer Service
+**Response Times**
+- 24-hour response for premium subscribers
+- Live chat support during business hours
+- Priority email support queue
+- Direct access to technical specialists
+
+**Enhanced Support Features**
+- Personalized onboarding consultation
+- Custom feature training sessions
+- Data migration assistance
+- Advanced troubleshooting support
+
+### Exclusive Access
+**Beta Features**
+- Early access to new features before public release
+- Opportunity to provide feedback on development
+- Exclusive feature previews
+- Beta testing community access
+
+**Educational Resources**
+- Premium-only webinars and tutorials
+- Expert consultations on baby care topics
+- Advanced user community access
+- Personalized recommendations based on data
+
+## Making the Premium Decision
+
+### Who Benefits Most from Premium?
+**Ideal Premium Users**
+- Parents tracking multiple aspects of baby's development
+- Families with multiple caregivers
+- Parents with specific concerns requiring detailed monitoring
+- Users who value advanced analytics and predictions
+- Families planning for multiple children
+
+**Consider Premium If You**
+- Want detailed reports for pediatrician visits
+- Have multiple family members involved in care
+- Need unlimited photo and video storage
+- Value predictive insights and recommendations
+- Want priority customer support
+
+### Return on Investment
+**Value Considerations**
+- Time saved through automation and smart features
+- Improved care quality through better insights
+- Enhanced communication with family and healthcare providers
+- Peace of mind through comprehensive monitoring
+- Professional-quality documentation for medical needs
+
+**Cost Comparison**
+- Less than the cost of a single pediatrician consultation per month
+- Comparable to other baby care apps with fewer features
+- Significant savings with annual subscription
+- Family plan offers excellent value for multiple children
+
+Premium features are designed to grow with your family and provide increasing value as your baby develops and your tracking needs become more sophisticated.`,
             readTime: '4 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Unlock the Full Potential of SleepyBabyy</h2>
-              <p>SleepyBabyy Premium offers advanced features designed to give you deeper insights and more comprehensive tracking capabilities for your baby's development.</p>
-              
-              <h3>Premium Feature Categories</h3>
-              
-              <h4>Advanced Analytics & Reports</h4>
-              <ul>
-                <li><strong>Detailed sleep analysis:</strong> REM cycle tracking, sleep efficiency metrics</li>
-                <li><strong>Growth predictions:</strong> AI-powered development forecasting</li>
-                <li><strong>Comparative analytics:</strong> Anonymous peer comparisons and percentile tracking</li>
-                <li><strong>Custom report generation:</strong> Tailored reports for specific needs</li>
-                <li><strong>Trend identification:</strong> Automatic pattern recognition and alerts</li>
-              </ul>
-
-              <h4>Enhanced Family Sharing</h4>
-              <ul>
-                <li><strong>Unlimited family members:</strong> Add as many caregivers as needed</li>
-                <li><strong>Professional caregiver accounts:</strong> Specialized access for daycare providers</li>
-                <li><strong>Advanced permissions:</strong> Granular control over data access</li>
-                <li><strong>Family activity feed:</strong> See who logged what activities when</li>
-                <li><strong>Group messaging:</strong> Communicate within the app</li>
-              </ul>
-
-              <h4>Smart Notifications & Reminders</h4>
-              <ul>
-                <li><strong>Predictive alerts:</strong> AI suggests optimal feeding and sleep times</li>
-                <li><strong>Milestone reminders:</strong> Never miss important developmental markers</li>
-                <li><strong>Health appointment scheduling:</strong> Automatic pediatrician visit planning</li>
-                <li><strong>Growth tracking alerts:</strong> Notifications for significant changes</li>
-                <li><strong>Custom reminder system:</strong> Personalized alerts for your routine</li>
-              </ul>
-
-              <h4>Extended Media Storage</h4>
-              <ul>
-                <li><strong>Unlimited photo storage:</strong> Capture every precious moment</li>
-                <li><strong>Video recording:</strong> Save longer video memories</li>
-                <li><strong>Cloud backup:</strong> Automatic secure storage of all memories</li>
-                <li><strong>HD quality preservation:</strong> Original resolution maintained</li>
-                <li><strong>Easy sharing:</strong> Create beautiful photo albums for family</li>
-              </ul>
-
-              <h3>Premium-Only Tools</h3>
-              
-              <h4>Sleep Optimization Engine</h4>
-              <ul>
-                <li>Personalized sleep schedule recommendations</li>
-                <li>Environmental factor analysis (temperature, lighting, sound)</li>
-                <li>Sleep regression prediction and management</li>
-                <li>Custom bedtime routine optimization</li>
-                <li>Integration with smart home devices</li>
-              </ul>
-
-              <h4>Feeding Intelligence</h4>
-              <ul>
-                <li>Nutritional intake analysis and recommendations</li>
-                <li>Growth correlation with feeding patterns</li>
-                <li>Allergic reaction tracking and alerts</li>
-                <li>Weaning transition guidance</li>
-                <li>Portion size optimization for age and development</li>
-              </ul>
-
-              <h4>Development Tracker Pro</h4>
-              <ul>
-                <li>Comprehensive milestone database (500+ markers)</li>
-                <li>Video milestone documentation</li>
-                <li>Early intervention alerts for developmental delays</li>
-                <li>Personalized activity suggestions</li>
-                <li>Professional developmental assessment tools</li>
-              </ul>
-
-              <h3>Data Export & Integration</h3>
-              
-              <h4>Advanced Export Options</h4>
-              <ul>
-                <li><strong>Medical-grade reports:</strong> HIPAA-compliant formats for healthcare providers</li>
-                <li><strong>Research participation:</strong> Anonymized data contribution to pediatric studies</li>
-                <li><strong>Insurance documentation:</strong> Formatted reports for health insurance claims</li>
-                <li><strong>Baby book creation:</strong> Automated photo book generation with milestones</li>
-                <li><strong>Data portability:</strong> Full data export if you ever need to switch platforms</li>
-              </ul>
-
-              <h4>Third-Party Integrations</h4>
-              <ul>
-                <li><strong>Smart baby monitors:</strong> Automatic sleep and feeding data import</li>
-                <li><strong>Wearable devices:</strong> Activity and vital sign monitoring integration</li>
-                <li><strong>Digital scales:</strong> Automatic weight tracking</li>
-                <li><strong>Pediatric EMR systems:</strong> Direct data sharing with healthcare providers</li>
-                <li><strong>Calendar applications:</strong> Appointment and feeding schedule synchronization</li>
-              </ul>
-
-              <h3>Priority Support & Consultation</h3>
-              
-              <h4>Expert Access</h4>
-              <ul>
-                <li><strong>Pediatric sleep consultants:</strong> Virtual consultations available</li>
-                <li><strong>Lactation specialists:</strong> Feeding guidance and support</li>
-                <li><strong>Child development experts:</strong> Milestone and behavior consultation</li>
-                <li><strong>Nutritionist access:</strong> Dietary planning and guidance</li>
-                <li><strong>24/7 support chat:</strong> Immediate help when you need it</li>
-              </ul>
-
-              <h4>Educational Resources</h4>
-              <ul>
-                <li>Premium webinar series with parenting experts</li>
-                <li>Age-specific development guides and activities</li>
-                <li>Sleep training programs with step-by-step guidance</li>
-                <li>Feeding transition workshops</li>
-                <li>Safety and first aid video library</li>
-              </ul>
-
-              <h3>Premium Subscription Tiers</h3>
-              
-              <h4>Premium Basic ($9.99/month)</h4>
-              <ul>
-                <li>Advanced analytics and reports</li>
-                <li>Unlimited family sharing</li>
-                <li>Extended photo storage (10GB)</li>
-                <li>Smart notifications</li>
-                <li>Priority email support</li>
-              </ul>
-
-              <h4>Premium Plus ($14.99/month)</h4>
-              <ul>
-                <li>All Premium Basic features</li>
-                <li>Expert consultation credits (2 per month)</li>
-                <li>Unlimited media storage</li>
-                <li>Advanced integrations</li>
-                <li>Custom report generation</li>
-                <li>24/7 chat support</li>
-              </ul>
-
-              <h4>Premium Family ($19.99/month)</h4>
-              <ul>
-                <li>All Premium Plus features</li>
-                <li>Multiple baby profiles (up to 5)</li>
-                <li>Sibling comparison analytics</li>
-                <li>Professional caregiver accounts</li>
-                <li>Unlimited expert consultations</li>
-                <li>Priority feature requests</li>
-              </ul>
-
-              <h3>Free Trial & Money-Back Guarantee</h3>
-              
-              <h4>30-Day Free Trial</h4>
-              <ul>
-                <li>Full access to all Premium features</li>
-                <li>No credit card required to start</li>
-                <li>Easy cancellation anytime</li>
-                <li>Data remains accessible even after trial</li>
-              </ul>
-
-              <h4>60-Day Money-Back Guarantee</h4>
-              <ul>
-                <li>Full refund if not completely satisfied</li>
-                <li>No questions asked policy</li>
-                <li>Keep all data and memories</li>
-                <li>Downgrade to free plan option</li>
-              </ul>
-
-              <h3>Value Comparison</h3>
-              
-              <h4>Cost vs. Professional Services</h4>
-              <ul>
-                <li>Sleep consultant: $300-500 per session vs. ongoing guidance</li>
-                <li>Lactation consultant: $100-200 per visit vs. 24/7 access</li>
-                <li>Baby photographer: $200-400 per session vs. unlimited storage</li>
-                <li>Development assessment: $150-300 vs. continuous monitoring</li>
-              </ul>
-
-              <h4>Peace of Mind Value</h4>
-              <ul>
-                <li>Comprehensive tracking reduces anxiety</li>
-                <li>Expert guidance builds confidence</li>
-                <li>Early problem identification</li>
-                <li>Better sleep for the whole family</li>
-                <li>Preserved memories for a lifetime</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '2': {
             title: 'Managing your subscription',
+            content: `Managing your SleepyBabyy subscription is straightforward, whether you need to upgrade, downgrade, update payment methods, or cancel your service.
+
+## Accessing Subscription Management
+
+### Through the App
+1. **Navigate to Account Settings**
+   - Tap your profile icon in the top right
+   - Select "Account & Settings"
+   - Choose "Subscription & Billing"
+
+2. **View Current Subscription**
+   - See your current plan and billing cycle
+   - Check renewal date and payment method
+   - Review feature usage and limits
+
+### Through the Website
+1. **Login to Your Account**
+   - Visit sleepybabyy.com and sign in
+   - Go to "Account Dashboard"
+   - Select "Billing & Subscription"
+
+## Subscription Plan Changes
+
+### Upgrading Your Plan
+
+**From Free to Premium**
+1. Go to Subscription settings
+2. Choose "Upgrade to Premium"
+3. Select Monthly ($9.99) or Annual ($79.99) plan
+4. Enter payment information
+5. Confirm upgrade
+
+**Benefits Take Effect Immediately**
+- All premium features unlock instantly
+- Previous data remains accessible
+- No interruption in service
+- Pro-rated billing for mid-cycle upgrades
+
+**From Individual to Family Plan**
+1. Select "Change Plan" in subscription settings
+2. Choose "Family Plan" option
+3. Add additional baby profiles if needed
+4. Confirm plan change and billing adjustment
+
+### Downgrading Your Plan
+
+**From Premium to Free**
+⚠️ **Important Considerations Before Downgrading**:
+- Premium features will be disabled
+- Data older than 30 days may become inaccessible
+- Photo storage limited to 50 photos
+- Family members beyond 3 will lose access
+- Advanced reports and analytics will be disabled
+
+**Downgrade Process**:
+1. Go to Subscription settings
+2. Select "Change Plan"
+3. Choose "Downgrade to Free"
+4. Review what features you'll lose
+5. Confirm downgrade (takes effect at end of billing cycle)
+
+**Data Retention During Downgrade**
+- Recent 30 days of data remains accessible
+- Older data is preserved but not accessible on free plan
+- Photos beyond the 50-photo limit are hidden but not deleted
+- Re-upgrading restores access to all data
+
+### Changing Payment Methods
+
+**Adding a New Payment Method**
+1. Go to "Payment Methods" in subscription settings
+2. Select "Add Payment Method"
+3. Enter new credit card or PayPal information
+4. Verify the payment method
+5. Set as primary if desired
+
+**Updating Existing Payment Method**
+1. Select the payment method to update
+2. Choose "Edit Payment Method"
+3. Update card number, expiration date, or billing address
+4. Save changes and verify update
+
+**Setting Default Payment Method**
+1. View all payment methods
+2. Select the method you want as default
+3. Choose "Set as Primary"
+4. Confirm the change
+
+## Billing Cycle Management
+
+### Understanding Billing Cycles
+
+**Monthly Subscriptions**
+- Billed on the same date each month
+- Automatic renewal unless cancelled
+- Pro-rated charges for mid-cycle changes
+- Can cancel anytime before next billing date
+
+**Annual Subscriptions**
+- Billed once per year on renewal date
+- Automatic renewal for continued service
+- Significant savings compared to monthly billing
+- 30-day refund period for new subscribers
+
+### Changing Billing Frequency
+
+**Monthly to Annual**
+1. Select "Change Billing Cycle"
+2. Choose "Switch to Annual"
+3. Review cost savings and new billing date
+4. Confirm change (immediate charge for annual plan minus remaining monthly credits)
+
+**Annual to Monthly**
+1. Choose "Change Billing Cycle"
+2. Select "Switch to Monthly"
+3. Change takes effect at end of current annual cycle
+4. Monthly billing begins after annual subscription expires
+
+## Payment Issues and Resolution
+
+### Common Payment Problems
+
+**Declined Credit Card**
+- Verify card information is correct
+- Check with bank for transaction blocks
+- Ensure sufficient funds available
+- Try alternative payment method
+
+**Expired Payment Method**
+- Update card expiration date
+- Add new payment method if needed
+- Set up automatic billing updates if available
+
+**Billing Address Mismatch**
+- Ensure billing address matches card account
+- Update address in payment settings
+- Contact customer support for assistance
+
+### Failed Payment Recovery
+
+**Automatic Retry Process**
+- System automatically retries failed payments
+- Multiple retry attempts over 7 days
+- Email notifications sent for each attempt
+- Account remains active during retry period
+
+**Manual Payment Update**
+1. Receive failed payment notification
+2. Go to subscription settings immediately
+3. Update payment method or fix issue
+4. Select "Retry Payment Now"
+5. Confirm successful payment processing
+
+## Subscription Cancellation
+
+### Cancelling Your Subscription
+
+**Through the App/Website**
+1. Go to Subscription settings
+2. Select "Cancel Subscription"
+3. Choose cancellation reason (optional feedback)
+4. Confirm cancellation
+
+**Important Cancellation Details**
+- Service continues until end of current billing period
+- No refunds for partial months (except within 30 days of new subscription)
+- Account automatically downgrades to free plan
+- All data is preserved but premium features are disabled
+
+### What Happens After Cancellation
+
+**Immediate Changes**
+- Subscription set to not renew
+- Confirmation email sent
+- Account remains premium until billing period ends
+
+**At End of Billing Period**
+- Account automatically downgrades to free
+- Premium features become unavailable
+- Data access limited to free plan restrictions
+- Family members beyond limit lose access
+
+### Reactivating Cancelled Subscriptions
+
+**Before End of Billing Period**
+1. Go to Subscription settings
+2. Select "Reactivate Subscription"
+3. Confirm reactivation
+4. Automatic renewal resumes
+
+**After End of Billing Period**
+1. Choose "Upgrade to Premium" from free account
+2. Select desired plan
+3. All previous data becomes accessible again
+4. Premium features restored immediately
+
+## Customer Support for Billing
+
+### When to Contact Support
+
+**Billing Disputes**
+- Unexpected charges
+- Failed refund requests
+- Billing cycle confusion
+- Payment processing errors
+
+**Technical Issues**
+- Payment methods not saving
+- Subscription changes not taking effect
+- App not recognizing premium status
+- Cross-platform sync issues
+
+### Contact Information
+- **Email**: billing@sleepybabyy.com
+- **Live Chat**: Available during business hours for premium subscribers
+- **Phone**: Premium subscribers receive priority phone support
+- **Response Time**: 24-48 hours for billing inquiries
+
+### Information to Provide
+- Account email address
+- Subscription plan details
+- Payment method used (last 4 digits only)
+- Error messages received
+- Screenshots if applicable
+
+Managing your subscription should be hassle-free. If you encounter any issues or need assistance with any aspect of billing or subscription management, our customer support team is ready to help ensure your experience with SleepyBabyy continues smoothly.`,
             readTime: '3 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Control Your SleepyBabyy Subscription</h2>
-              <p>Managing your SleepyBabyy subscription is straightforward and flexible. Here's everything you need to know about upgrades, downgrades, and account management.</p>
-              
-              <h3>Accessing Subscription Settings</h3>
-              
-              <h4>Desktop Navigation</h4>
-              <ul>
-                <li>Click on your profile icon in the top right corner</li>
-                <li>Select "Account Settings" from the dropdown menu</li>
-                <li>Click on the "Subscription" tab</li>
-                <li>View your current plan and billing information</li>
-              </ul>
-
-              <h4>Mobile Access</h4>
-              <ul>
-                <li>Tap the menu icon (three lines) in the top left</li>
-                <li>Scroll down and tap "Account"</li>
-                <li>Tap "Subscription & Billing"</li>
-                <li>Manage your plan from the subscription dashboard</li>
-              </ul>
-
-              <h3>Current Subscription Overview</h3>
-              
-              <h4>Plan Information</h4>
-              <ul>
-                <li><strong>Plan name:</strong> Your current subscription tier</li>
-                <li><strong>Billing cycle:</strong> Monthly or annual billing</li>
-                <li><strong>Next billing date:</strong> When your next payment is due</li>
-                <li><strong>Price:</strong> Amount charged per billing period</li>
-                <li><strong>Features included:</strong> List of active premium features</li>
-              </ul>
-
-              <h4>Usage Statistics</h4>
-              <ul>
-                <li>Storage used vs. available space</li>
-                <li>Number of family members added</li>
-                <li>Expert consultation credits remaining</li>
-                <li>Reports generated this month</li>
-                <li>Feature usage analytics</li>
-              </ul>
-
-              <h3>Upgrading Your Plan</h3>
-              
-              <h4>When to Consider Upgrading</h4>
-              <ul>
-                <li>Need more storage for photos and videos</li>
-                <li>Want to add more family members</li>
-                <li>Require expert consultation access</li>
-                <li>Need advanced analytics features</li>
-                <li>Preparing for multiple babies</li>
-              </ul>
-
-              <h4>Upgrade Process</h4>
-              <ul>
-                <li>Review available plans and features</li>
-                <li>Click "Upgrade Plan" next to desired tier</li>
-                <li>Confirm billing information</li>
-                <li>Features activate immediately upon payment</li>
-                <li>Prorated billing adjusts for plan changes</li>
-              </ul>
-
-              <h3>Downgrading Your Plan</h3>
-              
-              <h4>Important Considerations</h4>
-              <ul>
-                <li><strong>Data retention:</strong> All your data remains safe</li>
-                <li><strong>Feature access:</strong> Some features become unavailable</li>
-                <li><strong>Storage limits:</strong> May need to manage photo storage</li>
-                <li><strong>Family members:</strong> Excess members become read-only</li>
-                <li><strong>Reports:</strong> Advanced analytics become unavailable</li>
-              </ul>
-
-              <h4>Downgrade Process</h4>
-              <ul>
-                <li>Click "Change Plan" in subscription settings</li>
-                <li>Select a lower-tier plan or free option</li>
-                <li>Review what changes will occur</li>
-                <li>Confirm downgrade with security verification</li>
-                <li>Changes take effect at next billing cycle</li>
-              </ul>
-
-              <h3>Billing and Payment Management</h3>
-              
-              <h4>Payment Methods</h4>
-              <ul>
-                <li><strong>Credit cards:</strong> Visa, Mastercard, American Express, Discover</li>
-                <li><strong>Digital wallets:</strong> Apple Pay, Google Pay, PayPal</li>
-                <li><strong>Bank transfers:</strong> ACH direct debit (annual plans only)</li>
-                <li><strong>Gift cards:</strong> SleepyBabyy gift card redemption</li>
-              </ul>
-
-              <h4>Updating Payment Information</h4>
-              <ul>
-                <li>Navigate to "Payment Methods" in subscription settings</li>
-                <li>Add new payment method or update existing</li>
-                <li>Set primary payment method for automatic billing</li>
-                <li>Remove old or expired payment methods</li>
-                <li>Enable backup payment method for failed charges</li>
-              </ul>
-
-              <h3>Billing Cycles and Discounts</h3>
-              
-              <h4>Monthly vs. Annual Billing</h4>
-              <ul>
-                <li><strong>Monthly billing:</strong> Pay each month, cancel anytime</li>
-                <li><strong>Annual billing:</strong> Pay once yearly, save 20% on all plans</li>
-                <li><strong>Switching cycles:</strong> Change billing frequency anytime</li>
-                <li><strong>Prorated adjustments:</strong> Fair pricing when making changes</li>
-              </ul>
-
-              <h4>Available Discounts</h4>
-              <ul>
-                <li><strong>Annual subscription:</strong> 20% discount on yearly payments</li>
-                <li><strong>Multiple children:</strong> 15% off Premium Family for 3+ profiles</li>
-                <li><strong>Military families:</strong> 25% discount with verification</li>
-                <li><strong>Student parents:</strong> 15% off with valid student ID</li>
-                <li><strong>Referral program:</strong> One month free for each successful referral</li>
-              </ul>
-
-              <h3>Subscription Pause and Cancellation</h3>
-              
-              <h4>Temporary Pause Option</h4>
-              <ul>
-                <li>Pause subscription for up to 3 months</li>
-                <li>Perfect for extended travel or temporary breaks</li>
-                <li>All data preserved during pause period</li>
-                <li>Resume anytime with same plan and pricing</li>
-                <li>No cancellation fees or penalties</li>
-              </ul>
-
-              <h4>Cancellation Process</h4>
-              <ul>
-                <li>Click "Cancel Subscription" in settings</li>
-                <li>Complete brief feedback survey (optional)</li>
-                <li>Choose immediate or end-of-cycle cancellation</li>
-                <li>Receive confirmation email with details</li>
-                <li>Access to premium features until period ends</li>
-              </ul>
-
-              <h3>Account Recovery and Data Access</h3>
-              
-              <h4>After Cancellation</h4>
-              <ul>
-                <li><strong>Free plan access:</strong> Basic features remain available</li>
-                <li><strong>Data preservation:</strong> All logs and photos retained</li>
-                <li><strong>Export options:</strong> Download data anytime</li>
-                <li><strong>Reactivation:</strong> Easy to restart premium subscription</li>
-                <li><strong>No data loss:</strong> Everything exactly as you left it</li>
-              </ul>
-
-              <h4>Win-Back Offers</h4>
-              <ul>
-                <li>Special pricing to return within 30 days</li>
-                <li>Extended free trial periods</li>
-                <li>Feature-specific discounts based on usage</li>
-                <li>Loyalty rewards for long-term users</li>
-              </ul>
-
-              <h3>Customer Support for Billing</h3>
-              
-              <h4>Common Issues We Can Help With</h4>
-              <ul>
-                <li>Failed payment troubleshooting</li>
-                <li>Billing cycle confusion</li>
-                <li>Refund requests and processing</li>
-                <li>Plan comparison questions</li>
-                <li>Discount eligibility verification</li>
-              </ul>
-
-              <h4>Getting Help</h4>
-              <ul>
-                <li><strong>Live chat:</strong> Available 24/7 for Premium subscribers</li>
-                <li><strong>Email support:</strong> billing@sleepybabyy.com</li>
-                <li><strong>Phone support:</strong> Premium Plus and Family plan holders</li>
-                <li><strong>Help center:</strong> Self-service articles and FAQs</li>
-                <li><strong>Video tutorials:</strong> Step-by-step subscription management guides</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '3': {
             title: 'Billing and payment issues',
+            content: `Resolving billing and payment issues quickly ensures uninterrupted access to SleepyBabyy's features. Here's how to troubleshoot and resolve common billing problems.
+
+## Common Payment Issues
+
+### Credit Card Declined
+**Most Common Causes**:
+- **Insufficient funds**: Check account balance
+- **Expired card**: Verify expiration date
+- **Incorrect information**: Double-check card number, CVV, and billing address
+- **International restrictions**: Some cards block international transactions
+- **Fraud protection**: Banks may block unfamiliar subscription charges
+
+**Immediate Solutions**:
+1. **Verify Card Information**
+   - Check card number for typos
+   - Confirm CVV code (3-4 digit security code)
+   - Ensure expiration date is current
+   - Verify billing address matches bank records exactly
+
+2. **Contact Your Bank**
+   - Ask about blocks on subscription services
+   - Verify if transaction was flagged as fraudulent
+   - Request pre-approval for SleepyBabyy charges
+   - Check daily/monthly spending limits
+
+3. **Try Alternative Payment Method**
+   - Use different credit or debit card
+   - Try PayPal if available
+   - Consider using bank account for direct payment
+
+### Payment Processing Delays
+**What This Means**:
+- Payment submitted but not yet processed
+- Can take 1-3 business days to complete
+- Account remains active during processing
+- You'll receive confirmation once payment clears
+
+**During Processing Period**:
+- Premium features remain accessible
+- No action needed from you
+- Monitor email for payment confirmation
+- Contact support if delay exceeds 3 business days
+
+### Failed Recurring Payments
+**Why This Happens**:
+- Card expired since last successful payment
+- Bank changed fraud protection rules
+- Account closed or payment method removed
+- Technical issues with payment processor
+
+**Automatic Recovery Process**:
+1. **Day 1**: First retry attempt automatically
+2. **Day 3**: Second retry with email notification
+3. **Day 5**: Third retry with urgent email notification
+4. **Day 7**: Final retry before suspension warning
+5. **Day 10**: Account downgrade to free plan if not resolved
+
+## Resolving Billing Disputes
+
+### Unexpected Charges
+**First Steps**:
+1. **Check Your Subscription Settings**
+   - Verify current plan and billing frequency
+   - Look for recent plan changes
+   - Check if annual renewal occurred
+   - Review family member additions
+
+2. **Review Email Notifications**
+   - Check for upgrade confirmations
+   - Look for plan change notifications
+   - Verify renewal date communications
+   - Check spam folder for billing emails
+
+### Duplicate Charges
+**Common Causes**:
+- Browser refresh during payment processing
+- Multiple payment methods on file
+- System processing delays
+- User error (multiple submission attempts)
+
+**Resolution Process**:
+1. **Document the Issue**
+   - Screenshot of duplicate charges
+   - Note exact amounts and dates
+   - Gather transaction IDs if available
+
+2. **Contact Customer Support**
+   - Provide duplicate charge evidence
+   - Include account information
+   - Request immediate credit or refund
+
+3. **Temporary Resolution**
+   - Duplicate charges are typically refunded within 3-5 business days
+   - Account remains active during resolution
+   - Future payments not affected
+
+### Refund Requests
+
+**Eligible Refund Situations**:
+- **New subscribers**: 30-day money-back guarantee
+- **Billing errors**: System mistakes or overcharges
+- **Duplicate charges**: Accidental multiple payments
+- **Technical issues**: App malfunction preventing feature use
+
+**Refund Process**:
+1. **Submit Refund Request**
+   - Contact customer support within 30 days
+   - Provide reason for refund
+   - Include relevant documentation
+
+2. **Review Period**
+   - Support team reviews request within 2 business days
+   - May request additional information
+   - Account usage and payment history verified
+
+3. **Processing Timeline**
+   - Approved refunds processed within 5-7 business days
+   - Credit appears on original payment method
+   - Email confirmation sent when refund is issued
+
+## Payment Method Management
+
+### Updating Expired Cards
+**Before Card Expires**:
+- System sends email reminders 30 days before expiration
+- Update card information in account settings
+- Verify new information saves correctly
+- Test with small transaction if concerned
+
+**After Card Expires**:
+- Failed payment notifications begin
+- Account remains active during grace period
+- Add new payment method immediately
+- Contact support if unable to update
+
+### Changing Payment Methods
+**Switching Between Cards**:
+1. Add new payment method in account settings
+2. Set new method as primary
+3. Remove old payment method if desired
+4. Verify next billing cycle uses new method
+
+**Payment Method Security**:
+- Card information encrypted and secure
+- No full card numbers stored in app
+- PCI DSS compliant payment processing
+- Regular security audits and updates
+
+## International Payment Issues
+
+### Currency and Exchange Rates
+**How Billing Works**:
+- All prices displayed in USD
+- Bank converts to local currency
+- Exchange rates set by your bank
+- May include foreign transaction fees
+
+**Reducing Currency Issues**:
+- Use card with no foreign transaction fees
+- Consider PayPal for consistent currency handling
+- Annual subscriptions reduce frequency of currency conversions
+
+### Regional Payment Restrictions
+**Common Restrictions**:
+- Some countries restrict subscription services
+- Bank policies on international payments
+- Local regulations on app purchases
+- Payment processor limitations
+
+**Alternative Solutions**:
+- Use PayPal if credit cards are restricted
+- Try different card issuer
+- Consider VPN if regional restrictions apply
+- Contact support for region-specific payment options
+
+## Technical Payment Issues
+
+### App Payment Integration Problems
+**Symptoms**:
+- Payment appears to process but premium features don't activate
+- Subscription shows as cancelled but was charged
+- Cross-platform sync issues with subscription status
+
+**Troubleshooting Steps**:
+1. **Force Close and Restart App**
+2. **Log Out and Log Back In**
+3. **Check Internet Connection**
+4. **Update App to Latest Version**
+5. **Contact Support if Issues Persist**
+
+### Website Payment Issues
+**Browser-Related Problems**:
+- Clear browser cache and cookies
+- Disable browser extensions that might interfere
+- Try different browser or incognito mode
+- Ensure JavaScript is enabled
+
+## Getting Help with Billing Issues
+
+### When to Contact Support
+**Immediate Support Needed**:
+- Unable to access premium features after payment
+- Multiple failed attempts to update payment method
+- Suspicious or unauthorized charges
+- Account locked due to payment issues
+
+### How to Contact Support
+**Premium Subscribers**:
+- Live chat during business hours (9 AM - 6 PM EST)
+- Priority email support (billing@sleepybabyy.com)
+- Phone support for urgent billing issues
+- 24-hour response time guarantee
+
+**Free Account Users**:
+- Email support for billing inquiries
+- Community forums for general questions
+- 48-hour response time for billing issues
+
+### Information to Provide
+**Always Include**:
+- Account email address
+- Last 4 digits of payment method
+- Exact error messages received
+- Screenshots of issues
+- Date and time of problems
+- Device and browser information
+
+**For Billing Disputes**:
+- Bank statement showing charges
+- Transaction confirmation numbers
+- Previous successful payment history
+- Specific amounts and dates in question
+
+Most billing and payment issues can be resolved quickly with the right information and approach. Don't hesitate to contact customer support - we're here to help ensure your SleepyBabyy experience remains smooth and uninterrupted.`,
             readTime: '5 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Resolve Billing Issues Quickly</h2>
-              <p>Payment problems can be frustrating, but most billing issues with SleepyBabyy can be resolved quickly. Here's your complete troubleshooting guide.</p>
-              
-              <h3>Common Payment Failures</h3>
-              
-              <h4>Declined Credit Card Charges</h4>
-              <ul>
-                <li><strong>Insufficient funds:</strong> Account balance too low for charge</li>
-                <li><strong>Expired card:</strong> Credit card has passed expiration date</li>
-                <li><strong>Incorrect information:</strong> Wrong card number, CVV, or zip code</li>
-                <li><strong>Bank security:</strong> Unusual activity triggers automatic decline</li>
-                <li><strong>Credit limit:</strong> Purchase would exceed available credit</li>
-                <li><strong>International restrictions:</strong> Card blocked for online international purchases</li>
-              </ul>
-
-              <h4>Digital Wallet Issues</h4>
-              <ul>
-                <li><strong>PayPal problems:</strong> Insufficient PayPal balance or linked account issues</li>
-                <li><strong>Apple Pay failures:</strong> Touch ID/Face ID authentication problems</li>
-                <li><strong>Google Pay errors:</strong> Account verification or payment method issues</li>
-                <li><strong>Expired payment methods:</strong> Linked cards or accounts need updating</li>
-              </ul>
-
-              <h3>Immediate Troubleshooting Steps</h3>
-              
-              <h4>Step 1: Check Payment Method</h4>
-              <ul>
-                <li>Verify card number is entered correctly</li>
-                <li>Confirm expiration date is current</li>
-                <li>Double-check CVV security code</li>
-                <li>Ensure billing address matches bank records</li>
-                <li>Try a different payment method if available</li>
-              </ul>
-
-              <h4>Step 2: Contact Your Bank</h4>
-              <ul>
-                <li>Call the customer service number on your card</li>
-                <li>Ask if they declined a charge from "SleepyBabyy"</li>
-                <li>Request they allow future charges from our platform</li>
-                <li>Verify your account has sufficient funds</li>
-                <li>Update your address or contact information if needed</li>
-              </ul>
-
-              <h4>Step 3: Retry Payment</h4>
-              <ul>
-                <li>Wait 15-30 minutes after bank approval</li>
-                <li>Clear your browser cache and cookies</li>
-                <li>Try a different browser or device</li>
-                <li>Use incognito/private browsing mode</li>
-                <li>Attempt payment during off-peak hours</li>
-              </ul>
-
-              <h3>Specific Error Messages</h3>
-              
-              <h4>"Your card was declined"</h4>
-              <ul>
-                <li><strong>Solution:</strong> Contact your bank to authorize the transaction</li>
-                <li><strong>Common cause:</strong> Security system flagged as suspicious</li>
-                <li><strong>Prevention:</strong> Add SleepyBabyy to authorized merchant list</li>
-                <li><strong>Alternative:</strong> Use a different payment method</li>
-              </ul>
-
-              <h4>"Invalid card information"</h4>
-              <ul>
-                <li><strong>Solution:</strong> Re-enter all card details carefully</li>
-                <li><strong>Check:</strong> Card number, expiration date, CVV, and billing zip</li>
-                <li><strong>Verify:</strong> Information matches exactly what's on file with bank</li>
-                <li><strong>Try:</strong> Typing instead of auto-fill to avoid formatting errors</li>
-              </ul>
-
-              <h4>"Payment processing error"</h4>
-              <ul>
-                <li><strong>Solution:</strong> Wait a few minutes and try again</li>
-                <li><strong>Cause:</strong> Temporary system overload or maintenance</li>
-                <li><strong>Check:</strong> SleepyBabyy status page for known issues</li>
-                <li><strong>Contact:</strong> Support if problem persists for over an hour</li>
-              </ul>
-
-              <h3>Alternative Payment Options</h3>
-              
-              <h4>When Primary Method Fails</h4>
-              <ul>
-                <li>Add a backup credit or debit card</li>
-                <li>Link your PayPal account</li>
-                <li>Use Apple Pay or Google Pay if available</li>
-                <li>Consider prepaid SleepyBabyy gift cards</li>
-                <li>Request invoice billing (annual plans only)</li>
-              </ul>
-
-              <h4>Gift Card Redemption</h4>
-              <ul>
-                <li>Purchase gift cards from our website</li>
-                <li>Redeem in Account Settings > Payment Methods</li>
-                <li>Enter gift card code and PIN</li>
-                <li>Balance applies to next billing cycle</li>
-                <li>Partial balances roll over to future charges</li>
-              </ul>
-
-              <h3>Billing Dispute Resolution</h3>
-              
-              <h4>Unexpected Charges</h4>
-              <ul>
-                <li><strong>Review billing history:</strong> Check all charges in Account Settings</li>
-                <li><strong>Plan changes:</strong> Verify recent upgrades or downgrades</li>
-                <li><strong>Family sharing:</strong> Check if family members made changes</li>
-                <li><strong>Trial expiration:</strong> Free trials convert to paid subscriptions</li>
-                <li><strong>Currency fluctuations:</strong> International charges may vary</li>
-              </ul>
-
-              <h4>Duplicate Charges</h4>
-              <ul>
-                <li>Check if charge appears twice on credit card statement</li>
-                <li>Verify only one active subscription exists</li>
-                <li>Contact support immediately for investigation</li>
-                <li>Keep credit card statement as evidence</li>
-                <li>Refund processed within 5-7 business days</li>
-              </ul>
-
-              <h3>Refund Requests</h3>
-              
-              <h4>Eligible Refund Scenarios</h4>
-              <ul>
-                <li><strong>Accidental charges:</strong> Unintended upgrades or purchases</li>
-                <li><strong>Technical issues:</strong> Service unavailable during billing period</li>
-                <li><strong>Duplicate billing:</strong> Charged multiple times for same service</li>
-                <li><strong>Cancelled within grace period:</strong> Within 30 days of subscription start</li>
-                <li><strong>Billing errors:</strong> Incorrect amounts or unauthorized changes</li>
-              </ul>
-
-              <h4>Refund Process</h4>
-              <ul>
-                <li>Submit refund request through support chat or email</li>
-                <li>Provide transaction ID and reason for refund</li>
-                <li>Include screenshots of billing statements if applicable</li>
-                <li>Refunds processed within 5-10 business days</li>
-                <li>Money returns to original payment method</li>
-              </ul>
-
-              <h3>International Billing</h3>
-              
-              <h4>Currency and Conversion</h4>
-              <ul>
-                <li><strong>Supported currencies:</strong> USD, EUR, GBP, CAD, AUD</li>
-                <li><strong>Conversion rates:</strong> Updated daily based on market rates</li>
-                <li><strong>Bank fees:</strong> Your bank may charge foreign transaction fees</li>
-                <li><strong>Price display:</strong> Shown in your local currency when possible</li>
-              </ul>
-
-              <h4>International Payment Issues</h4>
-              <ul>
-                <li>Contact bank to enable international online purchases</li>
-                <li>Use PayPal for easier international processing</li>
-                <li>Consider local payment methods where available</li>
-                <li>Be aware of time zone differences for support</li>
-              </ul>
-
-              <h3>Subscription Interruption</h3>
-              
-              <h4>When Payments Fail</h4>
-              <ul>
-                <li><strong>Grace period:</strong> 7-day grace period before service interruption</li>
-                <li><strong>Email reminders:</strong> Notifications sent at 3, 1, and 0 days remaining</li>
-                <li><strong>Feature access:</strong> Premium features disabled after grace period</li>
-                <li><strong>Data safety:</strong> All data remains secure and accessible</li>
-                <li><strong>Easy restoration:</strong> Update payment method to restore immediately</li>
-              </ul>
-
-              <h4>Reactivating Service</h4>
-              <ul>
-                <li>Update payment method in Account Settings</li>
-                <li>Click "Reactivate Subscription" button</li>
-                <li>Pay any outstanding balance</li>
-                <li>Premium features restored within minutes</li>
-                <li>No data loss or service interruption going forward</li>
-              </ul>
-
-              <h3>Getting Help with Billing</h3>
-              
-              <h4>Self-Service Options</h4>
-              <ul>
-                <li><strong>Billing FAQ:</strong> Common questions and answers</li>
-                <li><strong>Video tutorials:</strong> Step-by-step payment troubleshooting</li>
-                <li><strong>Account dashboard:</strong> View all billing history and details</li>
-                <li><strong>Automated tools:</strong> Update payment methods instantly</li>
-              </ul>
-
-              <h4>Contacting Support</h4>
-              <ul>
-                <li><strong>Live chat:</strong> Fastest response for urgent billing issues</li>
-                <li><strong>Email:</strong> billing@sleepybabyy.com for detailed problems</li>
-                <li><strong>Phone support:</strong> Available for Premium Plus and Family subscribers</li>
-                <li><strong>Priority handling:</strong> Billing issues resolved within 24 hours</li>
-                <li><strong>Follow-up:</strong> Confirmation when issue is fully resolved</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           }
         }
       },
@@ -1845,595 +2124,719 @@ const HelpArticle = () => {
         articles: {
           '1': {
             title: 'Choosing the right sounds for sleep',
+            content: `SleepyBabyy's extensive sound library includes scientifically-backed audio designed to promote better sleep for babies of all ages. Here's how to choose the most effective sounds for your baby's sleep needs.
+
+## Understanding Baby Sleep Sounds
+
+### Types of Sleep-Promoting Sounds
+
+**White Noise**
+- **What it is**: Consistent sound across all frequencies
+- **Best for**: Newborns and very young babies
+- **Benefits**: Mimics womb environment, masks household noises
+- **Examples**: Fan noise, static, vacuum cleaner sounds
+
+**Pink Noise**
+- **What it is**: Lower frequency emphasis, softer than white noise
+- **Best for**: Babies 3+ months, light sleepers
+- **Benefits**: More natural sounding, promotes deeper sleep
+- **Examples**: Rainfall, ocean waves, rustling leaves
+
+**Brown Noise**
+- **What it is**: Even lower frequencies, very deep and rumbling
+- **Best for**: Babies who need strong sound masking
+- **Benefits**: Excellent for blocking sudden noises
+- **Examples**: Thunder, waterfall, heavy rain
+
+**Nature Sounds**
+- **What it is**: Natural environmental sounds
+- **Best for**: Older babies and toddlers
+- **Benefits**: Calming and familiar, promotes relaxation
+- **Examples**: Birds chirping, flowing water, forest sounds
+
+### Lullabies and Musical Sounds
+**Traditional Lullabies**
+- **Best for**: Bedtime routines, bonding time
+- **Benefits**: Familiar melodies, cultural connection
+- **Volume**: Soft and gentle, around 50 decibels
+
+**Instrumental Music**
+- **Best for**: Calm, alert time and pre-sleep routine
+- **Benefits**: Stimulates brain development while soothing
+- **Examples**: Classical music, soft piano, gentle strings
+
+**Heartbeat Sounds**
+- **Best for**: Newborns and fussy babies
+- **Benefits**: Mimics mother's heartbeat from womb
+- **Usage**: Particularly effective during transitions
+
+## Age-Appropriate Sound Selection
+
+### Newborns (0-3 months)
+**Recommended Sounds**:
+- White noise at 65-70 decibels
+- Heartbeat rhythms
+- Shushing sounds
+- Vacuum cleaner or hair dryer recordings
+
+**Why These Work**:
+- Recreate familiar womb environment
+- Provide consistent auditory input
+- Help establish sleep associations
+- Block startling household noises
+
+**Usage Tips**:
+- Play continuously during sleep
+- Position speaker 3-7 feet from baby
+- Use consistent volume every time
+- Start during awake time to create positive association
+
+### Infants (3-6 months)
+**Recommended Sounds**:
+- Pink noise (rainfall, ocean waves)
+- Soft nature sounds
+- Gentle lullabies
+- Consistent mechanical sounds
+
+**Developmental Considerations**:
+- Hearing is more developed
+- Beginning to prefer varied sounds
+- Can distinguish between different audio types
+- Sleep patterns becoming more regular
+
+**Advanced Techniques**:
+- Gradual volume reduction as baby falls asleep
+- Combine sounds (e.g., rain with soft music)
+- Use different sounds for naps vs. nighttime
+- Introduce variety while maintaining favorites
+
+### Babies (6-12 months)
+**Recommended Sounds**:
+- Nature sounds with gentle variation
+- Soft instrumental music
+- Combination soundscapes
+- Rhythmic sounds like trains or windchimes
+
+**Sleep Development**:
+- Longer sleep stretches possible
+- More aware of environment
+- Can develop sound preferences
+- May resist new sounds
+
+**Customization Strategies**:
+- Observe which sounds work best
+- Create custom playlists
+- Use familiar sounds for comfort during sleep regressions
+- Introduce new sounds gradually during wake times
+
+### Toddlers (12+ months)
+**Recommended Sounds**:
+- Story-based audio (for quiet time)
+- Complex nature soundscapes
+- Soft music with simple melodies
+- Familiar character voices (for comfort)
+
+**Considerations**:
+- May have strong preferences
+- Can request specific sounds
+- Understands routine associations
+- May use sounds for self-soothing
+
+## Optimizing Sound Usage
+
+### Volume Guidelines
+**Safe Volume Levels**:
+- **Newborns**: 50-70 decibels (softer than shower)
+- **Infants**: 50-65 decibels (conversation level)
+- **Toddlers**: 45-60 decibels (quiet office level)
+
+**Measuring Volume**:
+- Use smartphone decibel apps
+- Position meter at baby's ear level
+- Check volume regularly as speakers age
+- Consider room acoustics and sound reflection
+
+**Safety Considerations**:
+- Never exceed 70 decibels for extended periods
+- Use timer functions to prevent all-night exposure at high volumes
+- Monitor baby for signs of hearing discomfort
+- Regular hearing checkups with pediatrician
+
+### Timing and Duration
+
+**Continuous vs. Timed Play**:
+**Continuous** (All night):
+- Best for: Consistent sleepers, noisy environments
+- Benefits: Prevents wake-ups from sound changes
+- Considerations: Ensure safe volume levels
+
+**Timed Play** (30-60 minutes):
+- Best for: Babies learning to sleep independently
+- Benefits: Helps with sleep initiation, reduces dependency
+- Usage: Set timer to turn off after baby is in deep sleep
+
+**Gradual Fade-Out**:
+- Start at normal volume
+- Gradually reduce over 20-30 minutes
+- Helps baby transition to sleeping without sound
+- Good for reducing sound dependency
+
+### Environmental Factors
+
+**Room Acoustics**:
+- Hard surfaces amplify sound
+- Soft furnishings absorb and muffle sound
+- Speaker placement affects sound distribution
+- Consider neighbor noise policies
+
+**Speaker Placement**:
+- 3-7 feet from baby's sleep area
+- Not directly above crib for safety
+- Away from baby's head to prevent startle
+- Consider portable speakers for travel
+
+## Creating Effective Sound Routines
+
+### Building Sleep Associations
+**Consistency is Key**:
+- Use same sounds for same activities
+- Play sounds 15-30 minutes before sleep time
+- Maintain routine even when traveling
+- Include sounds in bedtime routine
+
+**Positive Associations**:
+- Introduce sounds during happy, calm times
+- Never use as punishment or when baby is distressed
+- Pair with other soothing activities (massage, rocking)
+- Allow baby to see and explore speaker safely
+
+### Troubleshooting Sound Issues
+
+**Baby Doesn't Respond to Sounds**:
+- Try different types (white noise vs. nature sounds)
+- Adjust volume (might be too loud or too soft)
+- Change timing (earlier in routine or different duration)
+- Combine with other soothing techniques
+
+**Baby Becomes Dependent on Sounds**:
+- Gradually reduce volume over several nights
+- Introduce silent periods during naps
+- Use sounds only for difficult sleep times
+- Practice sleeping without sounds occasionally
+
+**Sounds Stop Working**:
+- Rotate between different favorite sounds
+- Check if baby has outgrown current sounds
+- Combine familiar sounds with new elements
+- Consider if other sleep issues are developing
+
+### Travel and Consistency
+
+**Portable Sound Solutions**:
+- Download sounds to phone for offline use
+- Invest in small, portable speakers
+- Use sound apps with timer functions
+- Bring familiar sounds to new environments
+
+**Maintaining Routines Away from Home**:
+- Keep sound routine consistent
+- Adjust volume for different room sizes
+- Respect noise policies in hotels/family homes
+- Have backup sound options available
+
+The right sounds can significantly improve your baby's sleep quality and duration. Experiment with different options, observe your baby's responses, and remember that preferences may change as your baby grows and develops.`,
             readTime: '6 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Find the Perfect Sleep Sounds for Your Baby</h2>
-              <p>The right sound environment can transform your baby's sleep quality. Learn how to choose and use sounds that promote better, longer sleep periods.</p>
-              
-              <h3>Understanding Sound Categories</h3>
-              
-              <h4>White Noise</h4>
-              <ul>
-                <li><strong>Characteristics:</strong> Consistent, steady sound across all frequencies</li>
-                <li><strong>Benefits:</strong> Masks household noises and creates consistent environment</li>
-                <li><strong>Best for:</strong> Light sleepers and noisy environments</li>
-                <li><strong>Examples:</strong> Fan sounds, hair dryer, vacuum cleaner</li>
-                <li><strong>Volume:</strong> Should be around 50-60 decibels (conversation level)</li>
-              </ul>
-
-              <h4>Pink Noise</h4>
-              <ul>
-                <li><strong>Characteristics:</strong> Deeper, more balanced than white noise</li>
-                <li><strong>Benefits:</strong> More natural sound that's less harsh on ears</li>
-                <li><strong>Best for:</strong> Babies sensitive to sharp sounds</li>
-                <li><strong>Examples:</strong> Rain, ocean waves, wind through trees</li>
-                <li><strong>Research:</strong> Studies show improved deep sleep quality</li>
-              </ul>
-
-              <h4>Nature Sounds</h4>
-              <ul>
-                <li><strong>Characteristics:</strong> Organic, rhythmic patterns from natural sources</li>
-                <li><strong>Benefits:</strong> Calming effect, promotes relaxation</li>
-                <li><strong>Best for:</strong> Bedtime routines and relaxation</li>
-                <li><strong>Examples:</strong> Forest sounds, babbling brook, ocean waves, rain</li>
-                <li><strong>Caution:</strong> Avoid sounds with sudden loud elements (thunder)</li>
-              </ul>
-
-              <h4>Lullabies and Musical Sounds</h4>
-              <ul>
-                <li><strong>Characteristics:</strong> Melodic, rhythmic, often with vocals</li>
-                <li><strong>Benefits:</strong> Emotional bonding, cultural connection</li>
-                <li><strong>Best for:</strong> Bedtime routine, parent-child bonding</li>
-                <li><strong>Examples:</strong> Traditional lullabies, soft instrumental music</li>
-                <li><strong>Timing:</strong> Best during wind-down, not continuous sleep</li>
-              </ul>
-
-              <h3>Age-Appropriate Sound Selection</h3>
-              
-              <h4>Newborns (0-3 months)</h4>
-              <ul>
-                <li><strong>Preferred sounds:</strong> Womb-like sounds, shushing, heartbeat</li>
-                <li><strong>Volume:</strong> Can be louder (up to 70 decibels) initially</li>
-                <li><strong>Duration:</strong> Continuous during sleep periods</li>
-                <li><strong>Why it works:</strong> Mimics familiar in-utero environment</li>
-                <li><strong>Recommendations:</strong> Hair dryer, vacuum, womb sounds</li>
-              </ul>
-
-              <h4>Infants (3-6 months)</h4>
-              <ul>
-                <li><strong>Transition period:</strong> Begin introducing variety</li>
-                <li><strong>Volume:</strong> Gradually reduce to 60 decibels</li>
-                <li><strong>New sounds:</strong> Gentle rain, soft fan noise</li>
-                <li><strong>Consistency:</strong> Maintain same sound for naps and night</li>
-                <li><strong>Watch for:</strong> Preferences and sound associations</li>
-              </ul>
-
-              <h4>Older Babies (6-12 months)</h4>
-              <ul>
-                <li><strong>Sound exploration:</strong> Can appreciate more variety</li>
-                <li><strong>Nature integration:</strong> Ocean, forest, rain sounds work well</li>
-                <li><strong>Musical introduction:</strong> Soft instrumental during bedtime routine</li>
-                <li><strong>Sleep association:</strong> Use same sound consistently for sleep cues</li>
-                <li><strong>Safety:</strong> Ensure sounds don't startle during light sleep phases</li>
-              </ul>
-
-              <h4>Toddlers (12+ months)</h4>
-              <ul>
-                <li><strong>Personal preferences:</strong> May develop favorite sounds</li>
-                <li><strong>Story integration:</strong> Nature sounds can complement bedtime stories</li>
-                <li><strong>Routine importance:</strong> Sound becomes part of sleep ritual</li>
-                <li><strong>Flexibility:</strong> Can handle minor variations in sound</li>
-                <li><strong>Education:</strong> Begin explaining why sounds help sleep</li>
-              </ul>
-
-              <h3>Environmental Considerations</h3>
-              
-              <h4>Room Acoustics</h4>
-              <ul>
-                <li><strong>Hard surfaces:</strong> Sound reflects and may seem louder</li>
-                <li><strong>Soft furnishings:</strong> Carpet, curtains absorb and soften sound</li>
-                <li><strong>Room size:</strong> Larger rooms may need higher volume</li>
-                <li><strong>Sound placement:</strong> Position speaker away from baby's head</li>
-                <li><strong>Multiple speakers:</strong> Can create more even sound distribution</li>
-              </ul>
-
-              <h4>External Noise Factors</h4>
-              <ul>
-                <li><strong>Traffic noise:</strong> White noise helps mask car sounds</li>
-                <li><strong>Neighbor sounds:</strong> Pink noise good for muffling voices</li>
-                <li><strong>Household activity:</strong> Consistent sound masks footsteps, conversations</li>
-                <li><strong>HVAC systems:</strong> Consider how heating/cooling affects sound</li>
-                <li><strong>Pets:</strong> Choose sounds that mask barking or meowing</li>
-              </ul>
-
-              <h3>Sound Safety Guidelines</h3>
-              
-              <h4>Volume Recommendations</h4>
-              <ul>
-                <li><strong>Maximum safe level:</strong> 70 decibels (shower sound level)</li>
-                <li><strong>Optimal range:</strong> 50-60 decibels (conversation level)</li>
-                <li><strong>Measurement tool:</strong> Use smartphone decibel meter apps</li>
-                <li><strong>Distance matters:</strong> Volume decreases with distance from source</li>
-                <li><strong>Gradual adjustment:</strong> Start higher, reduce over time</li>
-              </ul>
-
-              <h4>Duration Guidelines</h4>
-              <ul>
-                <li><strong>Continuous play:</strong> Safe for entire sleep period</li>
-                <li><strong>Timer function:</strong> Can fade out after baby falls asleep</li>
-                <li><strong>All night use:</strong> Recommended for consistent sleep environment</li>
-                <li><strong>Nap consistency:</strong> Use same sounds for day and night sleep</li>
-                <li><strong>Travel considerations:</strong> Portable options for maintaining routine</li>
-              </ul>
-
-              <h3>Using SleepyBabyy Sound Features</h3>
-              
-              <h4>Sound Library Navigation</h4>
-              <ul>
-                <li><strong>Categories:</strong> Browse by sound type (white noise, nature, lullabies)</li>
-                <li><strong>Favorites:</strong> Save preferred sounds for quick access</li>
-                <li><strong>Recently played:</strong> Find sounds you've used before</li>
-                <li><strong>Search function:</strong> Find specific sounds by keyword</li>
-                <li><strong>Sound preview:</strong> Test sounds before playing for baby</li>
-              </ul>
-
-              <h4>Timer and Loop Settings</h4>
-              <ul>
-                <li><strong>Continuous loop:</strong> Sound plays until manually stopped</li>
-                <li><strong>Fade timer:</strong> Gradually reduces volume over set time</li>
-                <li><strong>Sleep timer:</strong> Stops playing after specified duration</li>
-                <li><strong>Smart fade:</strong> Automatically reduces volume as baby sleeps deeper</li>
-                <li><strong>Morning alarm:</strong> Gentle wake-up sounds after set sleep duration</li>
-              </ul>
-
-              <h3>Creating Sound Routines</h3>
-              
-              <h4>Bedtime Sound Sequence</h4>
-              <ol>
-                <li><strong>Wind-down (30 minutes before bed):</strong> Soft lullabies or gentle music</li>
-                <li><strong>Transition (15 minutes):</strong> Gradually shift to sleep sound</li>
-                <li><strong>Sleep induction:</strong> Consistent sound choice for falling asleep</li>
-                <li><strong>Continuous sleep:</strong> Same sound maintains throughout night</li>
-                <li><strong>Wake-up:</strong> Gradual volume reduction or natural wake sounds</li>
-              </ol>
-
-              <h4>Nap Time Adaptations</h4>
-              <ul>
-                <li>Use same sound as nighttime for consistency</li>
-                <li>Consider shorter timer duration for shorter naps</li>
-                <li>Account for different lighting and activity levels</li>
-                <li>Adjust volume for daytime household noise</li>
-                <li>Have backup sound options for travel or different rooms</li>
-              </ul>
-
-              <h3>Troubleshooting Sound Issues</h3>
-              
-              <h4>Baby Seems Startled by Sounds</h4>
-              <ul>
-                <li><strong>Lower the volume:</strong> Start very quiet and gradually increase</li>
-                <li><strong>Choose gentler sounds:</strong> Switch from white to pink noise</li>
-                <li><strong>Check placement:</strong> Move sound source further from baby</li>
-                <li><strong>Gradual introduction:</strong> Use sounds during awake play time first</li>
-                <li><strong>Consider timing:</strong> Some babies prefer sound after falling asleep</li>
-              </ul>
-
-              <h4>Sounds Not Helping Sleep</h4>
-              <ul>
-                <li><strong>Try different categories:</strong> Test various sound types</li>
-                <li><strong>Adjust timing:</strong> Start sound earlier or later in routine</li>
-                <li><strong>Check consistency:</strong> Use same sound every sleep period</li>
-                <li><strong>Evaluate environment:</strong> Address other sleep disruptors first</li>
-                <li><strong>Be patient:</strong> Sound associations can take 1-2 weeks to develop</li>
-              </ul>
-
-              <h4>Technical Sound Issues</h4>
-              <ul>
-                <li><strong>Poor audio quality:</strong> Check internet connection and device speakers</li>
-                <li><strong>Sound cutting out:</strong> Ensure app remains active, check device settings</li>
-                <li><strong>Volume inconsistency:</strong> Adjust device volume and app volume separately</li>
-                <li><strong>Battery drain:</strong> Use power saving mode or plug in device</li>
-                <li><strong>Bluetooth problems:</strong> Use wired speakers when possible</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '2': {
             title: 'Setting up audio timers',
+            content: `Audio timers in SleepyBabyy help you create automated sound schedules that support your baby's sleep routine without requiring constant manual control.
+
+## Understanding Audio Timers
+
+### What Audio Timers Do
+**Automated Sound Control**:
+- Start playing sounds at specific times
+- Stop sounds after set durations
+- Gradually fade volume in or out
+- Repeat patterns automatically
+- Sync with baby's sleep schedule
+
+**Benefits of Using Timers**:
+- Consistent routine without manual intervention
+- Prevents overnight sound dependency
+- Saves battery life on devices
+- Allows parents to sleep without worrying about turning off sounds
+- Creates predictable audio environment for baby
+
+### Types of Timer Functions
+
+**Start Timers**
+- Begin playing sounds at scheduled times
+- Perfect for nap time or bedtime routines
+- Can be set for daily, weekly, or custom schedules
+- Works with any sound in your library
+
+**Stop Timers**
+- Automatically end sound playback after set duration
+- Useful for preventing all-night sound exposure
+- Helps baby learn to sleep without continuous audio
+- Customizable from 15 minutes to 8 hours
+
+**Fade Timers**
+- Gradually increase or decrease volume over time
+- Smooth transitions that don't startle baby
+- Fade-in for gentle wake-ups
+- Fade-out for natural sleep onset
+
+**Repeat Timers**
+- Cycle sounds on and off throughout sleep period
+- Play for set duration, pause, then repeat
+- Useful for babies who wake between sleep cycles
+- Customizable intervals and repetitions
+
+## Setting Up Basic Audio Timers
+
+### Creating Your First Timer
+
+**Step 1: Choose Your Sound**
+1. Navigate to the Sounds Library
+2. Select the sound you want to schedule
+3. Tap the "Timer" or "Schedule" icon
+4. Choose "Create New Timer"
+
+**Step 2: Set the Schedule**
+1. Select start time for the sound
+2. Choose which days to repeat (daily, weekdays, specific days)
+3. Set the duration or end time
+4. Configure fade in/out options if desired
+
+**Step 3: Configure Advanced Options**
+1. Set volume level for this timer
+2. Choose repeat patterns if needed
+3. Enable/disable notifications
+4. Name your timer for easy identification
+
+**Step 4: Activate and Test**
+1. Save your timer settings
+2. Enable the timer
+3. Test during non-sleep times to verify settings
+4. Adjust timing based on baby's response
+
+### Common Timer Configurations
+
+**Bedtime Timer Setup**
+- **Start Time**: 30 minutes before desired sleep time
+- **Duration**: 45-60 minutes (or until baby is in deep sleep)
+- **Fade**: Gradual fade-out over final 15 minutes
+- **Sound**: White noise or familiar lullaby
+- **Volume**: Start at 60 decibels, fade to 45 decibels
+
+**Nap Time Timer Setup**
+- **Start Time**: 15 minutes before nap time
+- **Duration**: 30-45 minutes for short naps, longer for extended naps
+- **Sound**: Pink noise or nature sounds
+- **Volume**: Consistent at 55 decibels
+- **Repeat**: Daily during established nap times
+
+**Wake-Up Timer Setup**
+- **Start Time**: 15 minutes before desired wake time
+- **Fade**: Gradual volume increase over 10-15 minutes
+- **Sound**: Gentle nature sounds or soft music
+- **Volume**: Start at 30 decibels, increase to 50 decibels
+
+## Advanced Timer Features
+
+### Multiple Timer Coordination
+
+**Layered Sound Timers**
+- Combine different sounds with overlapping timers
+- Example: Start with heartbeat, add white noise after 10 minutes
+- Create complex soundscapes that evolve during sleep
+- Useful for babies who need varying audio stimulation
+
+**Schedule Integration**
+- Sync timers with feeding schedules
+- Coordinate with family member care shifts
+- Automatic adjustments for daylight saving time
+- Integration with baby's growth and changing sleep needs
+
+**Smart Timer Suggestions**
+- AI-powered recommendations based on baby's patterns
+- Automatic timer adjustments for sleep regressions
+- Seasonal adjustments for changing daylight hours
+- Growth milestone-based timer modifications
+
+### Conditional Timers
+
+**Activity-Based Triggers**
+- Start timers when baby is put down for sleep
+- Stop timers when baby wakes up (using app integration)
+- Adjust based on logged feeding or diaper change times
+- Coordinate with other family members' activities
+
+**Environmental Triggers**
+- Adjust volume based on ambient noise levels
+- Change sounds based on time of year or weather
+- Respond to household activity levels
+- Integration with smart home systems
+
+### Customizing Timer Behavior
+
+**Volume Control Options**
+- **Consistent Volume**: Same level throughout timer duration
+- **Fade In**: Start quiet, gradually increase to set level
+- **Fade Out**: Start at normal level, gradually decrease to silence
+- **Variable**: Different volume levels at different times
+- **Responsive**: Adjust based on ambient noise (premium feature)
+
+**Sound Transition Options**
+- **Hard Stop**: Sound ends abruptly when timer expires
+- **Fade Out**: Gradual volume reduction over 1-10 minutes
+- **Loop Fade**: Complete current sound loop before stopping
+- **Cross Fade**: Blend into different sound or silence
+
+## Timer Management and Organization
+
+### Creating Timer Categories
+
+**By Sleep Type**
+- **Bedtime Timers**: Evening and overnight schedules
+- **Nap Timers**: Daytime sleep periods
+- **Rest Time Timers**: Quiet time without full sleep
+- **Travel Timers**: Adjusted for different time zones
+
+**By Baby's Age**
+- **Newborn Timers**: Frequent, shorter durations
+- **Infant Timers**: Longer sleep periods, fewer timers
+- **Toddler Timers**: Scheduled around activities
+- **Growth Transition Timers**: For changing sleep needs
+
+### Timer Library Management
+
+**Organizing Your Timers**
+- Use descriptive names ("Bedtime - 7 PM Start")
+- Create folders for different types or babies
+- Archive old timers instead of deleting
+- Export timer settings for backup
+
+**Sharing Timers with Family**
+- Copy timer settings to other family members
+- Create shared timer templates
+- Coordinate timer schedules across caregivers
+- Synchronize changes and updates
+
+## Troubleshooting Timer Issues
+
+### Common Problems and Solutions
+
+**Timer Doesn't Start**
+- Check device volume and sound settings
+- Verify timer is enabled and scheduled correctly
+- Ensure app has necessary permissions
+- Check internet connection for cloud-based timers
+
+**Sound Stops Unexpectedly**
+- Check battery optimization settings on device
+- Verify app isn't being closed by system
+- Ensure sufficient storage space for sound files
+- Check for app updates that might fix issues
+
+**Timer Conflicts**
+- Review overlapping timer schedules
+- Prioritize timers by importance
+- Use timer groups to manage multiple schedules
+- Set up backup timers for critical sleep times
+
+### Optimization Tips
+
+**Battery Conservation**
+- Use local sound files instead of streaming
+- Enable low-power mode during timer operation
+- Close unnecessary apps while timers are running
+- Consider dedicated device for sound timers
+
+**Reliability Improvements**
+- Set up backup timers 5-10 minutes after primary
+- Use multiple devices for critical sleep times
+- Test timers regularly during non-sleep periods
+- Keep app and device software updated
+
+## Advanced Timer Strategies
+
+### Adaptive Timer Systems
+
+**Learning from Baby's Patterns**
+- Analyze sleep logs to optimize timer schedules
+- Adjust timer duration based on actual sleep times
+- Modify start times based on baby's natural rhythms
+- Create seasonal adjustment schedules
+
+**Responsive Timer Modifications**
+- Longer timers during sleep regressions
+- Shorter timers when establishing independence
+- Modified timers during illness or disruptions
+- Travel-adapted timer schedules
+
+### Integration with Other Features
+
+**Sleep Schedule Coordination**
+- Sync timers with recommended sleep schedules
+- Automatic adjustments when schedule changes
+- Coordination with feeding and activity timers
+- Integration with family member schedules
+
+**Analytics Integration**
+- Track effectiveness of different timer configurations
+- Analyze sleep quality with and without timers
+- Generate reports on timer usage and success
+- Use data to optimize future timer settings
+
+Audio timers transform your baby care routine from reactive to proactive, ensuring consistent, supportive sound environments that promote better sleep for the whole family.`,
             readTime: '4 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Master Audio Timer Features</h2>
-              <p>Audio timers help create consistent sleep routines and ensure sounds play for the right duration. Learn how to set up and customize timers for optimal sleep support.</p>
-              
-              <h3>Types of Audio Timers</h3>
-              
-              <h4>Sleep Timer</h4>
-              <ul>
-                <li><strong>Function:</strong> Stops audio after a set duration</li>
-                <li><strong>Best for:</strong> Parents who prefer quiet after baby falls asleep</li>
-                <li><strong>Typical duration:</strong> 30 minutes to 2 hours</li>
-                <li><strong>Use case:</strong> When baby falls asleep quickly and doesn't need continuous sound</li>
-                <li><strong>Benefit:</strong> Saves battery and reduces dependency on sound</li>
-              </ul>
-
-              <h4>Fade Timer</h4>
-              <ul>
-                <li><strong>Function:</strong> Gradually reduces volume over time until silent</li>
-                <li><strong>Best for:</strong> Gentle transition from sound to silence</li>
-                <li><strong>Duration options:</strong> 15 minutes to 1 hour fade time</li>
-                <li><strong>Use case:</strong> Babies who wake when sound stops abruptly</li>
-                <li><strong>Benefit:</strong> Natural, gradual reduction mimics real-world sound patterns</li>
-              </ul>
-
-              <h4>Loop Timer</h4>
-              <ul>
-                <li><strong>Function:</strong> Plays audio continuously until manually stopped</li>
-                <li><strong>Best for:</strong> Babies who need consistent sound all night</li>
-                <li><strong>Duration:</strong> Unlimited - plays until you turn it off</li>
-                <li><strong>Use case:</strong> Light sleepers or noisy environments</li>
-                <li><strong>Benefit:</strong> Maintains consistent sleep environment</li>
-              </ul>
-
-              <h4>Smart Timer</h4>
-              <ul>
-                <li><strong>Function:</strong> Adjusts based on baby's sleep patterns and movement</li>
-                <li><strong>Best for:</strong> Advanced users who want automated adjustment</li>
-                <li><strong>Technology:</strong> Uses device sensors or connected monitors</li>
-                <li><strong>Use case:</strong> Busy parents who want hands-off sleep management</li>
-                <li><strong>Benefit:</strong> Automatically adapts to baby's changing needs</li>
-              </ul>
-
-              <h3>Setting Up Basic Timers</h3>
-              
-              <h4>Accessing Timer Settings</h4>
-              <ul>
-                <li>Open the Sounds section from your dashboard</li>
-                <li>Select your preferred sound from the library</li>
-                <li>Tap the timer icon (clock symbol) near the play button</li>
-                <li>Choose from preset timer options or create custom duration</li>
-                <li>Confirm settings and start playback</li>
-              </ul>
-
-              <h4>Preset Timer Options</h4>
-              <ul>
-                <li><strong>15 minutes:</strong> Quick nap or settling period</li>
-                <li><strong>30 minutes:</strong> Short nap or sleep induction</li>
-                <li><strong>1 hour:</strong> Medium nap or partial night sleep</li>
-                <li><strong>2 hours:</strong> Long nap or early night sleep</li>
-                <li><strong>All night:</strong> Continuous play until morning</li>
-                <li><strong>Custom:</strong> Set any specific duration you prefer</li>
-              </ul>
-
-              <h3>Advanced Timer Configuration</h3>
-              
-              <h4>Fade Settings</h4>
-              <ul>
-                <li><strong>Fade duration:</strong> Choose how long the volume reduction takes</li>
-                <li><strong>Fade curve:</strong> Linear, exponential, or custom volume reduction</li>
-                <li><strong>Final volume:</strong> Set minimum volume before complete silence</li>
-                <li><strong>Fade start:</strong> Begin fading immediately or after set delay</li>
-                <li><strong>Smart fade:</strong> Adapt fade speed based on baby's sleep depth</li>
-              </ul>
-
-              <h4>Multiple Timer Sequences</h4>
-              <ul>
-                <li><strong>Stage 1:</strong> Lullaby for 15 minutes to help settle</li>
-                <li><strong>Stage 2:</strong> Transition to white noise for 30 minutes</li>
-                <li><strong>Stage 3:</strong> Fade to silence or continue at low volume</li>
-                <li><strong>Custom sequences:</strong> Create up to 5 timer stages</li>
-                <li><strong>Repeat options:</strong> Loop entire sequence or single stages</li>
-              </ul>
-
-              <h3>Timer Scheduling</h3>
-              
-              <h4>Nap Timer Scheduling</h4>
-              <ul>
-                <li><strong>Morning nap:</strong> Set timer for typical morning sleep duration</li>
-                <li><strong>Afternoon nap:</strong> Adjust for longer afternoon sleep periods</li>
-                <li><strong>Evening catnap:</strong> Shorter timer for brief evening rest</li>
-                <li><strong>Flexible scheduling:</strong> Adjust timers based on previous night's sleep</li>
-                <li><strong>Multiple baby support:</strong> Different timer settings for different children</li>
-              </ul>
-
-              <h4>Bedtime Timer Automation</h4>
-              <ul>
-                <li><strong>Routine integration:</strong> Timer starts automatically with bedtime routine</li>
-                <li><strong>Sleep schedule sync:</strong> Adjusts duration based on planned sleep time</li>
-                <li><strong>Weekend variations:</strong> Different timer settings for weekends</li>
-                <li><strong>Seasonal adjustments:</strong> Longer timers during daylight saving transitions</li>
-                <li><strong>Travel mode:</strong> Adapt timers for different time zones</li>
-              </ul>
-
-              <h3>Smart Timer Features</h3>
-              
-              <h4>Sleep Tracking Integration</h4>
-              <ul>
-                <li><strong>Movement detection:</strong> Extends timer if baby is still restless</li>
-                <li><strong>Sound monitoring:</strong> Continues playing if baby is fussing</li>
-                <li><strong>Sleep stage awareness:</strong> Adjusts volume based on deep vs. light sleep</li>
-                <li><strong>Wake-up prevention:</strong> Maintains sound during typical wake periods</li>
-                <li><strong>Learning algorithm:</strong> Improves timer accuracy over time</li>
-              </ul>
-
-              <h4>Environmental Adaptations</h4>
-              <ul>
-                <li><strong>Noise level monitoring:</strong> Extends timer during noisy periods</li>
-                <li><strong>Temperature awareness:</strong> Adjusts sound duration for comfort</li>
-                <li><strong>Light sensitivity:</strong> Coordinates with room lighting changes</li>
-                <li><strong>Activity detection:</strong> Responds to household activity levels</li>
-                <li><strong>Weather integration:</strong> Adapts to storms or unusual weather</li>
-              </ul>
-
-              <h3>Troubleshooting Timer Issues</h3>
-              
-              <h4>Timer Not Working Properly</h4>
-              <ul>
-                <li><strong>Check device settings:</strong> Ensure app isn't being closed by power management</li>
-                <li><strong>Background app refresh:</strong> Enable for SleepyBabyy in device settings</li>
-                <li><strong>Do not disturb mode:</strong> Configure to allow SleepyBabyy notifications</li>
-                <li><strong>Battery optimization:</strong> Exempt SleepyBabyy from battery saving modes</li>
-                <li><strong>Update app:</strong> Ensure you have the latest version for best performance</li>
-              </ul>
-
-              <h4>Timer Stopping Unexpectedly</h4>
-              <ul>
-                <li><strong>Phone calls:</strong> Audio pauses for calls, may not resume timer</li>
-                <li><strong>Other apps:</strong> Music or video apps can interrupt SleepyBabyy</li>
-                <li><strong>Low battery:</strong> Device may close apps to conserve power</li>
-                <li><strong>Network issues:</strong> Streaming sounds may stop with poor connection</li>
-                <li><strong>App crashes:</strong> Restart app and check for updates</li>
-              </ul>
-
-              <h3>Timer Best Practices</h3>
-              
-              <h4>Age-Appropriate Timer Use</h4>
-              <ul>
-                <li><strong>Newborns:</strong> Longer timers or continuous play for consistent environment</li>
-                <li><strong>3-6 months:</strong> Begin experimenting with fade timers</li>
-                <li><strong>6-12 months:</strong> Shorter timers as sleep consolidates</li>
-                <li><strong>Toddlers:</strong> Smart timers that adapt to sleep patterns</li>
-                <li><strong>Multiple ages:</strong> Customize timer profiles for each child</li>
-              </ul>
-
-              <h4>Routine Integration</h4>
-              <ul>
-                <li><strong>Consistency:</strong> Use same timer settings every night</li>
-                <li><strong>Gradual changes:</strong> Adjust timer duration slowly over weeks</li>
-                <li><strong>Backup plans:</strong> Have manual override options ready</li>
-                <li><strong>Travel preparation:</strong> Test timer settings before trips</li>
-                <li><strong>Caregiver training:</strong> Teach others how to use timer features</li>
-              </ul>
-
-              <h3>Premium Timer Features</h3>
-              
-              <h4>Advanced Scheduling</h4>
-              <ul>
-                <li><strong>Weekly patterns:</strong> Different timer settings for each day</li>
-                <li><strong>Seasonal schedules:</strong> Automatic adjustments for changing seasons</li>
-                <li><strong>Holiday modes:</strong> Special timer settings for disrupted routines</li>
-                <li><strong>Growth phase adaptation:</strong> Timers adjust for developmental changes</li>
-                <li><strong>Multiple location support:</strong> Different settings for home, daycare, travel</li>
-              </ul>
-
-              <h4>Analytics and Optimization</h4>
-              <ul>
-                <li><strong>Timer effectiveness tracking:</strong> See which durations work best</li>
-                <li><strong>Sleep quality correlation:</strong> Compare timer settings to sleep outcomes</li>
-                <li><strong>Recommendation engine:</strong> AI suggests optimal timer settings</li>
-                <li><strong>A/B testing:</strong> Automatically test different timer configurations</li>
-                <li><strong>Report integration:</strong> Timer data included in sleep analysis reports</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '3': {
             title: 'Creating custom sound playlists',
+            content: `Custom sound playlists in SleepyBabyy allow you to create personalized audio experiences tailored to your baby's preferences and different activities throughout the day.
+
+## Understanding Custom Playlists
+
+### What Custom Playlists Offer
+**Personalized Audio Experiences**:
+- Combine multiple sounds into seamless sequences
+- Create different moods for different activities
+- Build routines around specific audio combinations
+- Develop unique soundscapes for your baby's preferences
+
+**Flexibility and Control**:
+- Mix and match any sounds from the library
+- Set individual durations for each sound
+- Control transitions between sounds
+- Create unlimited playlists for different situations
+
+### Types of Playlists to Create
+
+**Sleep Progression Playlists**
+- Start with active sounds, gradually transition to calming
+- Begin with familiar sounds, move to sleep-promoting audio
+- Layer different types of noise for comprehensive coverage
+- End with minimal or no sound for independent sleep
+
+**Activity-Specific Playlists**
+- **Tummy Time**: Engaging but not overstimulating sounds
+- **Feeding Time**: Gentle, consistent background audio
+- **Play Time**: Varied, stimulating sounds that encourage interaction
+- **Calm Down**: Soothing progression from active to restful
+
+**Mood-Based Playlists**
+- **Fussy Baby**: Sounds specifically chosen for soothing distressed babies
+- **Alert and Happy**: Audio that maintains positive energy
+- **Sleepy but Fighting**: Gentle but persistent sleep-promoting sounds
+- **Overtired**: Immediate calming sounds for overstimulated babies
+
+## Creating Your First Custom Playlist
+
+### Step-by-Step Playlist Creation
+
+**Step 1: Plan Your Playlist**
+1. Identify the purpose (sleep, play, calming, etc.)
+2. Consider the total duration needed
+3. Think about the progression of moods/energy
+4. List your baby's favorite sounds to include
+
+**Step 2: Access Playlist Creator**
+1. Go to Sounds Library in SleepyBabyy
+2. Tap "Create Custom Playlist" or "+" icon
+3. Name your playlist descriptively
+4. Choose category (Sleep, Play, Calm, etc.)
+
+**Step 3: Add Sounds to Playlist**
+1. Browse sound library categories
+2. Preview sounds before adding
+3. Drag sounds into desired order
+4. Set individual sound duration (30 seconds to 20 minutes)
+5. Configure transition settings between sounds
+
+**Step 4: Customize Transitions**
+1. **Seamless**: Sounds blend into each other smoothly
+2. **Fade**: Previous sound fades out as next fades in
+3. **Pause**: Brief silence between sounds
+4. **Cross-fade**: Sounds overlap for specified duration
+
+**Step 5: Test and Refine**
+1. Play complete playlist during non-sleep time
+2. Observe baby's reactions to different segments
+3. Adjust sound order, duration, or transitions as needed
+4. Save multiple versions for different circumstances
+
+### Essential Playlist Templates
+
+**The Perfect Bedtime Playlist (45 minutes)**
+1. **Familiar Lullaby** (5 minutes) - Comfort and routine
+2. **Heartbeat Sounds** (8 minutes) - Deep comfort and security
+3. **Pink Noise/Rain** (15 minutes) - Sleep promotion
+4. **Soft White Noise** (12 minutes) - Consistent background
+5. **Very Soft White Noise** (5 minutes) - Fade to minimal sound
+
+**Nap Time Progression (30 minutes)**
+1. **Gentle Nature Sounds** (10 minutes) - Birds, soft breeze
+2. **Ocean Waves** (15 minutes) - Rhythmic, sleep-inducing
+3. **Minimal White Noise** (5 minutes) - Maintain sleep environment
+
+**Soothing for Fussy Baby (20 minutes)**
+1. **Shushing Sounds** (3 minutes) - Immediate comfort
+2. **Vacuum Cleaner** (7 minutes) - Strong masking noise
+3. **Rhythmic Heartbeat** (5 minutes) - Security and comfort
+4. **Soft Rain** (5 minutes) - Calming transition
+
+## Advanced Playlist Features
+
+### Dynamic Playlist Elements
+
+**Responsive Volume Control**
+- Start louder for attention, gradually decrease
+- Increase volume if baby becomes restless
+- Maintain consistent volume for deep sleep portions
+- Emergency volume boost for sudden wake-ups
+
+**Intelligent Looping**
+- Repeat entire playlist for extended sleep
+- Loop only certain sections (like middle sleep sounds)
+- Gradually reduce volume with each loop iteration
+- Stop after predetermined number of loops
+
+**Conditional Branching**
+- Different playlist paths based on baby's response
+- "If restless" alternatives for each playlist segment
+- Quick-switch options for different moods
+- Emergency calm-down sound insertions
+
+### Seasonal and Growth Adaptations
+
+**Age-Appropriate Modifications**
+**Newborn Versions** (0-3 months):
+- Shorter individual sound segments
+- More womb-like sounds (heartbeat, white noise)
+- Consistent volume throughout
+- Focus on comfort over sleep independence
+
+**Infant Adaptations** (3-6 months):
+- Longer sound segments
+- Introduction of gentle music and nature sounds
+- Beginning of volume variations
+- More complex sound layering
+
+**Baby and Toddler Versions** (6+ months):
+- Story elements or simple melodies
+- Environmental sounds for learning
+- Interactive elements (when appropriate)
+- Preparation for independent sleep
+
+**Seasonal Adjustments**
+- **Winter Playlists**: Cozy, warm sounds (fireplace, gentle wind)
+- **Spring Playlists**: Fresh nature sounds, birds, gentle rain
+- **Summer Playlists**: Ocean sounds, soft breezes, evening crickets
+- **Fall Playlists**: Rustling leaves, gentle rain, cozy indoor sounds
+
+## Playlist Management and Organization
+
+### Organizing Your Playlist Library
+
+**Category-Based Organization**
+- **Sleep Playlists**: Bedtime, nap, middle-of-night
+- **Activity Playlists**: Tummy time, feeding, play, travel
+- **Mood Playlists**: Calming, energizing, comforting
+- **Special Situation**: Illness, travel, visiting others
+
+**Naming Conventions**
+- Use descriptive names: "Bedtime - Winter Version"
+- Include duration: "Quick Calm (10 min)"
+- Note effectiveness: "Naptime - Works Great"
+- Version control: "Sleep Playlist v3 - Improved"
+
+**Playlist Maintenance**
+- Regular review of playlist effectiveness
+- Update based on baby's changing preferences
+- Archive playlists that no longer work
+- Create backup copies of successful playlists
+
+### Sharing and Collaboration
+
+**Family Playlist Sharing**
+- Share successful playlists with caregivers
+- Create collaborative playlists with partner input
+- Export playlists for babysitters or family members
+- Synchronized playlist updates across devices
+
+**Community Sharing** (Premium Feature)
+- Share anonymous playlist templates with other parents
+- Download popular playlist structures
+- Rate and review community-created playlists
+- Contribute to age-specific playlist collections
+
+## Troubleshooting Playlist Issues
+
+### Common Playlist Problems
+
+**Playlist Doesn't Flow Well**
+- Review transitions between sounds
+- Check individual sound volumes
+- Ensure sounds complement rather than conflict
+- Test complete playlist several times
+
+**Baby Loses Interest**
+- Vary the order of sounds occasionally
+- Create multiple versions of successful playlists
+- Introduce new sounds gradually
+- Monitor for signs of playlist fatigue
+
+**Technical Issues**
+- Ensure all sounds download properly
+- Check device storage for large playlists
+- Verify internet connection for streaming elements
+- Update app for latest playlist features
+
+### Optimization Strategies
+
+**Data and Battery Management**
+- Download playlist sounds for offline use
+- Optimize sound quality for storage vs. battery use
+- Create shorter backup versions for low battery situations
+- Use device power-saving modes compatible with audio playback
+
+**Performance Improvement**
+- Limit playlist length to prevent memory issues
+- Use consistent audio formats when possible
+- Regular app restarts for long playlist sessions
+- Monitor device temperature during extended use
+
+## Creative Playlist Ideas
+
+### Theme-Based Playlists
+
+**Around the World**: Gentle sounds from different cultures and environments
+**Seasonal Journey**: Sounds that represent different times of year
+**Day to Night**: Natural progression of environmental sounds
+**Growth Timeline**: Sounds that evolve with baby's development
+
+### Interactive Elements
+
+**Call and Response**: Alternating familiar and new sounds
+**Musical Learning**: Simple melodies with educational elements
+**Language Exposure**: Soft sounds from different languages/cultures
+**Nature Education**: Realistic animal and environmental sounds
+
+### Special Occasion Playlists
+
+**Travel Playlists**: Familiar sounds for comfort away from home
+**Holiday Themes**: Gentle, seasonal celebration sounds
+**Recovery Playlists**: Extra-soothing sounds for sick days
+**Celebration Playlists**: Happy, gentle sounds for special milestones
+
+Custom playlists transform your baby's audio environment from random sound selection to intentional, progressive experiences that support their development and your parenting goals. Experiment with different combinations, observe your baby's responses, and don't be afraid to create multiple versions until you find what works best for your family.`,
             readTime: '5 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Build Perfect Sound Playlists for Every Occasion</h2>
-              <p>Custom sound playlists allow you to create personalized audio experiences tailored to your baby's unique preferences and different situations throughout the day.</p>
-              
-              <h3>Understanding Playlist Types</h3>
-              
-              <h4>Sleep Playlists</h4>
-              <ul>
-                <li><strong>Bedtime sequence:</strong> Gentle transition from active to sleep sounds</li>
-                <li><strong>Nap time mix:</strong> Shorter sequences for daytime rest</li>
-                <li><strong>Night recovery:</strong> Sounds to help baby return to sleep after waking</li>
-                <li><strong>Early riser:</strong> Gentle sounds to encourage longer morning sleep</li>
-                <li><strong>Weekend routine:</strong> Relaxed schedule with flexible sound timing</li>
-              </ul>
-
-              <h4>Activity Playlists</h4>
-              <ul>
-                <li><strong>Tummy time:</strong> Engaging sounds to encourage motor development</li>
-                <li><strong>Play time:</strong> Stimulating but not overwhelming audio</li>
-                <li><strong>Feeding background:</strong> Calm sounds during meal times</li>
-                <li><strong>Bath time:</strong> Water-themed sounds for relaxation</li>
-                <li><strong>Car rides:</strong> Portable playlists for travel comfort</li>
-              </ul>
-
-              <h4>Mood-Based Playlists</h4>
-              <ul>
-                <li><strong>Fussy baby calm-down:</strong> Immediately soothing sounds</li>
-                <li><strong>Happy play:</strong> Upbeat but gentle audio for good moods</li>
-                <li><strong>Sick day comfort:</strong> Extra gentle sounds for when baby isn't feeling well</li>
-                <li><strong>Growth spurt support:</strong> Longer, more consistent sound sequences</li>
-                <li><strong>Teething relief:</strong> Specially selected calming audio</li>
-              </ul>
-
-              <h3>Creating Your First Playlist</h3>
-              
-              <h4>Step-by-Step Playlist Creation</h4>
-              <ol>
-                <li><strong>Navigate to Sounds:</strong> Open the Sounds section from your dashboard</li>
-                <li><strong>Access playlist creator:</strong> Tap "Create New Playlist" button</li>
-                <li><strong>Name your playlist:</strong> Choose descriptive name like "Bedtime Routine"</li>
-                <li><strong>Select sounds:</strong> Browse library and add sounds to playlist</li>
-                <li><strong>Arrange order:</strong> Drag and drop to arrange sound sequence</li>
-                <li><strong>Set durations:</strong> Specify how long each sound should play</li>
-                <li><strong>Configure transitions:</strong> Choose fade, crossfade, or direct cuts</li>
-                <li><strong>Save and test:</strong> Save playlist and test the full sequence</li>
-              </ol>
-
-              <h4>Playlist Naming Conventions</h4>
-              <ul>
-                <li><strong>Time-based:</strong> "Morning Routine," "Afternoon Nap," "Bedtime"</li>
-                <li><strong>Activity-based:</strong> "Feeding Time," "Play Session," "Tummy Time"</li>
-                <li><strong>Mood-based:</strong> "Calm Down," "Happy Time," "Comfort Sounds"</li>
-                <li><strong>Situation-based:</strong> "Travel Playlist," "Rainy Day," "Sick Day"</li>
-                <li><strong>Personal:</strong> "Emma's Favorites," "What Works for Jake"</li>
-              </ul>
-
-              <h3>Advanced Playlist Features</h3>
-              
-              <h4>Sound Transitions</h4>
-              <ul>
-                <li><strong>Crossfade:</strong> Smoothly blend from one sound to the next</li>
-                <li><strong>Fade out/in:</strong> Brief silence between sounds</li>
-                <li><strong>Direct cut:</strong> Immediate transition with no overlap</li>
-                <li><strong>Smart transition:</strong> AI chooses best transition method</li>
-                <li><strong>Custom duration:</strong> Set exact length of transition period</li>
-              </ul>
-
-              <h4>Dynamic Duration Settings</h4>
-              <ul>
-                <li><strong>Fixed duration:</strong> Each sound plays for exact time specified</li>
-                <li><strong>Minimum/maximum:</strong> Allow natural variation within set ranges</li>
-                <li><strong>Smart duration:</strong> Adjusts based on baby's response</li>
-                <li><strong>Loop individual:</strong> Repeat single sounds before moving to next</li>
-                <li><strong>Percentage-based:</strong> Allocate time as percentages of total playlist</li>
-              </ul>
-
-              <h3>Optimizing Playlists by Age</h3>
-              
-              <h4>Newborn Playlists (0-3 months)</h4>
-              <ul>
-                <li><strong>Womb sounds:</strong> Start with familiar heartbeat and whooshing</li>
-                <li><strong>Consistent volume:</strong> Maintain steady sound level throughout</li>
-                <li><strong>Longer durations:</strong> 20-30 minutes per sound minimum</li>
-                <li><strong>Simple transitions:</strong> Avoid complex crossfades</li>
-                <li><strong>Repetitive elements:</strong> Use similar sounds in sequence</li>
-              </ul>
-
-              <h4>Infant Playlists (3-6 months)</h4>
-              <ul>
-                <li><strong>Gentle variety:</strong> Introduce 2-3 different sound types</li>
-                <li><strong>Shorter segments:</strong> 10-15 minutes per sound</li>
-                <li><strong>Smooth transitions:</strong> Use crossfades between different sounds</li>
-                <li><strong>Volume variation:</strong> Slightly vary volume for interest</li>
-                <li><strong>Natural progression:</strong> Move from active to calm sounds</li>
-              </ul>
-
-              <h4>Older Baby Playlists (6-12 months)</h4>
-              <ul>
-                <li><strong>More complexity:</strong> 4-6 different sounds in sequence</li>
-                <li><strong>Themed playlists:</strong> Forest sounds, ocean themes, etc.</li>
-                <li><strong>Interactive elements:</strong> Sounds that respond to movement</li>
-                <li><strong>Seasonal adaptation:</strong> Match sounds to time of year</li>
-                <li><strong>Educational integration:</strong> Subtle learning elements</li>
-              </ul>
-
-              <h3>Playlist Customization</h3>
-              
-              <h4>Volume Mapping</h4>
-              <ul>
-                <li><strong>Individual sound levels:</strong> Set different volumes for each sound</li>
-                <li><strong>Gradual adjustment:</strong> Slowly increase or decrease throughout playlist</li>
-                <li><strong>Peak management:</strong> Ensure no sound is too loud or startling</li>
-                <li><strong>Consistent perception:</strong> Balance different sound types for equal perceived volume</li>
-                <li><strong>Night vs. day settings:</strong> Different volume curves for different times</li>
-              </ul>
-
-              <h4>Repeat and Shuffle Options</h4>
-              <ul>
-                <li><strong>Playlist loop:</strong> Repeat entire playlist continuously</li>
-                <li><strong>Single sound repeat:</strong> Loop one favorite sound</li>
-                <li><strong>Smart shuffle:</strong> Vary order while maintaining flow</li>
-                <li><strong>Weighted shuffle:</strong> Play favorites more often</li>
-                <li><strong>Time-based shuffle:</strong> Different sound orders for different times</li>
-              </ul>
-
-              <h3>Sharing and Collaboration</h3>
-              
-              <h4>Family Playlist Sharing</h4>
-              <ul>
-                <li><strong>Share with partner:</strong> Both parents can edit and use playlists</li>
-                <li><strong>Caregiver access:</strong> Give babysitters access to tested playlists</li>
-                <li><strong>Grandparent copies:</strong> Share favorite playlists for visits</li>
-                <li><strong>Export options:</strong> Save playlists for use in other apps</li>
-                <li><strong>Collaboration notes:</strong> Add comments about what works</li>
-              </ul>
-
-              <h4>Community Features</h4>
-              <ul>
-                <li><strong>Public sharing:</strong> Share successful playlists with SleepyBabyy community</li>
-                <li><strong>Browse popular:</strong> Find playlists that work for other parents</li>
-                <li><strong>Age-specific collections:</strong> Playlists curated by baby's age</li>
-                <li><strong>Expert recommendations:</strong> Playlists created by sleep specialists</li>
-                <li><strong>Seasonal collections:</strong> Holiday and seasonal themed playlists</li>
-              </ul>
-
-              <h3>Troubleshooting Playlist Issues</h3>
-              
-              <h4>Playback Problems</h4>
-              <ul>
-                <li><strong>Skipping sounds:</strong> Check internet connection for streaming sounds</li>
-                <li><strong>Uneven volume:</strong> Adjust individual sound levels in playlist</li>
-                <li><strong>Poor transitions:</strong> Experiment with different transition types</li>
-                <li><strong>Playlist stops:</strong> Ensure app has permission to run in background</li>
-                <li><strong>Wrong order:</strong> Double-check playlist sequence and save changes</li>
-              </ul>
-
-              <h4>Baby Not Responding</h4>
-              <ul>
-                <li><strong>Too complex:</strong> Simplify playlist with fewer sounds</li>
-                <li><strong>Wrong timing:</strong> Adjust duration of each sound</li>
-                <li><strong>Volume issues:</strong> Test different volume levels</li>
-                <li><strong>Sound mismatch:</strong> Replace sounds that seem to disturb baby</li>
-                <li><strong>Timing problems:</strong> Use playlist at different times of day</li>
-              </ul>
-
-              <h3>Playlist Analytics and Optimization</h3>
-              
-              <h4>Performance Tracking</h4>
-              <ul>
-                <li><strong>Success rates:</strong> Track how often playlists help baby sleep</li>
-                <li><strong>Duration analysis:</strong> See which sounds keep baby asleep longest</li>
-                <li><strong>Skip patterns:</strong> Identify sounds that aren't working</li>
-                <li><strong>Time correlation:</strong> Find optimal times to use each playlist</li>
-                <li><strong>Mood correlation:</strong> Match playlists to baby's emotional state</li>
-              </ul>
-
-              <h4>AI Optimization</h4>
-              <ul>
-                <li><strong>Smart suggestions:</strong> AI recommends sounds to add or remove</li>
-                <li><strong>Auto-ordering:</strong> Optimal sound sequence based on success data</li>
-                <li><strong>Duration optimization:</strong> AI suggests best length for each sound</li>
-                <li><strong>Seasonal adjustments:</strong> Automatic playlist updates for different seasons</li>
-                <li><strong>Growth adaptation:</strong> Playlists evolve as baby develops</li>
-              </ul>
-
-              <h3>Advanced Playlist Strategies</h3>
-              
-              <h4>Multi-Stage Sleep Playlists</h4>
-              <ul>
-                <li><strong>Pre-sleep (30 min):</strong> Gentle music or lullabies</li>
-                <li><strong>Sleep induction (15 min):</strong> White or pink noise</li>
-                <li><strong>Deep sleep (continuous):</strong> Consistent background sound</li>
-                <li><strong>Light sleep protection:</strong> Slightly louder during typical wake times</li>
-                <li><strong>Morning transition:</strong> Gradual volume reduction for wake-up</li>
-              </ul>
-
-              <h4>Situation-Specific Playlists</h4>
-              <ul>
-                <li><strong>Travel adaptation:</strong> Familiar sounds in new environments</li>
-                <li><strong>Daylight saving:</strong> Playlists to help adjust to time changes</li>
-                <li><strong>Illness recovery:</strong> Extra comforting sounds for sick days</li>
-                <li><strong>Milestone periods:</strong> Supportive sounds during developmental leaps</li>
-                <li><strong>Regression management:</strong> Proven effective sounds for difficult periods</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           }
         }
       },
@@ -2444,696 +2847,854 @@ const HelpArticle = () => {
         articles: {
           '1': {
             title: 'Setting up smart notifications',
+            content: `Smart notifications in SleepyBabyy help you stay on top of your baby's routine without overwhelming you with constant alerts. Here's how to configure intelligent notification systems that adapt to your family's needs.
+
+## Understanding Smart Notifications
+
+### What Makes Notifications "Smart"
+**Context-Aware Alerts**:
+- Notifications adjust based on your baby's patterns
+- Time-sensitive alerts for feeding, sleep, and diaper changes
+- Predictive notifications based on historical data
+- Reduced notifications during established routines
+
+**Family-Friendly Features**:
+- Coordinate notifications among multiple caregivers
+- Quiet hours and sleep mode configurations
+- Priority levels for different types of alerts
+- Location-based notification adjustments
+
+### Types of Smart Notifications
+
+**Routine Reminders**
+- Feeding time approaches based on typical schedule
+- Nap time alerts when baby shows sleepy signs
+- Diaper change reminders based on usual patterns
+- Medicine or vitamin reminders for scheduled doses
+
+**Pattern Recognition Alerts**
+- Sleep regression early warning systems
+- Growth spurt indicators
+- Unusual activity pattern notifications
+- Health and wellness trend alerts
+
+**Collaborative Notifications**
+- Real-time updates when partner logs activities
+- Caregiver handoff information sharing
+- Emergency alert systems for family members
+- Achievement and milestone celebrations
+
+## Setting Up Basic Smart Notifications
+
+### Initial Configuration
+
+**Step 1: Access Notification Settings**
+1. Go to Account Settings in SleepyBabyy
+2. Select "Notifications & Alerts"
+3. Choose "Smart Notifications Setup"
+4. Review current notification permissions
+
+**Step 2: Configure Core Activity Reminders**
+
+**Feeding Notifications**
+- Enable feeding time predictions based on patterns
+- Set minimum and maximum alert intervals
+- Choose notification style (gentle reminder vs. urgent alert)
+- Configure different settings for breast vs. bottle feeding
+
+**Sleep Notifications**
+- Nap time reminders based on wake windows
+- Bedtime preparation alerts
+- Overnight wake-up logging reminders
+- Sleep schedule deviation warnings
+
+**Diaper Change Alerts**
+- Time-based reminders (every 2-3 hours typical)
+- Post-feeding diaper change suggestions
+- Overnight diaper check reminders
+- Pattern-based wetness predictions
+
+**Step 3: Set Notification Priorities**
+
+**High Priority** (Always notify):
+- Safety concerns or unusual patterns
+- Medical reminders (medicine, appointments)
+- Emergency situations requiring immediate attention
+- Critical feeding or sleep schedule disruptions
+
+**Medium Priority** (Notify during active hours):
+- Routine reminders and upcoming activities
+- Pattern changes and trend notifications
+- Family member activity updates
+- Achievement and milestone alerts
+
+**Low Priority** (Batch notifications):
+- Weekly summary reminders
+- Analytics and report availability
+- Feature updates and tips
+- Community updates and social features
+
+### Advanced Smart Features
+
+**Predictive Notifications**
+- **Hunger Prediction**: Alerts 15-30 minutes before typical feeding times
+- **Sleepiness Detection**: Notifications when wake windows approach optimal lengths
+- **Growth Spurt Alerts**: Early indicators of increased feeding or sleep needs
+- **Developmental Leap Warnings**: Preparation for fussy periods and regression
+
+**Learning Notifications**
+- System learns from your response patterns
+- Reduces notifications for activities you consistently handle proactively
+- Increases alert frequency during challenging periods
+- Adapts to your family's unique rhythm and preferences
+
+## Customizing Notifications for Your Family
+
+### Multi-Caregiver Coordination
+
+**Primary Caregiver Settings**
+- Receive all notifications by default
+- Override capabilities for all alert types
+- Master control over family notification settings
+- Emergency contact for all family members
+
+**Secondary Caregiver Settings**
+- Filtered notifications based on responsibility areas
+- Shift-based notification schedules
+- Backup notifications when primary caregiver unavailable
+- Specialized alerts for their caregiving focus areas
+
+**Occasional Caregiver Settings** (Babysitters, Grandparents)
+- Essential notifications only during care periods
+- Emergency contact information prominently featured
+- Simplified notification categories
+- Temporary notification permissions
+
+### Time-Based Notification Management
+
+**Quiet Hours Configuration**
+- **Nighttime Quiet Hours**: Reduce non-essential notifications from 10 PM - 6 AM
+- **Nap Time Silence**: Pause notifications during baby's typical nap times
+- **Family Dinner Hours**: Minimize interruptions during evening family time
+- **Weekend Modifications**: Different notification patterns for non-workdays
+
+**Smart Quiet Hour Features**
+- Emergency notifications always allowed through quiet hours
+- Gradual notification resumption after quiet periods
+- Partner coordination (one parent gets urgent notifications)
+- Travel time zone automatic adjustments
+
+### Location-Based Intelligence
+
+**Home vs. Away Settings**
+- **At Home**: Full notification suite with routine reminders
+- **Away from Home**: Essential notifications only with location context
+- **At Work**: Professional-friendly notification timing and style
+- **Traveling**: Adjusted notifications for different time zones and schedules
+
+**Geofencing Features** (Premium)
+- Automatic notification profile switching based on location
+- Daycare pickup/dropoff reminder notifications
+- Pediatrician appointment arrival notifications
+- Home arrival routine preparation alerts
+
+## Notification Content and Style
+
+### Customizing Notification Messages
+
+**Tone and Style Options**
+- **Gentle Reminders**: Soft, suggestion-based language
+- **Urgent Alerts**: Clear, action-oriented messages
+- **Educational**: Include tips and context with reminders
+- **Minimal**: Brief, essential information only
+
+**Personalization Features**
+- Use baby's name in notifications
+- Include relevant context (last feeding time, sleep duration)
+- Customize message templates for different activities
+- Add personal notes and reminders to standard notifications
+
+### Visual and Audio Customization
+
+**Visual Notification Settings**
+- Choose notification badge styles and colors
+- Select icon designs for different alert types
+- Configure lock screen notification appearance
+- Customize in-app notification banners
+
+**Audio Alert Options**
+- Different sounds for different notification types
+- Volume control separate from device volume
+- Silent notification options with vibration patterns
+- Custom ringtones for emergency notifications
+
+## Advanced Notification Analytics
+
+### Understanding Notification Effectiveness
+
+**Response Tracking**
+- Monitor which notifications you respond to quickly
+- Identify notifications that are consistently ignored
+- Track optimal timing for different types of alerts
+- Measure notification impact on care routine compliance
+
+**Pattern Recognition**
+- System learns your response patterns over time
+- Adapts notification frequency based on effectiveness
+- Identifies optimal notification timing for your schedule
+- Suggests notification improvements based on usage data
+
+### Notification Optimization
+
+**AI-Powered Improvements**
+- Automatic reduction of ineffective notifications
+- Smart timing adjustments based on your response history
+- Predictive notification scheduling around your routine
+- Continuous learning from family patterns and preferences
+
+**Manual Optimization Tools**
+- Notification effectiveness ratings
+- Custom notification scheduling
+- A/B testing different notification approaches
+- Export notification analytics for review
+
+## Troubleshooting Notification Issues
+
+### Common Problems and Solutions
+
+**Not Receiving Notifications**
+- Check device notification permissions for SleepyBabyy
+- Verify app notification settings are enabled
+- Check Do Not Disturb or Focus mode settings
+- Ensure app is updated to latest version
+
+**Too Many Notifications**
+- Review and adjust notification priorities
+- Enable smart filtering to reduce redundant alerts
+- Configure appropriate quiet hours
+- Customize notification frequency settings
+
+**Notifications at Wrong Times**
+- Verify time zone settings in app and device
+- Check quiet hours configuration
+- Review family member notification schedules
+- Adjust predictive notification timing
+
+### Device-Specific Considerations
+
+**iOS Optimization**
+- Configure Focus modes to work with SleepyBabyy
+- Set up Screen Time exceptions for baby care apps
+- Use Shortcuts app for custom notification responses
+- Configure Lock Screen widgets for quick access
+
+**Android Optimization**
+- Add SleepyBabyy to battery optimization exceptions
+- Configure notification channels and priorities
+- Use Do Not Disturb custom rules
+- Set up tasker automation for advanced notification control
+
+## Privacy and Security in Notifications
+
+### Data Protection
+- All notifications use encrypted data transmission
+- Personal information never included in notification previews
+- Option to disable notification content on lock screen
+- Regular security audits of notification systems
+
+### Family Privacy Controls
+- Control what information different family members see in notifications
+- Separate notification streams for different babies/profiles
+- Option to limit sensitive information in shared notifications
+- Individual privacy controls for each family member
+
+Smart notifications should enhance your parenting experience by providing helpful, timely information without creating stress or information overload. Regular review and adjustment of your notification settings ensures they continue to serve your family's evolving needs effectively.`,
             readTime: '5 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Master Smart Notifications for Better Baby Care</h2>
-              <p>Smart notifications in SleepyBabyy help you stay on top of your baby's routine without being overwhelming. Learn how to configure notifications that work for your family's lifestyle.</p>
-              
-              <h3>Understanding Notification Types</h3>
-              
-              <h4>Routine Reminders</h4>
-              <ul>
-                <li><strong>Feeding alerts:</strong> Remind you when it's time for next feeding</li>
-                <li><strong>Sleep time notifications:</strong> Alert when baby should go down for nap or bedtime</li>
-                <li><strong>Diaper check reminders:</strong> Prompt for regular diaper changes</li>
-                <li><strong>Medicine reminders:</strong> Never miss medication doses</li>
-                <li><strong>Activity suggestions:</strong> Prompt for tummy time, play, or interaction</li>
-              </ul>
-
-              <h4>Pattern-Based Alerts</h4>
-              <ul>
-                <li><strong>Sleep regression warnings:</strong> Alert to potential sleep disruptions</li>
-                <li><strong>Growth spurt indicators:</strong> Notify when feeding patterns suggest growth</li>
-                <li><strong>Schedule drift alerts:</strong> Warn when routines are shifting</li>
-                <li><strong>Milestone readiness:</strong> Suggest when baby might reach new developments</li>
-                <li><strong>Health pattern changes:</strong> Alert to significant pattern deviations</li>
-              </ul>
-
-              <h4>Emergency and Safety Alerts</h4>
-              <ul>
-                <li><strong>Fever monitoring:</strong> Immediate alerts for temperature concerns</li>
-                <li><strong>Appointment reminders:</strong> Never miss pediatrician visits</li>
-                <li><strong>Vaccination schedules:</strong> Timely reminders for immunizations</li>
-                <li><strong>Safety check prompts:</strong> Regular infant safety reminders</li>
-                <li><strong>Emergency contact notifications:</strong> Family alerts during concerns</li>
-              </ul>
-
-              <h3>Configuring Basic Notifications</h3>
-              
-              <h4>Accessing Notification Settings</h4>
-              <ul>
-                <li>Open Settings from your dashboard menu</li>
-                <li>Tap "Notifications" section</li>
-                <li>Enable device notifications for SleepyBabyy if prompted</li>
-                <li>Choose notification categories to customize</li>
-                <li>Set your preferred notification times and frequencies</li>
-              </ul>
-
-              <h4>Essential Notification Setup</h4>
-              <ul>
-                <li><strong>Feeding schedule:</strong> Set intervals based on baby's age (2-4 hours)</li>
-                <li><strong>Sleep reminders:</strong> 15-30 minutes before scheduled nap/bedtime</li>
-                <li><strong>Wake windows:</strong> Alert when baby has been awake too long</li>
-                <li><strong>Activity tracking:</strong> Remind to log activities if forgotten</li>
-                <li><strong>Daily summary:</strong> End-of-day progress report</li>
-              </ul>
-
-              <h3>Age-Specific Notification Strategies</h3>
-              
-              <h4>Newborn Stage (0-3 months)</h4>
-              <ul>
-                <li><strong>Frequent feeding alerts:</strong> Every 2-3 hours, including night</li>
-                <li><strong>Diaper reminders:</strong> Every 2 hours or after feeding</li>
-                <li><strong>Sleep opportunity alerts:</strong> When baby shows tired signs</li>
-                <li><strong>Weight gain tracking:</strong> Weekly reminders to monitor growth</li>
-                <li><strong>Gentle routine building:</strong> Gradual schedule establishment</li>
-              </ul>
-
-              <h4>Infant Stage (3-6 months)</h4>
-              <ul>
-                <li><strong>Schedule consolidation:</strong> Reminders for emerging routine</li>
-                <li><strong>Sleep training support:</strong> Consistency reminders</li>
-                <li><strong>Solid food introduction:</strong> Alerts for trying new foods</li>
-                <li><strong>Development milestones:</strong> Motor skill encouragement reminders</li>
-                <li><strong>Social interaction prompts:</strong> Play and bonding time alerts</li>
-              </ul>
-
-              <h4>Mobile Baby Stage (6-12 months)</h4>
-              <ul>
-                <li><strong>Meal planning alerts:</strong> Variety in food introduction</li>
-                <li><strong>Safety check reminders:</strong> Baby-proofing updates</li>
-                <li><strong>Active play prompts:</strong> Encourage movement and exploration</li>
-                <li><strong>Language development:</strong> Reading and talking reminders</li>
-                <li><strong>Schedule flexibility:</strong> Adapt to changing nap patterns</li>
-              </ul>
-
-              <h3>Smart Notification Features</h3>
-              
-              <h4>AI-Powered Predictions</h4>
-              <ul>
-                <li><strong>Pattern learning:</strong> AI learns your baby's unique patterns</li>
-                <li><strong>Predictive alerts:</strong> Notifications based on historical data</li>
-                <li><strong>Anomaly detection:</strong> Alert to unusual patterns or behaviors</li>
-                <li><strong>Optimal timing:</strong> Suggest best times for activities</li>
-                <li><strong>Personalized recommendations:</strong> Custom advice based on your data</li>
-              </ul>
-
-              <h4>Context-Aware Notifications</h4>
-              <ul>
-                <li><strong>Location-based:</strong> Different alerts for home vs. daycare</li>
-                <li><strong>Time-sensitive:</strong> Adjust for weekends vs. weekdays</li>
-                <li><strong>Weather-adapted:</strong> Indoor activity suggestions on bad weather days</li>
-                <li><strong>Family schedule integration:</strong> Coordinate with partner's availability</li>
-                <li><strong>Event-aware:</strong> Adjust for holidays, travel, or special occasions</li>
-              </ul>
-
-              <h3>Customization Options</h3>
-              
-              <h4>Notification Timing</h4>
-              <ul>
-                <li><strong>Quiet hours:</strong> Set times when notifications should be silent</li>
-                <li><strong>Urgency levels:</strong> Different timing for different priority alerts</li>
-                <li><strong>Snooze options:</strong> Delay notifications for 5-30 minutes</li>
-                <li><strong>Repeat settings:</strong> How often to repeat missed alerts</li>
-                <li><strong>Lead time adjustment:</strong> More or less warning time for activities</li>
-              </ul>
-
-              <h4>Notification Styles</h4>
-              <ul>
-                <li><strong>Sound selection:</strong> Choose different tones for different alert types</li>
-                <li><strong>Vibration patterns:</strong> Custom vibration for silent alerts</li>
-                <li><strong>Visual alerts:</strong> Banner, badge, or full-screen options</li>
-                <li><strong>Text customization:</strong> Personalize notification messages</li>
-                <li><strong>Icon options:</strong> Different icons for different notification types</li>
-              </ul>
-
-              <h3>Family Coordination</h3>
-              
-              <h4>Multi-Parent Notifications</h4>
-              <ul>
-                <li><strong>Shared alerts:</strong> Both parents receive routine reminders</li>
-                <li><strong>Task distribution:</strong> Alternate who gets feeding/diaper alerts</li>
-                <li><strong>Handoff notifications:</strong> Alert when one parent takes over</li>
-                <li><strong>Sync confirmations:</strong> Confirm when activities are completed</li>
-                <li><strong>Priority parent:</strong> Primary recipient with backup notifications</li>
-              </ul>
-
-              <h4>Caregiver Integration</h4>
-              <ul>
-                <li><strong>Babysitter alerts:</strong> Important routine information for caregivers</li>
-                <li><strong>Emergency notifications:</strong> Critical alerts sent to multiple people</li>
-                <li><strong>Daycare coordination:</strong> Share routine information with providers</li>
-                <li><strong>Grandparent updates:</strong> Optional notifications for extended family</li>
-                <li><strong>Professional communication:</strong> Alerts for pediatrician visits</li>
-              </ul>
-
-              <h3>Advanced Notification Management</h3>
-              
-              <h4>Notification Grouping</h4>
-              <ul>
-                <li><strong>Category bundling:</strong> Group similar notifications together</li>
-                <li><strong>Priority ordering:</strong> Most important alerts shown first</li>
-                <li><strong>Time-based grouping:</strong> Bundle notifications by time period</li>
-                <li><strong>Smart summarization:</strong> Combine related alerts into single notification</li>
-                <li><strong>Expandable alerts:</strong> Quick view with option for detailed information</li>
-              </ul>
-
-              <h4>Notification Analytics</h4>
-              <ul>
-                <li><strong>Response tracking:</strong> See which notifications you act on quickly</li>
-                <li><strong>Effectiveness measurement:</strong> Analyze which alerts improve routine adherence</li>
-                <li><strong>Timing optimization:</strong> Adjust alert timing based on your response patterns</li>
-                <li><strong>Frequency adjustment:</strong> Reduce or increase alerts based on effectiveness</li>
-                <li><strong>Personalization improvement:</strong> Continuously refine notification relevance</li>
-              </ul>
-
-              <h3>Troubleshooting Notifications</h3>
-              
-              <h4>Not Receiving Notifications</h4>
-              <ul>
-                <li><strong>Device permissions:</strong> Check notification settings for SleepyBabyy</li>
-                <li><strong>Do not disturb:</strong> Configure exceptions for baby care alerts</li>
-                <li><strong>Battery optimization:</strong> Prevent system from closing SleepyBabyy</li>
-                <li><strong>App updates:</strong> Ensure latest version for best notification reliability</li>
-                <li><strong>Network connectivity:</strong> Check internet connection for cloud notifications</li>
-              </ul>
-
-              <h4>Too Many Notifications</h4>
-              <ul>
-                <li><strong>Priority adjustment:</strong> Disable less critical alert categories</li>
-                <li><strong>Frequency reduction:</strong> Increase intervals between similar alerts</li>
-                <li><strong>Smart bundling:</strong> Enable notification grouping to reduce clutter</li>
-                <li><strong>Time restrictions:</strong> Set quiet hours or specific active periods</li>
-                <li><strong>Custom profiles:</strong> Different notification levels for weekends/weekdays</li>
-              </ul>
-
-              <h3>Privacy and Security</h3>
-              
-              <h4>Notification Privacy</h4>
-              <ul>
-                <li><strong>Lock screen display:</strong> Choose what information shows when phone is locked</li>
-                <li><strong>Sensitive information:</strong> Hide detailed baby information from notifications</li>
-                <li><strong>Public device settings:</strong> Minimize information when others might see screen</li>
-                <li><strong>Family sharing boundaries:</strong> Control who sees which notifications</li>
-                <li><strong>Professional privacy:</strong> Separate work and personal notification settings</li>
-              </ul>
-
-              <h4>Data Security</h4>
-              <ul>
-                <li><strong>Encrypted notifications:</strong> All alert data is securely transmitted</li>
-                <li><strong>Local vs. cloud:</strong> Choose where notification data is stored</li>
-                <li><strong>Temporary storage:</strong> Notifications automatically deleted after set time</li>
-                <li><strong>Access control:</strong> Notifications only sent to authorized family members</li>
-                <li><strong>Emergency protocols:</strong> Secure sharing of critical information when needed</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '2': {
             title: 'Customizing your dashboard',
+            content: `Your SleepyBabyy dashboard is your command center for baby care. Customizing it to match your priorities and workflow makes daily tracking more efficient and intuitive.
+
+## Understanding Dashboard Components
+
+### Core Dashboard Elements
+
+**Quick Stats Bar**
+- Current status indicators (last feeding, sleep state, diaper status)
+- Time since last major activities
+- Today's totals and key metrics
+- Alert indicators for overdue activities
+
+**Quick Action Buttons**
+- One-tap logging for frequent activities
+- Customizable button layout and priorities
+- Color-coding for different activity types
+- Easy access to emergency functions
+
+**Activity Feed**
+- Chronological list of recent activities
+- Visual timeline of daily patterns
+- Quick edit capabilities for recent entries
+- Family member activity attribution
+
+**Summary Cards**
+- Weekly and daily pattern overviews
+- Growth tracking displays
+- Sleep quality indicators
+- Feeding trend summaries
+
+### Widget Categories
+
+**Essential Widgets** (Always Visible)
+- Baby's current status and needs
+- Emergency contact information
+- Critical health information
+- Last activity timestamps
+
+**Monitoring Widgets**
+- Growth charts and measurements
+- Sleep pattern visualizations
+- Feeding volume and frequency graphs
+- Development milestone trackers
+
+**Analytical Widgets**
+- Weekly summary cards
+- Trend analysis displays
+- Comparative analytics
+- Prediction and recommendation panels
+
+**Family Widgets**
+- Multi-caregiver activity logs
+- Family member status updates
+- Shared notes and communications
+- Collaborative tracking tools
+
+## Customizing Your Dashboard Layout
+
+### Getting Started with Customization
+
+**Step 1: Access Dashboard Settings**
+1. Navigate to your main dashboard
+2. Tap the "Customize" or gear icon (usually top right)
+3. Select "Dashboard Layout" or "Customize Dashboard"
+4. Enter editing mode
+
+**Step 2: Identify Your Priorities**
+Consider these questions:
+- Which activities do you track most frequently?
+- What information do you check multiple times per day?
+- Which family members need quick access to specific features?
+- What are your biggest daily challenges or concerns?
+
+**Step 3: Layout Planning**
+- **Top Section**: Most critical, frequently accessed information
+- **Middle Section**: Daily tracking tools and quick actions
+- **Bottom Section**: Analytics, summaries, and less frequently used features
+- **Hidden/Secondary**: Archive rarely used widgets
+
+### Widget Management
+
+**Adding Widgets**
+1. In customization mode, tap "Add Widget" or "+"
+2. Browse widget categories (Tracking, Analytics, Family, etc.)
+3. Preview widget appearance and functionality
+4. Drag to desired position on dashboard
+5. Configure widget-specific settings
+
+**Removing Widgets**
+1. Long-press on widget you want to remove
+2. Select "Remove" or drag to trash area
+3. Confirm removal (widgets can be re-added later)
+4. Reorganize remaining widgets as needed
+
+**Resizing and Positioning**
+- **Small Widgets**: Quick stats, single metrics
+- **Medium Widgets**: Charts, recent activity lists
+- **Large Widgets**: Detailed analytics, comprehensive summaries
+- **Full-Width**: Major features, detailed timelines
+
+### Creating Custom Widget Groups
+
+**Activity-Based Groups**
+- **Sleep Focus**: Sleep tracking, schedules, analytics
+- **Feeding Focus**: Nutrition tracking, volume charts, timing
+- **Health Focus**: Growth, symptoms, medication tracking
+- **Family Focus**: Multi-caregiver tools, communication, sharing
+
+**Time-Based Layouts**
+- **Morning Dashboard**: Overnight summaries, day planning, schedules
+- **Daytime Dashboard**: Active tracking, quick logging, real-time stats
+- **Evening Dashboard**: Day summaries, bedtime preparation, tomorrow planning
+
+**Role-Based Customization**
+- **Primary Caregiver**: Full access to all widgets and analytics
+- **Working Parent**: Essential stats, quick logging, summary information
+- **Babysitter**: Safety info, basic logging, emergency contacts
+- **Grandparent**: Baby's status, photos, milestone tracking
+
+## Advanced Customization Features
+
+### Smart Widget Behaviors
+
+**Context-Sensitive Display**
+- Widgets automatically adjust based on time of day
+- Priority changes based on baby's current needs
+- Seasonal adjustments for different activities
+- Growth stage-appropriate widget recommendations
+
+**Predictive Widget Arrangement**
+- Frequently used widgets move higher in layout
+- Rarely accessed widgets minimize or hide
+- Emergency widgets become prominent when needed
+- Learning algorithms optimize based on usage patterns
+
+**Conditional Widget Visibility**
+- Show feeding widgets only around meal times
+- Display sleep widgets during nap and bedtime hours
+- Highlight health widgets when symptoms are logged
+- Surface family widgets when multiple caregivers are active
+
+### Multi-Profile Dashboard Management
+
+**Single Baby, Multiple Caregivers**
+- Each family member can have personalized dashboard layouts
+- Shared widgets for coordination
+- Individual widgets for specific responsibilities
+- Unified data with personalized presentation
+
+**Multiple Baby Profiles**
+- Switch between baby dashboards with simple swipe or tap
+- Shared widgets that work across all profiles
+- Individual customization for each baby's unique needs
+- Family overview dashboard showing all babies
+
+**Profile-Specific Optimizations**
+- **Newborn Dashboard**: Focus on basic needs, frequent feeding/diaper changes
+- **Infant Dashboard**: Sleep schedule emphasis, developmental milestones
+- **Toddler Dashboard**: Activity tracking, behavioral patterns, nutrition
+
+### Advanced Widget Configuration
+
+**Widget-Specific Settings**
+- **Time Ranges**: Choose data periods for charts and summaries
+- **Metric Focus**: Select which measurements to highlight
+- **Alert Thresholds**: Customize when widgets show warnings or concerns
+- **Visual Themes**: Match widget colors to baby's profile theme
+
+**Data Source Selection**
+- Choose which family members' data appears in widgets
+- Filter by date ranges or specific activities
+- Include or exclude certain types of entries
+- Real-time vs. summary data preferences
+
+**Interactive Features**
+- Quick-edit capabilities directly from widgets
+- Drill-down to detailed views from summary widgets
+- One-tap actions from status widgets
+- Sharing options for specific widget data
+
+## Dashboard Themes and Visual Customization
+
+### Visual Theme Options
+
+**Color Schemes**
+- **Soft Pastels**: Calming, easy on eyes during night feeding
+- **High Contrast**: Clear visibility for quick information gathering
+- **Seasonal Themes**: Adjust colors based on time of year
+- **Personal Photos**: Use baby's photos as background elements
+
+**Layout Styles**
+- **Compact**: Maximum information in minimal space
+- **Spacious**: Larger widgets with plenty of white space
+- **Card-Based**: Individual cards for each widget type
+- **Timeline**: Chronological layout emphasizing activity sequence
+
+**Font and Text Options**
+- **Font Size**: Adjustable for different vision needs and devices
+- **Font Weight**: Bold for quick scanning, regular for detailed reading
+- **Text Color**: High contrast options for accessibility
+- **Label Customization**: Rename widgets and sections with personal terms
+
+### Accessibility Features
+
+**Visual Accessibility**
+- High contrast mode for vision difficulties
+- Large text options for easy reading
+- Color-blind friendly color schemes
+- Reduced motion options for sensitivity
+
+**Motor Accessibility**
+- Larger touch targets for easier interaction
+- Voice control integration for hands-free operation
+- One-handed operation optimizations
+- Customizable gesture controls
+
+**Cognitive Accessibility**
+- Simplified layouts for reduced cognitive load
+- Clear, consistent navigation patterns
+- Essential information prioritization
+- Reduced visual clutter options
+
+## Dashboard Analytics and Optimization
+
+### Usage Analytics
+
+**Widget Interaction Tracking**
+- Most frequently accessed widgets
+- Time spent viewing different dashboard sections
+- Peak usage hours and patterns
+- Feature utilization rates
+
+**Optimization Suggestions**
+- Recommendations for widget placement based on usage
+- Suggestions for widgets to add or remove
+- Layout efficiency improvements
+- Time-saving customization tips
+
+**Performance Monitoring**
+- Dashboard loading times
+- Widget refresh rates and reliability
+- Battery impact of different customization choices
+- Network usage optimization
+
+### Backup and Sync
+
+**Dashboard Configuration Backup**
+- Export dashboard layouts for backup
+- Save multiple layout configurations for different situations
+- Cloud sync across multiple devices
+- Family member layout sharing
+
+**Cross-Platform Consistency**
+- Maintain customizations across phone, tablet, web
+- Adapt layouts appropriately for different screen sizes
+- Sync customization preferences in real-time
+- Device-specific optimizations while maintaining core layout
+
+## Troubleshooting Dashboard Issues
+
+### Common Customization Problems
+
+**Widgets Not Loading**
+- Check internet connection for data-dependent widgets
+- Verify app permissions for accessing required data
+- Clear app cache and restart
+- Update to latest app version
+
+**Layout Changes Not Saving**
+- Ensure you're in edit mode when making changes
+- Confirm changes before exiting customization
+- Check available storage space on device
+- Verify account sync is working properly
+
+**Performance Issues with Heavily Customized Dashboards**
+- Reduce number of active widgets
+- Choose less data-intensive widget options
+- Adjust refresh rates for analytical widgets
+- Consider device memory and processing limitations
+
+### Optimization Tips
+
+**Efficiency Improvements**
+- Start with essential widgets, add others gradually
+- Group related widgets together for workflow efficiency
+- Use consistent layouts across different profiles
+- Regular review and pruning of unused widgets
+
+**Best Practices**
+- Test layouts during typical care routines
+- Get input from all family members who use the dashboard
+- Adjust layouts based on baby's changing needs
+- Maintain backup configurations for different life stages
+
+Your dashboard should evolve with your baby's needs and your family's routine. Regular customization and optimization ensure it remains a valuable tool that saves time and provides the information most important to your family's daily care routine.`,
             readTime: '4 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Personalize Your SleepyBabyy Dashboard</h2>
-              <p>Your dashboard is your command center for baby care. Learn how to customize it to show the most relevant information and arrange features for your workflow.</p>
-              
-              <h3>Understanding Dashboard Components</h3>
-              
-              <h4>Widget Types Available</h4>
-              <ul>
-                <li><strong>Quick action cards:</strong> One-tap logging for common activities</li>
-                <li><strong>Summary widgets:</strong> Today's overview of sleep, feeding, diapers</li>
-                <li><strong>Timeline displays:</strong> Recent activity chronological view</li>
-                <li><strong>Chart widgets:</strong> Visual graphs of patterns and trends</li>
-                <li><strong>Photo memories:</strong> Recent pictures and milestone images</li>
-                <li><strong>Alert panels:</strong> Upcoming reminders and notifications</li>
-                <li><strong>Weather integration:</strong> Current conditions affecting baby's comfort</li>
-                <li><strong>Family activity feed:</strong> What other caregivers have logged</li>
-              </ul>
-
-              <h4>Layout Options</h4>
-              <ul>
-                <li><strong>Grid view:</strong> Equal-sized widgets in organized rows</li>
-                <li><strong>List view:</strong> Stacked widgets in priority order</li>
-                <li><strong>Carousel view:</strong> Swipeable horizontal widget arrangement</li>
-                <li><strong>Mixed layout:</strong> Different sized widgets for different priorities</li>
-                <li><strong>Minimal view:</strong> Only essential information displayed</li>
-              </ul>
-
-              <h3>Basic Dashboard Customization</h3>
-              
-              <h4>Accessing Customization Settings</h4>
-              <ul>
-                <li>Tap the "Edit Dashboard" button in top right corner</li>
-                <li>Long-press any widget to enter edit mode</li>
-                <li>Access through Settings > Dashboard Preferences</li>
-                <li>Use the widget customization wizard for guided setup</li>
-              </ul>
-
-              <h4>Adding and Removing Widgets</h4>
-              <ul>
-                <li><strong>Add widgets:</strong> Tap the "+" button and browse available options</li>
-                <li><strong>Remove widgets:</strong> Long-press and drag to trash icon</li>
-                <li><strong>Resize widgets:</strong> Drag corner handles to adjust size</li>
-                <li><strong>Move widgets:</strong> Drag to rearrange position on dashboard</li>
-                <li><strong>Widget categories:</strong> Browse by function (Sleep, Feeding, Health, etc.)</li>
-              </ul>
-
-              <h3>Widget Configuration Options</h3>
-              
-              <h4>Quick Action Card Customization</h4>
-              <ul>
-                <li><strong>Activity selection:</strong> Choose which activities to show as quick buttons</li>
-                <li><strong>Button order:</strong> Arrange by frequency of use or personal preference</li>
-                <li><strong>Color coding:</strong> Assign colors to different activity types</li>
-                <li><strong>Icon customization:</strong> Select preferred icons for each activity</li>
-                <li><strong>Size options:</strong> Large buttons for easy tapping or compact for more options</li>
-              </ul>
-
-              <h4>Summary Widget Settings</h4>
-              <ul>
-                <li><strong>Time range:</strong> Show data for last 24 hours, week, or custom period</li>
-                <li><strong>Metrics displayed:</strong> Choose which statistics are most important</li>
-                <li><strong>Visual style:</strong> Numbers, progress bars, or charts</li>
-                <li><strong>Comparison options:</strong> Show changes from previous period</li>
-                <li><strong>Target tracking:</strong> Display progress toward daily goals</li>
-              </ul>
-
-              <h4>Chart Widget Customization</h4>
-              <ul>
-                <li><strong>Chart type:</strong> Line graphs, bar charts, pie charts, or heat maps</li>
-                <li><strong>Data selection:</strong> Choose which activities to visualize</li>
-                <li><strong>Time scale:</strong> Hourly, daily, weekly, or monthly views</li>
-                <li><strong>Color schemes:</strong> Select colors that are easy to read</li>
-                <li><strong>Interactive options:</strong> Enable tap-to-drill-down functionality</li>
-              </ul>
-
-              <h3>Age-Specific Dashboard Layouts</h3>
-              
-              <h4>Newborn Dashboard (0-3 months)</h4>
-              <ul>
-                <li><strong>Priority widgets:</strong> Feeding tracker, diaper log, sleep timer</li>
-                <li><strong>Quick actions:</strong> Start feeding, log diaper, begin sleep</li>
-                <li><strong>Essential info:</strong> Last feeding time, diaper count, total sleep</li>
-                <li><strong>Minimal complexity:</strong> Focus on survival basics</li>
-                <li><strong>Large buttons:</strong> Easy to use during sleep-deprived moments</li>
-              </ul>
-
-              <h4>Infant Dashboard (3-6 months)</h4>
-              <ul>
-                <li><strong>Routine tracking:</strong> Schedule adherence, pattern recognition</li>
-                <li><strong>Development focus:</strong> Milestone tracking, tummy time reminders</li>
-                <li><strong>Growth monitoring:</strong> Weight tracking, feeding amounts</li>
-                <li><strong>Sleep optimization:</strong> Sleep quality charts, wake window tracking</li>
-                <li><strong>Photo integration:</strong> Daily milestone photo widget</li>
-              </ul>
-
-              <h4>Mobile Baby Dashboard (6-12 months)</h4>
-              <ul>
-                <li><strong>Activity variety:</strong> Play time, learning activities, social interaction</li>
-                <li><strong>Safety tracking:</strong> Childproofing reminders, hazard awareness</li>
-                <li><strong>Meal planning:</strong> Solid food introduction, variety tracking</li>
-                <li><strong>Independence support:</strong> Self-feeding progress, mobility milestones</li>
-                <li><strong>Communication development:</strong> Word tracking, gesture recognition</li>
-              </ul>
-
-              <h3>Advanced Customization Features</h3>
-              
-              <h4>Conditional Widget Display</h4>
-              <ul>
-                <li><strong>Time-based visibility:</strong> Show different widgets for day vs. night</li>
-                <li><strong>Activity-dependent:</strong> Display relevant widgets based on current activity</li>
-                <li><strong>Schedule-aware:</strong> Emphasize upcoming routine items</li>
-                <li><strong>Location-based:</strong> Different widgets for home, daycare, travel</li>
-                <li><strong>Emergency mode:</strong> Simplified interface for urgent situations</li>
-              </ul>
-
-              <h4>Multi-Profile Dashboard</h4>
-              <ul>
-                <li><strong>Multiple babies:</strong> Quick switching between child profiles</li>
-                <li><strong>Sibling comparison:</strong> Side-by-side widgets for multiple children</li>
-                <li><strong>Age-appropriate automatic:</strong> Widgets adapt as baby grows</li>
-                <li><strong>Family member views:</strong> Different dashboard for different caregivers</li>
-                <li><strong>Professional mode:</strong> Healthcare provider optimized view</li>
-              </ul>
-
-              <h3>Theme and Visual Customization</h3>
-              
-              <h4>Color Themes</h4>
-              <ul>
-                <li><strong>Light theme:</strong> Clean, bright interface for daytime use</li>
-                <li><strong>Dark theme:</strong> Easy on eyes for nighttime feeding sessions</li>
-                <li><strong>Auto-switching:</strong> Automatically change theme based on time</li>
-                <li><strong>High contrast:</strong> Improved visibility for accessibility</li>
-                <li><strong>Custom colors:</strong> Choose your preferred color palette</li>
-              </ul>
-
-              <h4>Layout Density</h4>
-              <ul>
-                <li><strong>Compact view:</strong> More widgets visible on screen</li>
-                <li><strong>Comfortable view:</strong> Balanced spacing and readability</li>
-                <li><strong>Spacious view:</strong> Larger widgets with more white space</li>
-                <li><strong>Accessibility mode:</strong> Extra large text and buttons</li>
-                <li><strong>One-handed mode:</strong> Optimize for single-hand operation</li>
-              </ul>
-
-              <h3>Dashboard Templates</h3>
-              
-              <h4>Pre-Made Templates</h4>
-              <ul>
-                <li><strong>"First-Time Parent":</strong> Essential widgets with helpful tips</li>
-                <li><strong>"Experienced Parent":</strong> Advanced tracking and analytics focus</li>
-                <li><strong>"Working Parent":</strong> Quick logging and caregiver coordination</li>
-                <li><strong>"Data Enthusiast":</strong> Charts, graphs, and detailed analytics</li>
-                <li><strong>"Minimalist":</strong> Only the most essential information</li>
-              </ul>
-
-              <h4>Custom Template Creation</h4>
-              <ul>
-                <li><strong>Save current layout:</strong> Turn your customizations into reusable template</li>
-                <li><strong>Share templates:</strong> Send your dashboard setup to partner or friends</li>
-                <li><strong>Import templates:</strong> Use layouts shared by other parents</li>
-                <li><strong>Backup configurations:</strong> Save multiple layouts for different situations</li>
-                <li><strong>Template scheduling:</strong> Automatically switch layouts at different times</li>
-              </ul>
-
-              <h3>Mobile vs. Desktop Customization</h3>
-              
-              <h4>Mobile-Specific Options</h4>
-              <ul>
-                <li><strong>Swipe navigation:</strong> Configure swipe gestures between widgets</li>
-                <li><strong>One-thumb operation:</strong> Optimize widget placement for thumb reach</li>
-                <li><strong>Notification integration:</strong> Widgets that expand from notifications</li>
-                <li><strong>Lock screen widgets:</strong> Quick access without unlocking phone</li>
-                <li><strong>Voice activation:</strong> Control widgets with voice commands</li>
-              </ul>
-
-              <h4>Desktop Advantages</h4>
-              <ul>
-                <li><strong>Multi-column layout:</strong> More widgets visible simultaneously</li>
-                <li><strong>Drag and drop:</strong> Easier widget rearrangement</li>
-                <li><strong>Keyboard shortcuts:</strong> Quick access to common functions</li>
-                <li><strong>Multiple windows:</strong> Different views open simultaneously</li>
-                <li><strong>Export options:</strong> Easy data export and printing</li>
-              </ul>
-
-              <h3>Performance and Optimization</h3>
-              
-              <h4>Dashboard Performance</h4>
-              <ul>
-                <li><strong>Widget limits:</strong> Optimal number of widgets for smooth performance</li>
-                <li><strong>Refresh rates:</strong> Balance real-time updates with battery life</li>
-                <li><strong>Data caching:</strong> Store frequently accessed information locally</li>
-                <li><strong>Background updates:</strong> Keep dashboard current without draining battery</li>
-                <li><strong>Connection optimization:</strong> Efficient data syncing across devices</li>
-              </ul>
-
-              <h4>Accessibility Features</h4>
-              <ul>
-                <li><strong>Screen reader support:</strong> Compatible with accessibility tools</li>
-                <li><strong>Voice navigation:</strong> Control dashboard with voice commands</li>
-                <li><strong>High contrast mode:</strong> Enhanced visibility for visual impairments</li>
-                <li><strong>Large text options:</strong> Scalable fonts for better readability</li>
-                <li><strong>Motor accessibility:</strong> Switch control and assistive touch support</li>
-              </ul>
-
-              <h3>Backing Up and Syncing</h3>
-              
-              <h4>Cross-Device Synchronization</h4>
-              <ul>
-                <li><strong>Cloud sync:</strong> Dashboard layout syncs across all your devices</li>
-                <li><strong>Family sync:</strong> Share dashboard configurations with partner</li>
-                <li><strong>Backup restoration:</strong> Restore dashboard after app reinstall</li>
-                <li><strong>Version control:</strong> Keep multiple dashboard versions</li>
-                <li><strong>Export/import:</strong> Transfer dashboard settings between accounts</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           },
           '3': {
             title: 'Privacy and security settings',
+            content: `Protecting your family's privacy and maintaining the security of your baby's data is a top priority in SleepyBabyy. Here's how to configure and understand all privacy and security features.
+
+## Understanding Data Privacy in SleepyBabyy
+
+### What Data We Collect
+**Baby Information**:
+- Basic profile data (name, birth date, photos)
+- Activity logs (feeding, sleep, diaper changes)
+- Growth measurements and health tracking
+- Photos and videos you choose to upload
+- Custom notes and observations
+
+**Family Information**:
+- Account holder contact information
+- Family member names and email addresses (for sharing features)
+- Device information for app optimization
+- Usage patterns for feature improvement
+
+**What We Don't Collect**:
+- Location data (unless explicitly enabled for specific features)
+- Contacts from your phone
+- Other app usage or personal files
+- Social media account information
+- Financial information beyond subscription billing
+
+### Data Storage and Security
+**Encryption Standards**:
+- All data encrypted in transit using TLS 1.3
+- Data at rest encrypted using AES-256 standards
+- Database encryption with regular security audits
+- End-to-end encryption for sensitive communications
+
+**Server Security**:
+- SOC 2 Type II certified infrastructure
+- Regular penetration testing and vulnerability assessments
+- 24/7 security monitoring and threat detection
+- Multi-factor authentication for all administrative access
+
+**Backup and Recovery**:
+- Daily encrypted backups with geographic redundancy
+- Point-in-time recovery capabilities
+- Disaster recovery plans tested quarterly
+- Data integrity verification processes
+
+## Configuring Privacy Settings
+
+### Account Privacy Controls
+
+**Step 1: Access Privacy Settings**
+1. Navigate to Account Settings
+2. Select "Privacy & Security"
+3. Review current privacy configuration
+4. Choose "Manage Privacy Settings"
+
+**Step 2: Data Sharing Preferences**
+
+**Anonymous Analytics Sharing**
+- **Enabled** (Default): Help improve app features through anonymous usage data
+- **Disabled**: Opt out of all analytics sharing
+- **Custom**: Choose specific data types to share or withhold
+
+**Research Participation**
+- **General Research**: Anonymous data for baby care research
+- **Product Development**: Feedback for new feature development
+- **Medical Research**: Contribution to pediatric health studies (always anonymous)
+- **Opt-Out**: Completely exclude data from all research initiatives
+
+**Marketing Communications**
+- **Product Updates**: Information about new features and improvements
+- **Educational Content**: Baby care tips and expert advice
+- **Promotional Offers**: Subscription deals and premium feature announcements
+- **Community Updates**: Information about user community and social features
+
+### Family Sharing Privacy
+
+**Controlling Family Member Access**
+- **Profile Information**: Choose what family members can see and edit
+- **Activity History**: Control access to historical data
+- **Photos and Videos**: Manage who can view and download media
+- **Health Information**: Separate permissions for medical data
+
+**Privacy Levels for Family Members**
+**Full Family Access**:
+- View all baby information and activities
+- Access to photos, videos, and growth data
+- Permission to invite additional family members
+- Access to medical information and notes
+
+**Limited Family Access**:
+- View daily activities and current status
+- Access to recent photos and basic information
+- Cannot invite others or access medical data
+- Time-limited access options available
+
+**Caregiver Access**:
+- View information relevant to care responsibilities
+- Log activities during their care periods
+- Access emergency contact and medical information
+- Cannot modify baby profile or invite others
+
+**Viewer Access**:
+- See baby's progress and milestones
+- Access to selected photos and growth updates
+- Receive milestone notifications
+- Cannot log activities or see detailed data
+
+### Data Retention and Deletion
+
+**Retention Policies**
+- **Active Account Data**: Retained indefinitely while account is active
+- **Deleted Content**: Removed from active systems within 30 days
+- **Backup Data**: Deleted content purged from backups within 90 days
+- **Analytics Data**: Anonymous usage data retained for 2 years maximum
+
+**Account Deletion Process**
+1. **Initiate Deletion**: Request account deletion in privacy settings
+2. **Grace Period**: 30-day grace period to reactivate before permanent deletion
+3. **Data Export**: Option to download all data before deletion
+4. **Confirmation**: Final confirmation required after grace period
+5. **Permanent Deletion**: All data permanently removed within 48 hours
+
+**Partial Data Deletion**
+- Delete specific photos or videos
+- Remove particular activity entries
+- Clear data from specific date ranges
+- Delete family member access without removing their data contributions
+
+## Security Settings and Features
+
+### Account Security
+
+**Password Security**
+- **Strong Password Requirements**: Minimum 12 characters with mixed case, numbers, symbols
+- **Password Strength Indicator**: Real-time feedback on password quality
+- **Regular Password Updates**: Recommended every 90 days
+- **Breach Monitoring**: Automatic notification if password appears in data breaches
+
+**Two-Factor Authentication (2FA)**
+- **SMS Verification**: Text message codes for login
+- **Authenticator Apps**: Support for Google Authenticator, Authy, etc.
+- **Backup Codes**: Emergency access codes for device loss
+- **Biometric Options**: Fingerprint and face recognition where supported
+
+**Login Security**
+- **Session Management**: Control active login sessions across devices
+- **Login Notifications**: Email alerts for new device logins
+- **Suspicious Activity Monitoring**: Automatic detection of unusual login patterns
+- **Device Authorization**: Approve new devices before access is granted
+
+### Advanced Security Features
+
+**Family Member Security**
+- **Individual 2FA Requirements**: Require two-factor authentication for all family members
+- **Permission Auditing**: Regular review of family member access levels
+- **Access Logging**: Track when and how family members access data
+- **Suspicious Activity Alerts**: Notifications for unusual family member activity
+
+**Data Export Security**
+- **Encrypted Exports**: All data downloads encrypted with user-provided password
+- **Limited Download Windows**: Export links expire after 48 hours
+- **Download Logging**: Track all data export activities
+- **Watermarked Content**: Photos and documents include invisible security watermarks
+
+### Privacy During Family Changes
+
+**Divorce or Separation Considerations**
+- **Emergency Access Removal**: Immediately revoke partner access
+- **Data Ownership Clarification**: Understand who owns what data
+- **Child Custody Integration**: Support for court-ordered access arrangements
+- **Secure Communication**: Protected communication channels during transitions
+
+**Family Member Departure**
+- **Graceful Access Removal**: Remove access while preserving their data contributions
+- **Data Attribution**: Maintain record of who contributed what information
+- **Transition Planning**: Transfer responsibilities to remaining family members
+- **Final Data Export**: Option for departing member to export their contributed data
+
+## Monitoring and Auditing
+
+### Security Monitoring Tools
+
+**Account Activity Dashboard**
+- **Login History**: Recent login attempts and locations
+- **Data Access Logs**: Track when sensitive information is accessed
+- **Permission Changes**: Log of family member permission modifications
+- **Export Activities**: Record of all data downloads and sharing
+
+**Suspicious Activity Detection**
+- **Unusual Login Patterns**: Detection of logins from new locations or devices
+- **Bulk Data Access**: Alerts for unusually large data downloads
+- **Permission Escalation**: Notifications when family members request additional access
+- **Account Sharing Detection**: Identification of potential account sharing
+
+### Regular Security Reviews
+
+**Monthly Security Checkups**
+- Review active family member access
+- Update passwords and security settings
+- Check for new device authorizations
+- Review privacy setting changes
+
+**Annual Security Audits**
+- Comprehensive review of all privacy settings
+- Update emergency contacts and security questions
+- Review data retention preferences
+- Assess family sharing arrangements
+
+**Breach Response Procedures**
+- **Immediate Notification**: Real-time alerts for any security incidents
+- **Response Guidance**: Step-by-step instructions for securing account
+- **Impact Assessment**: Clear explanation of what data, if any, was affected
+- **Follow-up Support**: Ongoing assistance with security improvements
+
+## International Privacy Compliance
+
+### GDPR Compliance (European Users)
+- **Right to Access**: Full transparency about data collection and use
+- **Right to Rectification**: Easy correction of incorrect data
+- **Right to Erasure**: Complete data deletion upon request
+- **Right to Portability**: Export data in standard, readable formats
+- **Right to Object**: Opt-out of specific data processing activities
+
+### CCPA Compliance (California Users)
+- **Data Disclosure**: Clear information about data collection practices
+- **Opt-Out Rights**: Easy opt-out from data sales (we don't sell data)
+- **Non-Discrimination**: No penalties for exercising privacy rights
+- **Authorized Agent**: Support for parents acting on behalf of minors
+
+### Additional Protections
+- **COPPA Compliance**: Special protections for children's data
+- **PIPEDA Compliance**: Canadian privacy law adherence
+- **Local Law Integration**: Automatic compliance with applicable local privacy laws
+
+## Emergency Privacy Situations
+
+### Immediate Account Security
+**Compromised Account Steps**:
+1. **Change Password Immediately**: Use account recovery if locked out
+2. **Enable 2FA**: Add additional security layer
+3. **Review Family Access**: Remove any unauthorized family members
+4. **Check Recent Activity**: Look for suspicious data access or changes
+5. **Contact Support**: Report security incident for additional assistance
+
+**Lost or Stolen Device**:
+1. **Remote Logout**: Sign out all devices from web account
+2. **Change Passwords**: Update account credentials immediately
+3. **Review Access Logs**: Check for unauthorized activity
+4. **Notify Family**: Inform other caregivers of potential security issue
+
+### Legal and Emergency Situations
+- **Court Orders**: Compliance process for legal data requests
+- **Emergency Access**: Procedures for family emergencies
+- **Medical Access**: Healthcare provider data sharing with proper authorization
+- **Law Enforcement**: Transparent process for legitimate legal requests
+
+Your privacy and security are fundamental to SleepyBabyy's mission. These settings give you complete control over your family's data while ensuring it remains protected with industry-leading security measures. Regular review and updates of these settings help maintain optimal protection as your family's needs evolve.`,
             readTime: '6 min read',
-            author: 'SleepyBabyy Team',
-            content: `
-              <h2>Protect Your Family's Data and Privacy</h2>
-              <p>Your baby's information is precious and private. Learn how to configure SleepyBabyy's security features to protect your family's data while still getting the benefits of connected features.</p>
-              
-              <h3>Understanding Data Privacy</h3>
-              
-              <h4>Types of Data We Collect</h4>
-              <ul>
-                <li><strong>Baby activity data:</strong> Sleep, feeding, diaper changes, and developmental milestones</li>
-                <li><strong>Photos and videos:</strong> Images you upload of your baby</li>
-                <li><strong>Health information:</strong> Growth measurements, medical appointments, symptoms</li>
-                <li><strong>Account information:</strong> Your name, email, and app usage patterns</li>
-                <li><strong>Family data:</strong> Information about family members and caregivers</li>
-                <li><strong>Device information:</strong> Technical data needed for app functionality</li>
-              </ul>
-
-              <h4>How Your Data Is Used</h4>
-              <ul>
-                <li><strong>Personalized experience:</strong> Customizing app features for your baby's age and needs</li>
-                <li><strong>Analytics and insights:</strong> Generating reports and pattern recognition</li>
-                <li><strong>Feature improvement:</strong> Enhancing app functionality based on usage patterns</li>
-                <li><strong>Family sharing:</strong> Enabling collaboration with authorized family members</li>
-                <li><strong>Customer support:</strong> Providing help and troubleshooting when needed</li>
-              </ul>
-
-              <h3>Account Security Fundamentals</h3>
-              
-              <h4>Strong Password Requirements</h4>
-              <ul>
-                <li><strong>Minimum 12 characters:</strong> Longer passwords are significantly more secure</li>
-                <li><strong>Mix of character types:</strong> Upper/lowercase letters, numbers, symbols</li>
-                <li><strong>Avoid personal information:</strong> No names, birthdays, or obvious patterns</li>
-                <li><strong>Unique for SleepyBabyy:</strong> Don't reuse passwords from other accounts</li>
-                <li><strong>Regular updates:</strong> Change password every 6-12 months</li>
-              </ul>
-
-              <h4>Two-Factor Authentication Setup</h4>
-              <ul>
-                <li><strong>SMS verification:</strong> Receive codes via text message</li>
-                <li><strong>Authentication apps:</strong> Use Google Authenticator or similar apps</li>
-                <li><strong>Email backup:</strong> Secondary email for account recovery</li>
-                <li><strong>Recovery codes:</strong> Save backup codes in secure location</li>
-                <li><strong>Biometric options:</strong> Use fingerprint or face recognition where available</li>
-              </ul>
-
-              <h3>Privacy Control Settings</h3>
-              
-              <h4>Data Sharing Preferences</h4>
-              <ul>
-                <li><strong>Analytics opt-out:</strong> Prevent anonymous usage data collection</li>
-                <li><strong>Research participation:</strong> Control whether data can be used for studies</li>
-                <li><strong>Third-party integration:</strong> Manage connections with other apps and services</li>
-                <li><strong>Marketing communications:</strong> Control promotional emails and notifications</li>
-                <li><strong>Data export rights:</strong> Request copies of all your personal data</li>
-              </ul>
-
-              <h4>Photo and Media Privacy</h4>
-              <ul>
-                <li><strong>Upload restrictions:</strong> Control who can add photos to your baby's profile</li>
-                <li><strong>Sharing permissions:</strong> Set rules for who can view and download images</li>
-                <li><strong>Cloud storage options:</strong> Choose between local and cloud photo storage</li>
-                <li><strong>Automatic deletion:</strong> Set photos to delete after specified time periods</li>
-                <li><strong>Watermarking:</strong> Add protection to shared images</li>
-              </ul>
-
-              <h3>Family Access Controls</h3>
-              
-              <h4>Permission Levels Management</h4>
-              <ul>
-                <li><strong>Admin privileges:</strong> Full control over account settings and data</li>
-                <li><strong>Editor access:</strong> Can add and modify baby information</li>
-                <li><strong>Viewer permissions:</strong> Read-only access to specified information</li>
-                <li><strong>Time-limited access:</strong> Grant temporary permissions to caregivers</li>
-                <li><strong>Activity-specific access:</strong> Limit access to certain data types</li>
-              </ul>
-
-              <h4>Family Member Verification</h4>
-              <ul>
-                <li><strong>Email verification:</strong> Confirm identity before granting access</li>
-                <li><strong>Security questions:</strong> Additional verification for sensitive access</li>
-                <li><strong>Device registration:</strong> Approve new devices for family members</li>
-                <li><strong>Access auditing:</strong> Review who accessed what information when</li>
-                <li><strong>Emergency contacts:</strong> Designate trusted contacts for account recovery</li>
-              </ul>
-
-              <h3>Data Encryption and Storage</h3>
-              
-              <h4>Encryption Standards</h4>
-              <ul>
-                <li><strong>End-to-end encryption:</strong> Data encrypted from your device to our servers</li>
-                <li><strong>AES-256 encryption:</strong> Military-grade encryption for stored data</li>
-                <li><strong>TLS 1.3 transmission:</strong> Secure data transfer protocols</li>
-                <li><strong>Encrypted backups:</strong> All backup data is fully encrypted</li>
-                <li><strong>Zero-knowledge architecture:</strong> Even we can't read your encrypted data</li>
-              </ul>
-
-              <h4>Storage Location Options</h4>
-              <ul>
-                <li><strong>Cloud storage:</strong> Secure servers with automatic backup</li>
-                <li><strong>Local storage:</strong> Keep sensitive data only on your device</li>
-                <li><strong>Hybrid approach:</strong> Essential data in cloud, sensitive data local</li>
-                <li><strong>Geographic preferences:</strong> Choose data center locations</li>
-                <li><strong>Retention policies:</strong> Control how long data is stored</li>
-              </ul>
-
-              <h3>Advanced Security Features</h3>
-              
-              <h4>Device Security</h4>
-              <ul>
-                <li><strong>Device authorization:</strong> Approve each device that accesses your account</li>
-                <li><strong>Session management:</strong> View and terminate active sessions</li>
-                <li><strong>Login alerts:</strong> Notifications for new device logins</li>
-                <li><strong>Automatic logout:</strong> End sessions after period of inactivity</li>
-                <li><strong>Suspicious activity alerts:</strong> Immediate notification of potential security issues</li>
-              </ul>
-
-              <h4>Network Security</h4>
-              <ul>
-                <li><strong>VPN detection:</strong> Enhanced security when using VPNs</li>
-                <li><strong>Public Wi-Fi protection:</strong> Extra encryption on unsecured networks</li>
-                <li><strong>IP whitelisting:</strong> Restrict access to specific networks</li>
-                <li><strong>Geographic restrictions:</strong> Limit access to certain countries/regions</li>
-                <li><strong>Network anomaly detection:</strong> Alert to unusual connection patterns</li>
-              </ul>
-
-              <h3>Child Privacy Protection</h3>
-              
-              <h4>COPPA Compliance</h4>
-              <ul>
-                <li><strong>No direct child interaction:</strong> Children cannot create accounts</li>
-                <li><strong>Parental consent:</strong> All data collection authorized by parents</li>
-                <li><strong>Limited data collection:</strong> Only collect necessary information</li>
-                <li><strong>No behavioral advertising:</strong> Never use child data for marketing</li>
-                <li><strong>Easy data deletion:</strong> Parents can delete child data anytime</li>
-              </ul>
-
-              <h4>Future Privacy Protection</h4>
-              <ul>
-                <li><strong>Age-based controls:</strong> Transition controls as child grows</li>
-                <li><strong>Consent inheritance:</strong> Transfer control to child when appropriate</li>
-                <li><strong>Data minimization:</strong> Regularly review and delete unnecessary data</li>
-                <li><strong>Privacy education:</strong> Resources for teaching children about privacy</li>
-                <li><strong>Right to be forgotten:</strong> Complete data deletion upon request</li>
-              </ul>
-
-              <h3>Emergency Security Procedures</h3>
-              
-              <h4>Account Compromise Response</h4>
-              <ul>
-                <li><strong>Immediate password reset:</strong> Quick password change if account is compromised</li>
-                <li><strong>Session termination:</strong> End all active sessions on all devices</li>
-                <li><strong>Access audit:</strong> Review all recent account activity</li>
-                <li><strong>Family notification:</strong> Alert authorized family members of security issue</li>
-                <li><strong>Recovery assistance:</strong> 24/7 support for security emergencies</li>
-              </ul>
-
-              <h4>Data Breach Protocols</h4>
-              <ul>
-                <li><strong>Immediate notification:</strong> Alert users within 72 hours of discovery</li>
-                <li><strong>Impact assessment:</strong> Clear information about what data was affected</li>
-                <li><strong>Remediation steps:</strong> Specific actions you should take to protect yourself</li>
-                <li><strong>Prevention measures:</strong> Additional security features activated</li>
-                <li><strong>Ongoing monitoring:</strong> Enhanced security monitoring after incidents</li>
-              </ul>
-
-              <h3>Regular Security Maintenance</h3>
-              
-              <h4>Monthly Security Checkups</h4>
-              <ul>
-                <li><strong>Review family access:</strong> Confirm all family members still need access</li>
-                <li><strong>Check authorized devices:</strong> Remove old or unused devices</li>
-                <li><strong>Update recovery information:</strong> Ensure backup email and phone are current</li>
-                <li><strong>Review privacy settings:</strong> Confirm sharing preferences haven't changed</li>
-                <li><strong>Password strength check:</strong> Verify password is still secure</li>
-              </ul>
-
-              <h4>Annual Security Audit</h4>
-              <ul>
-                <li><strong>Complete data review:</strong> Examine all stored information</li>
-                <li><strong>Permission reassessment:</strong> Update family member access levels</li>
-                <li><strong>Security feature updates:</strong> Enable new security features as available</li>
-                <li><strong>Backup verification:</strong> Confirm all important data is properly backed up</li>
-                <li><strong>Emergency plan update:</strong> Review and update account recovery procedures</li>
-              </ul>
-
-              <h3>Legal Rights and Compliance</h3>
-              
-              <h4>Your Data Rights</h4>
-              <ul>
-                <li><strong>Access rights:</strong> Request copies of all data we have about you</li>
-                <li><strong>Correction rights:</strong> Update or correct inaccurate information</li>
-                <li><strong>Deletion rights:</strong> Request complete removal of your data</li>
-                <li><strong>Portability rights:</strong> Export your data to use elsewhere</li>
-                <li><strong>Objection rights:</strong> Object to certain types of data processing</li>
-              </ul>
-
-              <h4>Regulatory Compliance</h4>
-              <ul>
-                <li><strong>GDPR compliance:</strong> European data protection standards</li>
-                <li><strong>CCPA compliance:</strong> California consumer privacy protections</li>
-                <li><strong>COPPA compliance:</strong> Children's online privacy protection</li>
-                <li><strong>HIPAA awareness:</strong> Health information protection best practices</li>
-                <li><strong>International standards:</strong> Compliance with privacy laws worldwide</li>
-              </ul>
-
-              <h3>Getting Help with Security</h3>
-              
-              <h4>Security Support Resources</h4>
-              <ul>
-                <li><strong>Security help center:</strong> Comprehensive guides and tutorials</li>
-                <li><strong>Video tutorials:</strong> Step-by-step security setup instructions</li>
-                <li><strong>Live chat support:</strong> Real-time help with security questions</li>
-                <li><strong>Emergency security line:</strong> Immediate assistance for urgent security issues</li>
-                <li><strong>Community forums:</strong> Learn from other parents' security experiences</li>
-              </ul>
-
-              <h4>Reporting Security Issues</h4>
-              <ul>
-                <li><strong>Bug bounty program:</strong> Reward security researchers who find vulnerabilities</li>
-                <li><strong>Responsible disclosure:</strong> Secure channel for reporting security issues</li>
-                <li><strong>User feedback:</strong> Report suspicious activity or potential security problems</li>
-                <li><strong>Security advisory updates:</strong> Regular communication about security improvements</li>
-                <li><strong>Transparency reports:</strong> Regular updates on security requests and incidents</li>
-              </ul>
-            `
+            author: 'SleepyBabyy Team'
           }
         }
       }
     };
 
-    const category = articlesContent[category] || {
-      title: 'Article Not Found',
-      color: 'text-gray-600',
-      bgColor: 'bg-gray-50',
-      articles: {}
-    };
-
-    return {
-      ...category,
-      article: category.articles[id] || {
-        title: 'Article not found',
-        readTime: '0 min read',
-        author: 'SleepyBabyy Team',
-        content: '<p>This article could not be found. Please check the URL or return to the help center.</p>'
-      }
-    };
+    return articlesData[categoryKey] || null;
   };
 
-  const articleData = getArticleContent(categoryName || '', articleId || '');
+  const categoryData = getArticleData(categoryName || '', articleId || '');
+  const articleData = categoryData?.articles?.[articleId || ''];
 
-  const handleSignIn = () => {
-    navigate('/auth');
-  };
-
-  const handleGetStarted = () => {
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      navigate('/auth');
-    }
-  };
+  if (!categoryData || !articleData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <Book className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Article Not Found</h1>
+          <p className="text-gray-600 mb-6">The article you're looking for doesn't exist.</p>
+          <Button onClick={() => navigate('/help')}>Return to Help Center</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -3145,7 +3706,6 @@ const HelpArticle = () => {
         </>
       ) : (
         <>
-          {/* Non-authenticated Desktop Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
@@ -3179,7 +3739,6 @@ const HelpArticle = () => {
             </div>
           </header>
 
-          {/* Non-authenticated Mobile Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
             <div className="flex justify-between items-center h-16 px-4">
               <div className="flex items-center space-x-2">
@@ -3202,96 +3761,114 @@ const HelpArticle = () => {
       )}
 
       {/* Article Content */}
-      <section className="py-8 md:py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Breadcrumb Navigation */}
-          <Breadcrumb className="mb-6">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink onClick={() => navigate('/help')} className="cursor-pointer">
-                  Help Center
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink 
-                  onClick={() => navigate(`/help/category/${categoryName}`)} 
-                  className="cursor-pointer"
-                >
-                  {articleData.title}
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbPage>
-                {articleData.article.title}
-              </BreadcrumbPage>
-            </BreadcrumbList>
-          </Breadcrumb>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Navigation */}
+        <div className="flex justify-between items-center mb-8">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate(`/help/category/${categoryName}`)}
+            className="flex items-center space-x-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to {categoryData.title}</span>
+          </Button>
+        </div>
 
-          {/* Back Button */}
-          <div className="flex justify-between items-center mb-8">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate(`/help/category/${categoryName}`)} 
-              className="flex items-center space-x-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to {articleData.title}</span>
-            </Button>
+        {/* Article Header */}
+        <div className="mb-8">
+          <div className={`inline-flex p-3 rounded-xl ${categoryData.bgColor} mb-4`}>
+            <Book className={`h-8 w-8 ${categoryData.color}`} />
           </div>
-
-          {/* Article Header */}
-          <div className="mb-8">
-            <div className={`inline-flex p-3 rounded-2xl ${articleData.bgColor} mb-4`}>
-              <Book className={`h-8 w-8 ${articleData.color}`} />
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            {articleData.title}
+          </h1>
+          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-6">
+            <div className="flex items-center space-x-1">
+              <Clock className="h-4 w-4" />
+              <span>{articleData.readTime}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              {articleData.article.title}
-            </h1>
-            <div className="flex items-center space-x-4 text-sm text-gray-500 mb-6">
-              <div className="flex items-center space-x-1">
-                <Clock className="h-4 w-4" />
-                <span>{articleData.article.readTime}</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <User className="h-4 w-4" />
-                <span>{articleData.article.author}</span>
-              </div>
+            <div className="flex items-center space-x-1">
+              <User className="h-4 w-4" />
+              <span>{articleData.author}</span>
             </div>
           </div>
+        </div>
 
-          {/* Article Content */}
-          <Card className="border-0 shadow-lg">
+        {/* Article Content */}
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-8">
+            <div className="prose prose-lg max-w-none">
+              {articleData.content.split('\n\n').map((paragraph, index) => {
+                if (paragraph.startsWith('## ')) {
+                  return (
+                    <h2 key={index} className="text-2xl font-bold text-gray-900 mt-8 mb-4 first:mt-0">
+                      {paragraph.replace('## ', '')}
+                    </h2>
+                  );
+                }
+                if (paragraph.startsWith('### ')) {
+                  return (
+                    <h3 key={index} className="text-xl font-semibold text-gray-800 mt-6 mb-3">
+                      {paragraph.replace('### ', '')}
+                    </h3>
+                  );
+                }
+                if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                  return (
+                    <p key={index} className="font-semibold text-gray-900 mb-3">
+                      {paragraph.replace(/\*\*/g, '')}
+                    </p>
+                  );
+                }
+                if (paragraph.startsWith('- ')) {
+                  const listItems = paragraph.split('\n').filter(item => item.startsWith('- '));
+                  return (
+                    <ul key={index} className="list-disc list-inside space-y-2 mb-4 ml-4">
+                      {listItems.map((item, itemIndex) => (
+                        <li key={itemIndex} className="text-gray-700">
+                          {item.replace('- ', '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')}
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                }
+                return (
+                  <p key={index} className="text-gray-700 leading-relaxed mb-4" 
+                     dangerouslySetInnerHTML={{
+                       __html: paragraph
+                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                         .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                     }}
+                  />
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Help Section */}
+        <div className="mt-12 text-center">
+          <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-purple-50">
             <CardContent className="p-8">
-              <div 
-                className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: articleData.article.content }}
-              />
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Was this article helpful?
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Need more help? Contact our support team or browse more articles.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button onClick={() => navigate('/contact')}>
+                  Contact Support
+                </Button>
+                <Button variant="outline" onClick={() => navigate('/help')}>
+                  Browse All Articles
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
-      </section>
-
-      {/* Need More Help Section */}
-      <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-            Still Need Help?
-          </h2>
-          <p className="text-lg text-blue-100 mb-8">
-            Can't find what you're looking for? Our support team is here to help.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={() => navigate('/contact')} className="bg-white text-blue-600 hover:bg-blue-50">
-              Contact Support
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/tutorial')} className="border-white text-white hover:bg-white hover:text-blue-600">
-              Try Tutorial
-            </Button>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 };
