@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
 
 const Pricing = () => {
@@ -49,9 +51,66 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <DesktopHeader />
-      <MobileHeader />
+      {/* Conditional Navigation */}
+      {user ? (
+        <>
+          <DesktopHeader />
+          <MobileHeader />
+        </>
+      ) : (
+        <>
+          {/* Landing-style Desktop Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                    alt="SleepyBabyy Logo" 
+                    className="h-12 w-auto"
+                  />
+                  <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <LanguageSelector />
+                  <Button variant="ghost" onClick={() => navigate('/')}>
+                    Home
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/features')}>
+                    Features
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate('/auth')}>
+                    Sign In
+                  </Button>
+                  <Button onClick={() => navigate('/auth')}>
+                    Get Started
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Landing-style Mobile Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
+            <div className="flex justify-between items-center h-16 px-4">
+              <div className="flex items-center space-x-2">
+                <img 
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                  alt="SleepyBabyy Logo" 
+                  className="h-10 w-auto"
+                />
+                <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <LanguageSelector />
+                <Button size="sm" onClick={() => navigate('/auth')}>
+                  Get Started
+                </Button>
+              </div>
+            </div>
+          </header>
+        </>
+      )}
 
       {/* Back Button */}
       <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
@@ -277,7 +336,6 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6">
