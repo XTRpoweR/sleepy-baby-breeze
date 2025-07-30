@@ -10,58 +10,125 @@ const HelpArticle = () => {
 
   // Sample article data - in a real app, this would come from an API or database
   const getArticleContent = () => {
+    // Fix the URL parameter matching
     if (category === "getting-started" && id === "1") {
       return {
-        title: t("help.articles.gettingStarted.title"),
+        title: "Getting Started with SleepyBaby",
         content: `
-## ${t("help.articles.gettingStarted.setupTitle")}
+## Account Setup and Baby Profile Creation
 
-${t("help.articles.gettingStarted.setupContent")}
+Welcome to SleepyBaby! This comprehensive guide will help you get started with tracking your baby's sleep patterns and activities.
 
-### ${t("help.articles.gettingStarted.profileTitle")}
+### Creating Your Baby Profile
 
-${t("help.articles.gettingStarted.profileContent")}
+Start by creating a detailed profile for your baby:
 
-### ${t("help.articles.gettingStarted.trackingTitle")}
+1. **Sign up** for your free SleepyBaby account using your email address
+2. **Verify your email** and complete your profile information
+3. **Create your baby's profile** with their name and birth date
+4. **Explore the dashboard** to familiarize yourself with the main features
 
-${t("help.articles.gettingStarted.trackingContent")}
+### Setting Up Sleep Tracking
 
-**${t("help.articles.gettingStarted.trackingSteps")}:**
+Learn how to effectively track your baby's sleep:
 
-1. ${t("help.articles.gettingStarted.step1")}
-2. ${t("help.articles.gettingStarted.step2")}
-3. ${t("help.articles.gettingStarted.step3")}
+**Getting started with sleep tracking:**
 
-## ${t("help.articles.gettingStarted.tipsTitle")}
+- **Start a live sleep session** or log sleep manually with precise start and end times
+- **Choose the sleep type** - distinguish between naps and night sleep for better insights
+- **Add helpful notes** about sleep quality, environment, or any observations
+- **Review patterns** in your daily and weekly sleep reports
 
-${t("help.articles.gettingStarted.tipsContent")}
+## Essential Tracking Features
 
-**${t("help.articles.gettingStarted.keyTips")}:**
+Understanding how to use SleepyBaby's core tracking capabilities will help you get the most out of the app.
 
-- **${t("help.articles.gettingStarted.tip1Title")}**: ${t("help.articles.gettingStarted.tip1Content")}
-- **${t("help.articles.gettingStarted.tip2Title")}**: ${t("help.articles.gettingStarted.tip2Content")}
-- **${t("help.articles.gettingStarted.tip3Title")}**: ${t("help.articles.gettingStarted.tip3Content")}
+### Activity Tracking Made Simple
 
-## ${t("help.articles.gettingStarted.troubleshootTitle")}
+**Track all important activities:**
 
-${t("help.articles.gettingStarted.troubleshootContent")}
+- **Sleep Sessions**: Monitor naps and nighttime sleep with detailed timing
+- **Feeding Times**: Record breastfeeding, formula, or combination feeding sessions
+- **Diaper Changes**: Keep track of wet and soiled diapers throughout the day
+- **Custom Activities**: Log tummy time, baths, play sessions, and walks
 
-### ${t("help.articles.gettingStarted.commonIssues")}
+## Tips for Success
 
-**${t("help.articles.gettingStarted.issue1Title")}**
-${t("help.articles.gettingStarted.issue1Content")}
+Following these best practices will help you establish effective tracking routines.
 
-**${t("help.articles.gettingStarted.issue2Title")}**
-${t("help.articles.gettingStarted.issue2Content")}
+### Key Tips for Effective Tracking
 
-**${t("help.articles.gettingStarted.issue3Title")}**
-${t("help.articles.gettingStarted.issue3Content")}
+**Essential habits for success:**
+
+- **Consistency is key**: Try to log activities as they happen for the most accurate data
+- **Use the quick log features**: Take advantage of one-tap logging for faster entry
+- **Review patterns regularly**: Check your reports weekly to identify trends and improvements
+
+## Troubleshooting Common Issues
+
+If you encounter any problems, here are solutions to the most common issues.
+
+### Common Issues and Solutions
+
+**Having trouble with tracking?**
+Make sure you have created a baby profile first. All tracking features require an active profile to function properly.
+
+**Not seeing your data?**
+Check that you have selected the correct baby profile if you have multiple children. Your data is organized by individual profiles.
+
+**App running slowly?**
+Try refreshing the page or clearing your browser cache. Make sure you have a stable internet connection for the best experience.
         `
       };
     }
+    
+    // Add more articles as needed
+    if (category === "sleep-tips" && id === "1") {
+      return {
+        title: "Sleep Tips for Better Rest",
+        content: `
+## Creating the Perfect Sleep Environment
+
+A comfortable sleep environment is crucial for your baby's rest and development.
+
+### Room Setup
+
+**Essential elements for good sleep:**
+
+- **Temperature control**: Keep the room between 68-70°F (20-21°C)
+- **Darkness**: Use blackout curtains or shades to minimize light
+- **Sound management**: Consider white noise to mask household sounds
+- **Safety first**: Ensure the crib meets current safety standards
+
+## Age-Appropriate Sleep Schedules
+
+Different ages require different approaches to sleep timing and duration.
+
+### Newborn to 3 Months
+
+**Sleep patterns at this stage:**
+
+- **Total sleep needed**: 14-17 hours per day
+- **Night sleep**: 8-9 hours (with frequent wakings)
+- **Daytime naps**: 4-5 short naps throughout the day
+- **Feeding schedule**: Every 2-3 hours around the clock
+
+### 3 to 6 Months
+
+**Developing more regular patterns:**
+
+- **Total sleep needed**: 12-15 hours per day
+- **Night sleep**: 10-11 hours (longer stretches developing)
+- **Daytime naps**: 3-4 naps, becoming more predictable
+- **Sleep training**: Can begin gentle methods if desired
+        `
+      };
+    }
+
+    // Default fallback for unknown articles
     return {
-      title: t("help.articles.notFound.title"),
-      content: t("help.articles.notFound.content")
+      title: "Article Not Found",
+      content: "Sorry, we couldn't find the article you're looking for. Please check the URL or return to the help center to browse available articles."
     };
   };
 
@@ -76,7 +143,7 @@ ${t("help.articles.gettingStarted.issue3Content")}
       // Main headings (##)
       if (trimmedLine.startsWith('## ')) {
         return (
-          <h2 key={index} className="text-xl font-semibold text-foreground mt-8 mb-4 first:mt-0">
+          <h2 key={index} className="text-lg font-semibold text-foreground mt-6 mb-3 first:mt-0">
             {trimmedLine.substring(3)}
           </h2>
         );
@@ -85,7 +152,7 @@ ${t("help.articles.gettingStarted.issue3Content")}
       // Sub headings (###)
       if (trimmedLine.startsWith('### ')) {
         return (
-          <h3 key={index} className="text-lg font-medium text-foreground mt-6 mb-3">
+          <h3 key={index} className="text-base font-medium text-foreground mt-4 mb-2">
             {trimmedLine.substring(4)}
           </h3>
         );
@@ -94,7 +161,7 @@ ${t("help.articles.gettingStarted.issue3Content")}
       // Bold standalone lines
       if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**') && !trimmedLine.includes(':')) {
         return (
-          <p key={index} className="font-semibold text-foreground mt-4 mb-2">
+          <p key={index} className="font-medium text-foreground mt-3 mb-2 text-sm">
             {trimmedLine.substring(2, trimmedLine.length - 2)}
           </p>
         );
@@ -103,8 +170,8 @@ ${t("help.articles.gettingStarted.issue3Content")}
       // Numbered list items
       if (/^\d+\.\s/.test(trimmedLine)) {
         return (
-          <div key={index} className="ml-4 mb-2">
-            <p className="text-muted-foreground leading-relaxed">
+          <div key={index} className="ml-4 mb-1.5">
+            <p className="text-muted-foreground leading-relaxed text-sm">
               {renderInlineFormatting(trimmedLine)}
             </p>
           </div>
@@ -114,8 +181,8 @@ ${t("help.articles.gettingStarted.issue3Content")}
       // Bullet list items
       if (trimmedLine.startsWith('- ')) {
         return (
-          <div key={index} className="ml-4 mb-2">
-            <p className="text-muted-foreground leading-relaxed">
+          <div key={index} className="ml-4 mb-1.5">
+            <p className="text-muted-foreground leading-relaxed text-sm">
               {renderInlineFormatting(trimmedLine.substring(2))}
             </p>
           </div>
@@ -125,7 +192,7 @@ ${t("help.articles.gettingStarted.issue3Content")}
       // Regular paragraphs
       if (trimmedLine && !trimmedLine.startsWith('#')) {
         return (
-          <p key={index} className="text-muted-foreground leading-relaxed mb-4">
+          <p key={index} className="text-muted-foreground leading-relaxed mb-3 text-sm">
             {renderInlineFormatting(trimmedLine)}
           </p>
         );
@@ -142,7 +209,7 @@ ${t("help.articles.gettingStarted.issue3Content")}
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return (
-          <span key={index} className="font-semibold text-foreground">
+          <span key={index} className="font-medium text-foreground">
             {part.substring(2, part.length - 2)}
           </span>
         );
@@ -167,7 +234,7 @@ ${t("help.articles.gettingStarted.issue3Content")}
             </Link>
           </Button>
           
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground mb-2">
             {article.title}
           </h1>
           
@@ -183,7 +250,7 @@ ${t("help.articles.gettingStarted.issue3Content")}
         <div className="mt-12 pt-8 border-t border-border">
           <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
             <div>
-              <h3 className="text-lg font-medium text-foreground mb-2">
+              <h3 className="text-base font-medium text-foreground mb-2">
                 {t("help.wasHelpful")}
               </h3>
               <p className="text-sm text-muted-foreground">
