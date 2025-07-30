@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,14 +9,18 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { Moon, ArrowLeft, Mail, MessageCircle, Phone, MapPin, Clock, Send, HelpCircle, Users, Briefcase, CheckCircle } from "lucide-react";
+import { ArrowLeft, Mail, MessageCircle, Clock, Send, HelpCircle, Users, Briefcase, CheckCircle, User, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from '@/hooks/useAuth';
+import { DesktopHeader } from '@/components/layout/DesktopHeader';
+import { MobileHeader } from '@/components/layout/MobileHeader';
 
 const Contact = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -86,30 +91,55 @@ const Contact = () => {
     }));
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Back</span>
-              </Button>
-              <div className="flex items-center space-x-2">
-                <Moon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-                <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 animate-fade-in">
+      {/* Conditional Navigation */}
+      {user ? (
+        <>
+          <DesktopHeader />
+          <MobileHeader />
+        </>
+      ) : (
+        <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">Back</span>
+                </Button>
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                    alt="SleepyBabyy Logo" 
+                    className="h-8 w-8 sm:h-10 sm:w-10"
+                  />
+                  <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="hidden sm:block">
-                <LanguageSelector />
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <div className="hidden sm:block">
+                  <LanguageSelector />
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate('/auth')}
+                  className="flex items-center space-x-1"
+                >
+                  <User className="h-4 w-4" />
+                  <span>Sign In</span>
+                </Button>
               </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      )}
 
       {/* Hero Section */}
       <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
