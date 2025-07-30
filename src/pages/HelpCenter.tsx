@@ -5,18 +5,33 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { ArrowLeft, Search, Book, MessageCircle, Download, Users, Settings, CreditCard, Baby, BarChart3, Volume2, Calendar, PlayCircle, GraduationCap, ArrowRight } from "lucide-react";
 
 const HelpCenter = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleSignIn = () => {
+    navigate('/auth');
+  };
 
   const categories = [
     {
@@ -105,18 +120,78 @@ const HelpCenter = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Headers */}
-      <DesktopHeader />
-      <MobileHeader />
+      {/* Conditional Headers */}
+      {user ? (
+        <>
+          <DesktopHeader />
+          <MobileHeader />
+        </>
+      ) : (
+        <>
+          {/* Non-authenticated Desktop Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                    alt="SleepyBabyy Logo" 
+                    className="h-12 w-auto"
+                  />
+                  <span className="text-xl font-bold text-gray-900">SleepyBabyy</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Button variant="ghost" onClick={() => navigate('/')}>
+                    Home
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/features')}>
+                    Features
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/pricing')}>
+                    Pricing
+                  </Button>
+                  <LanguageSelector />
+                  <Button variant="outline" onClick={handleSignIn}>
+                    Sign In
+                  </Button>
+                  <Button onClick={handleGetStarted}>
+                    Get Started
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Non-authenticated Mobile Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
+            <div className="flex justify-between items-center h-16 px-4">
+              <div className="flex items-center space-x-2">
+                <img 
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                  alt="SleepyBabyy Logo" 
+                  className="h-10 w-auto"
+                />
+                <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <LanguageSelector />
+                <Button size="sm" onClick={handleGetStarted}>
+                  Get Started
+                </Button>
+              </div>
+            </div>
+          </header>
+        </>
+      )}
 
       {/* Hero Section with integrated navigation */}
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {/* Back button and tutorial button */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate(user ? '/dashboard' : '/')} className="flex items-center space-x-2">
               <ArrowLeft className="h-4 w-4" />
-              <span>Back to Home</span>
+              <span>{user ? 'Back to Dashboard' : 'Back to Home'}</span>
             </Button>
             <Button onClick={() => navigate('/tutorial')} className="bg-blue-600 hover:bg-blue-700">
               Start Tutorial

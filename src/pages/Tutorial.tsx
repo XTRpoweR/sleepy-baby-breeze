@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,16 +9,30 @@ import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, ArrowRight, CheckCircle, Baby, Activity, BarChart3, Calendar } from 'lucide-react';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 const Tutorial = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
+
+  const handleSignIn = () => {
+    navigate('/auth');
+  };
 
   const tutorialSteps = [
     {
@@ -114,17 +129,77 @@ const Tutorial = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Headers */}
-      <DesktopHeader />
-      <MobileHeader />
+      {/* Conditional Headers */}
+      {user ? (
+        <>
+          <DesktopHeader />
+          <MobileHeader />
+        </>
+      ) : (
+        <>
+          {/* Non-authenticated Desktop Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                    alt="SleepyBabyy Logo" 
+                    className="h-12 w-auto"
+                  />
+                  <span className="text-xl font-bold text-gray-900">SleepyBabyy</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Button variant="ghost" onClick={() => navigate('/')}>
+                    Home
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/features')}>
+                    Features
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/pricing')}>
+                    Pricing
+                  </Button>
+                  <LanguageSelector />
+                  <Button variant="outline" onClick={handleSignIn}>
+                    Sign In
+                  </Button>
+                  <Button onClick={handleGetStarted}>
+                    Get Started
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Non-authenticated Mobile Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
+            <div className="flex justify-between items-center h-16 px-4">
+              <div className="flex items-center space-x-2">
+                <img 
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                  alt="SleepyBabyy Logo" 
+                  className="h-10 w-auto"
+                />
+                <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <LanguageSelector />
+                <Button size="sm" onClick={handleGetStarted}>
+                  Get Started
+                </Button>
+              </div>
+            </div>
+          </header>
+        </>
+      )}
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Back button */}
         <div className="mb-6 md:mb-8">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
+          <Button variant="ghost" size="sm" onClick={() => navigate(user ? '/dashboard' : '/')} className="flex items-center space-x-2">
             <ArrowLeft className="h-4 w-4" />
-            <span>{t('navigation.back')}</span>
+            <span>{user ? 'Back to Dashboard' : 'Back to Home'}</span>
           </Button>
         </div>
 
