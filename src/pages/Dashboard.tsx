@@ -1,59 +1,36 @@
-
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Moon, Clock, Calendar, BarChart3, User, LogOut, Baby, Plus, TrendingUp, Activity, Users, Crown, Settings, ArrowRight, Sparkles, GraduationCap, Camera, FileText, Bell, MessageCircle } from 'lucide-react';
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
+import { 
+  Clock, 
+  BarChart3, 
+  Camera, 
+  Moon,
+  MessageCircle,
+  User,
+  LogOut,
+  Zap,
+  Crown,
+  Plus,
+  ArrowRight,
+  Baby
+} from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
-import { useSubscription } from '@/hooks/useSubscription';
-import { useDashboardStats } from '@/hooks/useDashboardStats';
-import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
-import { ProfileSelector } from '@/components/profiles/ProfileSelector';
-import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
-import { ProfileManagementDialog } from '@/components/profiles/ProfileManagementDialog';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
-import { NewUserOnboarding } from '@/components/onboarding/NewUserOnboarding';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
+import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
 
 const Dashboard = () => {
-  const {
-    user,
-    loading,
-    signOut
-  } = useAuth();
-  const {
-    activeProfile,
-    profiles,
-    createProfile
-  } = useBabyProfile();
-  const {
-    subscriptionTier,
-    isPremium,
-    openCustomerPortal,
-    checkSubscription
-  } = useSubscription();
-  const {
-    stats,
-    loading: statsLoading,
-    hasActiveProfile
-  } = useDashboardStats();
+  const { user, loading, signOut } = useAuth();
+  const { profile, loading: profileLoading, createProfile } = useBabyProfile();
+  const { role } = useProfilePermissions(profile?.id || null);
   const navigate = useNavigate();
-  const {
-    t
-  } = useTranslation();
-  const [showProfileManagement, setShowProfileManagement] = useState(false);
-  const [showProfileCreation, setShowProfileCreation] = useState(false);
-  const [showNewUserOnboarding, setShowNewUserOnboarding] = useState(false);
-  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician' | 'notifications'>('profiles');
-
-  // Check if user is truly new (no profiles and no family memberships)
-  const isNewUser = profiles.length === 0;
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -61,451 +38,230 @@ const Dashboard = () => {
     }
   }, [user, loading, navigate]);
 
-  // Check for success/canceled URL params and refresh subscription
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('success') === 'true') {
-      console.log('Payment successful, checking subscription...');
-      checkSubscription();
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (urlParams.get('canceled') === 'true') {
-      console.log('Payment canceled');
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [checkSubscription]);
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
 
-  const handleTrackActivity = () => {
-    navigate('/track');
-  };
-
-  const handleSleepSchedule = () => {
-    navigate('/sleep-schedule');
-  };
-
-  const handleViewReports = () => {
-    navigate('/reports');
-  };
-
-  const handleFamilySharing = () => {
-    if (!isPremium) {
-      setUpgradeFeature('sharing');
-      setShowUpgradePrompt(true);
-      return;
-    }
-    navigate('/family');
-  };
-
-  const handleMemories = () => {
-    if (!isPremium) {
-      setUpgradeFeature('memories');
-      setShowUpgradePrompt(true);
-      return;
-    }
-    navigate('/memories');
-  };
-
-  const handleAddProfile = () => {
-    console.log('Add profile clicked - Current profiles:', profiles.length, 'isPremium:', isPremium);
-    
-    // Check if user has reached profile limit
-    const ownedProfiles = profiles.filter(p => !p.is_shared);
-    if (!isPremium && ownedProfiles.length >= 1) {
-      console.log('Profile limit reached for basic user');
-      setUpgradeFeature('profiles');
-      setShowUpgradePrompt(true);
-      return;
-    }
-
-    // Show profile creation form
-    setShowProfileCreation(true);
-  };
-
-  const handleManageProfiles = () => {
-    setShowProfileManagement(true);
-  };
-
-  const handleProfileCreated = async (profileData: { name: string; birth_date?: string; photo_url?: string }) => {
-    console.log('Creating profile with data:', profileData);
-    const success = await createProfile(profileData);
-    if (success) {
-      setShowProfileCreation(false);
-      setShowNewUserOnboarding(false);
-    }
-    return success;
-  };
-
-  const handleSkipOnboarding = () => {
-    setShowNewUserOnboarding(false);
-  };
-
-  const handleManageSubscription = () => {
-    if (isPremium) {
-      openCustomerPortal();
-    } else {
-      navigate('/subscription');
-    }
-  };
-
-  const handlePediatricianReports = () => {
-    if (!isPremium) {
-      setUpgradeFeature('pediatrician');
-      setShowUpgradePrompt(true);
-      return;
-    }
-    navigate('/pediatrician-reports');
-  };
-
-  const handleNotifications = () => {
-    if (!isPremium) {
-      setUpgradeFeature('notifications');
-      setShowUpgradePrompt(true);
-      return;
-    }
-    navigate('/notifications');
-  };
-
-  const handleContact = () => {
-    navigate('/contact');
-  };
-
-  if (loading) {
-    return <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center">
+  if (loading || profileLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="text-center">
-          <Moon className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
-          <p className="text-muted-foreground">{t('common.loading')}</p>
+          <Moon className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600 text-sm sm:text-base">{t('common.loading')}</p>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   if (!user) {
     return null;
   }
 
-  // Show new user onboarding if requested
-  if (showNewUserOnboarding && isNewUser) {
-    return <div className="min-h-screen bg-soft gradient-dynamic-slow">
-        <DesktopHeader />
-        <MobileHeader />
-        <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4">
-          <NewUserOnboarding 
-            onProfileCreated={handleProfileCreated}
-            onSkip={handleSkipOnboarding}
-          />
-        </main>
-      </div>;
-  }
-
-  // Show profile creation form if requested
-  if (showProfileCreation) {
-    return <div className="min-h-screen bg-soft gradient-dynamic-slow">
-        <DesktopHeader />
-        <MobileHeader />
-        <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4">
-          <BabyProfileSetup 
-            onProfileCreated={handleProfileCreated}
-            showBackButton={true}
-            onBack={() => setShowProfileCreation(false)}
-          />
-        </main>
-      </div>;
-  }
-
-  const userName = user.user_metadata?.full_name?.split(' ')[0];
-  return <div className="min-h-screen bg-soft gradient-dynamic-slow">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Headers */}
       <DesktopHeader />
       <MobileHeader />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-1 lg:py-2">
-        {/* Welcome Section */}
-        <div className="mb-3 lg:mb-4">
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start mb-2">
-            <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-foreground mb-1">
-                {userName ? t('dashboard.welcome', {
-                name: userName
-              }) : t('dashboard.welcomeFallback')}
-              </h1>
-              <p className="text-muted-foreground mb-2 lg:mb-3 text-sm lg:text-base">
-                {t('dashboard.subtitle')}
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
+        {/* Page Header */}
+        <div className="mb-4 sm:mb-6 lg:mb-8">
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <Baby className="h-6 w-6 lg:h-8 lg:w-8 text-blue-600 flex-shrink-0" />
+                <h1 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 leading-tight">
+                  {t('pages.dashboard.welcome')}
+                </h1>
+              </div>
+              {/* Mobile Language Selector */}
+              <div className="sm:hidden">
+                <LanguageSelector />
+              </div>
+            </div>
+            <p className="text-gray-600 text-sm sm:text-base">
+              {t('pages.dashboard.trackMessage')}
+            </p>
+          </div>
+        </div>
+
+        {!profile ? (
+          <PermissionAwareActions requiredPermission="canEdit">
+            <div className="text-center mb-6 sm:mb-8 px-2 sm:px-4">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
+                {t('pages.dashboard.setupFirst')}
+              </h2>
+              <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+                {t('pages.dashboard.setupMessage')}
               </p>
+              <div className="max-w-sm sm:max-w-md mx-auto">
+                <BabyProfileSetup onProfileCreated={createProfile} />
+              </div>
             </div>
-            
-            {/* Tutorial Button */}
-            <Button onClick={() => navigate('/tutorial')} variant="outline" className="w-full lg:w-auto flex items-center space-x-2 mb-2 lg:mb-0">
-              <GraduationCap className="h-4 w-4" />
-              <span>Quick Tutorial</span>
-            </Button>
-          </div>
-          
-          {/* Profile Selector */}
-          <div className="mb-2 lg:mb-3">
-            <h2 className="text-base lg:text-lg font-medium text-foreground mb-1 lg:mb-2">{t('dashboard.childProfiles')}</h2>
-            
-            {/* Desktop Profile Selector */}
-            <div className="hidden lg:block">
-              <ProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
+          </PermissionAwareActions>
+        ) : (
+          <>
+            {/* Quick Actions Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
+              <Card 
+                className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 touch-target"
+                onClick={() => navigate('/track-activity')}
+              >
+                <CardHeader className="pb-2 sm:pb-3">
+                  <CardTitle className="flex items-center space-x-2 text-sm sm:text-base">
+                    <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    <span className="text-blue-900">Track</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs sm:text-sm text-blue-700">Log activities</p>
+                </CardContent>
+              </Card>
+
+              <Card 
+                className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 touch-target"
+                onClick={() => navigate('/reports')}
+              >
+                <CardHeader className="pb-2 sm:pb-3">
+                  <CardTitle className="flex items-center space-x-2 text-sm sm:text-base">
+                    <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
+                    <span className="text-purple-900">Reports</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs sm:text-sm text-purple-700">View insights</p>
+                </CardContent>
+              </Card>
+
+              <Card 
+                className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-green-50 to-green-100 border-green-200 touch-target"
+                onClick={() => navigate('/messages')}
+              >
+                <CardHeader className="pb-2 sm:pb-3">
+                  <CardTitle className="flex items-center space-x-2 text-sm sm:text-base">
+                    <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                    <span className="text-green-900">Messages</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs sm:text-sm text-green-700">Family chat</p>
+                </CardContent>
+              </Card>
+
+              <Card 
+                className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 touch-target"
+                onClick={() => navigate('/memories')}
+              >
+                <CardHeader className="pb-2 sm:pb-3">
+                  <CardTitle className="flex items-center space-x-2 text-sm sm:text-base">
+                    <Camera className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600" />
+                    <span className="text-amber-900">Memories</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-xs sm:text-sm text-amber-700">Photos & videos</p>
+                </CardContent>
+              </Card>
             </div>
-            
-            {/* Mobile Profile Selector */}
-            <div className="lg:hidden">
-              <MobileProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
+
+            {/* Settings and Account Management */}
+            <div className="border-t pt-4 sm:pt-6 lg:pt-8">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  {t('pages.dashboard.settings')}
+                </h2>
+                <div className="hidden sm:block">
+                  {/* Desktop Language Selector */}
+                  <LanguageSelector />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <Card className="touch-target">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium">
+                      {t('pages.dashboard.profile')}
+                    </CardTitle>
+                    <User className="h-4 w-4 text-gray-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">{t('pages.dashboard.profileMessage')}</p>
+                    <Button variant="secondary" size="sm" className="mt-2 w-full" onClick={() => navigate('/account')}>
+                      {t('pages.dashboard.manage')}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="touch-target">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium">
+                      {t('pages.dashboard.familySharing')}
+                    </CardTitle>
+                    <Crown className="h-4 w-4 text-gray-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">{t('pages.dashboard.familyMessage')}</p>
+                    <Button variant="secondary" size="sm" className="mt-2 w-full" onClick={() => navigate('/family-sharing')}>
+                      {t('pages.dashboard.manage')}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="touch-target">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium">
+                      {t('pages.dashboard.subscription')}
+                    </CardTitle>
+                    <Zap className="h-4 w-4 text-gray-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">{t('pages.dashboard.subscriptionMessage')}</p>
+                    <Button variant="secondary" size="sm" className="mt-2 w-full" onClick={() => navigate('/subscription')}>
+                      {t('pages.dashboard.manage')}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="touch-target">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                    <CardTitle className="text-sm font-medium">
+                      {t('pages.dashboard.notifications')}
+                    </CardTitle>
+                    <Plus className="h-4 w-4 text-gray-500" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">{t('pages.dashboard.notificationMessage')}</p>
+                    <Button variant="secondary" size="sm" className="mt-2 w-full" onClick={() => navigate('/notifications')}>
+                      {t('pages.dashboard.manage')}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-            
-            {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
-                <Crown className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
-                Upgrade to Premium for unlimited baby profiles
-              </p>}
-          </div>
-        </div>
-
-        {/* Upgrade Banner for Basic Users */}
-        {!isPremium && <Card className="mb-3 lg:mb-4 border-2 border-dashed border-warning/20 bg-gradient-to-r from-warning/5 to-warning/10 card-glow">
-            <CardContent className="p-2 lg:p-3">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-2 lg:space-y-0">
-                <div className="flex items-start lg:items-center space-x-2">
-                  <div className="bg-warning/20 rounded-full p-1.5 flex-shrink-0">
-                    <Sparkles className="h-4 w-4 text-warning" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-sm lg:text-base font-semibold text-foreground mb-0.5">
-                      Unlock Premium Features
-                    </h3>
-                    <p className="text-muted-foreground text-xs lg:text-sm">
-                      Get unlimited profiles, extended history, family sharing, and more for just $9.99/month
-                    </p>
-                  </div>
-                </div>
-                <Button onClick={() => navigate('/subscription')} variant="warning" className="flex items-center justify-center space-x-2 w-full lg:w-auto" size="sm">
-                  <Crown className="h-4 w-4" />
-                  <span>View Plans</span>
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>}
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 mb-3 lg:mb-4">
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 card-glow" onClick={handleTrackActivity}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-info/20 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2 transition-transform duration-300 hover:scale-110">
-                <Activity className="h-4 w-4 lg:h-5 lg:w-5 text-info" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-0.5 text-xs lg:text-sm">{t('dashboard.trackActivities')}</h3>
-              <p className="text-xs text-muted-foreground">{t('dashboard.trackActivitiesDesc')}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 card-glow" onClick={handleSleepSchedule}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-primary/20 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2 transition-transform duration-300 hover:scale-110">
-                <Moon className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-0.5 text-xs lg:text-sm">{t('dashboard.sleepSchedule')}</h3>
-              <p className="text-xs text-muted-foreground">{t('dashboard.sleepScheduleDesc')}</p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleNotifications}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-indigo-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Bell className="h-4 w-4 lg:h-5 lg:w-5 text-indigo-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Smart Notifications</h3>
-              <p className="text-xs text-gray-600">Intelligent care reminders</p>
-              {!isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleMemories}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-pink-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Camera className="h-4 w-4 lg:h-5 lg:w-5 text-pink-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Photo & Video Memories</h3>
-              <p className="text-xs text-gray-600">Capture precious moments</p>
-              {!isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
-
-          <div className="sm:col-span-2 lg:col-span-1">
-            <QuickLogCard />
-          </div>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleFamilySharing}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-green-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Users className="h-4 w-4 lg:h-5 lg:w-5 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.familySharing')}</h3>
-              <p className="text-xs text-gray-600">{t('dashboard.familySharingDesc')}</p>
-              {!isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handlePediatricianReports}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-teal-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-teal-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.pediatricianReports')}</h3>
-              <p className="text-xs text-gray-600">{t('dashboard.pediatricianReportsDesc')}</p>
-              {!isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer sm:col-span-2 lg:col-span-1" onClick={handleViewReports}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-orange-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <BarChart3 className="h-4 w-4 lg:h-5 lg:w-5 text-orange-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.viewReports')}</h3>
-              <p className="text-xs text-gray-600 mb-1">{t('dashboard.viewReportsDesc')}</p>
-              <div className="space-y-0.5 text-xs text-gray-500">
-                <div className="flex justify-between">
-                  <span>{t('dashboard.dailySleep')}</span>
-                  <span>{t('dashboard.trackPatterns')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>{t('dashboard.feedingData')}</span>
-                  <span>{t('dashboard.monitorFrequency')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>{t('dashboard.weeklyTrends')}</span>
-                  <span>{t('dashboard.visualCharts')}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity & Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3">
-          {/* Today's Summary */}
-          <Card className="lg:col-span-2">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
-                <Baby className="h-4 w-4 text-blue-600" />
-                <span>{t('dashboard.todaysActivity')}</span>
-                {activeProfile && <span className="text-xs font-normal text-gray-600">
-                    for {activeProfile.name}
-                  </span>}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {activeProfile ? <div className="text-center py-3 lg:py-4">
-                  <Moon className="h-10 w-10 lg:h-12 lg:w-12 text-gray-300 mx-auto mb-1 lg:mb-2" />
-                  <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">{t('dashboard.startTracking')}</h3>
-                  <p className="text-gray-600 mb-2 text-xs lg:text-sm">
-                    {t('dashboard.noDataMessage', {
-                  name: activeProfile.name
-                })}
-                  </p>
-                  <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" onClick={handleTrackActivity} size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    {t('dashboard.startTracking')}
-                  </Button>
-                </div> : <div className="text-center py-3 lg:py-4">
-                  <Baby className="h-10 w-10 lg:h-12 lg:w-12 text-gray-300 mx-auto mb-1 lg:mb-2" />
-                  <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">{t('dashboard.createProfile')}</h3>
-                  <p className="text-gray-600 mb-2 text-xs lg:text-sm">
-                    {t('dashboard.noProfileMessage')}
-                  </p>
-                  <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" onClick={handleAddProfile} size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    {t('dashboard.addProfile')}
-                  </Button>
-                </div>}
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
-                <TrendingUp className="h-4 w-4 text-green-600" />
-                <span>{t('dashboard.weekOverview')}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {statsLoading ? <div className="space-y-2">
-                  <div className="text-center">
-                    <div className="h-5 bg-gray-200 rounded w-12 mx-auto mb-1 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
-                  </div>
-                  <div className="text-center">
-                    <div className="h-5 bg-gray-200 rounded w-6 mx-auto mb-1 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-12 mx-auto animate-pulse"></div>
-                  </div>
-                  <div className="text-center">
-                    <div className="h-5 bg-gray-200 rounded w-6 mx-auto mb-1 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
-                  </div>
-                </div> : hasActiveProfile ? <>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">{stats.weeklyAverageSleep}</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.averageSleep')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">{stats.weeklyFeedings}</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.feedings')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">{stats.weeklyDiaperChanges}</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.diaperChanges')}</div>
-                  </div>
-                  <div className="pt-2 border-t">
-                    <p className="text-xs text-gray-500 text-center">
-                      Data from this week (Monday-Sunday)
-                    </p>
-                  </div>
-                </> : <>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">0h 0m</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.averageSleep')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">0</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.feedings')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">0</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.diaperChanges')}</div>
-                  </div>
-                  <div className="pt-2 border-t">
-                    <p className="text-xs text-gray-500 text-center">
-                      {t('dashboard.noProfileMessage')}
-                    </p>
-                  </div>
-                </>}
-            </CardContent>
-          </Card>
-        </div>
+          </>
+        )}
       </main>
 
-      {/* Profile Management Dialog */}
-      <ProfileManagementDialog isOpen={showProfileManagement} onClose={() => setShowProfileManagement(false)} />
-
-      {/* Upgrade Prompt */}
-      <UpgradePrompt isOpen={showUpgradePrompt} onClose={() => setShowUpgradePrompt(false)} feature={upgradeFeature} />
-    </div>;
+      {/* Footer with Sign Out */}
+      <footer className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 border-t mt-6">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={handleSignOut}
+          className="w-full sm:w-auto flex items-center space-x-2 text-gray-600 hover:text-gray-900 touch-target"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>{t('pages.dashboard.signOut')}</span>
+        </Button>
+      </footer>
+    </div>
+  );
 };
 
 export default Dashboard;
