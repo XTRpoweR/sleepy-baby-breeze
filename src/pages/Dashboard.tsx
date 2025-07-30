@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { 
   Clock, 
   BarChart3, 
