@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
@@ -31,6 +32,7 @@ import InvitationAccept from '@/pages/InvitationAccept';
 import NotFound from '@/pages/NotFound';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/useAuth';
+import { SubscriptionProvider } from '@/hooks/useSubscription';
 import { TranslationWrapper } from '@/components/TranslationWrapper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './App.css';
@@ -42,41 +44,43 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TranslationWrapper>
         <AuthProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/track-activity" element={<TrackActivity />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/pediatrician-reports" element={<PediatricianReports />} />
-              <Route path="/sleep-schedule" element={<SleepSchedule />} />
-              <Route path="/sounds" element={<Sounds />} />
-              <Route path="/memories" element={<Memories />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/family-sharing" element={<FamilySharing />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/subscription" element={<Subscription />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/careers" element={<Careers />} />
-              <Route path="/download" element={<Download />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogArticle />} />
-              <Route path="/help" element={<HelpCenter />} />
-              <Route path="/help/articles" element={<HelpArticles />} />
-              <Route path="/help/articles/:slug" element={<HelpArticle />} />
-              <Route path="/tutorial" element={<Tutorial />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/invitation/accept/:token" element={<InvitationAccept />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-          </Router>
+          <SubscriptionProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/track-activity" element={<TrackActivity />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/pediatrician-reports" element={<PediatricianReports />} />
+                <Route path="/sleep-schedule" element={<SleepSchedule />} />
+                <Route path="/sounds" element={<Sounds />} />
+                <Route path="/memories" element={<Memories />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/family-sharing" element={<FamilySharing />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/subscription" element={<Subscription />} />
+                <Route path="/features" element={<Features />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/download" element={<Download />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogArticle />} />
+                <Route path="/help" element={<HelpCenter />} />
+                <Route path="/help/articles" element={<HelpArticles />} />
+                <Route path="/help/articles/:slug" element={<HelpArticle />} />
+                <Route path="/tutorial" element={<Tutorial />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/invitation/accept/:token" element={<InvitationAccept />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+            </Router>
+          </SubscriptionProvider>
         </AuthProvider>
       </TranslationWrapper>
     </QueryClientProvider>
