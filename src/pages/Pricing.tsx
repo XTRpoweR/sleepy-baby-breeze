@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
-
 const Pricing = () => {
   const navigate = useNavigate();
   const {
@@ -25,7 +24,6 @@ const Pricing = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -33,17 +31,14 @@ const Pricing = () => {
       navigate('/auth');
     }
   };
-
   const features = {
     basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
     premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo & video memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
   };
-
   const monthlyPrice = 9.99;
   const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
-
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <DesktopHeader />
@@ -52,11 +47,7 @@ const Pricing = () => {
       {/* Back Button */}
       <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
         <div className="max-w-6xl mx-auto">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/dashboard')}
-            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
-          >
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base">
             <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>{t('navigation.backToDashboard')}</span>
           </Button>
@@ -94,7 +85,7 @@ const Pricing = () => {
               <CardHeader className="text-center pb-4 md:pb-6">
                 <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
                   <Baby className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
-                  <CardTitle className="text-xl md:text-2xl">SleepyBaby Basic</CardTitle>
+                  <CardTitle className="text-xl md:text-2xl">SleepyBabyy Basic</CardTitle>
                 </div>
                 <div className="space-y-2">
                   <div className="text-3xl md:text-4xl font-bold text-gray-900">Free</div>
@@ -131,7 +122,7 @@ const Pricing = () => {
               <CardHeader className="text-center pb-4 md:pb-6">
                 <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
                   <Crown className="h-6 w-6 md:h-8 md:w-8 text-orange-600" />
-                  <CardTitle className="text-xl md:text-2xl">SleepyBaby Premium</CardTitle>
+                  <CardTitle className="text-xl md:text-2xl">SleepyBabyy Premium</CardTitle>
                 </div>
                 
                 {/* Discount Badge */}
@@ -313,5 +304,4 @@ const Pricing = () => {
       </section>
     </div>;
 };
-
 export default Pricing;
