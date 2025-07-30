@@ -7,35 +7,20 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
-import { 
-  Clock, 
-  Calendar, 
-  Volume2, 
-  Users, 
-  BarChart3, 
-  Globe,
-  Baby,
-  Heart,
-  CheckCircle,
-  ArrowLeft,
-  Smartphone,
-  Shield,
-  Zap,
-  Bell,
-  Camera,
-  Share2
-} from "lucide-react";
-
+import { Clock, Calendar, Volume2, Users, BarChart3, Globe, Baby, Heart, CheckCircle, ArrowLeft, Smartphone, Shield, Zap, Bell, Camera, Share2 } from "lucide-react";
 const Features = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { t } = useTranslation();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useTranslation();
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -43,126 +28,73 @@ const Features = () => {
       navigate('/auth');
     }
   };
-
-  const coreFeatures = [
-    {
-      icon: Clock,
-      title: "Complete Activity Tracking",
-      description: "Track sleep, feeding, diaper changes, and custom activities with precise timing and detailed notes.",
-      color: "text-blue-500",
-      benefits: [
-        "One-tap logging for quick entries",
-        "Automatic duration calculations",
-        "Custom activity types",
-        "Detailed notes and observations"
-      ]
-    },
-    {
-      icon: Calendar,
-      title: "Smart Sleep Schedules",
-      description: "AI-powered sleep schedule recommendations based on your baby's age and patterns.",
-      color: "text-purple-500",
-      benefits: [
-        "Age-appropriate schedules",
-        "Personalized recommendations",
-        "Flexible adjustments",
-        "Schedule progress tracking"
-      ]
-    },
-    {
-      icon: Volume2,
-      title: "Soothing Sound Library",
-      description: "Premium collection of white noise, lullabies, and nature sounds to help your baby sleep.",
-      color: "text-green-500",
-      benefits: [
-        "High-quality audio recordings",
-        "Timer and fade-out options",
-        "Offline playback",
-        "Custom sound playlists"
-      ]
-    },
-    {
-      icon: Users,
-      title: "Family Collaboration",
-      description: "Share access with partners, grandparents, and caregivers for seamless coordination.",
-      color: "text-orange-500",
-      benefits: [
-        "Real-time sync across devices",
-        "Role-based permissions",
-        "Activity notifications",
-        "Handoff coordination"
-      ]
-    },
-    {
-      icon: BarChart3,
-      title: "Advanced Analytics",
-      description: "Beautiful charts and insights to understand your baby's patterns and progress.",
-      color: "text-indigo-500",
-      benefits: [
-        "Weekly and monthly trends",
-        "Pattern recognition",
-        "Sleep quality scoring",
-        "Milestone tracking"
-      ]
-    },
-    {
-      icon: Globe,
-      title: "Multilingual Support",
-      description: "Available in 8 languages with culturally appropriate guidance and tips.",
-      color: "text-pink-500",
-      benefits: [
-        "8 supported languages",
-        "Cultural sleep practices",
-        "Localized content",
-        "Regional expert advice"
-      ]
-    }
-  ];
-
-  const premiumFeatures = [
-    {
-      icon: Camera,
-      title: "Photo & Video Memories",
-      description: "Capture and organize precious moments with integrated photo and video storage.",
-      badge: "Premium"
-    },
-    {
-      icon: Bell,
-      title: "Smart Notifications",
-      description: "Intelligent reminders for feeding times, sleep windows, and important milestones.",
-      badge: "Premium"
-    },
-    {
-      icon: Share2,
-      title: "Pediatrician Reports",
-      description: "Generate professional reports to share with your healthcare provider.",
-      badge: "Premium",
-      advantages: [
-        "Easy to download and securely share with your doctor"
-      ]
-    },
-    {
-      icon: Shield,
-      title: "Data Backup & Export",
-      description: "Secure cloud backup and export your data in multiple formats.",
-      badge: "Premium"
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  const coreFeatures = [{
+    icon: Clock,
+    title: "Complete Activity Tracking",
+    description: "Track sleep, feeding, diaper changes, and custom activities with precise timing and detailed notes.",
+    color: "text-blue-500",
+    benefits: ["One-tap logging for quick entries", "Automatic duration calculations", "Custom activity types", "Detailed notes and observations"]
+  }, {
+    icon: Calendar,
+    title: "Smart Sleep Schedules",
+    description: "AI-powered sleep schedule recommendations based on your baby's age and patterns.",
+    color: "text-purple-500",
+    benefits: ["Age-appropriate schedules", "Personalized recommendations", "Flexible adjustments", "Schedule progress tracking"]
+  }, {
+    icon: Volume2,
+    title: "Soothing Sound Library",
+    description: "Premium collection of white noise, lullabies, and nature sounds to help your baby sleep.",
+    color: "text-green-500",
+    benefits: ["High-quality audio recordings", "Timer and fade-out options", "Offline playback", "Custom sound playlists"]
+  }, {
+    icon: Users,
+    title: "Family Collaboration",
+    description: "Share access with partners, grandparents, and caregivers for seamless coordination.",
+    color: "text-orange-500",
+    benefits: ["Real-time sync across devices", "Role-based permissions", "Activity notifications", "Handoff coordination"]
+  }, {
+    icon: BarChart3,
+    title: "Advanced Analytics",
+    description: "Beautiful charts and insights to understand your baby's patterns and progress.",
+    color: "text-indigo-500",
+    benefits: ["Weekly and monthly trends", "Pattern recognition", "Sleep quality scoring", "Milestone tracking"]
+  }, {
+    icon: Globe,
+    title: "Multilingual Support",
+    description: "Available in 8 languages with culturally appropriate guidance and tips.",
+    color: "text-pink-500",
+    benefits: ["8 supported languages", "Cultural sleep practices", "Localized content", "Regional expert advice"]
+  }];
+  const premiumFeatures = [{
+    icon: Camera,
+    title: "Photo & Video Memories",
+    description: "Capture and organize precious moments with integrated photo and video storage.",
+    badge: "Premium"
+  }, {
+    icon: Bell,
+    title: "Smart Notifications",
+    description: "Intelligent reminders for feeding times, sleep windows, and important milestones.",
+    badge: "Premium"
+  }, {
+    icon: Share2,
+    title: "Pediatrician Reports",
+    description: "Generate professional reports to share with your healthcare provider.",
+    badge: "Premium",
+    advantages: ["Easy to download and securely share with your doctor"]
+  }, {
+    icon: Shield,
+    title: "Data Backup & Export",
+    description: "Secure cloud backup and export your data in multiple formats.",
+    badge: "Premium"
+  }];
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Headers */}
       <DesktopHeader />
       <MobileHeader />
 
       {/* Back Button for Mobile */}
       <div className="lg:hidden bg-white/80 backdrop-blur-sm border-b border-blue-100 px-4 py-3">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => navigate('/')}
-          className="flex items-center space-x-2"
-        >
+        <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
           <ArrowLeft className="h-4 w-4" />
           <span>Back</span>
         </Button>
@@ -204,9 +136,8 @@ const Features = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {coreFeatures.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+            const IconComponent = feature.icon;
+            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                   <CardHeader>
                     <div className={`inline-flex p-3 rounded-2xl bg-gray-50 mb-4 w-fit`}>
                       <IconComponent className={`h-8 w-8 ${feature.color}`} />
@@ -218,17 +149,14 @@ const Features = () => {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {feature.benefits.map((benefit, idx) => (
-                        <li key={idx} className="flex items-center space-x-2 text-sm">
+                      {feature.benefits.map((benefit, idx) => <li key={idx} className="flex items-center space-x-2 text-sm">
                           <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                           <span>{benefit}</span>
-                        </li>
-                      ))}
+                        </li>)}
                     </ul>
                   </CardContent>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
         </div>
       </section>
@@ -252,9 +180,8 @@ const Features = () => {
           </div>
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {premiumFeatures.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Card key={index} className="border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between">
+            const IconComponent = feature.icon;
+            return <Card key={index} className="border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between">
                   <CardHeader>
                     <div className="flex items-center justify-between mb-4">
                       <div className="inline-flex p-3 rounded-2xl bg-orange-100">
@@ -266,19 +193,14 @@ const Features = () => {
                     <CardDescription className="text-gray-600">
                       {feature.description}
                     </CardDescription>
-                    {feature.advantages && (
-                      <ul className="mt-4 space-y-1 pl-4 list-disc text-gray-700 text-sm">
-                        {feature.advantages.map((adv, aidx) => (
-                          <li key={aidx}>
+                    {feature.advantages && <ul className="mt-4 space-y-1 pl-4 list-disc text-gray-700 text-sm">
+                        {feature.advantages.map((adv, aidx) => <li key={aidx}>
                             {adv}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                          </li>)}
+                      </ul>}
                   </CardHeader>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
           <div className="text-center mt-12">
             <Button size="lg" onClick={() => navigate('/pricing')} className="bg-orange-600 hover:bg-orange-700">
@@ -343,14 +265,12 @@ const Features = () => {
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
               <Link to="/contact" className="flex items-center space-x-2">
-                <span>Contact Sales</span>
+                <span className="text-violet-600">Contact Sales</span>
               </Link>
             </Button>
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Features;
