@@ -7,20 +7,19 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { Clock, Calendar, Volume2, Users, BarChart3, Globe, Baby, Heart, CheckCircle, ArrowLeft, Smartphone, Shield, Zap, Bell, Camera, Share2 } from "lucide-react";
+
 const Features = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-  const {
-    t
-  } = useTranslation();
+  const { user } = useAuth();
+  const { t } = useTranslation();
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -28,6 +27,11 @@ const Features = () => {
       navigate('/auth');
     }
   };
+
+  const handleSignIn = () => {
+    navigate('/auth');
+  };
+
   const coreFeatures = [{
     icon: Clock,
     title: "Complete Activity Tracking",
@@ -65,6 +69,7 @@ const Features = () => {
     color: "text-pink-500",
     benefits: ["8 supported languages", "Cultural sleep practices", "Localized content", "Regional expert advice"]
   }];
+
   const premiumFeatures = [{
     icon: Camera,
     title: "Photo & Video Memories",
@@ -87,18 +92,88 @@ const Features = () => {
     description: "Secure cloud backup and export your data in multiple formats.",
     badge: "Premium"
   }];
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Headers */}
-      <DesktopHeader />
-      <MobileHeader />
 
-      {/* Back Button for Mobile */}
-      <div className="lg:hidden bg-white/80 backdrop-blur-sm border-b border-blue-100 px-4 py-3">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back</span>
-        </Button>
-      </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Conditional Headers */}
+      {user ? (
+        <>
+          <DesktopHeader />
+          <MobileHeader />
+          
+          {/* Back Button for Mobile (authenticated users) */}
+          <div className="lg:hidden bg-white/80 backdrop-blur-sm border-b border-blue-100 px-4 py-3">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="flex items-center space-x-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Dashboard</span>
+            </Button>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Non-authenticated Desktop Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                    alt="SleepyBabyy Logo" 
+                    className="h-12 w-auto"
+                  />
+                  <span className="text-xl font-bold text-gray-900">SleepyBabyy</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Button variant="ghost" onClick={() => navigate('/')}>
+                    Home
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/features')}>
+                    Features
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/pricing')}>
+                    Pricing
+                  </Button>
+                  <LanguageSelector />
+                  <Button variant="outline" onClick={handleSignIn}>
+                    Sign In
+                  </Button>
+                  <Button onClick={handleGetStarted}>
+                    Get Started
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Non-authenticated Mobile Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
+            <div className="flex justify-between items-center h-16 px-4">
+              <div className="flex items-center space-x-2">
+                <img 
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
+                  alt="SleepyBabyy Logo" 
+                  className="h-10 w-auto"
+                />
+                <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <LanguageSelector />
+                <Button size="sm" onClick={handleGetStarted}>
+                  Get Started
+                </Button>
+              </div>
+            </div>
+          </header>
+
+          {/* Back Button for Mobile (non-authenticated users) */}
+          <div className="lg:hidden bg-white/80 backdrop-blur-sm border-b border-blue-100 px-4 py-3">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Home</span>
+            </Button>
+          </div>
+        </>
+      )}
 
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
@@ -136,8 +211,9 @@ const Features = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {coreFeatures.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              const IconComponent = feature.icon;
+              return (
+                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
                   <CardHeader>
                     <div className={`inline-flex p-3 rounded-2xl bg-gray-50 mb-4 w-fit`}>
                       <IconComponent className={`h-8 w-8 ${feature.color}`} />
@@ -149,14 +225,17 @@ const Features = () => {
                   </CardHeader>
                   <CardContent>
                     <ul className="space-y-2">
-                      {feature.benefits.map((benefit, idx) => <li key={idx} className="flex items-center space-x-2 text-sm">
+                      {feature.benefits.map((benefit, idx) => (
+                        <li key={idx} className="flex items-center space-x-2 text-sm">
                           <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                           <span>{benefit}</span>
-                        </li>)}
+                        </li>
+                      ))}
                     </ul>
                   </CardContent>
-                </Card>;
-          })}
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -180,8 +259,9 @@ const Features = () => {
           </div>
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {premiumFeatures.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return <Card key={index} className="border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between">
+              const IconComponent = feature.icon;
+              return (
+                <Card key={index} className="border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col justify-between">
                   <CardHeader>
                     <div className="flex items-center justify-between mb-4">
                       <div className="inline-flex p-3 rounded-2xl bg-orange-100">
@@ -193,14 +273,19 @@ const Features = () => {
                     <CardDescription className="text-gray-600">
                       {feature.description}
                     </CardDescription>
-                    {feature.advantages && <ul className="mt-4 space-y-1 pl-4 list-disc text-gray-700 text-sm">
-                        {feature.advantages.map((adv, aidx) => <li key={aidx}>
+                    {feature.advantages && (
+                      <ul className="mt-4 space-y-1 pl-4 list-disc text-gray-700 text-sm">
+                        {feature.advantages.map((adv, aidx) => (
+                          <li key={aidx}>
                             {adv}
-                          </li>)}
-                      </ul>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </CardHeader>
-                </Card>;
-          })}
+                </Card>
+              );
+            })}
           </div>
           <div className="text-center mt-12">
             <Button size="lg" onClick={() => navigate('/pricing')} className="bg-orange-600 hover:bg-orange-700">
@@ -271,6 +356,8 @@ const Features = () => {
           </div>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 };
+
 export default Features;
