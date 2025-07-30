@@ -31,12 +31,16 @@ const HelpArticles = () => {
     }
   };
 
+  const handleArticleClick = (articleId: number) => {
+    navigate(`/help/article/${categoryName}/${articleId}`);
+  };
+
   // Article data based on category
   const getArticlesData = (category: string) => {
     const articlesData = {
       'getting-started': {
         title: 'Getting Started',
-        description: 'Learn the basics of SleepyBaby',
+        description: 'Learn the basics of SleepyBabyy',
         color: 'text-blue-600',
         bgColor: 'bg-blue-50',
         articles: [
@@ -45,28 +49,28 @@ const HelpArticles = () => {
             title: 'How to create your first baby profile',
             description: 'Step-by-step guide to setting up your baby\'s profile with all essential information.',
             readTime: '3 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 2,
             title: 'Quick setup guide for new parents',
             description: 'Get started in under 5 minutes with our comprehensive quick setup process.',
             readTime: '5 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 3,
             title: 'Understanding the dashboard layout',
             description: 'Navigate through your baby\'s dashboard and understand all the key features.',
             readTime: '4 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 4,
             title: 'Setting up your first sleep schedule',
             description: 'Create and customize sleep schedules that work for your baby\'s routine.',
             readTime: '6 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           }
         ]
       },
@@ -81,21 +85,21 @@ const HelpArticles = () => {
             title: 'Inviting family members to collaborate',
             description: 'Learn how to invite parents, grandparents, and caregivers to help track your baby.',
             readTime: '4 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 2,
             title: 'Managing family member permissions',
             description: 'Control what each family member can see and edit in your baby\'s profile.',
             readTime: '3 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 3,
             title: 'Setting up caregiver access',
             description: 'Give babysitters and daycare providers the right level of access.',
             readTime: '5 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           }
         ]
       },
@@ -110,21 +114,21 @@ const HelpArticles = () => {
             title: 'Understanding sleep pattern charts',
             description: 'Learn how to read and interpret your baby\'s sleep analytics and trends.',
             readTime: '7 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 2,
             title: 'Exporting your baby\'s data',
             description: 'Download and share your baby\'s activity reports with pediatricians.',
             readTime: '3 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 3,
             title: 'Weekly and monthly report summaries',
             description: 'Get insights from comprehensive weekly and monthly activity summaries.',
             readTime: '5 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           }
         ]
       },
@@ -139,21 +143,21 @@ const HelpArticles = () => {
             title: 'Understanding premium features',
             description: 'Learn about all the premium features available with your subscription.',
             readTime: '4 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 2,
             title: 'Managing your subscription',
             description: 'How to upgrade, downgrade, or cancel your subscription plan.',
             readTime: '3 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 3,
             title: 'Billing and payment issues',
             description: 'Troubleshoot common billing problems and update payment methods.',
             readTime: '5 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           }
         ]
       },
@@ -168,21 +172,21 @@ const HelpArticles = () => {
             title: 'Choosing the right sounds for sleep',
             description: 'Discover which sounds work best for different sleep situations.',
             readTime: '6 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 2,
             title: 'Setting up audio timers',
             description: 'Learn how to schedule sounds to play automatically at specific times.',
             readTime: '4 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 3,
             title: 'Creating custom sound playlists',
             description: 'Build personalized playlists for different activities and moods.',
             readTime: '5 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           }
         ]
       },
@@ -197,21 +201,21 @@ const HelpArticles = () => {
             title: 'Setting up smart notifications',
             description: 'Configure notifications that help you stay on top of your baby\'s routine.',
             readTime: '5 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 2,
             title: 'Customizing your dashboard',
             description: 'Personalize your dashboard layout and choose which widgets to display.',
             readTime: '4 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           },
           {
             id: 3,
             title: 'Privacy and security settings',
             description: 'Manage your privacy preferences and secure your account.',
             readTime: '6 min read',
-            author: 'SleepyBaby Team'
+            author: 'SleepyBabyy Team'
           }
         ]
       }
@@ -238,7 +242,6 @@ const HelpArticles = () => {
         </>
       ) : (
         <>
-          {/* Non-authenticated Desktop Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
@@ -272,7 +275,6 @@ const HelpArticles = () => {
             </div>
           </header>
 
-          {/* Non-authenticated Mobile Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
             <div className="flex justify-between items-center h-16 px-4">
               <div className="flex items-center space-x-2">
@@ -297,7 +299,6 @@ const HelpArticles = () => {
       {/* Hero Section */}
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          {/* Back button */}
           <div className="flex justify-between items-center mb-8">
             <Button variant="ghost" size="sm" onClick={() => navigate('/help')} className="flex items-center space-x-2">
               <ArrowLeft className="h-4 w-4" />
@@ -305,7 +306,6 @@ const HelpArticles = () => {
             </Button>
           </div>
 
-          {/* Category Header */}
           <div className="text-center mb-12">
             <div className={`inline-flex p-4 rounded-2xl ${categoryData.bgColor} mb-6`}>
               <Book className={`h-12 w-12 ${categoryData.color}`} />
@@ -329,7 +329,11 @@ const HelpArticles = () => {
           {categoryData.articles.length > 0 ? (
             <div className="space-y-6">
               {categoryData.articles.map((article) => (
-                <Card key={article.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer">
+                <Card 
+                  key={article.id} 
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  onClick={() => handleArticleClick(article.id)}
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

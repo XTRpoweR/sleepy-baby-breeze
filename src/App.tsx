@@ -26,6 +26,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import HelpCenter from "./pages/HelpCenter";
 import HelpArticles from "./pages/HelpArticles";
+import HelpArticle from "./pages/HelpArticle";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Blog from "./pages/Blog";
 import Careers from "./pages/Careers";
@@ -77,6 +78,7 @@ const App: React.FC = () => {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/help" element={<HelpCenter />} />
                   <Route path="/help/category/:categoryName" element={<HelpArticles />} />
+                  <Route path="/help/article/:categoryName/:articleId" element={<HelpArticle />} />
                   <Route path="/tutorial" element={<Tutorial />} />
                   <Route path="/getting-started" element={<Tutorial />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
