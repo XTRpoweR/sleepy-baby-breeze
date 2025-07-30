@@ -279,7 +279,7 @@ const HelpCenter = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <Badge variant="secondary" className="text-xs md:text-sm">{category.articles} articles</Badge>
+                      <Badge variant="secondary" className="text-xs md:text-sm">4 articles</Badge>
                       <div className="flex items-center text-blue-600 group-hover:text-blue-700">
                         <span className="mr-2 text-sm">Browse</span>
                         <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
