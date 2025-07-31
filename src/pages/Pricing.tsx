@@ -11,7 +11,6 @@ import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
-
 const Pricing = () => {
   const navigate = useNavigate();
   const {
@@ -48,7 +47,6 @@ const Pricing = () => {
   const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
-
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Navigation */}
       {user ? <>
@@ -345,9 +343,7 @@ const Pricing = () => {
             <Button onClick={handleGetStarted} className="bg-white text-blue-600 hover:bg-blue-50">
               Start Free Today
             </Button>
-            <Button variant="outline" className="border-white text-white hover:bg-white/10 bg-white/5">
-              View All Features
-            </Button>
+            
           </div>
           <p className="text-blue-100 text-xs md:text-sm mt-4 md:mt-6">
             7-day free trial • No credit card required • Cancel anytime
@@ -356,5 +352,4 @@ const Pricing = () => {
       </section>
     </div>;
 };
-
 export default Pricing;
