@@ -252,10 +252,8 @@ const PrivacyPolicy = () => {
                       please contact us:
                     </p>
                     <div className="bg-gray-50 p-6 rounded-lg">
-                      <p><strong>Email:</strong> privacy@sleepybaby.com</p>
-                      <p><strong>Address:</strong> SleepyBaby Privacy Team<br />
-                      123 Tech Street, Suite 100<br />
-                      San Francisco, CA 94105</p>
+                      <p><strong>Email:</strong> support@sleepybabyy.com</p>
+                      <p><strong>Address:</strong> SleepyBabyy Privacy Team</p>
                     </div>
                   </div>
                 </div>
