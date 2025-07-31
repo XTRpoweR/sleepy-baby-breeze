@@ -25,6 +25,144 @@ const BlogArticle = () => {
 
   // Article data - in a real app, this would come from an API or database
   const articlesData = {
+    "circadian-rhythms-newborns": {
+      title: "Understanding Circadian Rhythms in Newborns",
+      excerpt: "Discover how your baby's internal clock develops and how you can support healthy circadian rhythm establishment from birth.",
+      author: "Dr. Rachel Martinez",
+      date: "December 12, 2024",
+      readTime: "6 min read",
+      category: "Sleep Science",
+      content: `
+        <h2>What Are Circadian Rhythms?</h2>
+        <p>Circadian rhythms are our body's internal clock that regulates sleep-wake cycles over a 24-hour period. These biological processes are controlled by a master clock in the brain called the suprachiasmatic nucleus (SCN), which responds to light and darkness signals.</p>
+
+        <h3>How Circadian Rhythms Develop in Babies</h3>
+        <p>Unlike adults who have well-established circadian rhythms, newborns are born without this internal clock fully developed. Here's how it evolves:</p>
+        <ul>
+          <li><strong>Birth to 6 weeks:</strong> No clear circadian rhythm exists. Babies sleep in short bursts throughout day and night</li>
+          <li><strong>6-12 weeks:</strong> The first signs of rhythm begin to emerge, with slightly longer sleep periods at night</li>
+          <li><strong>3-6 months:</strong> More defined patterns develop, with consolidated nighttime sleep becoming more common</li>
+          <li><strong>6-12 months:</strong> Circadian rhythms become more established and predictable</li>
+        </ul>
+
+        <h2>The Science Behind Circadian Development</h2>
+        <p>Several factors influence how quickly and effectively a baby's circadian rhythm develops:</p>
+
+        <h3>Light Exposure</h3>
+        <p>Light is the most powerful cue for circadian rhythm development. The SCN receives information about light and darkness through the eyes, even when they're closed. This is why:</p>
+        <ul>
+          <li>Bright light during the day helps establish the "awake" period</li>
+          <li>Dim lighting in the evening signals it's time to prepare for sleep</li>
+          <li>Complete darkness at night reinforces the sleep phase</li>
+        </ul>
+
+        <h3>Melatonin Production</h3>
+        <p>Melatonin, often called the "sleep hormone," plays a crucial role in circadian rhythm regulation:</p>
+        <ul>
+          <li>Newborns don't produce significant amounts of melatonin initially</li>
+          <li>Production begins around 2-3 months of age</li>
+          <li>Peak production typically occurs between 1-3 AM</li>
+          <li>Light exposure suppresses melatonin production</li>
+        </ul>
+
+        <h2>Supporting Healthy Circadian Rhythm Development</h2>
+
+        <h3>Light Management Strategies</h3>
+        <p>Help your baby's internal clock by managing light exposure:</p>
+        <ul>
+          <li><strong>Morning:</strong> Open curtains and expose baby to natural daylight</li>
+          <li><strong>Daytime:</strong> Keep living spaces bright during awake periods</li>
+          <li><strong>Evening:</strong> Dim lights 1-2 hours before bedtime</li>
+          <li><strong>Night:</strong> Use minimal lighting for feeds and diaper changes</li>
+        </ul>
+
+        <h3>Consistent Daily Routines</h3>
+        <p>Regular daily activities help reinforce circadian timing:</p>
+        <ul>
+          <li>Feed at consistent times throughout the day</li>
+          <li>Establish regular wake-up and bedtime routines</li>
+          <li>Create distinct differences between day and night activities</li>
+          <li>Maintain consistent sleep environments</li>
+        </ul>
+
+        <h3>Temperature Regulation</h3>
+        <p>Body temperature naturally fluctuates with circadian rhythms:</p>
+        <ul>
+          <li>Keep the nursery slightly cooler at night (68-70°F)</li>
+          <li>Dress baby appropriately for the ambient temperature</li>
+          <li>Avoid overheating, which can disrupt sleep</li>
+        </ul>
+
+        <h2>Common Challenges and Solutions</h2>
+
+        <h3>Day-Night Confusion</h3>
+        <p>Some babies seem to have their days and nights mixed up. To address this:</p>
+        <ul>
+          <li>Maximize light exposure during daytime hours</li>
+          <li>Keep nighttime interactions minimal and boring</li>
+          <li>Be patient - this typically resolves by 12-16 weeks</li>
+          <li>Maintain consistent routines even when it feels futile</li>
+        </ul>
+
+        <h3>Premature Babies</h3>
+        <p>Premature infants may take longer to develop circadian rhythms because:</p>
+        <ul>
+          <li>Their nervous systems are less mature</li>
+          <li>They missed the final weeks of in-utero development</li>
+          <li>Hospital environments often lack natural light cues</li>
+          <li>Medical needs may interrupt natural sleep patterns</li>
+        </ul>
+
+        <h2>Environmental Factors That Influence Circadian Rhythms</h2>
+
+        <h3>Seasonal Considerations</h3>
+        <p>The time of year can affect circadian development:</p>
+        <ul>
+          <li><strong>Winter babies:</strong> May need extra light exposure due to shorter days</li>
+          <li><strong>Summer babies:</strong> Benefit from longer natural light periods</li>
+          <li><strong>Light therapy:</strong> Consider bright light boxes in extreme cases</li>
+        </ul>
+
+        <h3>Family Lifestyle</h3>
+        <p>Your family's routine impacts your baby's rhythm development:</p>
+        <ul>
+          <li>Shift workers may need to be extra intentional about light cues</li>
+          <li>Travel across time zones can temporarily disrupt established rhythms</li>
+          <li>Siblings' schedules can provide helpful routine structure</li>
+        </ul>
+
+        <h2>Signs of Developing Circadian Rhythms</h2>
+        <p>Watch for these positive indicators:</p>
+        <ul>
+          <li>Longer sleep stretches at night (4-6 hours)</li>
+          <li>More predictable wake times</li>
+          <li>Increased alertness during specific daytime periods</li>
+          <li>More settled behavior in the evening</li>
+          <li>Decreased confusion between day and night</li>
+        </ul>
+
+        <h2>When to Seek Professional Help</h2>
+        <p>Consult your pediatrician if:</p>
+        <ul>
+          <li>No improvement in day-night distinction by 4 months</li>
+          <li>Extreme sleep disturbances persist beyond typical newborn phase</li>
+          <li>Baby seems excessively sleepy or lethargic during expected wake periods</li>
+          <li>Family functioning is severely impacted by sleep issues</li>
+        </ul>
+
+        <h2>The Long-Term Benefits</h2>
+        <p>Supporting healthy circadian rhythm development provides lasting benefits:</p>
+        <ul>
+          <li><strong>Better sleep quality:</strong> Throughout childhood and beyond</li>
+          <li><strong>Improved mood regulation:</strong> More stable emotional patterns</li>
+          <li><strong>Enhanced cognitive function:</strong> Better attention and learning capacity</li>
+          <li><strong>Stronger immune function:</strong> Better resistance to illness</li>
+          <li><strong>Healthy growth patterns:</strong> Optimal hormone production for development</li>
+        </ul>
+
+        <p>Remember, every baby develops at their own pace. While these guidelines provide a framework, trust your instincts and be patient with the process. Establishing healthy circadian rhythms is one of the best gifts you can give your baby for lifelong sleep health.</p>
+      `
+    },
     "science-behind-baby-sleep-cycles": {
       title: "The Science Behind Baby Sleep Cycles: What Every Parent Should Know",
       excerpt: "Understanding your baby's sleep patterns can transform your approach to bedtime routines. Learn about the latest research in pediatric sleep science and how to apply it to your daily routine.",
