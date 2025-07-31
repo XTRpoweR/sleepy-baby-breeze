@@ -8,14 +8,12 @@ import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ArrowLeft, Book, Clock, User } from "lucide-react";
+
 const HelpArticles = () => {
   const navigate = useNavigate();
-  const {
-    categoryName
-  } = useParams();
-  const {
-    user
-  } = useAuth();
+  const { categoryName } = useParams();
+  const { user } = useAuth();
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -23,9 +21,11 @@ const HelpArticles = () => {
       behavior: 'instant'
     });
   }, []);
+
   const handleSignIn = () => {
     navigate('/auth');
   };
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -33,6 +33,7 @@ const HelpArticles = () => {
       navigate('/auth');
     }
   };
+
   const handleArticleClick = (articleId: number) => {
     navigate(`/help/article/${categoryName}/${articleId}`);
   };
@@ -45,158 +46,177 @@ const HelpArticles = () => {
         description: 'Learn the basics of SleepyBabyy',
         color: 'text-blue-600',
         bgColor: 'bg-blue-50',
-        articles: [{
-          id: 1,
-          title: 'How to create your first baby profile',
-          description: 'Step-by-step guide to setting up your baby\'s profile with all essential information.',
-          readTime: '3 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 2,
-          title: 'Quick setup guide for new parents',
-          description: 'Get started in under 5 minutes with our comprehensive quick setup process.',
-          readTime: '5 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 3,
-          title: 'Understanding the dashboard layout',
-          description: 'Navigate through your baby\'s dashboard and understand all the key features.',
-          readTime: '4 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 4,
-          title: 'Setting up your first sleep schedule',
-          description: 'Create and customize sleep schedules that work for your baby\'s routine.',
-          readTime: '6 min read',
-          author: 'SleepyBabyy Team'
-        }]
+        articles: [
+          {
+            id: 1,
+            title: 'How to create your first baby profile',
+            description: 'Step-by-step guide to setting up your baby\'s profile with all essential information.',
+            readTime: '3 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 2,
+            title: 'Quick setup guide for new parents',
+            description: 'Get started in under 5 minutes with our comprehensive quick setup process.',
+            readTime: '5 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 3,
+            title: 'Understanding the dashboard layout',
+            description: 'Navigate through your baby\'s dashboard and understand all the key features.',
+            readTime: '4 min read',
+            author: 'SleepyBabyy Team'
+          }
+        ]
       },
       'family-sharing': {
         title: 'Family Sharing',
         description: 'Add family members and caregivers',
         color: 'text-green-600',
         bgColor: 'bg-green-50',
-        articles: [{
-          id: 1,
-          title: 'Inviting family members to collaborate',
-          description: 'Learn how to invite parents, grandparents, and caregivers to help track your baby.',
-          readTime: '4 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 2,
-          title: 'Managing family member permissions',
-          description: 'Control what each family member can see and edit in your baby\'s profile.',
-          readTime: '3 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 3,
-          title: 'Setting up caregiver access',
-          description: 'Give babysitters and daycare providers the right level of access.',
-          readTime: '5 min read',
-          author: 'SleepyBabyy Team'
-        }]
+        articles: [
+          {
+            id: 1,
+            title: 'Inviting family members to collaborate',
+            description: 'Learn how to invite parents, grandparents, and caregivers to help track your baby.',
+            readTime: '4 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 2,
+            title: 'Managing family member permissions',
+            description: 'Control what each family member can see and edit in your baby\'s profile.',
+            readTime: '3 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 3,
+            title: 'Setting up caregiver access',
+            description: 'Give babysitters and daycare providers the right level of access.',
+            readTime: '5 min read',
+            author: 'SleepyBabyy Team'
+          }
+        ]
       },
       'reports-analytics': {
         title: 'Reports & Analytics',
         description: 'Understanding your baby\'s patterns',
         color: 'text-purple-600',
         bgColor: 'bg-purple-50',
-        articles: [{
-          id: 1,
-          title: 'Understanding sleep pattern charts',
-          description: 'Learn how to read and interpret your baby\'s sleep analytics and trends.',
-          readTime: '7 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 2,
-          title: 'Exporting your baby\'s data',
-          description: 'Download and share your baby\'s activity reports with pediatricians.',
-          readTime: '3 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 3,
-          title: 'Weekly and monthly report summaries',
-          description: 'Get insights from comprehensive weekly and monthly activity summaries.',
-          readTime: '5 min read',
-          author: 'SleepyBabyy Team'
-        }]
+        articles: [
+          {
+            id: 1,
+            title: 'Understanding sleep pattern charts',
+            description: 'Learn how to read and interpret your baby\'s sleep analytics and trends.',
+            readTime: '7 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 2,
+            title: 'Exporting your baby\'s data',
+            description: 'Download and share your baby\'s activity reports with pediatricians.',
+            readTime: '3 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 3,
+            title: 'Weekly and monthly report summaries',
+            description: 'Get insights from comprehensive weekly and monthly activity summaries.',
+            readTime: '5 min read',
+            author: 'SleepyBabyy Team'
+          }
+        ]
       },
       'billing-subscriptions': {
         title: 'Billing & Subscriptions',
         description: 'Manage your premium subscription',
         color: 'text-orange-600',
         bgColor: 'bg-orange-50',
-        articles: [{
-          id: 1,
-          title: 'Understanding premium features',
-          description: 'Learn about all the premium features available with your subscription.',
-          readTime: '4 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 2,
-          title: 'Managing your subscription',
-          description: 'How to upgrade, downgrade, or cancel your subscription plan.',
-          readTime: '3 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 3,
-          title: 'Billing and payment issues',
-          description: 'Troubleshoot common billing problems and update payment methods.',
-          readTime: '5 min read',
-          author: 'SleepyBabyy Team'
-        }]
+        articles: [
+          {
+            id: 1,
+            title: 'Understanding premium features',
+            description: 'Learn about all the premium features available with your subscription.',
+            readTime: '4 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 2,
+            title: 'Managing your subscription',
+            description: 'How to upgrade, downgrade, or cancel your subscription plan.',
+            readTime: '3 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 3,
+            title: 'Billing and payment issues',
+            description: 'Troubleshoot common billing problems and update payment methods.',
+            readTime: '5 min read',
+            author: 'SleepyBabyy Team'
+          }
+        ]
       },
       'sounds-sleep': {
         title: 'Sounds & Sleep',
         description: 'Using our sound library effectively',
         color: 'text-pink-600',
         bgColor: 'bg-pink-50',
-        articles: [{
-          id: 1,
-          title: 'Choosing the right sounds for sleep',
-          description: 'Discover which sounds work best for different sleep situations.',
-          readTime: '6 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 2,
-          title: 'Setting up audio timers',
-          description: 'Learn how to schedule sounds to play automatically at specific times.',
-          readTime: '4 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 3,
-          title: 'Creating custom sound playlists',
-          description: 'Build personalized playlists for different activities and moods.',
-          readTime: '5 min read',
-          author: 'SleepyBabyy Team'
-        }]
+        articles: [
+          {
+            id: 1,
+            title: 'Choosing the right sounds for sleep',
+            description: 'Discover which sounds work best for different sleep situations.',
+            readTime: '6 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 2,
+            title: 'Setting up audio timers',
+            description: 'Learn how to schedule sounds to play automatically at specific times.',
+            readTime: '4 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 3,
+            title: 'Creating custom sound playlists',
+            description: 'Build personalized playlists for different activities and moods.',
+            readTime: '5 min read',
+            author: 'SleepyBabyy Team'
+          }
+        ]
       },
       'account-settings': {
         title: 'Account Settings',
         description: 'Customize your app experience',
         color: 'text-indigo-600',
         bgColor: 'bg-indigo-50',
-        articles: [{
-          id: 1,
-          title: 'Setting up smart notifications',
-          description: 'Configure notifications that help you stay on top of your baby\'s routine.',
-          readTime: '5 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 2,
-          title: 'Customizing your dashboard',
-          description: 'Personalize your dashboard layout and choose which widgets to display.',
-          readTime: '4 min read',
-          author: 'SleepyBabyy Team'
-        }, {
-          id: 3,
-          title: 'Privacy and security settings',
-          description: 'Manage your privacy preferences and secure your account.',
-          readTime: '6 min read',
-          author: 'SleepyBabyy Team'
-        }]
+        articles: [
+          {
+            id: 1,
+            title: 'Setting up smart notifications',
+            description: 'Configure notifications that help you stay on top of your baby\'s routine.',
+            readTime: '5 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 2,
+            title: 'Customizing your dashboard',
+            description: 'Personalize your dashboard layout and choose which widgets to display.',
+            readTime: '4 min read',
+            author: 'SleepyBabyy Team'
+          },
+          {
+            id: 3,
+            title: 'Privacy and security settings',
+            description: 'Manage your privacy preferences and secure your account.',
+            readTime: '6 min read',
+            author: 'SleepyBabyy Team'
+          }
+        ]
       }
     };
+
     return articlesData[category] || {
       title: 'Help Articles',
       description: 'Find helpful information',
@@ -205,18 +225,28 @@ const HelpArticles = () => {
       articles: []
     };
   };
+
   const categoryData = getArticlesData(categoryName || '');
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Headers */}
-      {user ? <>
+      {user ? (
+        <>
           <DesktopHeader />
           <MobileHeader />
-        </> : <>
+        </>
+      ) : (
+        <>
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center space-x-2">
-                  <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-12 w-auto" />
+                  <img
+                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
+                    alt="SleepyBabyy Logo"
+                    className="h-12 w-auto"
+                  />
                   <span className="text-xl font-bold text-gray-900">SleepyBabyy</span>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -244,7 +274,11 @@ const HelpArticles = () => {
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
             <div className="flex justify-between items-center h-16 px-4">
               <div className="flex items-center space-x-2">
-                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-10 w-auto" />
+                <img
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
+                  alt="SleepyBabyy Logo"
+                  className="h-10 w-auto"
+                />
                 <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
               </div>
               <div className="flex items-center space-x-2">
@@ -255,13 +289,19 @@ const HelpArticles = () => {
               </div>
             </div>
           </header>
-        </>}
+        </>
+      )}
 
       {/* Hero Section */}
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/help')} className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/help')}
+              className="flex items-center space-x-2"
+            >
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Help Center</span>
             </Button>
@@ -287,8 +327,14 @@ const HelpArticles = () => {
       {/* Articles List */}
       <section className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          {categoryData.articles.length > 0 ? <div className="space-y-6">
-              {categoryData.articles.map(article => <Card key={article.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onClick={() => handleArticleClick(article.id)}>
+          {categoryData.articles.length > 0 ? (
+            <div className="space-y-6">
+              {categoryData.articles.map((article) => (
+                <Card
+                  key={article.id}
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  onClick={() => handleArticleClick(article.id)}
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -312,12 +358,16 @@ const HelpArticles = () => {
                       <Book className={`h-8 w-8 ${categoryData.color} ml-4 flex-shrink-0`} />
                     </div>
                   </CardContent>
-                </Card>)}
-            </div> : <div className="text-center py-12">
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
               <Book className="h-16 w-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No Articles Found</h3>
               <p className="text-gray-600">Articles for this category are coming soon.</p>
-            </div>}
+            </div>
+          )}
         </div>
       </section>
 
@@ -331,13 +381,18 @@ const HelpArticles = () => {
             Can't find what you're looking for? Our support team is here to help.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={() => navigate('/contact')} className="bg-white text-blue-600 hover:bg-blue-50">
+            <Button
+              size="lg"
+              onClick={() => navigate('/contact')}
+              className="bg-white text-blue-600 hover:bg-blue-50"
+            >
               Contact Support
             </Button>
-            
           </div>
         </div>
       </section>
-    </div>;
+    </div>
+  );
 };
+
 export default HelpArticles;
