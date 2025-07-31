@@ -6,38 +6,32 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ArrowLeft, Shield, Eye, Lock, Download } from "lucide-react";
-
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
 
   // Scroll to top when component mounts
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant'
+    });
   }, []);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-2"
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-2">
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back</span>
               </Button>
               <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                  alt="SleepyBabyy Logo" 
-                  className="h-8 w-8"
-                />
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-8 w-8" />
                 <span className="text-xl font-semibold text-gray-900">{t('app.name')}</span>
               </div>
             </div>
@@ -62,9 +56,7 @@ const PrivacyPolicy = () => {
             <p className="text-xl text-gray-600 mb-6">
               Your privacy is our priority. Here's how we protect your family's data.
             </p>
-            <p className="text-gray-500">
-              Last updated: December 13, 2024
-            </p>
+            <p className="text-gray-500">Last updated: Juli 31, 2025</p>
           </div>
         </section>
 
@@ -134,7 +126,7 @@ const PrivacyPolicy = () => {
                     <div className="bg-green-50 p-6 rounded-lg">
                       <h4 className="font-semibold mb-2">We use your data to:</h4>
                       <ul className="list-disc pl-6 space-y-1">
-                        <li>Provide the SleepyBaby app and its features</li>
+                        <li>Provide the SleepyBabyy app and its features</li>
                         <li>Generate sleep pattern insights and recommendations</li>
                         <li>Enable family sharing and collaboration features</li>
                         <li>Provide customer support and respond to your requests</li>
@@ -205,10 +197,7 @@ const PrivacyPolicy = () => {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Children's Privacy</h2>
                   <div className="text-gray-700 space-y-4">
-                    <p>
-                      SleepyBaby is designed for parents and caregivers to track their babies' activities. 
-                      We do not knowingly collect personal information from children under 13.
-                    </p>
+                    <p>SleepyBabyy is designed for parents and caregivers to track their babies' activities. We do not knowingly collect personal information from children under 13.</p>
                     <p>
                       All baby profile information is controlled by the parent or guardian who created the account. 
                       We implement additional safeguards for any information about children.
@@ -237,10 +226,7 @@ const PrivacyPolicy = () => {
                       We may update this privacy policy from time to time. We will notify you of any 
                       material changes by email or through the app.
                     </p>
-                    <p>
-                      Your continued use of SleepyBaby after any changes indicates your acceptance 
-                      of the updated privacy policy.
-                    </p>
+                    <p>Your continued use of SleepyBabyy after any changes indicates your acceptance of the updated privacy policy.</p>
                   </div>
                 </div>
 
@@ -278,8 +264,6 @@ const PrivacyPolicy = () => {
           </div>
         </section>
       </ScrollArea>
-    </div>
-  );
+    </div>;
 };
-
 export default PrivacyPolicy;
