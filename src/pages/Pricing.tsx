@@ -11,6 +11,7 @@ import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
+
 const Pricing = () => {
   const navigate = useNavigate();
   const {
@@ -41,12 +42,13 @@ const Pricing = () => {
   };
   const features = {
     basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
-    premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo & video memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
+    premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
   };
   const monthlyPrice = 9.99;
   const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
+
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Navigation */}
       {user ? <>
@@ -259,7 +261,7 @@ const Pricing = () => {
                 basic: false,
                 premium: true
               }, {
-                feature: "Photo & Video Storage",
+                feature: "Photo Storage",
                 basic: false,
                 premium: true
               }, {
@@ -354,4 +356,5 @@ const Pricing = () => {
       </section>
     </div>;
 };
+
 export default Pricing;
