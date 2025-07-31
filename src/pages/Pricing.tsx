@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,18 +11,20 @@ import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
-
 const Pricing = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { t } = useTranslation();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useTranslation();
   const [isAnnual, setIsAnnual] = useState(true);
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -31,7 +32,6 @@ const Pricing = () => {
       navigate('/auth');
     }
   };
-
   const handleBackNavigation = () => {
     if (user) {
       navigate('/dashboard');
@@ -39,7 +39,6 @@ const Pricing = () => {
       navigate('/');
     }
   };
-
   const features = {
     basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
     premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo & video memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
@@ -48,27 +47,18 @@ const Pricing = () => {
   const annualPrice = 99.99;
   const originalPrice = 14.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Navigation */}
-      {user ? (
-        <>
+      {user ? <>
           <DesktopHeader />
           <MobileHeader />
-        </>
-      ) : (
-        <>
+        </> : <>
           {/* Landing-style Desktop Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center space-x-2">
-                  <img 
-                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                    alt="SleepyBabyy Logo" 
-                    className="h-12 w-auto"
-                  />
+                  <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-12 w-auto" />
                   <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -94,11 +84,7 @@ const Pricing = () => {
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
             <div className="flex justify-between items-center h-16 px-4">
               <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                  alt="SleepyBabyy Logo" 
-                  className="h-10 w-auto"
-                />
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-10 w-auto" />
                 <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
               </div>
               <div className="flex items-center space-x-2">
@@ -109,17 +95,12 @@ const Pricing = () => {
               </div>
             </div>
           </header>
-        </>
-      )}
+        </>}
 
       {/* Back Button */}
       <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
         <div className="max-w-6xl mx-auto">
-          <Button 
-            variant="ghost" 
-            onClick={handleBackNavigation} 
-            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
-          >
+          <Button variant="ghost" onClick={handleBackNavigation} className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base">
             <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>{user ? t('navigation.backToDashboard') : 'Back to Home'}</span>
           </Button>
@@ -174,12 +155,10 @@ const Pricing = () => {
                 <div className="space-y-3 md:space-y-4">
                   <h4 className="font-semibold text-gray-900">What's included:</h4>
                   <ul className="space-y-2 md:space-y-3">
-                    {features.basic.map((feature, index) => (
-                      <li key={index} className="flex items-center space-x-3">
+                    {features.basic.map((feature, index) => <li key={index} className="flex items-center space-x-3">
                         <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                         <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </div>
               </CardContent>
@@ -229,12 +208,10 @@ const Pricing = () => {
                 <div className="space-y-3 md:space-y-4">
                   <h4 className="font-semibold text-gray-900">Everything in Basic, plus:</h4>
                   <ul className="space-y-2 md:space-y-3">
-                    {features.premium.map((feature, index) => (
-                      <li key={index} className="flex items-center space-x-3">
+                    {features.premium.map((feature, index) => <li key={index} className="flex items-center space-x-3">
                         <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
                         <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </div>
               </CardContent>
@@ -265,44 +242,55 @@ const Pricing = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {[
-                  { feature: "Baby Profiles", basic: "1", premium: "Unlimited" },
-                  { feature: "Activity History", basic: "Current day", premium: "Extended history" },
-                  { feature: "Family Sharing", basic: false, premium: true },
-                  { feature: "Advanced Analytics", basic: false, premium: true },
-                  { feature: "Photo & Video Storage", basic: false, premium: true },
-                  { feature: "Smart Notifications", basic: false, premium: true },
-                  { feature: "Pediatrician Reports", basic: false, premium: true },
-                  { feature: "Data Export", basic: false, premium: true },
-                  { feature: "Priority Support", basic: false, premium: true },
-                  { feature: "Sleep Coaching", basic: false, premium: true }
-                ].map((row, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
+                {[{
+                feature: "Baby Profiles",
+                basic: "1",
+                premium: "Unlimited"
+              }, {
+                feature: "Activity History",
+                basic: "Current day",
+                premium: "Extended history"
+              }, {
+                feature: "Family Sharing",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Advanced Analytics",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Photo & Video Storage",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Smart Notifications",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Pediatrician Reports",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Data Export",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Priority Support",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Sleep Coaching",
+                basic: false,
+                premium: true
+              }].map((row, index) => <tr key={index} className="hover:bg-gray-50">
                     <td className="py-3 md:py-4 pr-4 md:pr-8 font-medium text-gray-900 text-sm md:text-base">{row.feature}</td>
                     <td className="text-center py-3 md:py-4 px-2 md:px-4">
-                      {typeof row.basic === 'boolean' ? (
-                        row.basic ? (
-                          <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" />
-                        )
-                      ) : (
-                        <span className="text-gray-700 text-sm md:text-base">{row.basic}</span>
-                      )}
+                      {typeof row.basic === 'boolean' ? row.basic ? <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" /> : <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" /> : <span className="text-gray-700 text-sm md:text-base">{row.basic}</span>}
                     </td>
                     <td className="text-center py-3 md:py-4 px-2 md:px-4">
-                      {typeof row.premium === 'boolean' ? (
-                        row.premium ? (
-                          <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" />
-                        )
-                      ) : (
-                        <span className="text-gray-700 text-sm md:text-base">{row.premium}</span>
-                      )}
+                      {typeof row.premium === 'boolean' ? row.premium ? <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" /> : <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" /> : <span className="text-gray-700 text-sm md:text-base">{row.premium}</span>}
                     </td>
-                  </tr>
-                ))}
+                  </tr>)}
               </tbody>
             </table>
           </div>
@@ -317,21 +305,30 @@ const Pricing = () => {
           </h2>
           
           <div className="grid gap-6 md:gap-8 md:grid-cols-2">
-            {[
-              { question: "Can I switch plans anytime?", answer: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately." },
-              { question: "Is there a free trial?", answer: "Yes, Premium comes with a 7-day free trial. No credit card required to start." },
-              { question: "What if I have multiple babies?", answer: "Basic includes 1 baby profile. Premium includes unlimited baby profiles for your growing family." },
-              { question: "Do you offer refunds?", answer: "Yes, we offer a 30-day money-back guarantee if you're not completely satisfied." },
-              { question: "Is my data secure?", answer: "Absolutely. We use enterprise-grade encryption and never share your personal data." },
-              { question: "Can I cancel anytime?", answer: "Yes, you can cancel your subscription at any time. Your data remains accessible during your billing period." }
-            ].map((faq, index) => (
-              <Card key={index} className="border-0 shadow-sm">
+            {[{
+            question: "Can I switch plans anytime?",
+            answer: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately."
+          }, {
+            question: "Is there a free trial?",
+            answer: "Yes, Premium comes with a 7-day free trial. No credit card required to start."
+          }, {
+            question: "What if I have multiple babies?",
+            answer: "Basic includes 1 baby profile. Premium includes unlimited baby profiles for your growing family."
+          }, {
+            question: "Do you offer refunds?",
+            answer: "Yes, we offer a 30-day money-back guarantee if you're not completely satisfied."
+          }, {
+            question: "Is my data secure?",
+            answer: "Absolutely. We use enterprise-grade encryption and never share your personal data."
+          }, {
+            question: "Can I cancel anytime?",
+            answer: "Yes, you can cancel your subscription at any time. Your data remains accessible during your billing period."
+          }].map((faq, index) => <Card key={index} className="border-0 shadow-sm">
                 <CardContent className="p-4 md:p-6">
                   <h3 className="font-semibold text-gray-900 mb-2 text-sm md:text-base">{faq.question}</h3>
                   <p className="text-gray-600 text-sm md:text-base">{faq.answer}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -341,9 +338,7 @@ const Pricing = () => {
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6">
             Ready to Get Better Sleep?
           </h2>
-          <p className="text-lg md:text-xl text-blue-100 mb-6 md:mb-8">
-            Join thousands of families who've transformed their sleep experience with SleepyBaby.
-          </p>
+          <p className="text-lg md:text-xl text-blue-100 mb-6 md:mb-8">Join thousands of families who've transformed their sleep experience with SleepyBabyy.</p>
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
             <Button onClick={handleGetStarted} className="bg-white text-blue-600 hover:bg-blue-50">
               Start Free Today
@@ -357,8 +352,6 @@ const Pricing = () => {
           </p>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default Pricing;
