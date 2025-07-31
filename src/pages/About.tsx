@@ -1,28 +1,21 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { Moon, ArrowLeft, Heart, Users, Target, Award, Baby, Clock, Shield, Globe } from "lucide-react";
-
 const About = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  const {
+    t
+  } = useTranslation();
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/')} 
-                className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3"
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3">
                 <ArrowLeft className="h-4 w-4" />
                 <span className="hidden sm:inline">Back</span>
               </Button>
@@ -35,11 +28,7 @@ const About = () => {
               <div className="hidden sm:block">
                 <LanguageSelector />
               </div>
-              <Button 
-                onClick={() => navigate('/contact')} 
-                className="bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm px-3 sm:px-4 py-2"
-                size="sm"
-              >
+              <Button onClick={() => navigate('/contact')} className="bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm px-3 sm:px-4 py-2" size="sm">
                 <span className="hidden sm:inline">Contact Us</span>
                 <span className="sm:hidden">Contact</span>
               </Button>
@@ -55,11 +44,7 @@ const About = () => {
             Made by Parents,
             <span className="text-blue-600 block">for Parents</span>
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-2 sm:px-0">
-            SleepyBaby was born from the sleepless nights and endless questions that come with 
-            welcoming a new baby into the family. We've been there, and we built the app we 
-            wished we had during those precious but challenging early days.
-          </p>
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-2 sm:px-0">SleepyBabyy was born from the sleepless nights and endless questions that come with welcoming a new baby into the family. We've been there, and we built the app we wished we had during those precious but challenging early days.</p>
         </div>
       </section>
 
@@ -83,11 +68,7 @@ const About = () => {
                   during late-night feeding sessions, designing every feature with real-world 
                   parenting challenges in mind.
                 </p>
-                <p>
-                  Today, SleepyBaby helps thousands of families worldwide get better sleep, 
-                  backed by sleep science and refined through the experiences of real parents 
-                  just like you.
-                </p>
+                <p>Today, SleepyBabyy helps thousands of families worldwide get better sleep, backed by sleep science and refined through the experiences of real parents just like you.</p>
               </div>
             </div>
             <div className="relative mt-8 lg:mt-0">
@@ -210,18 +191,12 @@ const About = () => {
             one peaceful night at a time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              size="lg" 
-              onClick={() => navigate('/')} 
-              className="bg-white text-blue-600 hover:bg-blue-50 w-full sm:w-auto touch-target"
-            >
+            <Button size="lg" onClick={() => navigate('/')} className="bg-white text-blue-600 hover:bg-blue-50 w-full sm:w-auto touch-target">
               Start Your Journey
             </Button>
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default About;
