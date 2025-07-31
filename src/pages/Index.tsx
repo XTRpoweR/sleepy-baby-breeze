@@ -379,7 +379,9 @@ const Index = () => {
                   </div>
                   
                   {/* Discount Badge */}
-                  
+                  <div className="inline-flex items-center justify-center bg-red-100 text-red-800 text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-3 sm:mb-4 animate-pulse">
+                    40% OFF LIMITED TIME
+                  </div>
                   
                   {/* Pricing with old price crossed out */}
                   <div className="flex items-center justify-center space-x-2 mb-1">
