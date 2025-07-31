@@ -10,17 +10,18 @@ import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ArrowLeft, Search, Book, MessageCircle, Download, Users, Settings, CreditCard, Baby, BarChart3, Volume2, Calendar, PlayCircle, GraduationCap, ArrowRight } from "lucide-react";
-
 const HelpCenter = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  const { user } = useAuth();
+  const {
+    t
+  } = useTranslation();
+  const {
+    user
+  } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -28,116 +29,85 @@ const HelpCenter = () => {
       navigate('/auth');
     }
   };
-
   const handleSignIn = () => {
     navigate('/auth');
   };
-
-  const categories = [
-    {
-      icon: Baby,
-      title: "Getting Started",
-      description: "Learn the basics of SleepyBaby",
-      articles: 12,
-      color: "text-blue-600",
-      route: "/help/getting-started"
-    },
-    {
-      icon: Users,
-      title: "Family Sharing", 
-      description: "Add family members and caregivers",
-      articles: 8,
-      color: "text-green-600",
-      route: "/help/family-sharing"
-    },
-    {
-      icon: BarChart3,
-      title: "Reports & Analytics",
-      description: "Understanding your baby's patterns",
-      articles: 10,
-      color: "text-purple-600",
-      route: "/help/reports-analytics"
-    },
-    {
-      icon: CreditCard,
-      title: "Billing & Subscriptions",
-      description: "Manage your premium subscription",
-      articles: 6,
-      color: "text-orange-600",
-      route: "/help/billing-subscriptions"
-    },
-    {
-      icon: Volume2,
-      title: "Sounds & Sleep",
-      description: "Using our sound library effectively",
-      articles: 5,
-      color: "text-pink-600",
-      route: "/help/sounds-sleep"
-    },
-    {
-      icon: Settings,
-      title: "Account Settings",
-      description: "Customize your app experience",
-      articles: 7,
-      color: "text-indigo-600",
-      route: "/help/account-settings"
-    }
-  ];
-
-  const quickStartOptions = [
-    {
-      title: "Interactive Tutorial",
-      description: "Step-by-step guided tour of all features",
-      icon: GraduationCap,
-      action: () => navigate('/tutorial'),
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
-    },
-    {
-      title: "Quick Setup",
-      description: "Get started in under 5 minutes",
-      icon: Baby,
-      action: () => navigate('/dashboard'),
-      color: "text-purple-600",
-      bgColor: "bg-purple-50"
-    }
-  ];
-
-  const popularArticles = [
-    "How to create your first baby profile",
-    "Understanding sleep pattern charts",
-    "Inviting family members to collaborate",
-    "Setting up smart notifications",
-    "Exporting your baby's data",
-    "Troubleshooting sync issues"
-  ];
-
+  const categories = [{
+    icon: Baby,
+    title: "Getting Started",
+    description: "Learn the basics of SleepyBaby",
+    articles: 12,
+    color: "text-blue-600",
+    route: "/help/getting-started"
+  }, {
+    icon: Users,
+    title: "Family Sharing",
+    description: "Add family members and caregivers",
+    articles: 8,
+    color: "text-green-600",
+    route: "/help/family-sharing"
+  }, {
+    icon: BarChart3,
+    title: "Reports & Analytics",
+    description: "Understanding your baby's patterns",
+    articles: 10,
+    color: "text-purple-600",
+    route: "/help/reports-analytics"
+  }, {
+    icon: CreditCard,
+    title: "Billing & Subscriptions",
+    description: "Manage your premium subscription",
+    articles: 6,
+    color: "text-orange-600",
+    route: "/help/billing-subscriptions"
+  }, {
+    icon: Volume2,
+    title: "Sounds & Sleep",
+    description: "Using our sound library effectively",
+    articles: 5,
+    color: "text-pink-600",
+    route: "/help/sounds-sleep"
+  }, {
+    icon: Settings,
+    title: "Account Settings",
+    description: "Customize your app experience",
+    articles: 7,
+    color: "text-indigo-600",
+    route: "/help/account-settings"
+  }];
+  const quickStartOptions = [{
+    title: "Interactive Tutorial",
+    description: "Step-by-step guided tour of all features",
+    icon: GraduationCap,
+    action: () => navigate('/tutorial'),
+    color: "text-blue-600",
+    bgColor: "bg-blue-50"
+  }, {
+    title: "Quick Setup",
+    description: "Get started in under 5 minutes",
+    icon: Baby,
+    action: () => navigate('/dashboard'),
+    color: "text-purple-600",
+    bgColor: "bg-purple-50"
+  }];
+  const popularArticles = ["How to create your first baby profile", "Understanding sleep pattern charts", "Inviting family members to collaborate", "Setting up smart notifications", "Exporting your baby's data", "Troubleshooting sync issues"];
   const handleCategoryClick = (route: string) => {
     // Extract category name from route and navigate to dynamic help articles page
     const categoryName = route.split('/').pop(); // Extract the last part of the route
     navigate(`/help/category/${categoryName}`);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Headers */}
-      {user ? (
-        <>
+      {user ? <>
           <DesktopHeader />
           <MobileHeader />
-        </>
-      ) : (
-        <>
+        </> : <>
           {/* Non-authenticated Desktop Header */}
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center space-x-2">
-                  <img 
-                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                    alt="SleepyBabyy Logo" 
-                    className="h-12 w-auto"
-                  />
+                  <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-12 w-auto" />
                   <span className="text-xl font-bold text-gray-900">SleepyBabyy</span>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -166,11 +136,7 @@ const HelpCenter = () => {
           <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
             <div className="flex justify-between items-center h-16 px-4">
               <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                  alt="SleepyBabyy Logo" 
-                  className="h-10 w-auto"
-                />
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-10 w-auto" />
                 <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
               </div>
               <div className="flex items-center space-x-2">
@@ -181,8 +147,7 @@ const HelpCenter = () => {
               </div>
             </div>
           </header>
-        </>
-      )}
+        </>}
 
       {/* Hero Section with integrated navigation */}
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
@@ -212,13 +177,7 @@ const HelpCenter = () => {
             {/* Search Bar */}
             <div className="relative max-w-2xl mx-auto">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <Input 
-                type="text" 
-                placeholder="Search for help articles..." 
-                className="pl-12 pr-4 py-4 md:py-6 text-base md:text-lg border-2 border-blue-200 focus:border-blue-500" 
-                value={searchQuery} 
-                onChange={(e) => setSearchQuery(e.target.value)} 
-              />
+              <Input type="text" placeholder="Search for help articles..." className="pl-12 pr-4 py-4 md:py-6 text-base md:text-lg border-2 border-blue-200 focus:border-blue-500" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
             </div>
           </div>
         </div>
@@ -233,9 +192,8 @@ const HelpCenter = () => {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-12">
             {quickStartOptions.map((option, index) => {
-              const IconComponent = option.icon;
-              return (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={option.action}>
+            const IconComponent = option.icon;
+            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={option.action}>
                   <CardContent className="p-6 md:p-8 text-center">
                     <div className={`inline-flex p-3 md:p-4 rounded-2xl ${option.bgColor} mb-4 md:mb-6 group-hover:scale-110 transition-transform`}>
                       <IconComponent className={`h-6 w-6 md:h-8 md:w-8 ${option.color}`} />
@@ -247,9 +205,8 @@ const HelpCenter = () => {
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
         </div>
       </section>
@@ -263,13 +220,8 @@ const HelpCenter = () => {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {categories.map((category, index) => {
-              const IconComponent = category.icon;
-              return (
-                <Card 
-                  key={index} 
-                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                  onClick={() => handleCategoryClick(category.route)}
-                >
+            const IconComponent = category.icon;
+            return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group" onClick={() => handleCategoryClick(category.route)}>
                   <CardHeader className="pb-4">
                     <div className={`inline-flex p-2 md:p-3 rounded-2xl bg-gray-50 mb-3 md:mb-4 w-fit group-hover:scale-110 transition-transform`}>
                       <IconComponent className={`h-6 w-6 md:h-8 md:w-8 ${category.color}`} />
@@ -286,9 +238,8 @@ const HelpCenter = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
         </div>
       </section>
@@ -302,8 +253,7 @@ const HelpCenter = () => {
                 Popular Articles
               </h2>
               <div className="space-y-3 md:space-y-4">
-                {popularArticles.map((article, index) => (
-                  <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer">
+                {popularArticles.map((article, index) => <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer">
                     <CardContent className="p-3 md:p-4">
                       <div className="flex items-center space-x-3">
                         <Book className="h-4 w-4 md:h-5 md:w-5 text-blue-600 flex-shrink-0" />
@@ -312,8 +262,7 @@ const HelpCenter = () => {
                         </span>
                       </div>
                     </CardContent>
-                  </Card>
-                ))}
+                  </Card>)}
               </div>
             </div>
 
@@ -387,9 +336,7 @@ const HelpCenter = () => {
           <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-6">
             Still Need Help?
           </h2>
-          <p className="text-lg md:text-xl text-blue-100 mb-6 md:mb-8">
-            Can't find what you're looking for? Our support team is here to help you get the most out of SleepyBaby.
-          </p>
+          <p className="text-lg md:text-xl text-blue-100 mb-6 md:mb-8">Can't find what you're looking for? Our support team is here to help you get the most out of SleepyBabyy.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" onClick={() => navigate('/contact')} className="bg-white text-blue-600 hover:bg-blue-50">
               Contact Support
@@ -400,8 +347,6 @@ const HelpCenter = () => {
           </p>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 };
-
 export default HelpCenter;
