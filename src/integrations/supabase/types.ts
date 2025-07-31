@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
   public: {
     Tables: {
@@ -241,6 +241,99 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      family_messages: {
+        Row: {
+          attachment_type: string | null
+          attachment_url: string | null
+          baby_id: string
+          content: string | null
+          created_at: string
+          id: string
+          message_type: string
+          metadata: Json | null
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_type?: string | null
+          attachment_url?: string | null
+          baby_id: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          message_type?: string
+          metadata?: Json | null
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_type?: string | null
+          attachment_url?: string | null
+          baby_id?: string
+          content?: string | null
+          created_at?: string
+          id?: string
+          message_type?: string
+          metadata?: Json | null
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      message_participants: {
+        Row: {
+          created_at: string
+          id: string
+          message_id: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_id: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_id?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          status: string
+          subscribed_at: string
+          unsubscribe_token: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          status?: string
+          subscribed_at?: string
+          unsubscribe_token?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          status?: string
+          subscribed_at?: string
+          unsubscribe_token?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       password_reset_codes: {
         Row: {

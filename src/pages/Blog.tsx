@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { NewsletterSubscription } from "@/components/NewsletterSubscription";
 import { ArrowLeft, Calendar, Clock, User, Baby, Heart, Lightbulb, Stethoscope, Users, BookOpen } from "lucide-react";
 
 const Blog = () => {
@@ -288,12 +288,7 @@ const Blog = () => {
             <p className="text-base sm:text-lg lg:text-xl text-blue-100 mb-6 sm:mb-8 px-2 sm:px-0">
               Subscribe to our newsletter for weekly sleep tips, expert advice, and early access to new articles.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md mx-auto">
-              <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-3 rounded-lg border-0 focus:ring-2 focus:ring-white text-sm sm:text-base touch-target" />
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 touch-target whitespace-nowrap">
-                Subscribe
-              </Button>
-            </div>
+            <NewsletterSubscription />
             <p className="text-blue-100 text-xs sm:text-sm mt-3 sm:mt-4 px-4 sm:px-0">
               No spam, unsubscribe anytime. Privacy policy applies.
             </p>
