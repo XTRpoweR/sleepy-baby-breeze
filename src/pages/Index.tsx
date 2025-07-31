@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate, Link } from "react-router-dom";
@@ -10,11 +9,17 @@ import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState } from "react";
 
 // Memoized components for better performance
-const FeatureCard = memo(({ feature, index }: { feature: any; index: number }) => {
+const FeatureCard = memo(({
+  feature,
+  index
+}: {
+  feature: any;
+  index: number;
+}) => {
   const IconComponent = feature.icon;
-  return (
-    <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group animate-fade-in-up card-glow gpu-accelerated" 
-          style={{ animationDelay: `${index * 50}ms` }}>
+  return <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group animate-fade-in-up card-glow gpu-accelerated" style={{
+    animationDelay: `${index * 50}ms`
+  }}>
       <CardContent className="p-4 sm:p-6 md:p-8">
         <div className="inline-flex p-2 sm:p-3 rounded-2xl gradient-dynamic-slow mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110">
           <IconComponent className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
@@ -22,18 +27,20 @@ const FeatureCard = memo(({ feature, index }: { feature: any; index: number }) =
         <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight leading-tight">{feature.title}</h3>
         <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-light">{feature.description}</p>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 });
-
-const TestimonialCard = memo(({ testimonial, index }: { testimonial: any; index: number }) => (
-  <Card key={index} className="border-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-up gpu-accelerated" 
-        style={{ animationDelay: `${index * 100}ms` }}>
+const TestimonialCard = memo(({
+  testimonial,
+  index
+}: {
+  testimonial: any;
+  index: number;
+}) => <Card key={index} className="border-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-up gpu-accelerated" style={{
+  animationDelay: `${index * 100}ms`
+}}>
     <CardContent className="p-4 sm:p-6 md:p-8">
       <div className="flex space-x-1 mb-3 sm:mb-4">
-        {[...Array(testimonial.rating)].map((_, i) => (
-          <Star key={i} className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-        ))}
+        {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />)}
       </div>
       <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 italic font-light leading-relaxed">"{testimonial.content}"</p>
       <div>
@@ -41,16 +48,19 @@ const TestimonialCard = memo(({ testimonial, index }: { testimonial: any; index:
         <div className="text-xs sm:text-sm text-gray-500 font-medium">{testimonial.role}</div>
       </div>
     </CardContent>
-  </Card>
-));
-
+  </Card>);
 const Index = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { t } = useTranslation();
-  const { toast } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useTranslation();
+  const {
+    toast
+  } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -58,7 +68,6 @@ const Index = () => {
       navigate('/auth');
     }
   };
-
   const handleViewPricing = () => {
     if (user) {
       navigate('/subscription');
@@ -66,7 +75,6 @@ const Index = () => {
       navigate('/auth');
     }
   };
-
   const handleDownloadComingSoon = () => {
     toast({
       title: "Coming Soon",
@@ -75,75 +83,54 @@ const Index = () => {
   };
 
   // Memoized data to prevent recalculation
-  const features = useMemo(() => [
-    {
-      icon: Clock,
-      title: t('features.trackEverything.title'),
-      description: t('features.trackEverything.description'),
-    },
-    {
-      icon: Calendar,
-      title: t('features.customSchedules.title'),
-      description: t('features.customSchedules.description'),
-    },
-    {
-      icon: Volume2,
-      title: t('features.soothingSounds.title'),
-      description: t('features.soothingSounds.description'),
-    },
-    {
-      icon: Users,
-      title: t('features.multiCaregiver.title'),
-      description: t('features.multiCaregiver.description'),
-    },
-    {
-      icon: BarChart3,
-      title: t('features.insights.title'),
-      description: t('features.insights.description'),
-    },
-    {
-      icon: Globe,
-      title: t('features.multilingual.title'),
-      description: t('features.multilingual.description'),
-    }
-  ], [t]);
-
-  const testimonials = useMemo(() => [
-    {
-      name: "Sarah M.",
-      role: "New Mom",
-      content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
-      rating: 5
-    },
-    {
-      name: "Mike & Jessica",
-      role: "First-time Parents",
-      content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
-      rating: 5
-    },
-    {
-      name: "Dr. Emily Chen",
-      role: "Pediatric Sleep Specialist",
-      content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
-      rating: 5
-    }
-  ], []);
-
-  return (
-    <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
+  const features = useMemo(() => [{
+    icon: Clock,
+    title: t('features.trackEverything.title'),
+    description: t('features.trackEverything.description')
+  }, {
+    icon: Calendar,
+    title: t('features.customSchedules.title'),
+    description: t('features.customSchedules.description')
+  }, {
+    icon: Volume2,
+    title: t('features.soothingSounds.title'),
+    description: t('features.soothingSounds.description')
+  }, {
+    icon: Users,
+    title: t('features.multiCaregiver.title'),
+    description: t('features.multiCaregiver.description')
+  }, {
+    icon: BarChart3,
+    title: t('features.insights.title'),
+    description: t('features.insights.description')
+  }, {
+    icon: Globe,
+    title: t('features.multilingual.title'),
+    description: t('features.multilingual.description')
+  }], [t]);
+  const testimonials = useMemo(() => [{
+    name: "Sarah M.",
+    role: "New Mom",
+    content: "This app saved my sanity! Finally understanding my baby's sleep patterns made everything so much easier.",
+    rating: 5
+  }, {
+    name: "Mike & Jessica",
+    role: "First-time Parents",
+    content: "The multi-caregiver feature is a game-changer. My partner and I can both stay on top of our baby's sleep schedule.",
+    rating: 5
+  }, {
+    name: "Dr. Emily Chen",
+    role: "Pediatric Sleep Specialist",
+    content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
+    rating: 5
+  }], []);
+  return <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
       {/* Navigation */}
       <nav className="bg-white/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in safe-area-top">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center space-x-2 sm:space-x-3 group">
-              <img 
-                src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                alt="SleepyBabyy Logo" 
-                className="h-8 sm:h-10 w-auto transition-transform duration-300 group-hover:scale-110"
-                loading="eager"
-                width="40"
-                height="40"
-              />
+              <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-8 sm:h-10 w-auto transition-transform duration-300 group-hover:scale-110" loading="eager" width="40" height="40" />
               <span className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
             </div>
             
@@ -154,51 +141,42 @@ const Index = () => {
               <a href="#pricing" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium text-sm xl:text-base">Pricing</a>
               <a href="#testimonials" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium text-sm xl:text-base">{t('navigation.reviews')}</a>
               <LanguageSelector />
-              {user ? (
-                <Button onClick={() => navigate('/dashboard')} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-4 xl:px-6">
+              {user ? <Button onClick={() => navigate('/dashboard')} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-4 xl:px-6">
                   {t('navigation.dashboard')}
-                </Button>
-              ) : (
-                <Button onClick={handleGetStarted} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-4 xl:px-6">
+                </Button> : <Button onClick={handleGetStarted} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-4 xl:px-6">
                   {t('navigation.getStarted')}
-                </Button>
-              )}
+                </Button>}
             </div>
 
             {/* Mobile Navigation */}
             <div className="lg:hidden flex items-center space-x-2">
               <LanguageSelector />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="touch-target"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="touch-target">
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
           </div>
 
           {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="lg:hidden py-4 border-t border-gray-200 animate-fade-in">
+          {mobileMenuOpen && <div className="lg:hidden py-4 border-t border-gray-200 animate-fade-in">
               <div className="flex flex-col space-y-3">
                 <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.features')}</a>
                 <a href="#insights" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.insights')}</a>
                 <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">Pricing</a>
                 <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.reviews')}</a>
-                {user ? (
-                  <Button onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 w-full mt-2 touch-target">
+                {user ? <Button onClick={() => {
+              navigate('/dashboard');
+              setMobileMenuOpen(false);
+            }} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 w-full mt-2 touch-target">
                     {t('navigation.dashboard')}
-                  </Button>
-                ) : (
-                  <Button onClick={() => { handleGetStarted(); setMobileMenuOpen(false); }} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 w-full mt-2 touch-target">
+                  </Button> : <Button onClick={() => {
+              handleGetStarted();
+              setMobileMenuOpen(false);
+            }} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 w-full mt-2 touch-target">
                     {t('navigation.getStarted')}
-                  </Button>
-                )}
+                  </Button>}
               </div>
-            </div>
-          )}
+            </div>}
         </div>
       </nav>
 
@@ -250,14 +228,7 @@ const Index = () => {
 
             <div className="relative animate-scale-in order-1 lg:order-2">
               <div className="gradient-dynamic rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl animate-float card-glow gpu-accelerated">
-                <img 
-                  src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" 
-                  alt="SleepyBabyy - Baby sleeping peacefully on moon" 
-                  className="w-full h-auto rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-105"
-                  loading="lazy"
-                  width="400"
-                  height="300"
-                />
+                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy - Baby sleeping peacefully on moon" className="w-full h-auto rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-105" loading="lazy" width="400" height="300" />
               </div>
             </div>
           </div>
@@ -277,9 +248,7 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {features.map((feature, index) => (
-              <FeatureCard key={index} feature={feature} index={index} />
-            ))}
+            {features.map((feature, index) => <FeatureCard key={index} feature={feature} index={index} />)}
           </div>
         </div>
       </section>
@@ -298,14 +267,12 @@ const Index = () => {
                 No more guessing - just gentle, data-driven guidance.
               </p>
               <div className="space-y-3 sm:space-y-4">
-                {["Weekly sleep pattern analysis", "Personalized bedtime recommendations", "Sleep regression alerts and tips", "Progress tracking and milestones"].map((item, index) => (
-                  <div key={index} className="flex items-center space-x-3 transition-all duration-300 hover:scale-105" style={{
-                    animationDelay: `${index * 100}ms`
-                  }}>
+                {["Weekly sleep pattern analysis", "Personalized bedtime recommendations", "Sleep regression alerts and tips", "Progress tracking and milestones"].map((item, index) => <div key={index} className="flex items-center space-x-3 transition-all duration-300 hover:scale-105" style={{
+                animationDelay: `${index * 100}ms`
+              }}>
                     <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                     <span className="text-sm sm:text-base text-gray-700 font-medium">{item}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
                <Button size="lg" className="gradient-dynamic transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-white border-0 touch-target w-full sm:w-auto" onClick={handleGetStarted}>
                  See Your Sleep Insights
@@ -331,9 +298,7 @@ const Index = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-sm sm:text-base text-gray-600">Sleep Quality</span>
                     <div className="flex space-x-1">
-                      {[1, 2, 3, 4, 5].map(star => (
-                        <Star key={star} className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                      ))}
+                      {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />)}
                     </div>
                   </div>
                   
@@ -367,8 +332,8 @@ const Index = () => {
           </div>
           
           <div className="animate-fade-in-up text-center" style={{
-            animationDelay: '200ms'
-          }}>
+          animationDelay: '200ms'
+        }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto mb-6 sm:mb-8">
               {/* Basic Plan Preview */}
               <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
@@ -414,11 +379,7 @@ const Index = () => {
                   </div>
                   
                   {/* Discount Badge */}
-                  <div className="mb-2">
-                    <Badge className="bg-red-500 text-white text-xs sm:text-sm font-bold px-2 py-1">
-                      40% OFF
-                    </Badge>
-                  </div>
+                  
                   
                   {/* Pricing with old price crossed out */}
                   <div className="flex items-center justify-center space-x-2 mb-1">
@@ -474,9 +435,7 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard key={index} testimonial={testimonial} index={index} />
-            ))}
+            {testimonials.map((testimonial, index) => <TestimonialCard key={index} testimonial={testimonial} index={index} />)}
           </div>
         </div>
       </section>
@@ -532,8 +491,8 @@ const Index = () => {
                 <Link to="/pricing" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</Link>
                 {/* Replace Download link with a button that shows "Coming Soon" */}
                 <button type="button" onClick={handleDownloadComingSoon} className="block w-full text-left text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0 text-sm sm:text-base" style={{
-                  font: 'inherit'
-                }}>
+                font: 'inherit'
+              }}>
                   {t('footer.download')}
                 </button>
               </div>
@@ -562,8 +521,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
