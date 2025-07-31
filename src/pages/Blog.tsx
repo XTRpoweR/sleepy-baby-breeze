@@ -34,6 +34,15 @@ const Blog = () => {
   };
 
   const articles = [{
+    title: "Understanding Circadian Rhythms in Newborns",
+    excerpt: "Discover how your baby's internal clock develops and how you can support healthy circadian rhythm establishment from birth.",
+    author: "Dr. Rachel Martinez",
+    date: "December 12, 2024",
+    readTime: "6 min read",
+    category: "Sleep Science",
+    slug: "circadian-rhythms-newborns",
+    icon: Lightbulb
+  }, {
     title: "Creating the Perfect Bedtime Routine for Your 6-Month-Old",
     excerpt: "A step-by-step guide to establishing healthy sleep habits that will benefit your baby for years to come.",
     author: "Emily Chen",
