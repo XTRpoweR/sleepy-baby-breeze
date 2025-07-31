@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -73,7 +72,7 @@ export const MobileHeader = () => {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-80">
+          <SheetContent side="left" className="w-80">
             <div className="flex flex-col space-y-6 pt-6">
               {/* User Info */}
               <div className="flex items-center space-x-3 pb-4 border-b">
