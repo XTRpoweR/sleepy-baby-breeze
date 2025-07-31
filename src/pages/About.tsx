@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,18 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ArrowLeft, Heart, Users, Target, Award, Baby, Clock, Shield, Globe } from "lucide-react";
-
 const About = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
 
   // Scroll to top when component mounts
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant'
+    });
   }, []);
-
-  return (
-    <ScrollArea className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  return <ScrollArea className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Navigation */}
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,11 +31,7 @@ const About = () => {
                 <span className="hidden sm:inline">Back</span>
               </Button>
               <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                  alt="SleepyBabyy Logo" 
-                  className="h-6 w-6 sm:h-8 sm:w-8"
-                />
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
                 <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
               </div>
             </div>
@@ -70,17 +68,8 @@ const About = () => {
                 Our Story
               </h2>
               <div className="space-y-4 sm:space-y-6 text-sm sm:text-base text-gray-600 leading-relaxed">
-                <p>
-                  It started with Emma and David, new parents struggling to understand their 
-                  baby's sleep patterns. Like many parents, they found themselves overwhelmed 
-                  by conflicting advice and generic solutions that didn't work for their unique situation.
-                </p>
-                <p>
-                  As software engineers and parents, they realized technology could help families 
-                  make sense of their baby's individual needs. They began developing SleepyBaby 
-                  during late-night feeding sessions, designing every feature with real-world 
-                  parenting challenges in mind.
-                </p>
+                <p>It starts with a pair of new parents, new parents struggling to understand their baby's sleep patterns. Like many parents, they found themselves overwhelmed by conflicting advice and generic solutions that didn't work for their unique situation.</p>
+                <p>As software engineers and parents, they realized technology could help families make sense of their baby's individual needs. They began developing SleepyBabyy during late-night feeding sessions, designing every feature with real-world parenting challenges in mind.</p>
                 <p>Today, SleepyBabyy helps thousands of families worldwide get better sleep, backed by sleep science and refined through the experiences of real parents just like you.</p>
               </div>
             </div>
@@ -210,8 +199,6 @@ const About = () => {
           </div>
         </div>
       </section>
-    </ScrollArea>
-  );
+    </ScrollArea>;
 };
-
 export default About;
