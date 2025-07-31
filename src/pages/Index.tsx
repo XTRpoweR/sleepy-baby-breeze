@@ -69,11 +69,7 @@ const Index = () => {
     }
   };
   const handleViewPricing = () => {
-    if (user) {
-      navigate('/subscription');
-    } else {
-      navigate('/auth');
-    }
+    navigate('/pricing');
   };
   const handleDownloadComingSoon = () => {
     toast({
