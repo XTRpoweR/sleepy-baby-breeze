@@ -462,9 +462,7 @@ const Index = () => {
              </Button>
           </div>
           
-          <p className="text-blue-100 text-xs sm:text-sm mt-4 sm:mt-6 font-medium leading-relaxed">
-            Free 7-day trial • No credit card required • Available on iOS & Android
-          </p>
+          <p className="text-blue-100 text-xs sm:text-sm mt-4 sm:mt-6 font-medium leading-relaxed">Free 7-day trial • No credit card required • Coming soon on iOS & Android</p>
         </div>
       </section>
 
