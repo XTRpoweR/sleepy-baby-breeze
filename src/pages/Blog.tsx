@@ -1,17 +1,19 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { ArrowLeft, Calendar, Clock, User, Baby, Heart, Lightbulb, Stethoscope, Users, BookOpen } from "lucide-react";
+
 const Blog = () => {
   const navigate = useNavigate();
-  const {
-    t
-  } = useTranslation();
+  const { t } = useTranslation();
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -19,6 +21,7 @@ const Blog = () => {
       behavior: 'instant'
     });
   }, []);
+
   const featuredArticle = {
     title: "The Science Behind Baby Sleep Cycles: What Every Parent Should Know",
     excerpt: "Understanding your baby's sleep patterns can transform your approach to bedtime routines. Learn about the latest research in pediatric sleep science and how to apply it to your daily routine.",
@@ -29,6 +32,7 @@ const Blog = () => {
     slug: "science-behind-baby-sleep-cycles",
     image: "/placeholder.svg"
   };
+
   const articles = [{
     title: "Creating the Perfect Bedtime Routine for Your 6-Month-Old",
     excerpt: "A step-by-step guide to establishing healthy sleep habits that will benefit your baby for years to come.",
@@ -84,7 +88,17 @@ const Blog = () => {
     slug: "sleep-data-understanding",
     icon: BookOpen
   }];
+
   const categories = ["All", "Sleep Science", "Sleep Training", "Development", "Sleep Tips", "Medical", "Parenting", "Data & Analytics"];
+
+  // Filter articles based on selected category
+  const filteredArticles = selectedCategory === "All" 
+    ? articles 
+    : articles.filter(article => article.category === selectedCategory);
+
+  // Show featured article only when "All" is selected or when it matches the selected category
+  const showFeaturedArticle = selectedCategory === "All" || featuredArticle.category === selectedCategory;
+
   return <ScrollArea className="h-screen">
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         {/* Navigation */}
@@ -128,56 +142,68 @@ const Blog = () => {
           </div>
         </section>
 
-        {/* Featured Article */}
-        <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <Card className="border-0 shadow-xl sm:shadow-2xl overflow-hidden cursor-pointer hover:shadow-3xl transition-shadow duration-300">
-              <div className="grid lg:grid-cols-2">
-                <div className="bg-gradient-to-br from-blue-100 to-purple-100 p-6 sm:p-8 lg:p-12 flex items-center justify-center">
-                  <div className="text-center">
-                    <BookOpen className="h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 text-blue-600 mx-auto mb-4 sm:mb-6" />
-                    <Badge className="mb-3 sm:mb-4 text-xs sm:text-sm">{featuredArticle.category}</Badge>
-                    <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">Featured Article</h2>
-                  </div>
-                </div>
-                <div className="p-6 sm:p-8 lg:p-12">
-                  <Badge className="mb-3 sm:mb-4 bg-blue-100 text-blue-800 text-xs sm:text-sm">{featuredArticle.category}</Badge>
-                  <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
-                    {featuredArticle.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
-                    {featuredArticle.excerpt}
-                  </p>
-                  <div className="flex flex-col sm:flex-row sm:items-center text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 space-y-2 sm:space-y-0 sm:space-x-4">
-                    <div className="flex items-center space-x-1">
-                      <User className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span>{featuredArticle.author}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span>{featuredArticle.date}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span>{featuredArticle.readTime}</span>
+        {/* Featured Article - Only show when category matches or "All" is selected */}
+        {showFeaturedArticle && (
+          <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-6xl mx-auto">
+              <Card className="border-0 shadow-xl sm:shadow-2xl overflow-hidden cursor-pointer hover:shadow-3xl transition-shadow duration-300">
+                <div className="grid lg:grid-cols-2">
+                  <div className="bg-gradient-to-br from-blue-100 to-purple-100 p-6 sm:p-8 lg:p-12 flex items-center justify-center">
+                    <div className="text-center">
+                      <BookOpen className="h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24 text-blue-600 mx-auto mb-4 sm:mb-6" />
+                      <Badge className="mb-3 sm:mb-4 text-xs sm:text-sm">{featuredArticle.category}</Badge>
+                      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-4">Featured Article</h2>
                     </div>
                   </div>
-                  <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto touch-target" onClick={() => navigate(`/blog/${featuredArticle.slug}`)}>
-                    Read Full Article
-                  </Button>
+                  <div className="p-6 sm:p-8 lg:p-12">
+                    <Badge className="mb-3 sm:mb-4 bg-blue-100 text-blue-800 text-xs sm:text-sm">{featuredArticle.category}</Badge>
+                    <h3 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight">
+                      {featuredArticle.title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
+                      {featuredArticle.excerpt}
+                    </p>
+                    <div className="flex flex-col sm:flex-row sm:items-center text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 space-y-2 sm:space-y-0 sm:space-x-4">
+                      <div className="flex items-center space-x-1">
+                        <User className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span>{featuredArticle.author}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span>{featuredArticle.date}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span>{featuredArticle.readTime}</span>
+                      </div>
+                    </div>
+                    <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto touch-target" onClick={() => navigate(`/blog/${featuredArticle.slug}`)}>
+                      Read Full Article
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          </div>
-        </section>
+              </Card>
+            </div>
+          </section>
+        )}
 
         {/* Categories Filter */}
         <section className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-wrap gap-2 justify-center">
-              {categories.map((category, index) => <Button key={index} variant={index === 0 ? "default" : "outline"} size="sm" className={`text-xs sm:text-sm px-3 sm:px-4 touch-target ${index === 0 ? "bg-blue-600 hover:bg-blue-700" : ""}`}>
+              {categories.map((category, index) => (
+                <Button 
+                  key={index} 
+                  variant={selectedCategory === category ? "default" : "outline"} 
+                  size="sm" 
+                  className={`text-xs sm:text-sm px-3 sm:px-4 touch-target ${
+                    selectedCategory === category ? "bg-blue-600 hover:bg-blue-700" : ""
+                  }`}
+                  onClick={() => setSelectedCategory(category)}
+                >
                   {category}
-                </Button>)}
+                </Button>
+              ))}
             </div>
           </div>
         </section>
@@ -186,42 +212,57 @@ const Blog = () => {
         <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-12">
-              Latest Articles
+              {selectedCategory === "All" ? "Latest Articles" : `${selectedCategory} Articles`}
             </h2>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {articles.map((article, index) => {
-              const IconComponent = article.icon;
-              return <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onClick={() => navigate(`/blog/${article.slug}`)}>
-                    <CardHeader className="p-4 sm:p-6">
-                      <div className="flex items-start justify-between mb-2">
-                        <Badge variant="secondary" className="text-xs">{article.category}</Badge>
-                        <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 flex-shrink-0" />
-                      </div>
-                      <CardTitle className="text-base sm:text-lg leading-tight">{article.title}</CardTitle>
-                      <CardDescription className="text-sm line-clamp-3">{article.excerpt}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-4 sm:p-6 pt-0">
-                      <div className="flex flex-col space-y-2 text-xs sm:text-sm text-gray-500">
-                        <div className="flex items-center justify-between">
+            {filteredArticles.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {filteredArticles.map((article, index) => {
+                  const IconComponent = article.icon;
+                  return (
+                    <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onClick={() => navigate(`/blog/${article.slug}`)}>
+                      <CardHeader className="p-4 sm:p-6">
+                        <div className="flex items-start justify-between mb-2">
+                          <Badge variant="secondary" className="text-xs">{article.category}</Badge>
+                          <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 flex-shrink-0" />
+                        </div>
+                        <CardTitle className="text-base sm:text-lg leading-tight">{article.title}</CardTitle>
+                        <CardDescription className="text-sm line-clamp-3">{article.excerpt}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-4 sm:p-6 pt-0">
+                        <div className="flex flex-col space-y-2 text-xs sm:text-sm text-gray-500">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-1">
+                              <User className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">{article.author}</span>
+                            </div>
+                            <div className="flex items-center space-x-1 flex-shrink-0">
+                              <Clock className="h-3 w-3" />
+                              <span>{article.readTime}</span>
+                            </div>
+                          </div>
                           <div className="flex items-center space-x-1">
-                            <User className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">{article.author}</span>
-                          </div>
-                          <div className="flex items-center space-x-1 flex-shrink-0">
-                            <Clock className="h-3 w-3" />
-                            <span>{article.readTime}</span>
+                            <Calendar className="h-3 w-3 flex-shrink-0" />
+                            <span>{article.date}</span>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="h-3 w-3 flex-shrink-0" />
-                          <span>{article.date}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>;
-            })}
-            </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No articles found for "{selectedCategory}" category.</p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSelectedCategory("All")} 
+                  className="mt-4"
+                >
+                  View All Articles
+                </Button>
+              </div>
+            )}
 
             <div className="text-center mt-8 sm:mt-12">
               
@@ -252,4 +293,5 @@ const Blog = () => {
       </div>
     </ScrollArea>;
 };
+
 export default Blog;
