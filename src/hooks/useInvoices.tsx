@@ -54,7 +54,12 @@ export const useInvoices = () => {
       }
 
       console.log('Invoices fetched:', data);
-      setInvoices(data || []);
+      // Type assertion to ensure invoice_status is properly typed
+      const typedInvoices = (data || []).map(invoice => ({
+        ...invoice,
+        invoice_status: invoice.invoice_status as 'paid' | 'failed' | 'pending'
+      }));
+      setInvoices(typedInvoices);
 
     } catch (error) {
       console.error('Error fetching invoices:', error);
