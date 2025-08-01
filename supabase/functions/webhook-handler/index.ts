@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -114,6 +115,7 @@ serve(async (req) => {
       
       case 'invoice.payment_succeeded':
         await handlePaymentSuccess(supabaseClient, event);
+        await handleInvoiceGeneration(supabaseClient, event);
         break;
       
       case 'invoice.payment_failed':
@@ -243,5 +245,206 @@ async function handlePaymentFailed(supabase: any, event: any) {
     }
 
     logStep("Subscription marked as past_due after payment failure");
+  }
+}
+
+async function handleInvoiceGeneration(supabase: any, event: any) {
+  const invoice = event.data.object;
+  logStep("Handling invoice generation", { 
+    invoiceId: invoice.id,
+    subscriptionId: invoice.subscription,
+    customerId: invoice.customer,
+    amountPaid: invoice.amount_paid
+  });
+
+  try {
+    // Get subscription details to find user_id
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('user_id, id')
+      .eq('stripe_subscription_id', invoice.subscription)
+      .single();
+
+    if (!subscription) {
+      logStep("ERROR", "Subscription not found for invoice");
+      return;
+    }
+
+    // Generate invoice number
+    const { data: invoiceNumberResult } = await supabase
+      .rpc('generate_invoice_number');
+
+    const invoiceNumber = invoiceNumberResult || `INV-${Date.now()}`;
+
+    // Create invoice record
+    const invoiceData = {
+      user_id: subscription.user_id,
+      subscription_id: subscription.id,
+      stripe_invoice_id: invoice.id,
+      invoice_number: invoiceNumber,
+      amount_paid: invoice.amount_paid,
+      currency: invoice.currency || 'usd',
+      billing_period_start: new Date(invoice.period_start * 1000).toISOString(),
+      billing_period_end: new Date(invoice.period_end * 1000).toISOString(),
+      paid_at: new Date(invoice.status_transitions.paid_at * 1000).toISOString(),
+      invoice_status: 'paid',
+    };
+
+    const { data: createdInvoice, error: invoiceError } = await supabase
+      .from('invoices')
+      .insert(invoiceData)
+      .select()
+      .single();
+
+    if (invoiceError) {
+      logStep("ERROR creating invoice record", { error: invoiceError.message });
+      throw invoiceError;
+    }
+
+    logStep("Invoice record created successfully", { invoiceId: createdInvoice.id });
+
+    // Generate PDF and send email
+    await generateAndSendInvoice(supabase, createdInvoice, invoice);
+
+  } catch (error) {
+    logStep("ERROR in invoice generation", { error: error.message });
+    throw error;
+  }
+}
+
+async function generateAndSendInvoice(supabase: any, invoiceRecord: any, stripeInvoice: any) {
+  logStep("Generating and sending invoice", { invoiceId: invoiceRecord.id });
+
+  try {
+    // Get user details
+    const { data: user } = await supabase.auth.admin.getUserById(invoiceRecord.user_id);
+    const userEmail = user?.user?.email;
+
+    if (!userEmail) {
+      logStep("ERROR", "User email not found for invoice");
+      return;
+    }
+
+    // Call the generate-invoice-pdf edge function
+    const { data: pdfResult, error: pdfError } = await supabase.functions.invoke('generate-invoice-pdf', {
+      body: {
+        invoiceId: invoiceRecord.id,
+        invoiceData: invoiceRecord,
+        stripeInvoice: stripeInvoice
+      }
+    });
+
+    if (pdfError) {
+      logStep("ERROR generating PDF", { error: pdfError.message });
+      return;
+    }
+
+    // Send invoice email
+    await sendInvoiceEmail(supabase, userEmail, invoiceRecord, pdfResult.pdfUrl);
+
+    logStep("Invoice generated and sent successfully");
+
+  } catch (error) {
+    logStep("ERROR in generate and send invoice", { error: error.message });
+  }
+}
+
+async function sendInvoiceEmail(supabase: any, userEmail: string, invoiceRecord: any, pdfUrl: string) {
+  logStep("Sending invoice email", { email: userEmail, invoiceNumber: invoiceRecord.invoice_number });
+
+  try {
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    if (!resendApiKey) {
+      logStep("ERROR", "RESEND_API_KEY not configured");
+      return;
+    }
+
+    const emailData = {
+      from: 'SleepyBabyy <noreply@sleepybaby.com>',
+      to: [userEmail],
+      subject: `Your SleepyBabyy Subscription Invoice - ${invoiceRecord.invoice_number}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .header { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 20px; text-align: center; }
+            .content { padding: 20px; max-width: 600px; margin: 0 auto; }
+            .invoice-details { background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; }
+            .footer { background: #f1f5f9; padding: 20px; text-align: center; margin-top: 30px; }
+            .button { background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>🍼 SleepyBabyy</h1>
+            <p>Your Subscription Invoice</p>
+          </div>
+          
+          <div class="content">
+            <h2>Thank you for your subscription!</h2>
+            <p>We've processed your payment and your SleepyBabyy Premium subscription is now active.</p>
+            
+            <div class="invoice-details">
+              <h3>Invoice Details</h3>
+              <p><strong>Invoice Number:</strong> ${invoiceRecord.invoice_number}</p>
+              <p><strong>Amount Paid:</strong> $${(invoiceRecord.amount_paid / 100).toFixed(2)} ${invoiceRecord.currency.toUpperCase()}</p>
+              <p><strong>Billing Period:</strong> ${new Date(invoiceRecord.billing_period_start).toLocaleDateString()} - ${new Date(invoiceRecord.billing_period_end).toLocaleDateString()}</p>
+              <p><strong>Payment Date:</strong> ${new Date(invoiceRecord.paid_at).toLocaleDateString()}</p>
+            </div>
+
+            <p>Your invoice is attached to this email as a PDF. You can also access all your invoices from your account dashboard.</p>
+            
+            <p>
+              <a href="${Deno.env.get('SUPABASE_URL')?.replace('/rest/v1', '')}/dashboard" class="button">
+                View Dashboard
+              </a>
+            </p>
+
+            <h3>What's Next?</h3>
+            <ul>
+              <li>Access all premium features in your SleepyBabyy app</li>
+              <li>Enjoy unlimited baby tracking and family sharing</li>
+              <li>Generate detailed reports and insights</li>
+              <li>Priority customer support</li>
+            </ul>
+          </div>
+
+          <div class="footer">
+            <p>Questions? Contact us at <a href="mailto:support@sleepybaby.com">support@sleepybaby.com</a></p>
+            <p>&copy; ${new Date().getFullYear()} SleepyBabyy. All rights reserved.</p>
+          </div>
+        </body>
+        </html>
+      `,
+      attachments: pdfUrl ? [
+        {
+          filename: `${invoiceRecord.invoice_number}.pdf`,
+          path: pdfUrl
+        }
+      ] : undefined
+    };
+
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailData),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      logStep("ERROR sending email", { error });
+      return;
+    }
+
+    logStep("Invoice email sent successfully");
+
+  } catch (error) {
+    logStep("ERROR in send invoice email", { error: error.message });
   }
 }

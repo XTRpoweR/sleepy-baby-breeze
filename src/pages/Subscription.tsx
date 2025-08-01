@@ -23,6 +23,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
+import { InvoiceHistory } from '@/components/subscription/InvoiceHistory';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 
@@ -188,6 +189,13 @@ const Subscription = () => {
         <div className="mb-12 lg:mb-16">
           <SubscriptionPlans />
         </div>
+
+        {/* Invoice History - Show only for premium users */}
+        {isPremium && (
+          <div className="mb-12 lg:mb-16">
+            <InvoiceHistory />
+          </div>
+        )}
 
         {/* Features Section */}
         <div className="mb-12 lg:mb-16">

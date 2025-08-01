@@ -281,6 +281,65 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          amount_paid: number
+          billing_period_end: string
+          billing_period_start: string
+          created_at: string
+          currency: string
+          id: string
+          invoice_number: string
+          invoice_pdf_url: string | null
+          invoice_status: string
+          paid_at: string
+          stripe_invoice_id: string
+          subscription_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount_paid: number
+          billing_period_end: string
+          billing_period_start: string
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_number: string
+          invoice_pdf_url?: string | null
+          invoice_status?: string
+          paid_at: string
+          stripe_invoice_id: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount_paid?: number
+          billing_period_end?: string
+          billing_period_start?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          invoice_number?: string
+          invoice_pdf_url?: string | null
+          invoice_status?: string
+          paid_at?: string
+          stripe_invoice_id?: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_participants: {
         Row: {
           created_at: string
@@ -520,6 +579,10 @@ export type Database = {
       can_edit_baby_activities: {
         Args: { user_uuid: string; baby_uuid: string }
         Returns: boolean
+      }
+      generate_invoice_number: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       get_family_member_role: {
         Args: { user_uuid: string; baby_uuid: string }
