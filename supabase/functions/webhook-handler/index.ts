@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -104,6 +103,10 @@ serve(async (req) => {
 
     // Handle different webhook events
     switch (event.type) {
+      case 'checkout.session.completed':
+        await handleCheckoutSessionCompleted(supabaseClient, event);
+        break;
+      
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
         await handleSubscriptionEvent(supabaseClient, event);
@@ -139,6 +142,114 @@ serve(async (req) => {
     });
   }
 });
+
+async function handleCheckoutSessionCompleted(supabase: any, event: any) {
+  const session = event.data.object;
+  logStep("Handling checkout session completed", { 
+    sessionId: session.id,
+    customerId: session.customer,
+    subscriptionId: session.subscription 
+  });
+
+  try {
+    // Get customer email
+    const customerEmail = session.customer_details?.email || session.customer_email;
+    if (!customerEmail) {
+      logStep("ERROR", "No customer email found in checkout session");
+      return;
+    }
+
+    // If this is a subscription checkout, handle subscription creation
+    if (session.subscription) {
+      // Update or create subscription record
+      const { error: subError } = await supabase
+        .from('subscriptions')
+        .upsert({
+          stripe_customer_id: session.customer,
+          stripe_subscription_id: session.subscription,
+          email: customerEmail,
+          status: 'active',
+          subscription_tier: 'premium',
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'stripe_subscription_id'
+        });
+
+      if (subError) {
+        logStep("ERROR creating subscription record", { error: subError.message });
+      } else {
+        logStep("Subscription record created/updated successfully");
+      }
+
+      // Create immediate invoice for the new subscription
+      if (session.invoice) {
+        logStep("Creating invoice for new subscription", { invoiceId: session.invoice });
+        
+        // Get subscription details to find user_id
+        const { data: subscription } = await supabase
+          .from('subscriptions')
+          .select('user_id, id')
+          .eq('stripe_subscription_id', session.subscription)
+          .single();
+
+        if (subscription) {
+          // Generate invoice number
+          const { data: invoiceNumberResult } = await supabase
+            .rpc('generate_invoice_number');
+
+          const invoiceNumber = invoiceNumberResult || `INV-${Date.now()}`;
+
+          // Create invoice record
+          const invoiceData = {
+            user_id: subscription.user_id,
+            subscription_id: subscription.id,
+            stripe_invoice_id: session.invoice,
+            invoice_number: invoiceNumber,
+            amount_paid: session.amount_total || 0,
+            currency: session.currency || 'usd',
+            billing_period_start: new Date().toISOString(),
+            billing_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+            paid_at: new Date().toISOString(),
+            invoice_status: 'paid',
+          };
+
+          const { data: createdInvoice, error: invoiceError } = await supabase
+            .from('invoices')
+            .insert(invoiceData)
+            .select()
+            .single();
+
+          if (invoiceError) {
+            logStep("ERROR creating invoice record", { error: invoiceError.message });
+          } else {
+            logStep("Invoice record created successfully", { invoiceId: createdInvoice.id });
+
+            // Generate PDF and send email immediately
+            await generateAndSendInvoice(supabase, createdInvoice, {
+              id: session.invoice,
+              customer: session.customer,
+              amount_paid: session.amount_total || 0,
+              currency: session.currency || 'usd',
+              period_start: Math.floor(Date.now() / 1000),
+              period_end: Math.floor((Date.now() + 30 * 24 * 60 * 60 * 1000) / 1000),
+              status_transitions: {
+                paid_at: Math.floor(Date.now() / 1000)
+              }
+            });
+          }
+        } else {
+          logStep("ERROR", "Subscription not found for invoice creation");
+        }
+      }
+    }
+
+    logStep("Checkout session completed processing finished");
+
+  } catch (error) {
+    logStep("ERROR in checkout session completed", { error: error.message });
+    throw error;
+  }
+}
 
 async function handleSubscriptionEvent(supabase: any, event: any) {
   const subscription = event.data.object;
