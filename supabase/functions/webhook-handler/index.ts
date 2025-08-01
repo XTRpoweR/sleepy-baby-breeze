@@ -121,6 +121,13 @@ serve(async (req) => {
         await handleInvoiceGeneration(supabaseClient, event);
         break;
       
+      case 'invoice_payment.paid':
+        // Handle the event type that's showing up in your logs
+        logStep("Handling invoice_payment.paid event (treating as payment success)");
+        await handlePaymentSuccess(supabaseClient, event);
+        await handleInvoiceGeneration(supabaseClient, event);
+        break;
+      
       case 'invoice.payment_failed':
         await handlePaymentFailed(supabaseClient, event);
         break;
@@ -161,6 +168,20 @@ async function handleCheckoutSessionCompleted(supabase: any, event: any) {
 
     // If this is a subscription checkout, handle subscription creation
     if (session.subscription) {
+      // First, try to find the user by email
+      const { data: existingSubscription } = await supabase
+        .from('subscriptions')
+        .select('user_id, id, email')
+        .eq('email', customerEmail)
+        .single();
+
+      let userId = existingSubscription?.user_id;
+
+      // If no user found by subscription, try to find by auth users (if possible)
+      if (!userId) {
+        logStep("No existing subscription found, will create basic record");
+      }
+
       // Update or create subscription record
       const { error: subError } = await supabase
         .from('subscriptions')
@@ -168,6 +189,7 @@ async function handleCheckoutSessionCompleted(supabase: any, event: any) {
           stripe_customer_id: session.customer,
           stripe_subscription_id: session.subscription,
           email: customerEmail,
+          user_id: userId, // This might be null for now
           status: 'active',
           subscription_tier: 'premium',
           updated_at: new Date().toISOString(),
@@ -185,7 +207,7 @@ async function handleCheckoutSessionCompleted(supabase: any, event: any) {
       if (session.invoice) {
         logStep("Creating invoice for new subscription", { invoiceId: session.invoice });
         
-        // Get subscription details to find user_id
+        // Get subscription details again after upsert
         const { data: subscription } = await supabase
           .from('subscriptions')
           .select('user_id, id')
@@ -369,15 +391,30 @@ async function handleInvoiceGeneration(supabase: any, event: any) {
   });
 
   try {
-    // Get subscription details to find user_id
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('user_id, id')
-      .eq('stripe_subscription_id', invoice.subscription)
-      .single();
+    // First try to get subscription details to find user_id
+    let subscription = null;
+    if (invoice.subscription) {
+      const { data } = await supabase
+        .from('subscriptions')
+        .select('user_id, id, email')
+        .eq('stripe_subscription_id', invoice.subscription)
+        .single();
+      subscription = data;
+    }
+
+    // If no subscription found by stripe_subscription_id, try by customer
+    if (!subscription && invoice.customer) {
+      const { data } = await supabase
+        .from('subscriptions')
+        .select('user_id, id, email')
+        .eq('stripe_customer_id', invoice.customer)
+        .single();
+      subscription = data;
+      logStep("Found subscription by customer ID", { subscriptionId: subscription?.id });
+    }
 
     if (!subscription) {
-      logStep("ERROR", "Subscription not found for invoice");
+      logStep("ERROR", "Subscription not found for invoice - will skip invoice generation");
       return;
     }
 
@@ -427,14 +464,30 @@ async function generateAndSendInvoice(supabase: any, invoiceRecord: any, stripeI
   logStep("Generating and sending invoice", { invoiceId: invoiceRecord.id });
 
   try {
-    // Get user details
-    const { data: user } = await supabase.auth.admin.getUserById(invoiceRecord.user_id);
-    const userEmail = user?.user?.email;
+    // Get user details - try multiple approaches
+    let userEmail = null;
+
+    if (invoiceRecord.user_id) {
+      const { data: user } = await supabase.auth.admin.getUserById(invoiceRecord.user_id);
+      userEmail = user?.user?.email;
+    }
+
+    // Fallback to subscription email if no user email found
+    if (!userEmail && invoiceRecord.subscription_id) {
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('email')
+        .eq('id', invoiceRecord.subscription_id)
+        .single();
+      userEmail = subscription?.email;
+    }
 
     if (!userEmail) {
       logStep("ERROR", "User email not found for invoice");
       return;
     }
+
+    logStep("Found user email for invoice", { email: userEmail });
 
     // Call the generate-invoice-pdf edge function
     const { data: pdfResult, error: pdfError } = await supabase.functions.invoke('generate-invoice-pdf', {
