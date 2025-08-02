@@ -76,16 +76,22 @@ export const useInvoices = () => {
   const downloadInvoice = async (invoice: Invoice) => {
     if (!invoice.invoice_pdf_url) {
       toast({
-        title: "PDF Not Available",
-        description: "The PDF for this invoice is not available yet.",
+        title: "Invoice Not Available",
+        description: "The invoice is not available yet. Please generate it first.",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      // Open PDF in new tab for download
-      window.open(invoice.invoice_pdf_url, '_blank');
+      // Create a temporary link to trigger download
+      const link = document.createElement('a');
+      link.href = invoice.invoice_pdf_url;
+      link.download = `${invoice.invoice_number}.html`;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
       toast({
         title: "Download Started",

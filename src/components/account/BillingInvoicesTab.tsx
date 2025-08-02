@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,8 +30,8 @@ export const BillingInvoicesTab = () => {
   const handleGeneratePDF = async (invoice: any) => {
     try {
       toast({
-        title: "Generating PDF",
-        description: "Please wait while we generate your invoice PDF...",
+        title: "Generating Invoice",
+        description: "Please wait while we generate your invoice...",
       });
 
       const { data, error } = await supabase.functions.invoke('generate-invoice-pdf', {
@@ -45,20 +44,39 @@ export const BillingInvoicesTab = () => {
       if (error) throw error;
 
       toast({
-        title: "PDF Generated",
-        description: "Invoice PDF has been generated successfully.",
+        title: "Invoice Generated",
+        description: "Invoice has been generated successfully.",
       });
 
       // Refresh invoices to get the updated PDF URL
       await fetchInvoices();
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error('Error generating invoice:', error);
       toast({
-        title: "PDF Generation Failed",
-        description: "Failed to generate PDF. Please try again later.",
+        title: "Generation Failed",
+        description: "Failed to generate invoice. Please try again later.",
         variant: "destructive",
       });
     }
+  };
+
+  const handleViewInvoice = (invoice: any) => {
+    if (!invoice.invoice_pdf_url) {
+      toast({
+        title: "Invoice Not Available",
+        description: "The invoice is not available yet. Please generate it first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Open invoice in new tab for viewing
+    window.open(invoice.invoice_pdf_url, '_blank');
+    
+    toast({
+      title: "Invoice Opened",
+      description: `Invoice ${invoice.invoice_number} opened in new tab.`,
+    });
   };
 
   if (loading) {
@@ -247,7 +265,7 @@ export const BillingInvoicesTab = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => downloadInvoice(invoice)}
+                            onClick={() => handleViewInvoice(invoice)}
                             className="flex items-center space-x-1"
                           >
                             <Eye className="h-4 w-4" />
@@ -267,7 +285,7 @@ export const BillingInvoicesTab = () => {
                         <div className="flex items-center space-x-2">
                           <div className="flex items-center space-x-1 text-amber-600 text-xs">
                             <AlertCircle className="h-3 w-3" />
-                            <span>PDF Processing</span>
+                            <span>Processing</span>
                           </div>
                           <Button
                             variant="outline"
@@ -276,7 +294,7 @@ export const BillingInvoicesTab = () => {
                             className="flex items-center space-x-1"
                           >
                             <FileText className="h-4 w-4" />
-                            <span>Generate PDF</span>
+                            <span>Generate</span>
                           </Button>
                         </div>
                       )}
