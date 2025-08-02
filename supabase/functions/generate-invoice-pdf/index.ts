@@ -63,8 +63,8 @@ serve(async (req) => {
       }
     }
 
-    // Generate PDF using jsPDF since Puppeteer is not reliable in Deno
-    const pdfBuffer = await generateSimplePDF(invoiceData, stripeInvoice, stripeCustomer);
+    // Generate professional PDF
+    const pdfBuffer = await generateProfessionalPDF(invoiceData, stripeInvoice, stripeCustomer);
 
     // Store as PDF file in Supabase Storage
     const fileName = `invoices/${invoiceData.invoice_number}.pdf`;
@@ -123,92 +123,197 @@ serve(async (req) => {
   }
 });
 
-async function generateSimplePDF(invoiceData: any, stripeInvoice: any, stripeCustomer: any): Promise<Uint8Array> {
-  // Since Puppeteer is not reliable, we'll use a different approach
-  // Import jsPDF for client-side PDF generation
+async function generateProfessionalPDF(invoiceData: any, stripeInvoice: any, stripeCustomer: any): Promise<Uint8Array> {
   const { jsPDF } = await import("https://esm.sh/jspdf@2.5.1");
   
   try {
-    logStep("Generating PDF with jsPDF");
+    logStep("Generating professional PDF with jsPDF");
     
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     
-    // Company header
+    // Colors
+    const primaryBlue = [59, 130, 246]; // #3b82f6
+    const darkGray = [55, 65, 81]; // #374151
+    const lightGray = [156, 163, 175]; // #9ca3af
+    const green = [34, 197, 94]; // #22c55e
+    
+    // Header Section
+    doc.setFillColor(...primaryBlue);
+    doc.rect(0, 0, pageWidth, 50, 'F');
+    
+    // Company Logo Area (left side)
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(24);
-    doc.setTextColor(59, 130, 246); // Blue color
-    doc.text('🍼 SleepyBabyy', pageWidth / 2, 30, { align: 'center' });
+    doc.setFont(undefined, 'bold');
+    doc.text('🍼', 20, 25);
     
-    doc.setFontSize(18);
-    doc.setTextColor(0, 0, 0);
-    doc.text('INVOICE', pageWidth / 2, 45, { align: 'center' });
+    doc.setFontSize(20);
+    doc.text('SleepyBabyy', 35, 30);
     
-    doc.setFontSize(12);
-    doc.text(`#${invoiceData.invoice_number}`, pageWidth / 2, 55, { align: 'center' });
+    // Invoice Title (right side)
+    doc.setFontSize(28);
+    doc.text('INVOICE', pageWidth - 20, 30, { align: 'right' });
     
-    // Customer info
-    doc.setFontSize(14);
-    doc.text('Bill To:', 20, 80);
+    // Reset text color for body
+    doc.setTextColor(...darkGray);
+    
+    // Company Information Section
     doc.setFontSize(10);
-    const customerName = stripeCustomer?.name || stripeCustomer?.email || 'Valued Customer';
-    const customerEmail = stripeCustomer?.email || 'Email not available';
+    doc.setFont(undefined, 'normal');
+    let yPos = 70;
     
-    doc.text(`Customer: ${customerName}`, 20, 95);
-    doc.text(`Email: ${customerEmail}`, 20, 105);
+    doc.text('Sleepy business sandbox', 20, yPos);
+    doc.text('12555 Berlin, Germany', 20, yPos + 8);
+    doc.text('support@sleepybabyy.com', 20, yPos + 16);
     
-    // Invoice details
-    doc.setFontSize(14);
-    doc.text('Invoice Details:', 120, 80);
-    doc.setFontSize(10);
+    // Invoice Details (right side)
+    doc.setFont(undefined, 'bold');
+    doc.text('Invoice Number:', pageWidth - 100, yPos);
+    doc.setFont(undefined, 'normal');
+    doc.text(invoiceData.invoice_number, pageWidth - 20, yPos, { align: 'right' });
     
+    doc.setFont(undefined, 'bold');
+    doc.text('Invoice Date:', pageWidth - 100, yPos + 8);
+    doc.setFont(undefined, 'normal');
     const invoiceDate = new Date(invoiceData.paid_at).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long', 
+      month: 'long',
       day: 'numeric'
     });
+    doc.text(invoiceDate, pageWidth - 20, yPos + 8, { align: 'right' });
     
-    doc.text(`Invoice Date: ${invoiceDate}`, 120, 95);
-    doc.text(`Payment Date: ${invoiceDate}`, 120, 105);
-    doc.text('Status: PAID', 120, 115);
+    doc.setFont(undefined, 'bold');
+    doc.text('Due Date:', pageWidth - 100, yPos + 16);
+    doc.setFont(undefined, 'normal');
+    doc.text(invoiceDate, pageWidth - 20, yPos + 16, { align: 'right' });
     
-    const billingStart = new Date(invoiceData.billing_period_start).toLocaleDateString();
-    const billingEnd = new Date(invoiceData.billing_period_end).toLocaleDateString();
-    doc.text(`Billing Period: ${billingStart} - ${billingEnd}`, 120, 125);
-    
-    // Line items table
+    // Bill To Section
+    yPos = 120;
     doc.setFontSize(12);
-    doc.text('Description', 20, 150);
-    doc.text('Qty', 100, 150);
-    doc.text('Amount', 150, 150);
-    
-    // Draw line
-    doc.line(20, 155, 190, 155);
+    doc.setFont(undefined, 'bold');
+    doc.text('BILL TO', 20, yPos);
     
     doc.setFontSize(10);
-    doc.text('SleepyBabyy Premium Subscription', 20, 170);
-    doc.text('Monthly subscription service', 20, 180);
-    doc.text('1', 100, 170);
-    doc.text(`$${(invoiceData.amount_paid / 100).toFixed(2)}`, 150, 170);
+    doc.setFont(undefined, 'normal');
+    const customerName = stripeCustomer?.name || stripeCustomer?.email || 'Valued Customer';
+    const customerEmail = stripeCustomer?.email || 'Email not available';
+    const customerAddress = stripeCustomer?.address ? 
+      `${stripeCustomer.address.line1 || ''}, ${stripeCustomer.address.city || ''}, ${stripeCustomer.address.country || ''}`.replace(/^,\s*|,\s*$/g, '') : 
+      'Address not available';
     
-    // Totals
-    doc.line(120, 200, 190, 200);
-    doc.setFontSize(12);
-    doc.text(`Total Paid: $${(invoiceData.amount_paid / 100).toFixed(2)} ${invoiceData.currency.toUpperCase()}`, 150, 215, { align: 'right' });
+    doc.text(customerName, 20, yPos + 15);
+    if (customerAddress !== 'Address not available') {
+      doc.text(customerAddress, 20, yPos + 23);
+    }
+    doc.text(customerEmail, 20, yPos + 31);
     
-    // Footer
+    // Amount Due Section (right side)
+    doc.setFillColor(248, 250, 252); // Light gray background
+    doc.rect(pageWidth - 140, yPos + 5, 120, 35, 'F');
+    
+    doc.setTextColor(...darkGray);
     doc.setFontSize(10);
-    doc.text('Thank you for your business!', pageWidth / 2, 250, { align: 'center' });
-    doc.text('For support, contact: support@sleepybaby.com', pageWidth / 2, 260, { align: 'center' });
-    doc.text(`© ${new Date().getFullYear()} SleepyBabyy. All rights reserved.`, pageWidth / 2, 270, { align: 'center' });
+    doc.setFont(undefined, 'bold');
+    doc.text('AMOUNT DUE (USD)', pageWidth - 130, yPos + 15);
+    
+    doc.setFontSize(18);
+    doc.setTextColor(...green);
+    doc.text(`$${(invoiceData.amount_paid / 100).toFixed(2)}`, pageWidth - 130, yPos + 28);
+    
+    doc.setFontSize(8);
+    doc.setTextColor(...lightGray);
+    doc.text('PAID', pageWidth - 130, yPos + 35);
+    
+    // Reset text color
+    doc.setTextColor(...darkGray);
+    
+    // Table Header
+    yPos = 180;
+    doc.setFillColor(248, 250, 252);
+    doc.rect(20, yPos, pageWidth - 40, 15, 'F');
+    
+    doc.setFontSize(9);
+    doc.setFont(undefined, 'bold');
+    doc.text('DESCRIPTION', 25, yPos + 10);
+    doc.text('QTY', pageWidth - 120, yPos + 10);
+    doc.text('UNIT PRICE', pageWidth - 80, yPos + 10);
+    doc.text('AMOUNT', pageWidth - 40, yPos + 10, { align: 'right' });
+    
+    // Table Border
+    doc.setDrawColor(...lightGray);
+    doc.setLineWidth(0.5);
+    doc.line(20, yPos, pageWidth - 20, yPos);
+    doc.line(20, yPos + 15, pageWidth - 20, yPos + 15);
+    
+    // Table Content
+    yPos += 15;
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(9);
+    
+    const billingStart = new Date(invoiceData.billing_period_start).toLocaleDateString('en-US', { 
+      month: 'short', day: 'numeric', year: 'numeric' 
+    });
+    const billingEnd = new Date(invoiceData.billing_period_end).toLocaleDateString('en-US', { 
+      month: 'short', day: 'numeric', year: 'numeric' 
+    });
+    
+    // Service row
+    doc.text('SleepyBabyy Premium Subscription', 25, yPos + 10);
+    doc.text(`Service period: ${billingStart} - ${billingEnd}`, 25, yPos + 18);
+    doc.text('1', pageWidth - 120, yPos + 10);
+    doc.text(`$${(invoiceData.amount_paid / 100).toFixed(2)}`, pageWidth - 80, yPos + 10);
+    doc.text(`$${(invoiceData.amount_paid / 100).toFixed(2)}`, pageWidth - 40, yPos + 10, { align: 'right' });
+    
+    // Table bottom border
+    doc.line(20, yPos + 25, pageWidth - 20, yPos + 25);
+    
+    // Totals Section
+    yPos += 40;
+    const totalsX = pageWidth - 120;
+    
+    doc.setFont(undefined, 'normal');
+    doc.text('Subtotal:', totalsX, yPos);
+    doc.text(`$${(invoiceData.amount_paid / 100).toFixed(2)}`, pageWidth - 40, yPos, { align: 'right' });
+    
+    doc.text('Tax:', totalsX, yPos + 8);
+    doc.text('$0.00', pageWidth - 40, yPos + 8, { align: 'right' });
+    
+    // Total line
+    doc.setDrawColor(...darkGray);
+    doc.line(totalsX, yPos + 15, pageWidth - 20, yPos + 15);
+    
+    doc.setFont(undefined, 'bold');
+    doc.setFontSize(10);
+    doc.text('Total:', totalsX, yPos + 23);
+    doc.text(`$${(invoiceData.amount_paid / 100).toFixed(2)}`, pageWidth - 40, yPos + 23, { align: 'right' });
+    
+    // Footer Section
+    const footerY = pageHeight - 30;
+    
+    // Thank you message
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(...darkGray);
+    doc.text('Thank you for your business!', 20, footerY);
+    
+    // Support contact
+    doc.setFontSize(8);
+    doc.setTextColor(...lightGray);
+    doc.text('For support, contact: support@sleepybabyy.com', 20, footerY + 8);
+    
+    // Page number
+    doc.text('Page 1 of 1', pageWidth - 20, footerY + 8, { align: 'right' });
     
     const pdfOutput = doc.output('arraybuffer');
-    logStep("PDF generated successfully with jsPDF");
+    logStep("Professional PDF generated successfully with jsPDF");
     
     return new Uint8Array(pdfOutput);
     
   } catch (error) {
-    logStep("ERROR generating PDF with jsPDF", { error: error.message });
-    // Fallback to simple text-based content if jsPDF fails
+    logStep("ERROR generating professional PDF with jsPDF", { error: error.message });
+    // Fallback to simple PDF generation
     return generateFallbackPDF(invoiceData);
   }
 }
@@ -254,7 +359,7 @@ BT
 0 -40 Td
 (Thank you for your subscription to SleepyBabyy Premium!) Tj
 0 -30 Td
-(For support, contact: support@sleepybaby.com) Tj
+(For support, contact: support@sleepybabyy.com) Tj
 ET
 endstream
 endobj
