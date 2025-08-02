@@ -30,8 +30,8 @@ export const BillingInvoicesTab = () => {
   const handleGeneratePDF = async (invoice: any) => {
     try {
       toast({
-        title: "Generating Invoice",
-        description: "Please wait while we generate your invoice PDF...",
+        title: "Generating Invoice PDF",
+        description: "Please wait while we generate your PDF invoice...",
       });
 
       const { data, error } = await supabase.functions.invoke('generate-invoice-pdf', {
@@ -41,20 +41,23 @@ export const BillingInvoicesTab = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Function error:', error);
+        throw error;
+      }
 
       toast({
-        title: "Invoice Generated",
-        description: "Invoice PDF has been generated successfully.",
+        title: "PDF Generated Successfully",
+        description: "Your invoice PDF has been generated and is ready to view.",
       });
 
       // Refresh invoices to get the updated PDF URL
       await fetchInvoices();
     } catch (error) {
-      console.error('Error generating invoice:', error);
+      console.error('Error generating invoice PDF:', error);
       toast({
-        title: "Generation Failed",
-        description: "Failed to generate invoice PDF. Please try again later.",
+        title: "PDF Generation Failed",
+        description: "Failed to generate PDF invoice. Please try again later.",
         variant: "destructive",
       });
     }
@@ -74,8 +77,9 @@ export const BillingInvoicesTab = () => {
     const isPDF = invoice.invoice_pdf_url.endsWith('.pdf');
     
     if (isPDF) {
-      // Open PDF in new tab for viewing
-      window.open(invoice.invoice_pdf_url, '_blank');
+      // Open PDF in new tab for viewing with proper parameters
+      const pdfUrl = `${invoice.invoice_pdf_url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH&page=1`;
+      window.open(pdfUrl, '_blank', 'noopener,noreferrer');
       
       toast({
         title: "Invoice Opened",

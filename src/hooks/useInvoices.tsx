@@ -88,25 +88,14 @@ export const useInvoices = () => {
       const isPDF = invoice.invoice_pdf_url.endsWith('.pdf');
       
       if (isPDF) {
-        // For PDFs, directly fetch and trigger download
-        const response = await fetch(invoice.invoice_pdf_url);
-        if (!response.ok) {
-          throw new Error('Failed to fetch invoice');
-        }
-        
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        
-        // Create a temporary link to trigger download
+        // For PDFs, create a link that forces download
         const link = document.createElement('a');
-        link.href = url;
+        link.href = invoice.invoice_pdf_url;
         link.download = `${invoice.invoice_number}.pdf`;
+        link.target = '_blank';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
-        // Clean up the object URL
-        window.URL.revokeObjectURL(url);
       } else {
         // Legacy handling for HTML/text files
         const response = await fetch(invoice.invoice_pdf_url);
