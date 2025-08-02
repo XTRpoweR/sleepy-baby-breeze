@@ -31,7 +31,7 @@ export const BillingInvoicesTab = () => {
     try {
       toast({
         title: "Generating Invoice",
-        description: "Please wait while we generate your invoice...",
+        description: "Please wait while we generate your invoice PDF...",
       });
 
       const { data, error } = await supabase.functions.invoke('generate-invoice-pdf', {
@@ -45,7 +45,7 @@ export const BillingInvoicesTab = () => {
 
       toast({
         title: "Invoice Generated",
-        description: "Invoice has been generated successfully.",
+        description: "Invoice PDF has been generated successfully.",
       });
 
       // Refresh invoices to get the updated PDF URL
@@ -54,7 +54,7 @@ export const BillingInvoicesTab = () => {
       console.error('Error generating invoice:', error);
       toast({
         title: "Generation Failed",
-        description: "Failed to generate invoice. Please try again later.",
+        description: "Failed to generate invoice PDF. Please try again later.",
         variant: "destructive",
       });
     }
@@ -70,13 +70,30 @@ export const BillingInvoicesTab = () => {
       return;
     }
 
-    // Open invoice in new tab for viewing
-    window.open(invoice.invoice_pdf_url, '_blank');
+    // Check if this is a PDF file
+    const isPDF = invoice.invoice_pdf_url.endsWith('.pdf');
     
-    toast({
-      title: "Invoice Opened",
-      description: `Invoice ${invoice.invoice_number} opened in new tab.`,
-    });
+    if (isPDF) {
+      // Open PDF in new tab for viewing
+      window.open(invoice.invoice_pdf_url, '_blank');
+      
+      toast({
+        title: "Invoice Opened",
+        description: `Invoice ${invoice.invoice_number} opened in new tab.`,
+      });
+    } else {
+      // For legacy files, show a warning and still open
+      toast({
+        title: "Legacy Invoice Format",
+        description: "This invoice is in an older format. Please regenerate for best viewing experience.",
+        variant: "destructive",
+      });
+      window.open(invoice.invoice_pdf_url, '_blank');
+    }
+  };
+
+  const isInvoicePDF = (invoice: any) => {
+    return invoice.invoice_pdf_url?.endsWith('.pdf');
   };
 
   if (loading) {
@@ -235,6 +252,11 @@ export const BillingInvoicesTab = () => {
                         >
                           {invoice.invoice_status.toUpperCase()}
                         </span>
+                        {isInvoicePDF(invoice) && (
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-600">
+                            PDF
+                          </span>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-gray-600">
@@ -280,6 +302,17 @@ export const BillingInvoicesTab = () => {
                             <Download className="h-4 w-4" />
                             <span>Download</span>
                           </Button>
+                          {!isInvoicePDF(invoice) && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleGeneratePDF(invoice)}
+                              className="flex items-center space-x-1 text-blue-600"
+                            >
+                              <FileText className="h-4 w-4" />
+                              <span>Upgrade to PDF</span>
+                            </Button>
+                          )}
                         </>
                       ) : (
                         <div className="flex items-center space-x-2">
@@ -294,7 +327,7 @@ export const BillingInvoicesTab = () => {
                             className="flex items-center space-x-1"
                           >
                             <FileText className="h-4 w-4" />
-                            <span>Generate</span>
+                            <span>Generate PDF</span>
                           </Button>
                         </div>
                       )}

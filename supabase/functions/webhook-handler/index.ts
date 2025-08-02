@@ -424,7 +424,7 @@ async function handleInvoiceGeneration(supabase: any, event: any) {
 
     const invoiceNumber = invoiceNumberResult || `INV-${Date.now()}`;
 
-    // Create invoice record
+    // Create invoice record WITHOUT PDF URL initially
     const invoiceData = {
       user_id: subscription.user_id,
       subscription_id: subscription.id,
@@ -436,6 +436,7 @@ async function handleInvoiceGeneration(supabase: any, event: any) {
       billing_period_end: new Date(invoice.period_end * 1000).toISOString(),
       paid_at: new Date(invoice.status_transitions.paid_at * 1000).toISOString(),
       invoice_status: 'paid',
+      // Don't set invoice_pdf_url here - let users generate PDFs on demand
     };
 
     const { data: createdInvoice, error: invoiceError } = await supabase
@@ -449,10 +450,10 @@ async function handleInvoiceGeneration(supabase: any, event: any) {
       throw invoiceError;
     }
 
-    logStep("Invoice record created successfully", { invoiceId: createdInvoice.id });
+    logStep("Invoice record created successfully (without PDF)", { invoiceId: createdInvoice.id });
 
-    // Generate PDF and send email
-    await generateAndSendInvoice(supabase, createdInvoice, invoice);
+    // Don't generate PDF automatically - let users generate on demand
+    // This prevents the encoding issues and improves performance
 
   } catch (error) {
     logStep("ERROR in invoice generation", { error: error.message });

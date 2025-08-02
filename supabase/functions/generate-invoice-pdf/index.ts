@@ -63,16 +63,16 @@ serve(async (req) => {
       }
     }
 
-    // Generate comprehensive HTML invoice content
-    const htmlContent = generateProfessionalInvoiceHTML(invoiceData, stripeInvoice, stripeCustomer);
+    // Generate PDF using Puppeteer
+    const pdfBuffer = await generateInvoicePDF(invoiceData, stripeInvoice, stripeCustomer);
 
-    // Store as HTML file in Supabase Storage with proper content type
-    const fileName = `invoices/${invoiceData.invoice_number}.html`;
+    // Store as PDF file in Supabase Storage
+    const fileName = `invoices/${invoiceData.invoice_number}.pdf`;
     
     const { data: uploadData, error: uploadError } = await supabaseClient.storage
       .from('baby-memories')
-      .upload(fileName, new Blob([htmlContent], { type: 'text/html' }), {
-        contentType: 'text/html',
+      .upload(fileName, pdfBuffer, {
+        contentType: 'application/pdf',
         cacheControl: '3600',
         upsert: true,
       });
@@ -102,7 +102,7 @@ serve(async (req) => {
       logStep("ERROR updating invoice with PDF URL", { error: updateError.message });
     }
 
-    logStep("HTML invoice generated successfully", { pdfUrl });
+    logStep("PDF invoice generated successfully", { pdfUrl });
 
     return new Response(JSON.stringify({ 
       success: true, 
@@ -122,6 +122,63 @@ serve(async (req) => {
     });
   }
 });
+
+async function generateInvoicePDF(invoiceData: any, stripeInvoice: any, stripeCustomer: any): Promise<Uint8Array> {
+  const { default: puppeteer } = await import("https://deno.land/x/puppeteer@16.2.0/mod.ts");
+  
+  try {
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    
+    const page = await browser.newPage();
+    
+    // Generate the HTML content
+    const htmlContent = generateProfessionalInvoiceHTML(invoiceData, stripeInvoice, stripeCustomer);
+    
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    
+    // Generate PDF with proper settings
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '20px',
+        bottom: '20px',
+        left: '20px',
+        right: '20px'
+      }
+    });
+    
+    await browser.close();
+    
+    return new Uint8Array(pdfBuffer);
+    
+  } catch (error) {
+    logStep("ERROR generating PDF with Puppeteer", { error: error.message });
+    
+    // Fallback to simple text-based PDF if Puppeteer fails
+    const fallbackContent = generateFallbackPDFContent(invoiceData);
+    return new TextEncoder().encode(fallbackContent);
+  }
+}
+
+function generateFallbackPDFContent(invoiceData: any): string {
+  return `
+SLEEPYBABYY INVOICE
+
+Invoice Number: ${invoiceData.invoice_number}
+Amount: $${(invoiceData.amount_paid / 100).toFixed(2)} ${invoiceData.currency.toUpperCase()}
+Date: ${new Date(invoiceData.paid_at).toLocaleDateString()}
+Billing Period: ${new Date(invoiceData.billing_period_start).toLocaleDateString()} - ${new Date(invoiceData.billing_period_end).toLocaleDateString()}
+Status: PAID
+
+Thank you for your subscription to SleepyBabyy Premium!
+
+For support, contact: support@sleepybaby.com
+  `;
+}
 
 function generateProfessionalInvoiceHTML(invoiceData: any, stripeInvoice: any, stripeCustomer: any): string {
   const customerName = stripeCustomer?.name || stripeCustomer?.email || 'Valued Customer';

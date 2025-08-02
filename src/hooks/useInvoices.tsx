@@ -84,26 +84,49 @@ export const useInvoices = () => {
     }
 
     try {
-      // Fetch the HTML content from the URL
-      const response = await fetch(invoice.invoice_pdf_url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch invoice');
+      // Check if URL is a PDF or legacy format
+      const isPDF = invoice.invoice_pdf_url.endsWith('.pdf');
+      
+      if (isPDF) {
+        // For PDFs, directly fetch and trigger download
+        const response = await fetch(invoice.invoice_pdf_url);
+        if (!response.ok) {
+          throw new Error('Failed to fetch invoice');
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        // Create a temporary link to trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${invoice.invoice_number}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the object URL
+        window.URL.revokeObjectURL(url);
+      } else {
+        // Legacy handling for HTML/text files
+        const response = await fetch(invoice.invoice_pdf_url);
+        if (!response.ok) {
+          throw new Error('Failed to fetch invoice');
+        }
+        
+        const content = await response.text();
+        const blob = new Blob([content], { type: 'text/html' });
+        const url = window.URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${invoice.invoice_number}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        window.URL.revokeObjectURL(url);
       }
-      
-      const htmlContent = await response.text();
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = window.URL.createObjectURL(blob);
-      
-      // Create a temporary link to trigger download
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${invoice.invoice_number}.html`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Clean up the object URL
-      window.URL.revokeObjectURL(url);
       
       toast({
         title: "Download Started",
