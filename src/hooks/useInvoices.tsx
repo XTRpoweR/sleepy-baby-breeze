@@ -84,14 +84,26 @@ export const useInvoices = () => {
     }
 
     try {
+      // Fetch the HTML content from the URL
+      const response = await fetch(invoice.invoice_pdf_url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch invoice');
+      }
+      
+      const htmlContent = await response.text();
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      
       // Create a temporary link to trigger download
       const link = document.createElement('a');
-      link.href = invoice.invoice_pdf_url;
+      link.href = url;
       link.download = `${invoice.invoice_number}.html`;
-      link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
+      // Clean up the object URL
+      window.URL.revokeObjectURL(url);
       
       toast({
         title: "Download Started",
