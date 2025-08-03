@@ -113,59 +113,49 @@ serve(async (req) => {
       logStep("New customer created", { customerId });
     }
 
-    // Create or find the premium subscription product and price
+    // Use your specific product ID and get its active price
+    const PRODUCT_ID = "prod_SngH6Y04uO0jIF";
     let priceId;
+    
     try {
-      logStep("Setting up product and price");
+      logStep("Using existing product", { productId: PRODUCT_ID });
       
-      const products = await stripe.products.list({ 
-        active: true,
-        limit: 100 
-      });
-      
-      let product = products.data.find(p => p.name === "SleepyBaby Premium");
-      
-      if (!product) {
-        logStep("Creating new product");
-        product = await stripe.products.create({
-          name: "SleepyBaby Premium",
-          description: "Complete baby tracking solution with unlimited profiles, extended history, family sharing, and advanced analytics.",
-        });
-        logStep("Product created", { productId: product.id });
-      } else {
-        logStep("Found existing product", { productId: product.id });
-      }
+      // Get the product to verify it exists
+      const product = await stripe.products.retrieve(PRODUCT_ID);
+      logStep("Product retrieved", { productId: product.id, name: product.name });
 
+      // Get active prices for this product
       const prices = await stripe.prices.list({
-        product: product.id,
+        product: PRODUCT_ID,
         active: true,
-        limit: 100
+        limit: 10
       });
 
-      let price = prices.data.find(p => 
-        p.unit_amount === 999 && 
-        p.currency === 'usd' && 
-        p.recurring?.interval === 'month'
-      );
+      logStep("Retrieved prices for product", { pricesCount: prices.data.length });
 
-      if (!price) {
-        logStep("Creating new price");
-        price = await stripe.prices.create({
-          product: product.id,
-          unit_amount: 999, // $9.99 in cents
-          currency: "usd",
-          recurring: {
-            interval: "month",
-          },
-        });
-        logStep("Price created", { priceId: price.id });
-      } else {
-        logStep("Found existing price", { priceId: price.id });
+      if (prices.data.length === 0) {
+        logStep("ERROR: No active prices found for product");
+        throw new Error("No active pricing found for this product. Please contact support.");
       }
 
-      priceId = price.id;
+      // Find the recurring price (subscription)
+      const recurringPrice = prices.data.find(price => price.recurring);
+      
+      if (!recurringPrice) {
+        logStep("ERROR: No recurring price found");
+        throw new Error("No subscription pricing found for this product.");
+      }
+
+      priceId = recurringPrice.id;
+      logStep("Using recurring price", { 
+        priceId, 
+        amount: recurringPrice.unit_amount, 
+        currency: recurringPrice.currency,
+        interval: recurringPrice.recurring?.interval 
+      });
+
     } catch (error) {
-      logStep("Error creating/finding product and price", { error: error.message });
+      logStep("Error retrieving product or prices", { error: error.message });
       throw new Error(`Failed to setup subscription pricing: ${error.message}`);
     }
 

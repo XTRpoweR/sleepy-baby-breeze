@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
@@ -261,12 +260,31 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
     return;
   }
 
+  // Determine subscription tier based on the price
+  let subscriptionTier = 'basic';
+  if (subscription.items?.data[0]?.price) {
+    const price = subscription.items.data[0].price;
+    const amount = price.unit_amount || 0;
+    
+    // Map pricing to tiers - adjust these amounts based on your actual pricing
+    if (amount >= 999) { // $9.99 or more
+      subscriptionTier = 'premium';
+    }
+    
+    console.log('Determined subscription tier', { 
+      priceId: price.id, 
+      amount, 
+      subscriptionTier,
+      productId: price.product 
+    });
+  }
+
   const subscriptionData = {
     stripe_subscription_id: subscription.id,
     status: subscription.status,
     current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
     current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-    subscription_tier: subscription.items?.data[0]?.price?.lookup_key || 'basic',
+    subscription_tier: subscriptionTier,
     updated_at: new Date().toISOString()
   };
 
@@ -280,7 +298,7 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
     throw error;
   }
 
-  console.log('Subscription updated successfully');
+  console.log('Subscription updated successfully', { customerId, subscriptionTier });
 }
 
 async function handleSubscriptionDeleted(supabase: any, event: any) {
