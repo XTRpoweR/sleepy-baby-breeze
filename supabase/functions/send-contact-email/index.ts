@@ -1,74 +1,135 @@
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { ContactFormData } from './types.ts';
-import { storeContactSubmission } from './database.ts';
-import { sendSupportEmail, sendUserConfirmationEmail } from './email.ts';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  createValidationErrorResponse, 
-  createCorsResponse 
-} from './response.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
+import { EmailService } from './email.ts';
+import { DatabaseService } from './database.ts';
+import { validateContactForm, sanitizeInput } from './validation.ts';
+import { createErrorResponse, createSuccessResponse } from './response.ts';
 
-const handler = async (req: Request): Promise<Response> => {
-  console.log("Contact form submission received");
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Content-Security-Policy': 'default-src \'self\'',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin'
+};
 
+// Rate limiting store (in production, use Redis or similar)
+const rateLimitStore = new Map();
+
+function checkRateLimit(key: string, limit: number = 5, windowMs: number = 300000): boolean {
+  const now = Date.now();
+  const windowStart = now - windowMs;
+  
+  if (!rateLimitStore.has(key)) {
+    rateLimitStore.set(key, []);
+  }
+  
+  const requests = rateLimitStore.get(key).filter((time: number) => time > windowStart);
+  
+  if (requests.length >= limit) {
+    return false;
+  }
+  
+  requests.push(now);
+  rateLimitStore.set(key, requests);
+  return true;
+}
+
+serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return createCorsResponse();
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
-  if (req.method !== "POST") {
-    return createErrorResponse("Method not allowed", undefined, 405);
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return createErrorResponse('Method not allowed', 405, corsHeaders);
   }
 
   try {
-    const formData: ContactFormData = await req.json();
-    console.log("Form data received:", { name: formData.name, email: formData.email, category: formData.category });
-
-    // Validate required fields
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-      return createValidationErrorResponse("Missing required fields");
+    // Rate limiting based on IP
+    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    if (!checkRateLimit(clientIP)) {
+      return createErrorResponse('Rate limit exceeded. Please try again later.', 429, corsHeaders);
     }
 
-    // Store the contact form submission (continue even if this fails)
-    const dbStored = await storeContactSubmission(formData);
+    // Parse and validate request body
+    let body;
+    try {
+      const rawBody = await req.text();
+      if (!rawBody || rawBody.length === 0) {
+        return createErrorResponse('Request body is required', 400, corsHeaders);
+      }
+      
+      if (rawBody.length > 10000) { // 10KB limit
+        return createErrorResponse('Request body too large', 413, corsHeaders);
+      }
+      
+      body = JSON.parse(rawBody);
+    } catch (error) {
+      return createErrorResponse('Invalid JSON in request body', 400, corsHeaders);
+    }
 
-    // Send support email
-    const supportEmailResult = await sendSupportEmail(formData);
+    // Sanitize input
+    body = sanitizeInput(body);
+
+    // Validate the contact form data
+    const validation = validateContactForm(body);
+    if (!validation.isValid) {
+      return createErrorResponse(`Validation error: ${validation.errors.join(', ')}`, 400, corsHeaders);
+    }
+
+    const { name, email, subject, message } = body;
+
+    // Initialize services
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
-    // Send user confirmation email
-    const userEmailResult = await sendUserConfirmationEmail(formData);
-
-    // Determine response based on email delivery success
-    if (supportEmailResult.success && userEmailResult.success) {
-      return createSuccessResponse("Contact form submitted successfully. You should receive a confirmation email shortly.");
-    } else if (supportEmailResult.success && !userEmailResult.success) {
-      return createSuccessResponse(
-        "Your message was sent successfully, but we couldn't send a confirmation email. We'll still respond to your inquiry within 24 hours.",
-        "Confirmation email delivery failed"
-      );
-    } else if (!supportEmailResult.success && userEmailResult.success) {
-      return createSuccessResponse(
-        "We received your message and sent you a confirmation. Our team will respond within 24 hours.",
-        "Internal email delivery issues detected"
-      );
-    } else {
-      // Both failed - still return success to user but log the issues
-      console.error("Both support and user emails failed", { supportEmailResult });
-      return createSuccessResponse(
-        "Your message was received. If you don't hear back within 24 hours, please try emailing us directly at support@sleepybabyy.com",
-        "Email delivery issues detected"
-      );
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing Supabase configuration');
+      return createErrorResponse('Internal server error', 500, corsHeaders);
     }
 
-  } catch (error: any) {
-    console.error("Error in send-contact-email function:", error);
-    return createErrorResponse(
-      "There was a technical issue. Please try again or email us directly at support@sleepybabyy.com",
-      error.message
-    );
-  }
-};
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const emailService = new EmailService();
+    const dbService = new DatabaseService(supabase);
 
-serve(handler);
+    // Get user ID if authenticated
+    let userId = null;
+    const authHeader = req.headers.get('authorization');
+    if (authHeader?.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.substring(7);
+        const { data: { user } } = await supabase.auth.getUser(token);
+        userId = user?.id || null;
+      } catch (error) {
+        // Continue without user ID if token is invalid
+        console.log('Invalid auth token, continuing as anonymous');
+      }
+    }
+
+    // Store the query in database
+    await dbService.storeUserQuery({
+      user_id: userId,
+      email: email,
+      message_text: `${subject}\n\n${message}`
+    });
+
+    // Send email
+    await emailService.sendContactEmail({
+      name,
+      email,
+      subject,
+      message
+    });
+
+    return createSuccessResponse('Message sent successfully', corsHeaders);
+
+  } catch (error) {
+    console.error('Error processing contact form:', error);
+    return createErrorResponse('Failed to send message. Please try again later.', 500, corsHeaders);
+  }
+});
