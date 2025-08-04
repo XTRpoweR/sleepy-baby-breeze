@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +18,6 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
-
 const Dashboard = () => {
   const {
     user,
@@ -54,7 +52,6 @@ const Dashboard = () => {
 
   // Check if user is truly new (no profiles and no family memberships)
   const isNewUser = profiles.length === 0;
-
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
@@ -75,24 +72,19 @@ const Dashboard = () => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [checkSubscription]);
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
-
   const handleTrackActivity = () => {
     navigate('/track');
   };
-
   const handleSleepSchedule = () => {
     navigate('/sleep-schedule');
   };
-
   const handleViewReports = () => {
     navigate('/reports');
   };
-
   const handleFamilySharing = () => {
     if (!isPremium) {
       setUpgradeFeature('sharing');
@@ -101,7 +93,6 @@ const Dashboard = () => {
     }
     navigate('/family');
   };
-
   const handleMemories = () => {
     if (!isPremium) {
       setUpgradeFeature('memories');
@@ -110,10 +101,9 @@ const Dashboard = () => {
     }
     navigate('/memories');
   };
-
   const handleAddProfile = () => {
     console.log('Add profile clicked - Current profiles:', profiles.length, 'isPremium:', isPremium);
-    
+
     // Check if user has reached profile limit
     const ownedProfiles = profiles.filter(p => !p.is_shared);
     if (!isPremium && ownedProfiles.length >= 1) {
@@ -126,12 +116,14 @@ const Dashboard = () => {
     // Show profile creation form
     setShowProfileCreation(true);
   };
-
   const handleManageProfiles = () => {
     setShowProfileManagement(true);
   };
-
-  const handleProfileCreated = async (profileData: { name: string; birth_date?: string; photo_url?: string }) => {
+  const handleProfileCreated = async (profileData: {
+    name: string;
+    birth_date?: string;
+    photo_url?: string;
+  }) => {
     console.log('Creating profile with data:', profileData);
     const success = await createProfile(profileData);
     if (success) {
@@ -140,11 +132,9 @@ const Dashboard = () => {
     }
     return success;
   };
-
   const handleSkipOnboarding = () => {
     setShowNewUserOnboarding(false);
   };
-
   const handleManageSubscription = () => {
     if (isPremium) {
       openCustomerPortal();
@@ -152,7 +142,6 @@ const Dashboard = () => {
       navigate('/subscription');
     }
   };
-
   const handlePediatricianReports = () => {
     if (!isPremium) {
       setUpgradeFeature('pediatrician');
@@ -161,7 +150,6 @@ const Dashboard = () => {
     }
     navigate('/pediatrician-reports');
   };
-
   const handleNotifications = () => {
     if (!isPremium) {
       setUpgradeFeature('notifications');
@@ -170,11 +158,9 @@ const Dashboard = () => {
     }
     navigate('/notifications');
   };
-
   const handleContact = () => {
     navigate('/contact');
   };
-
   if (loading) {
     return <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center">
         <div className="text-center">
@@ -183,7 +169,6 @@ const Dashboard = () => {
         </div>
       </div>;
   }
-
   if (!user) {
     return null;
   }
@@ -194,10 +179,7 @@ const Dashboard = () => {
         <DesktopHeader />
         <MobileHeader />
         <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4">
-          <NewUserOnboarding 
-            onProfileCreated={handleProfileCreated}
-            onSkip={handleSkipOnboarding}
-          />
+          <NewUserOnboarding onProfileCreated={handleProfileCreated} onSkip={handleSkipOnboarding} />
         </main>
       </div>;
   }
@@ -208,15 +190,10 @@ const Dashboard = () => {
         <DesktopHeader />
         <MobileHeader />
         <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4">
-          <BabyProfileSetup 
-            onProfileCreated={handleProfileCreated}
-            showBackButton={true}
-            onBack={() => setShowProfileCreation(false)}
-          />
+          <BabyProfileSetup onProfileCreated={handleProfileCreated} showBackButton={true} onBack={() => setShowProfileCreation(false)} />
         </main>
       </div>;
   }
-
   const userName = user.user_metadata?.full_name?.split(' ')[0];
   return <div className="min-h-screen bg-soft gradient-dynamic-slow">
       {/* Headers */}
@@ -333,7 +310,7 @@ const Dashboard = () => {
               <div className="bg-pink-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
                 <Camera className="h-4 w-4 lg:h-5 lg:w-5 text-pink-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Photo & Video Memories</h3>
+              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Photo & Memories</h3>
               <p className="text-xs text-gray-600">Capture precious moments</p>
               {!isPremium && <div className="absolute top-1 right-1">
                   <Crown className="h-3 w-3 text-orange-500" />
@@ -507,5 +484,4 @@ const Dashboard = () => {
       <UpgradePrompt isOpen={showUpgradePrompt} onClose={() => setShowUpgradePrompt(false)} feature={upgradeFeature} />
     </div>;
 };
-
 export default Dashboard;
