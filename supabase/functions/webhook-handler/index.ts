@@ -133,6 +133,34 @@ function sanitizeInput(input: any): any {
   return input;
 }
 
+// Helper function to safely convert timestamps to ISO strings
+function safeTimestampToISO(timestamp: number | null | undefined): string | null {
+  try {
+    if (!timestamp || timestamp === 0) {
+      console.log('Timestamp is null, undefined, or 0:', timestamp);
+      return null;
+    }
+    
+    // Ensure timestamp is a valid number
+    const numTimestamp = Number(timestamp);
+    if (!Number.isFinite(numTimestamp) || numTimestamp < 0) {
+      console.log('Invalid timestamp value:', timestamp);
+      return null;
+    }
+    
+    const date = new Date(numTimestamp * 1000);
+    if (isNaN(date.getTime())) {
+      console.log('Invalid date from timestamp:', timestamp);
+      return null;
+    }
+    
+    return date.toISOString();
+  } catch (error) {
+    console.error('Error converting timestamp to ISO:', { timestamp, error: error.message });
+    return null;
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -209,7 +237,7 @@ serve(async (req) => {
       });
     }
 
-    console.log('Processing webhook event:', event.type);
+    console.log('Processing webhook event:', event.type, 'Event ID:', event.id);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -245,120 +273,177 @@ serve(async (req) => {
 });
 
 async function handleSubscriptionUpdate(supabase: any, event: any) {
-  const subscription = event.data.object;
-  const customerId = subscription.customer;
+  try {
+    const subscription = event.data.object;
+    const customerId = subscription.customer;
 
-  // Find user by customer ID
-  const { data: existingSubscription } = await supabase
-    .from('subscriptions')
-    .select('user_id, email')
-    .eq('stripe_customer_id', customerId)
-    .single();
-
-  if (!existingSubscription) {
-    console.error('No subscription found for customer:', customerId);
-    return;
-  }
-
-  // Determine subscription tier based on the price
-  let subscriptionTier = 'basic';
-  if (subscription.items?.data[0]?.price) {
-    const price = subscription.items.data[0].price;
-    const amount = price.unit_amount || 0;
-    
-    // Map pricing to tiers - adjust these amounts based on your actual pricing
-    if (amount >= 999) { // $9.99 or more
-      subscriptionTier = 'premium';
-    }
-    
-    console.log('Determined subscription tier', { 
-      priceId: price.id, 
-      amount, 
-      subscriptionTier,
-      productId: price.product 
+    console.log('Processing subscription update:', {
+      subscriptionId: subscription.id,
+      customerId,
+      status: subscription.status,
+      currentPeriodStart: subscription.current_period_start,
+      currentPeriodEnd: subscription.current_period_end
     });
-  }
 
-  const subscriptionData = {
-    stripe_subscription_id: subscription.id,
-    status: subscription.status,
-    current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-    current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-    subscription_tier: subscriptionTier,
-    updated_at: new Date().toISOString()
-  };
+    // Find user by customer ID
+    const { data: existingSubscription } = await supabase
+      .from('subscriptions')
+      .select('user_id, email')
+      .eq('stripe_customer_id', customerId)
+      .single();
 
-  const { error } = await supabase
-    .from('subscriptions')
-    .update(subscriptionData)
-    .eq('stripe_customer_id', customerId);
+    if (!existingSubscription) {
+      console.error('No subscription found for customer:', customerId);
+      return;
+    }
 
-  if (error) {
-    console.error('Error updating subscription:', error);
+    // Determine subscription tier based on the price
+    let subscriptionTier = 'basic';
+    if (subscription.items?.data[0]?.price) {
+      const price = subscription.items.data[0].price;
+      const amount = price.unit_amount || 0;
+      
+      // Map pricing to tiers - adjust these amounts based on your actual pricing
+      if (amount >= 999) { // $9.99 or more
+        subscriptionTier = 'premium';
+      }
+      
+      console.log('Determined subscription tier', { 
+        priceId: price.id, 
+        amount, 
+        subscriptionTier,
+        productId: price.product 
+      });
+    }
+
+    // Safely convert timestamps
+    const currentPeriodStart = safeTimestampToISO(subscription.current_period_start);
+    const currentPeriodEnd = safeTimestampToISO(subscription.current_period_end);
+
+    const subscriptionData = {
+      stripe_subscription_id: subscription.id,
+      status: subscription.status,
+      current_period_start: currentPeriodStart,
+      current_period_end: currentPeriodEnd,
+      subscription_tier: subscriptionTier,
+      updated_at: new Date().toISOString()
+    };
+
+    console.log('Updating subscription with data:', subscriptionData);
+
+    const { error } = await supabase
+      .from('subscriptions')
+      .update(subscriptionData)
+      .eq('stripe_customer_id', customerId);
+
+    if (error) {
+      console.error('Error updating subscription:', error);
+      throw error;
+    }
+
+    console.log('Subscription updated successfully', { customerId, subscriptionTier, status: subscription.status });
+  } catch (error) {
+    console.error('Error in handleSubscriptionUpdate:', error);
     throw error;
   }
-
-  console.log('Subscription updated successfully', { customerId, subscriptionTier });
 }
 
 async function handleSubscriptionDeleted(supabase: any, event: any) {
-  const subscription = event.data.object;
-  const customerId = subscription.customer;
+  try {
+    const subscription = event.data.object;
+    const customerId = subscription.customer;
 
-  const { error } = await supabase
-    .from('subscriptions')
-    .update({ 
-      status: 'cancelled',
-      updated_at: new Date().toISOString()
-    })
-    .eq('stripe_customer_id', customerId);
+    console.log('Processing subscription deletion:', { subscriptionId: subscription.id, customerId });
 
-  if (error) {
-    console.error('Error updating cancelled subscription:', error);
+    const { error } = await supabase
+      .from('subscriptions')
+      .update({ 
+        status: 'cancelled',
+        updated_at: new Date().toISOString()
+      })
+      .eq('stripe_customer_id', customerId);
+
+    if (error) {
+      console.error('Error updating cancelled subscription:', error);
+      throw error;
+    }
+
+    console.log('Subscription cancelled successfully');
+  } catch (error) {
+    console.error('Error in handleSubscriptionDeleted:', error);
     throw error;
   }
-
-  console.log('Subscription cancelled successfully');
 }
 
 async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
-  const invoice = event.data.object;
-  const customerId = invoice.customer;
+  try {
+    const invoice = event.data.object;
+    const customerId = invoice.customer;
 
-  // Find user by customer ID
-  const { data: subscription } = await supabase
-    .from('subscriptions')
-    .select('user_id')
-    .eq('stripe_customer_id', customerId)
-    .single();
+    console.log('Processing successful invoice payment:', {
+      invoiceId: invoice.id,
+      customerId,
+      amountPaid: invoice.amount_paid,
+      periodStart: invoice.period_start,
+      periodEnd: invoice.period_end,
+      paidAt: invoice.status_transitions?.paid_at
+    });
 
-  if (!subscription) {
-    console.error('No subscription found for customer:', customerId);
-    return;
-  }
+    // Find user by customer ID
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('user_id')
+      .eq('stripe_customer_id', customerId)
+      .single();
 
-  // Store invoice data
-  const invoiceData = {
-    user_id: subscription.user_id,
-    stripe_invoice_id: invoice.id,
-    amount_paid: invoice.amount_paid,
-    currency: invoice.currency,
-    billing_period_start: new Date(invoice.period_start * 1000).toISOString(),
-    billing_period_end: new Date(invoice.period_end * 1000).toISOString(),
-    paid_at: new Date(invoice.status_transitions.paid_at * 1000).toISOString(),
-    invoice_status: 'paid'
-  };
+    if (!subscription) {
+      console.error('No subscription found for customer:', customerId);
+      return;
+    }
 
-  const { error } = await supabase
-    .from('invoices')
-    .insert(invoiceData);
+    // Safely convert timestamps
+    const billingPeriodStart = safeTimestampToISO(invoice.period_start);
+    const billingPeriodEnd = safeTimestampToISO(invoice.period_end);
+    const paidAt = safeTimestampToISO(invoice.status_transitions?.paid_at);
 
-  if (error) {
-    console.error('Error storing invoice:', error);
+    // Only store invoice if we have valid timestamps
+    if (!billingPeriodStart || !billingPeriodEnd || !paidAt) {
+      console.error('Missing required timestamps for invoice:', {
+        periodStart: invoice.period_start,
+        periodEnd: invoice.period_end,
+        paidAt: invoice.status_transitions?.paid_at
+      });
+      return;
+    }
+
+    // Store invoice data
+    const invoiceData = {
+      user_id: subscription.user_id,
+      stripe_invoice_id: invoice.id,
+      amount_paid: invoice.amount_paid,
+      currency: invoice.currency,
+      billing_period_start: billingPeriodStart,
+      billing_period_end: billingPeriodEnd,
+      paid_at: paidAt,
+      invoice_status: 'paid'
+    };
+
+    console.log('Storing invoice data:', invoiceData);
+
+    const { error } = await supabase
+      .from('invoices')
+      .insert(invoiceData);
+
+    if (error) {
+      console.error('Error storing invoice:', error);
+      throw error;
+    }
+
+    console.log('Invoice stored successfully');
+  } catch (error) {
+    console.error('Error in handleInvoicePaymentSucceeded:', error);
     throw error;
   }
-
-  console.log('Invoice stored successfully');
 }
 
 async function handleInvoicePaymentFailed(supabase: any, event: any) {
