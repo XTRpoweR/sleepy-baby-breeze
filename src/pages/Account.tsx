@@ -17,8 +17,7 @@ import {
   AlertTriangle,
   Check,
   RefreshCcw,
-  Trash2,
-  FileText
+  Trash2
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -31,7 +30,6 @@ import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
-import { BillingInvoicesTab } from '@/components/account/BillingInvoicesTab';
 
 const Account = () => {
   const { user, session, loading, signOut } = useAuth();
@@ -321,7 +319,7 @@ const Account = () => {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="h-4 w-4" />
               <span>Profile</span>
@@ -329,10 +327,6 @@ const Account = () => {
             <TabsTrigger value="subscription" className="flex items-center space-x-2">
               <Crown className="h-4 w-4" />
               <span>Subscription</span>
-            </TabsTrigger>
-            <TabsTrigger value="billing" className="flex items-center space-x-2">
-              <FileText className="h-4 w-4" />
-              <span>Invoices</span>
             </TabsTrigger>
             <TabsTrigger value="security" className="flex items-center space-x-2 text-red-700">
               <Trash2 className="h-4 w-4" />
@@ -522,11 +516,6 @@ const Account = () => {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* New Billing & Invoices Tab */}
-          <TabsContent value="billing" className="space-y-6">
-            <BillingInvoicesTab />
           </TabsContent>
 
           {/* Security Tab */}
