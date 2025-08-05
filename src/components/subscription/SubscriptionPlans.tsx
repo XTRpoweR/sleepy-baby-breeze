@@ -145,9 +145,7 @@ export const SubscriptionPlans = () => {
           <Button className="w-full bg-orange-600 hover:bg-orange-700 transition-all duration-300 hover:scale-105 touch-target" onClick={handleUpgrade} disabled={upgrading || user && isPremium}>
             {upgrading ? 'Processing...' : user && isPremium ? 'Current Plan' : user ? 'Upgrade to Premium' : 'Start Premium Trial'}
           </Button>
-          {(!user || !isPremium) && <p className="text-xs text-center text-gray-500">
-              7-day free trial • Cancel anytime
-            </p>}
+          {(!user || !isPremium) && <p className="text-xs text-center text-gray-500"> • Cancel anytime</p>}
         </CardContent>
       </Card>
     </div>;
