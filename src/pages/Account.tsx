@@ -16,7 +16,6 @@ import {
   Calendar,
   AlertTriangle,
   Check,
-  RefreshCcw,
   Trash2
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -52,7 +51,6 @@ const Account = () => {
     email: ''
   });
   const [saving, setSaving] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -191,26 +189,6 @@ const Account = () => {
 
   const handleUpgrade = () => {
     createCheckout();
-  };
-
-  const handleRefreshStatus = async () => {
-    try {
-      setRefreshing(true);
-      await checkSubscription();
-      toast({
-        title: "Status Refreshed",
-        description: "Your subscription status has been updated.",
-      });
-    } catch (error) {
-      console.error('Error refreshing status:', error);
-      toast({
-        title: "Error",
-        description: "Failed to refresh subscription status.",
-        variant: "destructive",
-      });
-    } finally {
-      setRefreshing(false);
-    }
   };
 
   const handleManageSubscription = () => {
@@ -432,7 +410,7 @@ const Account = () => {
                 </div>
 
                 {!isViewerOnly && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
                     {!isPremium && (
                       <Button 
                         onClick={handleUpgrade}
@@ -454,16 +432,6 @@ const Account = () => {
                         <span>Cancel Subscription</span>
                       </Button>
                     )}
-
-                    <Button 
-                      variant="outline"
-                      onClick={handleRefreshStatus}
-                      disabled={refreshing}
-                      className="flex items-center space-x-2"
-                    >
-                      <RefreshCcw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                      <span>{refreshing ? 'Refreshing...' : 'Refresh Status'}</span>
-                    </Button>
                   </div>
                 )}
               </CardContent>
