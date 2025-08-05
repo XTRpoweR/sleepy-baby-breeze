@@ -36,7 +36,7 @@ export const DeleteProfileConfirmation = ({
             </p>
             <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
               <li>All activity tracking records (feeding, sleep, diaper changes)</li>
-              <li>All photo memories and videos</li>
+              <li>All photo memories</li>
               <li>All sleep schedules and recommendations</li>
               <li>All family sharing permissions</li>
               <li>The baby profile itself</li>
