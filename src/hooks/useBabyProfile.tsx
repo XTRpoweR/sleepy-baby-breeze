@@ -293,15 +293,122 @@ export const useBabyProfile = () => {
   const deleteProfile = async (profileId: string) => {
     if (!user) return false;
 
+    const profileToDelete = profiles.find(p => p.id === profileId);
+    if (!profileToDelete) {
+      toast({
+        title: "Error",
+        description: "Profile not found",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Only allow deleting owned profiles
+    if (profileToDelete.is_shared || profileToDelete.user_role !== 'owner') {
+      toast({
+        title: "Error",
+        description: "You can only delete profiles you own",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    console.log('Starting profile deletion for:', profileToDelete.name);
+
     try {
-      const { error } = await supabase
+      // Start a transaction-like deletion process
+      // We'll delete in the correct order to maintain referential integrity
+
+      // 1. Delete family members first
+      console.log('Deleting family members...');
+      const { error: familyError } = await supabase
+        .from('family_members')
+        .delete()
+        .eq('baby_id', profileId);
+
+      if (familyError) {
+        console.error('Error deleting family members:', familyError);
+        toast({
+          title: "Error",
+          description: "Failed to delete family relationships",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // 2. Delete baby activities
+      console.log('Deleting baby activities...');
+      const { error: activitiesError } = await supabase
+        .from('baby_activities')
+        .delete()
+        .eq('baby_id', profileId);
+
+      if (activitiesError) {
+        console.error('Error deleting baby activities:', activitiesError);
+        toast({
+          title: "Error",
+          description: "Failed to delete activity records",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // 3. Delete baby memories (photos/videos)
+      console.log('Deleting baby memories...');
+      const { error: memoriesError } = await supabase
+        .from('baby_memories')
+        .delete()
+        .eq('baby_id', profileId);
+
+      if (memoriesError) {
+        console.error('Error deleting baby memories:', memoriesError);
+        toast({
+          title: "Error",
+          description: "Failed to delete photo memories",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // 4. Delete sleep schedules
+      console.log('Deleting sleep schedules...');
+      const { error: sleepError } = await supabase
+        .from('sleep_schedules')
+        .delete()
+        .eq('baby_id', profileId);
+
+      if (sleepError) {
+        console.error('Error deleting sleep schedules:', sleepError);
+        toast({
+          title: "Error",
+          description: "Failed to delete sleep schedules",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // 5. Delete family invitations
+      console.log('Deleting family invitations...');
+      const { error: invitationsError } = await supabase
+        .from('family_invitations')
+        .delete()
+        .eq('baby_id', profileId);
+
+      if (invitationsError) {
+        console.error('Error deleting family invitations:', invitationsError);
+        // Don't fail here as this is not critical
+      }
+
+      // 6. Finally, delete the baby profile itself
+      console.log('Deleting baby profile...');
+      const { error: profileError } = await supabase
         .from('baby_profiles')
         .delete()
         .eq('id', profileId)
         .eq('user_id', user.id);
 
-      if (error) {
-        console.error('Error deleting baby profile:', error);
+      if (profileError) {
+        console.error('Error deleting baby profile:', profileError);
         toast({
           title: "Error",
           description: "Failed to delete baby profile",
@@ -310,10 +417,13 @@ export const useBabyProfile = () => {
         return false;
       }
 
+      console.log('Profile deletion completed successfully');
+
+      // Update local state
       const updatedProfiles = profiles.filter(p => p.id !== profileId);
       setProfiles(updatedProfiles);
 
-      // If we deleted the active profile, switch to the first remaining one
+      // If we deleted the active profile, switch to the first remaining owned profile
       if (activeProfile?.id === profileId) {
         const ownedProfiles = updatedProfiles.filter(p => !p.is_shared);
         if (ownedProfiles.length > 0) {
@@ -327,11 +437,16 @@ export const useBabyProfile = () => {
 
       toast({
         title: "Success!",
-        description: "Baby profile deleted successfully",
+        description: `${profileToDelete.name}'s profile and all associated data have been permanently deleted`,
       });
       return true;
     } catch (error) {
-      console.error('Error deleting baby profile:', error);
+      console.error('Unexpected error during profile deletion:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while deleting the profile",
+        variant: "destructive",
+      });
       return false;
     }
   };
