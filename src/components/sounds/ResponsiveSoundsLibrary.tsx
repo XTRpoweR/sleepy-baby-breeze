@@ -255,13 +255,7 @@ export const ResponsiveSoundsLibrary = ({
             </div>
 
             {/* Volume Control */}
-            <div className="flex items-center space-x-2">
-              {volume === 0 ? <VolumeX className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : volume < 0.5 ? <Volume1 className="h-4 w-4 text-muted-foreground flex-shrink-0" /> : <Volume2 className="h-4 w-4 text-muted-foreground flex-shrink-0" />}
-              <Slider value={[volume * 100]} onValueChange={value => changeVolume(value[0] / 100)} max={100} step={1} className="flex-1" />
-              <span className="text-xs text-muted-foreground w-10 text-right flex-shrink-0">
-                {Math.round(volume * 100)}%
-              </span>
-            </div>
+            
           </div>}
       </div>;
   };
