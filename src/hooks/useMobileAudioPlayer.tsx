@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface AudioTrack {
@@ -299,7 +298,12 @@ export const useMobileAudioPlayer = () => {
         artist: track.category.replace('-', ' '),
         album: track.description || 'Calming Sounds',
         artwork: [
-          { src: '/favicon.ico', sizes: '96x96', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '96x96', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '128x128', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '192x192', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '256x256', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '384x384', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '512x512', type: 'image/png' },
         ],
       });
     }
