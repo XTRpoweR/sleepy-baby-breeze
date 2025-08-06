@@ -127,7 +127,7 @@ const Sounds = () => {
               </TabsTrigger>
               <TabsTrigger value="sleep-tips" className="flex items-center space-x-2 py-2 px-3 text-xs sm:text-sm">
                 <BookOpen className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>{t('pages.sounds.sleepTipsTab', { default: 'Sleep Tips' })}</span>
+                <span>Sleep Articles & Tips</span>
               </TabsTrigger>
             </TabsList>
 
