@@ -26,6 +26,7 @@ export const useMobileAudioPlayer = () => {
   const [audioQuality, setAudioQuality] = useState<'auto' | 'high' | 'medium' | 'low'>('auto');
   const [isBuffering, setIsBuffering] = useState(false);
   const [networkType, setNetworkType] = useState<string>('unknown');
+  const [autoplay, setAutoplay] = useState(true);
 
   // Timer functionality
   const [timer, setTimer] = useState<number | null>(null);
@@ -102,6 +103,28 @@ export const useMobileAudioPlayer = () => {
     }
   }, []);
 
+  // Play next track
+  const playNextTrack = useCallback(() => {
+    if (!currentTrack) return;
+    
+    const currentIndex = audioTracks.findIndex(track => track.id === currentTrack.id);
+    const nextIndex = (currentIndex + 1) % audioTracks.length;
+    const nextTrack = audioTracks[nextIndex];
+    
+    playAudio(nextTrack);
+  }, [currentTrack, audioTracks]);
+
+  // Play previous track
+  const playPreviousTrack = useCallback(() => {
+    if (!currentTrack) return;
+    
+    const currentIndex = audioTracks.findIndex(track => track.id === currentTrack.id);
+    const prevIndex = currentIndex === 0 ? audioTracks.length - 1 : currentIndex - 1;
+    const prevTrack = audioTracks[prevIndex];
+    
+    playAudio(prevTrack);
+  }, [currentTrack, audioTracks]);
+
   // Initialize audio context and media session for mobile devices
   const initializeAudioContext = useCallback(async () => {
     if (!audioContextRef.current) {
@@ -141,7 +164,7 @@ export const useMobileAudioPlayer = () => {
         playNextTrack();
       });
     }
-  }, [currentTrack]);
+  }, [currentTrack, playPreviousTrack, playNextTrack]);
 
   // Request wake lock to prevent screen sleep during playback
   const requestWakeLock = useCallback(async () => {
@@ -262,7 +285,14 @@ export const useMobileAudioPlayer = () => {
     };
 
     const handleEnded = () => {
-      if (!audio.loop) {
+      if (isLooping) {
+        // If loop is enabled, the audio will loop automatically
+        return;
+      } else if (autoplay) {
+        // Auto-play next track when current track ends
+        playNextTrack();
+      } else {
+        // Stop playback if auto-play is disabled
         setIsPlaying(false);
         setCurrentTime(0);
         releaseWakeLock();
@@ -289,7 +319,7 @@ export const useMobileAudioPlayer = () => {
       audio.removeEventListener('ended', handleEnded);
       releaseWakeLock();
     };
-  }, [detectNetworkType, initializeAudioContext, requestWakeLock, releaseWakeLock]);
+  }, [detectNetworkType, initializeAudioContext, requestWakeLock, releaseWakeLock, isLooping, autoplay, playNextTrack]);
 
   const updateMediaSessionMetadata = useCallback((track: AudioTrack) => {
     if ('mediaSession' in navigator) {
@@ -387,28 +417,6 @@ export const useMobileAudioPlayer = () => {
     }
   };
 
-  // Play next track
-  const playNextTrack = () => {
-    if (!currentTrack) return;
-    
-    const currentIndex = audioTracks.findIndex(track => track.id === currentTrack.id);
-    const nextIndex = (currentIndex + 1) % audioTracks.length;
-    const nextTrack = audioTracks[nextIndex];
-    
-    playAudio(nextTrack);
-  };
-
-  // Play previous track
-  const playPreviousTrack = () => {
-    if (!currentTrack) return;
-    
-    const currentIndex = audioTracks.findIndex(track => track.id === currentTrack.id);
-    const prevIndex = currentIndex === 0 ? audioTracks.length - 1 : currentIndex - 1;
-    const prevTrack = audioTracks[prevIndex];
-    
-    playAudio(prevTrack);
-  };
-
   const changeVolume = (newVolume: number) => {
     setVolume(newVolume);
     if (audioRef.current) {
@@ -499,6 +507,7 @@ export const useMobileAudioPlayer = () => {
     isLoading,
     isBuffering,
     error,
+    autoplay,
     
     // Timer state
     timer,
@@ -533,6 +542,7 @@ export const useMobileAudioPlayer = () => {
     
     // Audio settings
     setAudioQuality,
+    setAutoplay,
     
     // Utility functions
     setSearchQuery,
