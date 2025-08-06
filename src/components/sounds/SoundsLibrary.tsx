@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,9 +9,6 @@ import {
   Play, 
   Pause, 
   Square, 
-  Volume2, 
-  VolumeX,
-  Volume1,
   Repeat, 
   Timer,
   Music,
@@ -32,9 +28,9 @@ import {
   SkipForward,
   SkipBack,
   AlertCircle,
-  Minus,
-  Plus,
-  Shuffle
+  Shuffle,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { EnhancedAudioTimerDialog } from './EnhancedAudioTimerDialog';
@@ -53,7 +49,6 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     currentTrack,
     currentTime,
     duration,
-    volume,
     isLooping,
     timer,
     timeRemaining,
@@ -72,9 +67,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     skipForward,
     skipBackward,
     playNextTrack,
-    setVolume,
-    volumeUp,
-    volumeDown,
+    playPreviousTrack,
     setIsLooping,
     changePlaybackRate,
     setFadeIn,
@@ -301,6 +294,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                   )}
                   {autoplay && (
                     <Badge variant="outline" className="bg-blue-100 text-blue-800">
+                      <Shuffle className="h-3 w-3 mr-1" />
                       Auto-play
                     </Badge>
                   )}
@@ -331,14 +325,24 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                 </div>
               )}
 
-              {/* Playback Controls */}
-              <div className="flex items-center justify-between mb-4">
+              {/* Enhanced Playback Controls */}
+              <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={playPreviousTrack}
+                    disabled={!isPlaying}
+                    title="Previous track"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={skipBackward}
                     disabled={!isPlaying}
+                    title="Skip back 15s"
                   >
                     <SkipBack className="h-4 w-4" />
                   </Button>
@@ -356,7 +360,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                       <Play className="h-4 w-4" />
                     )}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={stopAudio}>
+                  <Button size="sm" variant="outline" onClick={stopAudio} title="Stop">
                     <Square className="h-4 w-4" />
                   </Button>
                   <Button
@@ -364,25 +368,27 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                     variant="outline"
                     onClick={skipForward}
                     disabled={!isPlaying}
+                    title="Skip forward 15s"
                   >
                     <SkipForward className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={playNextTrack}
+                    disabled={!isPlaying}
+                    title="Next track"
+                  >
+                    <ChevronRight className="h-4 w-4" />
                   </Button>
                   <Button
                     size="sm"
                     variant={isLooping ? "default" : "outline"}
                     onClick={() => setIsLooping(!isLooping)}
                     className={isLooping ? colors.button : ''}
+                    title="Loop current track"
                   >
                     <Repeat className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={autoplay ? "default" : "outline"}
-                    onClick={() => setAutoplay(!autoplay)}
-                    className={autoplay ? colors.button : ''}
-                    title="Auto-play next track"
-                  >
-                    <Shuffle className="h-4 w-4" />
                   </Button>
                 </div>
                 
@@ -391,6 +397,7 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                     size="sm"
                     variant="outline"
                     onClick={() => setShowTimerDialog(true)}
+                    title="Set timer"
                   >
                     <Timer className="h-4 w-4" />
                   </Button>
@@ -398,37 +405,11 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
                     size="sm"
                     variant="outline"
                     onClick={() => setShowSettingsDialog(true)}
+                    title="Audio settings"
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
                 </div>
-              </div>
-
-              {/* Volume Control */}
-              <div className="flex items-center space-x-3">
-                <Button size="sm" variant="ghost" onClick={volumeDown}>
-                  <Minus className="h-4 w-4" />
-                </Button>
-                {volume === 0 ? (
-                  <VolumeX className="h-4 w-4 text-gray-600" />
-                ) : volume < 0.5 ? (
-                  <Volume1 className="h-4 w-4 text-gray-600" />
-                ) : (
-                  <Volume2 className="h-4 w-4 text-gray-600" />
-                )}
-                <Slider
-                  value={[volume * 100]}
-                  onValueChange={(value) => setVolume(value[0] / 100)}
-                  max={100}
-                  step={1}
-                  className="flex-1"
-                />
-                <Button size="sm" variant="ghost" onClick={volumeUp}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-                <span className="text-sm text-gray-600 w-10">
-                  {Math.round(volume * 100)}%
-                </span>
               </div>
             </div>
           )}
@@ -441,10 +422,18 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Music className="h-5 w-5 text-purple-600" />
-            <span>Calming Sounds Library</span>
-            {isLoading && <Loader2 className="h-4 w-4 animate-spin text-purple-600" />}
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Music className="h-5 w-5 text-purple-600" />
+              <span>Calming Sounds Library</span>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin text-purple-600" />}
+            </div>
+            {autoplay && currentTrack && (
+              <Badge variant="outline" className="bg-green-50 text-green-700">
+                <Shuffle className="h-3 w-3 mr-1" />
+                Continuous Play
+              </Badge>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -575,11 +564,11 @@ export const SoundsLibrary = ({ onSoundSelect }: SoundsLibraryProps) => {
           <AudioSettingsDialog
             open={showSettingsDialog}
             onOpenChange={setShowSettingsDialog}
-            volume={volume}
+            volume={1}
             playbackRate={playbackRate}
             fadeIn={fadeIn}
             fadeOut={fadeOut}
-            onVolumeChange={setVolume}
+            onVolumeChange={() => {}}
             onPlaybackRateChange={changePlaybackRate}
             onFadeInChange={setFadeIn}
             onFadeOutChange={setFadeOut}

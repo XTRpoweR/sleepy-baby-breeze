@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 
 interface AudioTrack {
@@ -29,8 +28,8 @@ export const useAudioPlayer = () => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
-  const [autoplay, setAutoplay] = useState(false);
-  
+  const [autoplay, setAutoplay] = useState(true);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const fadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -92,7 +91,57 @@ export const useAudioPlayer = () => {
     }
   ];
 
+  // Initialize Media Session API for background playback controls
+  const initializeMediaSession = () => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', () => {
+        if (currentTrack) playAudio(currentTrack);
+      });
+      
+      navigator.mediaSession.setActionHandler('pause', () => {
+        pauseAudio();
+      });
+
+      navigator.mediaSession.setActionHandler('seekbackward', () => {
+        skipBackward();
+      });
+
+      navigator.mediaSession.setActionHandler('seekforward', () => {
+        skipForward();
+      });
+
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        playPreviousTrack();
+      });
+
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        playNextTrack();
+      });
+    }
+  };
+
+  // Update media session metadata when track changes
+  const updateMediaSessionMetadata = (track: AudioTrack) => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.name,
+        artist: track.category.replace('-', ' '),
+        album: track.description || 'Calming Sounds',
+        artwork: [
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '96x96', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '128x128', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '192x192', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '256x256', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '384x384', type: 'image/png' },
+          { src: '/lovable-uploads/d464ff16-7245-484a-86cb-68f2fc44bb12.png', sizes: '512x512', type: 'image/png' },
+        ],
+      });
+    }
+  };
+
   useEffect(() => {
+    initializeMediaSession();
+    
     if (!audioRef.current) {
       audioRef.current = new Audio();
     }
@@ -100,6 +149,15 @@ export const useAudioPlayer = () => {
 
     const handleTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
+      
+      // Update Media Session position state
+      if ('mediaSession' in navigator && navigator.mediaSession.setPositionState) {
+        navigator.mediaSession.setPositionState({
+          duration: audio.duration,
+          playbackRate: audio.playbackRate,
+          position: audio.currentTime,
+        });
+      }
     };
 
     const handleLoadStart = () => {
@@ -119,11 +177,14 @@ export const useAudioPlayer = () => {
     };
 
     const handleEnded = () => {
-      if (audio.loop) {
-        // Audio will loop automatically
+      if (isLooping) {
+        // If loop is enabled, the audio will loop automatically
+        return;
       } else if (autoplay) {
+        // Auto-play next track when current track ends
         playNextTrack();
       } else {
+        // Stop playback if auto-play is disabled
         stopAudio();
       }
     };
@@ -150,9 +211,8 @@ export const useAudioPlayer = () => {
         audio.pause();
       }
     };
-  }, [autoplay]);
+  }, [autoplay, isLooping]);
 
-  // Timer logic with seconds precision
   useEffect(() => {
     if (timerIntervalRef.current) {
       clearInterval(timerIntervalRef.current);
@@ -197,6 +257,16 @@ export const useAudioPlayer = () => {
     playAudio(nextTrack);
   };
 
+  const playPreviousTrack = () => {
+    if (!currentTrack) return;
+    
+    const currentIndex = audioTracks.findIndex(track => track.id === currentTrack.id);
+    const prevIndex = currentIndex === 0 ? audioTracks.length - 1 : currentIndex - 1;
+    const prevTrack = audioTracks[prevIndex];
+    
+    playAudio(prevTrack);
+  };
+
   const playAudio = async (track: AudioTrack) => {
     if (!audioRef.current) return;
     
@@ -233,6 +303,7 @@ export const useAudioPlayer = () => {
       setIsPlaying(true);
       setCurrentTime(0);
       addToRecentlyPlayed(track.id);
+      updateMediaSessionMetadata(track);
       
       if (fadeIn) {
         startFadeIn();
@@ -466,6 +537,7 @@ export const useAudioPlayer = () => {
     skipForward,
     skipBackward,
     playNextTrack,
+    playPreviousTrack,
     
     // Volume controls
     setVolume,
