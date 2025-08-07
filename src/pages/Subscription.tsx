@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +17,7 @@ import {
   Zap,
   Users,
   Calendar,
-  BarChart3,
-  FileText
+  BarChart3
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -25,12 +25,10 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
-import { useInvoices } from '@/hooks/useInvoices';
 
 const Subscription = () => {
   const { user, loading, signOut } = useAuth();
   const { subscriptionTier, isPremium, openCustomerPortal } = useSubscription();
-  const { invoices } = useInvoices();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -47,10 +45,6 @@ const Subscription = () => {
 
   const handleManageSubscription = () => {
     openCustomerPortal();
-  };
-
-  const handleViewInvoices = () => {
-    navigate('/account');
   };
 
   if (loading) {
@@ -189,36 +183,6 @@ const Subscription = () => {
             </div>
           </div>
         </div>
-
-        {/* Quick Invoice Access for paid users */}
-        {invoices.length > 0 && (
-          <div className="mb-8">
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-blue-100 p-3 rounded-full">
-                      <FileText className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">Invoice History</h3>
-                      <p className="text-gray-600 text-sm">
-                        You have {invoices.length} invoice{invoices.length !== 1 ? 's' : ''} available for download
-                      </p>
-                    </div>
-                  </div>
-                  <Button 
-                    onClick={handleViewInvoices}
-                    className="flex items-center space-x-2"
-                  >
-                    <FileText className="h-4 w-4" />
-                    <span>View Invoices</span>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
 
         {/* Subscription Plans */}
         <div className="mb-12 lg:mb-16">
