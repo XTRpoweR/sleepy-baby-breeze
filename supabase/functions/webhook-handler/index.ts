@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
@@ -164,7 +165,7 @@ function safeTimestampToISO(timestamp: number | null | undefined): string | null
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
@@ -250,12 +251,6 @@ serve(async (req) => {
         break;
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(supabase, event);
-        break;
-      case 'invoice.payment_succeeded':
-        await handleInvoicePaymentSucceeded(supabase, event);
-        break;
-      case 'invoice.payment_failed':
-        await handleInvoicePaymentFailed(supabase, event);
         break;
       default:
         console.log('Unhandled event type:', event.type);
@@ -373,83 +368,4 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
     console.error('Error in handleSubscriptionDeleted:', error);
     throw error;
   }
-}
-
-async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
-  try {
-    const invoice = event.data.object;
-    const customerId = invoice.customer;
-
-    console.log('Processing successful invoice payment:', {
-      invoiceId: invoice.id,
-      customerId,
-      amountPaid: invoice.amount_paid,
-      periodStart: invoice.period_start,
-      periodEnd: invoice.period_end,
-      paidAt: invoice.status_transitions?.paid_at
-    });
-
-    // Find user by customer ID
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('user_id')
-      .eq('stripe_customer_id', customerId)
-      .single();
-
-    if (!subscription) {
-      console.error('No subscription found for customer:', customerId);
-      return;
-    }
-
-    // Safely convert timestamps
-    const billingPeriodStart = safeTimestampToISO(invoice.period_start);
-    const billingPeriodEnd = safeTimestampToISO(invoice.period_end);
-    const paidAt = safeTimestampToISO(invoice.status_transitions?.paid_at);
-
-    // Only store invoice if we have valid timestamps
-    if (!billingPeriodStart || !billingPeriodEnd || !paidAt) {
-      console.error('Missing required timestamps for invoice:', {
-        periodStart: invoice.period_start,
-        periodEnd: invoice.period_end,
-        paidAt: invoice.status_transitions?.paid_at
-      });
-      return;
-    }
-
-    // Store invoice data
-    const invoiceData = {
-      user_id: subscription.user_id,
-      stripe_invoice_id: invoice.id,
-      amount_paid: invoice.amount_paid,
-      currency: invoice.currency,
-      billing_period_start: billingPeriodStart,
-      billing_period_end: billingPeriodEnd,
-      paid_at: paidAt,
-      invoice_status: 'paid'
-    };
-
-    console.log('Storing invoice data:', invoiceData);
-
-    const { error } = await supabase
-      .from('invoices')
-      .insert(invoiceData);
-
-    if (error) {
-      console.error('Error storing invoice:', error);
-      throw error;
-    }
-
-    console.log('Invoice stored successfully');
-  } catch (error) {
-    console.error('Error in handleInvoicePaymentSucceeded:', error);
-    throw error;
-  }
-}
-
-async function handleInvoicePaymentFailed(supabase: any, event: any) {
-  const invoice = event.data.object;
-  console.log('Payment failed for invoice:', invoice.id);
-  
-  // Could implement additional logic here like sending notification emails
-  // or updating subscription status based on failed payment attempts
 }
