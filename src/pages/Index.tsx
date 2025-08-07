@@ -209,7 +209,7 @@ const Index = () => {
               <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 md:space-x-6 text-xs sm:text-sm text-gray-600">
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
                   <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
-                  <span className="font-medium">{t('hero.freeTrial')}</span>
+                  <span className="font-medium">Free</span>
                 </div>
                 <div className="flex items-center space-x-1 transition-all duration-300 hover:scale-105">
                   <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
