@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,9 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Moon, Sun, Play, Square } from 'lucide-react';
+import { Moon, Sun, Clock, Play, Square } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 interface SleepTrackerProps {
   babyId: string;
@@ -25,41 +26,54 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
   const [notes, setNotes] = useState('');
   const [isActive, setIsActive] = useState(false);
   const [activeStartTime, setActiveStartTime] = useState<Date | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
-  const startSleepSession = () => {
+  // Real-time timer updates
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (isActive && activeStartTime) {
+      interval = setInterval(() => {
+        setCurrentTime(new Date());
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isActive, activeStartTime]);
+
+  const handleStartSleep = () => {
     const now = new Date();
     setActiveStartTime(now);
+    setStartTime(now.toISOString().slice(0, 16));
     setIsActive(true);
+    
+    toast({
+      title: t('tracking.sleepTracker.sessionStarted'),
+      description: t('tracking.sleepTracker.sessionStartedDesc'),
+    });
   };
 
-  const endSleepSession = async () => {
-    if (!activeStartTime) return;
-
-    const endDateTime = new Date();
-    const duration = Math.round((endDateTime.getTime() - activeStartTime.getTime()) / (1000 * 60));
-
-    const success = await addActivity({
-      baby_id: babyId,
-      activity_type: 'sleep',
-      start_time: activeStartTime.toISOString(),
-      end_time: endDateTime.toISOString(),
-      duration_minutes: duration,
-      notes: notes.trim() || null,
-      metadata: {
-        type: sleepType,
-        session: true
-      }
-    });
-
-    if (success) {
+  const handleStopSleep = () => {
+    if (activeStartTime) {
+      const now = new Date();
+      setEndTime(now.toISOString().slice(0, 16));
       setIsActive(false);
-      setActiveStartTime(null);
-      setNotes('');
+      
+      const duration = Math.round((now.getTime() - activeStartTime.getTime()) / (1000 * 60));
+      toast({
+        title: t('tracking.sleepTracker.sessionEnded'),
+        description: `${t('common.duration')}: ${Math.floor(duration / 60)}h ${duration % 60}m`,
+      });
     }
   };
 
-  const handleManualSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!startTime) return;
 
@@ -74,123 +88,131 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       end_time: end?.toISOString() || null,
       duration_minutes: duration,
       notes: notes.trim() || null,
-      metadata: {
-        type: sleepType,
-        session: false
-      }
+      metadata: { sleep_type: sleepType }
     });
 
     if (success) {
       setStartTime('');
       setEndTime('');
       setNotes('');
+      setIsActive(false);
+      setActiveStartTime(null);
+    }
+  };
+
+  const formatDuration = () => {
+    if (!activeStartTime) return '';
+    const totalSeconds = Math.floor((currentTime.getTime() - activeStartTime.getTime()) / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    } else {
+      return `${minutes}m ${seconds}s`;
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* Active Sleep Session */}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Quick Start/Stop */}
       <Card>
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
             <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-            <span>{t('tracking.sleepTracker.title')}</span>
+            <span>{t('tracking.sleepTracker.sleepSession')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          {!isActive ? (
-            <Button 
-              onClick={startSleepSession}
-              className="w-full bg-blue-600 hover:bg-blue-700 py-2 sm:py-3"
-              disabled={isSubmitting}
-            >
-              <Play className="h-4 w-4 mr-2" />
-              {t('tracking.sleepTracker.startSession')}
-            </Button>
-          ) : (
-            <div className="space-y-4">
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-2">
-                  {t('tracking.sleepTracker.sessionStarted')}
-                </p>
-                <p className="text-lg font-medium">
-                  {activeStartTime?.toLocaleTimeString()}
-                </p>
+          <div className="text-center space-y-3 sm:space-y-4">
+            {isActive ? (
+              <div>
+                <div className={`text-xl sm:text-2xl font-bold text-blue-600 mb-2 ${isActive ? 'animate-pulse' : ''}`}>
+                  {formatDuration()}
+                </div>
+                <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">{t('tracking.sleepTracker.sessionInProgress')}</p>
+                <Button 
+                  onClick={handleStopSleep} 
+                  className="bg-red-500 hover:bg-red-600 w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3"
+                  size={isMobile ? "default" : "lg"}
+                >
+                  <Square className="h-4 w-4 mr-2" />
+                  {t('tracking.sleepTracker.endSleepSession')}
+                </Button>
               </div>
-              <Button 
-                onClick={endSleepSession}
-                className="w-full bg-red-600 hover:bg-red-700 py-2 sm:py-3"
-                disabled={isSubmitting}
-              >
-                <Square className="h-4 w-4 mr-2" />
-                {t('tracking.sleepTracker.endSession')}
-              </Button>
-            </div>
-          )}
+            ) : (
+              <div>
+                <Button 
+                  onClick={handleStartSleep} 
+                  className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3"
+                  size={isMobile ? "default" : "lg"}
+                >
+                  <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  {t('tracking.sleepTracker.startSleepSession')}
+                </Button>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
-      {/* Manual Sleep Log */}
+      {/* Manual Entry Form */}
       <Card>
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-            <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-            <span>{t('tracking.sleepTracker.manualTitle')}</span>
+            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
+            <span>{t('tracking.sleepTracker.logManually')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
-          <form onSubmit={handleManualSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label className="text-sm sm:text-base">{t('tracking.sleepTracker.sleepTypeLabel')}</Label>
-              <RadioGroup 
-                value={sleepType} 
-                onValueChange={(value: 'nap' | 'night') => setSleepType(value)}
-                className="flex flex-row space-x-6 mt-3"
-              >
+              <Label className="text-sm sm:text-base">{t('tracking.sleepTracker.sleepType')}</Label>
+              <RadioGroup value={sleepType} onValueChange={(value: 'nap' | 'night') => setSleepType(value)} className="mt-2">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="nap" id="nap" />
                   <Label htmlFor="nap" className="flex items-center space-x-2 text-sm sm:text-base">
-                    <Sun className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500" />
-                    <span>{t('tracking.sleepTracker.napLabel')}</span>
+                    <Sun className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span>{t('tracking.sleepTracker.nap')}</span>
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="night" id="night" />
                   <Label htmlFor="night" className="flex items-center space-x-2 text-sm sm:text-base">
-                    <Moon className="h-3 w-3 sm:h-4 sm:w-4 text-indigo-500" />
-                    <span>{t('tracking.sleepTracker.nightLabel')}</span>
+                    <Moon className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span>{t('tracking.sleepTracker.nightSleep')}</span>
                   </Label>
                 </div>
               </RadioGroup>
             </div>
 
-            <div>
-              <Label htmlFor="startTime" className="text-sm sm:text-base">{t('tracking.sleepTracker.startTimeRequired')}</Label>
-              <Input
-                id="startTime"
-                type="datetime-local"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                required
-                className="mt-1"
-                lang="en"
-              />
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="startTime" className="text-sm sm:text-base">{t('tracking.sleepTracker.startTime')} *</Label>
+                <Input
+                  id="startTime"
+                  type="datetime-local"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  required
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="endTime" className="text-sm sm:text-base">{t('tracking.sleepTracker.endTime')}</Label>
+                <Input
+                  id="endTime"
+                  type="datetime-local"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="endTime" className="text-sm sm:text-base">{t('tracking.sleepTracker.endTimeLabel')}</Label>
-              <Input
-                id="endTime"
-                type="datetime-local"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="mt-1"
-                lang="en"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="notes" className="text-sm sm:text-base">{t('tracking.sleepTracker.notesLabel')}</Label>
+              <Label htmlFor="notes" className="text-sm sm:text-base">{t('tracking.sleepTracker.notes')} ({t('forms.optional')})</Label>
               <Textarea
                 id="notes"
                 value={notes}
@@ -206,7 +228,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
               className="w-full bg-purple-600 hover:bg-purple-700 py-2 sm:py-3"
               disabled={!startTime || isSubmitting}
             >
-              {isSubmitting ? t('tracking.sleepTracker.submittingButton') : t('tracking.sleepTracker.submitButton')}
+              {isSubmitting ? t('tracking.sleepTracker.saving') : t('tracking.sleepTracker.logSleep')}
             </Button>
           </form>
         </CardContent>

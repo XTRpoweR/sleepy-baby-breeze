@@ -94,7 +94,6 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 required
-                lang="en"
               />
             </div>
             <div>
@@ -104,7 +103,6 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
                 type="datetime-local"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                lang="en"
               />
             </div>
           </div>
