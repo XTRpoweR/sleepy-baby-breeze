@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { DropletIcon as Bottle, Heart, Baby } from 'lucide-react';
+import { DropletIcon as Bottle, Heart, Baby2 } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -20,10 +20,10 @@ export const FeedingTracker = ({ babyId, onActivityAdded }: FeedingTrackerProps)
   const { t } = useTranslation();
   const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
   const [feedingType, setFeedingType] = useState<'breastfeeding' | 'formula' | 'both'>('breastfeeding');
+  const [breastSide, setBreastSide] = useState<'left' | 'right' | 'both'>('left');
+  const [amount, setAmount] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [side, setSide] = useState<'left' | 'right' | 'both'>('left');
   const [notes, setNotes] = useState('');
   const isMobile = useIsMobile();
 
@@ -35,15 +35,6 @@ export const FeedingTracker = ({ babyId, onActivityAdded }: FeedingTrackerProps)
     const end = endTime ? new Date(endTime) : null;
     const duration = end ? Math.round((end.getTime() - start.getTime()) / (1000 * 60)) : null;
 
-    const metadata: any = { 
-      feeding_type: feedingType,
-      quantity: quantity ? parseFloat(quantity) : null
-    };
-
-    if (feedingType === 'breastfeeding') {
-      metadata.side = side;
-    }
-
     const success = await addActivity({
       baby_id: babyId,
       activity_type: 'feeding',
@@ -51,13 +42,18 @@ export const FeedingTracker = ({ babyId, onActivityAdded }: FeedingTrackerProps)
       end_time: end?.toISOString() || null,
       duration_minutes: duration,
       notes: notes.trim() || null,
-      metadata
+      metadata: {
+        type: feedingType,
+        breastSide: feedingType === 'breastfeeding' || feedingType === 'both' ? breastSide : null,
+        amount: amount ? parseFloat(amount) : null,
+        unit: 'ml'
+      }
     });
 
     if (success) {
+      setAmount('');
       setStartTime('');
       setEndTime('');
-      setQuantity('');
       setNotes('');
     }
   };
@@ -74,91 +70,99 @@ export const FeedingTracker = ({ babyId, onActivityAdded }: FeedingTrackerProps)
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label className="text-sm sm:text-base">{t('tracking.feedingTracker.feedingTypeLabel')}</Label>
-            <RadioGroup value={feedingType} onValueChange={(value: 'breastfeeding' | 'formula' | 'both') => setFeedingType(value)} className="mt-2">
+            <RadioGroup 
+              value={feedingType} 
+              onValueChange={(value: 'breastfeeding' | 'formula' | 'both') => setFeedingType(value)}
+              className="space-y-3 mt-3"
+            >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="breastfeeding" id="breastfeeding" />
                 <Label htmlFor="breastfeeding" className="flex items-center space-x-2 text-sm sm:text-base">
-                  <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <Heart className="h-3 w-3 sm:h-4 sm:w-4 text-pink-500" />
                   <span>{t('tracking.feedingTracker.breastfeedingLabel')}</span>
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="formula" id="formula" />
                 <Label htmlFor="formula" className="flex items-center space-x-2 text-sm sm:text-base">
-                  <Bottle className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <Bottle className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
                   <span>{t('tracking.feedingTracker.formulaLabel')}</span>
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="both" id="both" />
                 <Label htmlFor="both" className="flex items-center space-x-2 text-sm sm:text-base">
-                  <Baby className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <Baby2 className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500" />
                   <span>{t('tracking.feedingTracker.bothLabel')}</span>
                 </Label>
               </div>
             </RadioGroup>
           </div>
 
-          {feedingType === 'breastfeeding' && (
+          {(feedingType === 'breastfeeding' || feedingType === 'both') && (
             <div>
               <Label className="text-sm sm:text-base">{t('tracking.feedingTracker.breastSideLabel')}</Label>
-              <RadioGroup value={side} onValueChange={(value: 'left' | 'right' | 'both') => setSide(value)} className="mt-2">
-                <div className={`grid grid-cols-3 gap-2 ${isMobile ? 'text-sm' : ''}`}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="left" id="left" />
-                    <Label htmlFor="left" className="text-sm sm:text-base">{t('tracking.feedingTracker.leftLabel')}</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="right" id="right" />
-                    <Label htmlFor="right" className="text-sm sm:text-base">{t('tracking.feedingTracker.rightLabel')}</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="both" id="both-sides" />
-                    <Label htmlFor="both-sides" className="text-sm sm:text-base">{t('tracking.feedingTracker.bothSidesLabel')}</Label>
-                  </div>
+              <RadioGroup 
+                value={breastSide} 
+                onValueChange={(value: 'left' | 'right' | 'both') => setBreastSide(value)}
+                className="flex flex-row space-x-6 mt-3"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="left" id="left" />
+                  <Label htmlFor="left" className="text-sm sm:text-base">{t('tracking.feedingTracker.leftLabel')}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="right" id="right" />
+                  <Label htmlFor="right" className="text-sm sm:text-base">{t('tracking.feedingTracker.rightLabel')}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="both" id="both-sides" />
+                  <Label htmlFor="both-sides" className="text-sm sm:text-base">{t('tracking.feedingTracker.bothSidesLabel')}</Label>
                 </div>
               </RadioGroup>
             </div>
           )}
 
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <Label htmlFor="startTime" className="text-sm sm:text-base">{t('tracking.feedingTracker.startTimeRequired')}</Label>
-              <Input
-                id="startTime"
-                type="datetime-local"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                required
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="endTime" className="text-sm sm:text-base">{t('tracking.feedingTracker.endTimeLabel')}</Label>
-              <Input
-                id="endTime"
-                type="datetime-local"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-          </div>
-
           {(feedingType === 'formula' || feedingType === 'both') && (
             <div>
-              <Label htmlFor="quantity" className="text-sm sm:text-base">{t('tracking.feedingTracker.quantityLabel')}</Label>
+              <Label htmlFor="amount" className="text-sm sm:text-base">{t('tracking.feedingTracker.amountLabel')}</Label>
               <Input
-                id="quantity"
+                id="amount"
                 type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder={t('tracking.feedingTracker.amountPlaceholder')}
                 step="0.1"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                placeholder={t('tracking.feedingTracker.quantityPlaceholder')}
+                min="0"
                 className="mt-1"
               />
             </div>
           )}
+
+          <div>
+            <Label htmlFor="startTime" className="text-sm sm:text-base">{t('tracking.feedingTracker.startTimeRequired')}</Label>
+            <Input
+              id="startTime"
+              type="datetime-local"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              required
+              className="mt-1"
+              lang="en"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="endTime" className="text-sm sm:text-base">{t('tracking.feedingTracker.endTimeLabel')}</Label>
+            <Input
+              id="endTime"
+              type="datetime-local"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              className="mt-1"
+              lang="en"
+            />
+          </div>
 
           <div>
             <Label htmlFor="notes" className="text-sm sm:text-base">{t('tracking.feedingTracker.notesLabel')}</Label>

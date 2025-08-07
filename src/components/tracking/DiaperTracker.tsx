@@ -72,6 +72,7 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
               onChange={(e) => setChangeTime(e.target.value)}
               required
               className="mt-1"
+              lang="en"
             />
           </div>
 
