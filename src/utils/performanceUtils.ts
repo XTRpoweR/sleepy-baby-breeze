@@ -26,11 +26,24 @@ export const lazyLoadImage = (img: HTMLImageElement, src: string) => {
 
 export const preloadCriticalResources = () => {
   // Preload critical fonts
-  const link = document.createElement('link');
-  link.rel = 'preload';
-  link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap';
-  link.as = 'style';
-  document.head.appendChild(link);
+  const fontLink = document.createElement('link');
+  fontLink.rel = 'preload';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap';
+  fontLink.as = 'style';
+  document.head.appendChild(fontLink);
+
+  // Preload hero image if not already preloaded
+  const heroImageLink = document.createElement('link');
+  heroImageLink.rel = 'preload';
+  heroImageLink.href = '/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png';
+  heroImageLink.as = 'image';
+  heroImageLink.setAttribute('fetchpriority', 'high');
+  
+  // Check if already preloaded to avoid duplication
+  const existingPreload = document.querySelector('link[href="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"]');
+  if (!existingPreload) {
+    document.head.appendChild(heroImageLink);
+  }
 };
 
 // Initialize performance optimizations
@@ -42,4 +55,18 @@ if (typeof window !== 'undefined') {
   if ('scrollBehavior' in document.documentElement.style) {
     document.documentElement.style.scrollBehavior = 'smooth';
   }
+
+  // Optimize image loading performance
+  document.addEventListener('DOMContentLoaded', () => {
+    // Force repaint for critical images
+    const heroImages = document.querySelectorAll('img[fetchpriority="high"]');
+    heroImages.forEach(img => {
+      if (img instanceof HTMLImageElement) {
+        img.style.willChange = 'transform';
+        img.addEventListener('load', () => {
+          img.style.willChange = 'auto';
+        }, { once: true });
+      }
+    });
+  });
 }

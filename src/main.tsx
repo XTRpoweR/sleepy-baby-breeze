@@ -4,6 +4,10 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import './i18n/index.ts';
+import { preloadCriticalResources } from './utils/performanceUtils';
+
+// Initialize performance optimizations
+preloadCriticalResources();
 
 const container = document.getElementById("root");
 if (!container) {

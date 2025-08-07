@@ -224,7 +224,16 @@ const Index = () => {
 
             <div className="relative animate-scale-in order-1 lg:order-2">
               <div className="gradient-dynamic rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl animate-float card-glow gpu-accelerated">
-                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy - Baby sleeping peacefully on moon" className="w-full h-auto rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-105" loading="lazy" width="400" height="300" />
+                <img 
+                  src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" 
+                  alt="SleepyBabyy - Baby sleeping peacefully on moon" 
+                  className="w-full h-auto rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-105" 
+                  loading="eager"
+                  fetchpriority="high"
+                  width="600" 
+                  height="450"
+                  decoding="async"
+                />
               </div>
             </div>
           </div>
