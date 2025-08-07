@@ -1,7 +1,7 @@
 
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subDays, subWeeks, subMonths, format } from 'date-fns';
 
-export type DateRangeOption = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek' | 'thisMonth' | string; // string for previous months
+export type DateRangeOption = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth' | 'last7Days' | 'last30Days' | string;
 
 export interface DateRange {
   start: Date;
@@ -27,6 +27,22 @@ export const getDateRange = (option: DateRangeOption): DateRange => {
         end: endOfDay(yesterday),
         label: 'Yesterday'
       };
+
+    case 'last7Days':
+      const sevenDaysAgo = subDays(now, 6); // Include today
+      return {
+        start: startOfDay(sevenDaysAgo),
+        end: endOfDay(now),
+        label: 'Last 7 Days'
+      };
+
+    case 'last30Days':
+      const thirtyDaysAgo = subDays(now, 29); // Include today
+      return {
+        start: startOfDay(thirtyDaysAgo),
+        end: endOfDay(now),
+        label: 'Last 30 Days'
+      };
       
     case 'thisWeek':
       return {
@@ -50,6 +66,14 @@ export const getDateRange = (option: DateRangeOption): DateRange => {
         end: endOfMonth(now),
         label: 'This Month'
       };
+
+    case 'lastMonth':
+      const lastMonth = subMonths(now, 1);
+      return {
+        start: startOfMonth(lastMonth),
+        end: endOfMonth(lastMonth),
+        label: 'Last Month'
+      };
       
     default:
       // Handle previous months (format: "month-YYYY-MM")
@@ -72,14 +96,17 @@ export const generateDateRangeOptions = (): { value: DateRangeOption; label: str
   const options = [
     { value: 'today' as DateRangeOption, label: 'Today' },
     { value: 'yesterday' as DateRangeOption, label: 'Yesterday' },
+    { value: 'last7Days' as DateRangeOption, label: 'Last 7 Days' },
+    { value: 'last30Days' as DateRangeOption, label: 'Last 30 Days' },
     { value: 'thisWeek' as DateRangeOption, label: 'This Week' },
     { value: 'lastWeek' as DateRangeOption, label: 'Last Week' },
     { value: 'thisMonth' as DateRangeOption, label: 'This Month' },
+    { value: 'lastMonth' as DateRangeOption, label: 'Last Month' },
   ];
   
   // Add previous 6 months
   const now = new Date();
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 2; i <= 7; i++) {
     const monthDate = subMonths(now, i);
     const monthKey = `month-${format(monthDate, 'yyyy-MM')}`;
     options.push({

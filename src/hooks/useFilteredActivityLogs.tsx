@@ -11,9 +11,10 @@ export const useFilteredActivityLogs = (babyId: string, dateRange: DateRange) =>
     
     return logs.filter(log => {
       const logDate = new Date(log.start_time);
+      // Ensure we're comparing dates correctly by using the full date range
       return logDate >= dateRange.start && logDate <= dateRange.end;
     });
-  }, [logs, dateRange]);
+  }, [logs, dateRange.start, dateRange.end]);
 
   return {
     logs: filteredLogs,
