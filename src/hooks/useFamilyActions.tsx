@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { normalizeEmail, validateRole } from '@/utils/familyUtils';
+import { securityUtils, rateLimiters } from '@/utils/securityUtils';
 
 export const useFamilyActions = (
   babyId: string | null,
@@ -16,8 +16,39 @@ export const useFamilyActions = (
   const inviteFamilyMember = useCallback(async (email: string, role: string = 'caregiver') => {
     if (!user || !babyId) return false;
 
-    email = normalizeEmail(email);
-    role = validateRole(role);
+    // Rate limiting check
+    if (!rateLimiters.invitation.isAllowed(user.id)) {
+      const remainingTime = Math.ceil(rateLimiters.invitation.getRemainingTime(user.id) / 1000);
+      toast({
+        title: "Too Many Requests",
+        description: `Please wait ${remainingTime} seconds before sending another invitation.`,
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Enhanced email validation
+    const emailValidation = securityUtils.validateSecureEmail(email);
+    if (!emailValidation.isValid) {
+      toast({
+        title: "Invalid Email",
+        description: emailValidation.error,
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    // Enhanced role validation
+    if (!securityUtils.validateRole(role)) {
+      toast({
+        title: "Invalid Role",
+        description: "Invalid role specified",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
 
     if (!(await checkOwnerPermission())) {
       toast({
@@ -28,14 +59,14 @@ export const useFamilyActions = (
       return false;
     }
 
-    console.log('Inviting family member:', email, 'role:', role);
+    console.log('Inviting family member:', normalizedEmail, 'role:', role);
 
     try {
       const { data: existingInvitations, error: checkError } = await supabase
         .from('family_invitations')
         .select('id, email')
         .eq('baby_id', babyId)
-        .eq('email', email.trim().toLowerCase())
+        .eq('email', normalizedEmail)
         .eq('status', 'pending')
         .gt('expires_at', new Date().toISOString());
 
@@ -90,12 +121,12 @@ export const useFamilyActions = (
         return false;
       }
 
-      const babyName = babyProfile?.name || 'Baby';
-      const inviterName = userProfile?.full_name || user.email || 'Someone';
+      const babyName = securityUtils.sanitizeUserContent(babyProfile?.name || 'Baby');
+      const inviterName = securityUtils.sanitizeUserContent(userProfile?.full_name || user.email || 'Someone');
 
       const insertData = {
         baby_id: babyId,
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         role,
         status: 'pending',
         invited_by: user.id,
@@ -127,7 +158,7 @@ export const useFamilyActions = (
         const { error: emailError } = await supabase.functions.invoke('send-family-invitation', {
           body: {
             invitationId: data.id,
-            email: email.trim().toLowerCase(),
+            email: normalizedEmail,
             babyName: babyName,
             inviterName: inviterName,
             role: role,
@@ -145,7 +176,7 @@ export const useFamilyActions = (
         } else {
           toast({
             title: "Invitation sent!",
-            description: `Family invitation sent to ${email}. They have 7 days to accept.`,
+            description: `Family invitation sent to ${normalizedEmail}. They have 7 days to accept.`,
           });
         }
       } catch (emailError) {

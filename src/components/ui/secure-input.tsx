@@ -1,29 +1,63 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { validateInput } from "@/utils/validation";
+import { securityUtils } from "@/utils/securityUtils";
 
 export interface SecureInputProps extends React.ComponentProps<"input"> {
   maxLength?: number;
   sanitize?: boolean;
   validationRules?: Array<(value: string) => string | null>;
+  securityLevel?: 'basic' | 'enhanced';
 }
 
 const SecureInput = React.forwardRef<HTMLInputElement, SecureInputProps>(
-  ({ className, type, maxLength = 255, sanitize = false, validationRules = [], onChange, ...props }, ref) => {
+  ({ 
+    className, 
+    type, 
+    maxLength = 255, 
+    sanitize = true, 
+    validationRules = [], 
+    securityLevel = 'enhanced',
+    onChange, 
+    ...props 
+  }, ref) => {
     const [error, setError] = React.useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       let value = e.target.value;
       
-      // Apply length validation
-      if (maxLength && !validateInput.maxLength(value, maxLength)) {
+      // Apply length validation first
+      if (maxLength && value.length > maxLength) {
         value = value.substring(0, maxLength);
       }
       
-      // Apply sanitization if enabled
+      // Apply sanitization based on security level
       if (sanitize) {
-        value = validateInput.sanitizeHtml(value);
+        if (securityLevel === 'enhanced') {
+          value = securityUtils.sanitizeUserContent(value);
+        } else {
+          // Basic sanitization - remove potential XSS patterns
+          value = value.replace(/<[^>]*>/g, '').replace(/javascript:/gi, '');
+        }
+      }
+      
+      // Enhanced security checks for certain input types
+      if (securityLevel === 'enhanced') {
+        if (type === 'email') {
+          const emailValidation = securityUtils.validateSecureEmail(value);
+          if (value && !emailValidation.isValid) {
+            setError(emailValidation.error || 'Invalid email format');
+          } else {
+            setError(null);
+          }
+        } else if (props.name === 'name' || props.name === 'full_name') {
+          const nameValidation = securityUtils.validateBabyName(value);
+          if (value && !nameValidation.isValid) {
+            setError(nameValidation.error || 'Invalid name format');
+          } else {
+            setError(null);
+          }
+        }
       }
       
       // Apply custom validation rules
@@ -36,7 +70,11 @@ const SecureInput = React.forwardRef<HTMLInputElement, SecureInputProps>(
         }
       }
       
-      setError(validationError);
+      if (validationError) {
+        setError(validationError);
+      } else if (!error) {
+        setError(null);
+      }
       
       // Update the event target value
       e.target.value = value;
@@ -57,6 +95,7 @@ const SecureInput = React.forwardRef<HTMLInputElement, SecureInputProps>(
           )}
           ref={ref}
           onChange={handleChange}
+          maxLength={maxLength}
           {...props}
         />
         {error && (
