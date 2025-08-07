@@ -41,6 +41,7 @@ const getRoleColor = (role: string) => {
 export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelectorProps) => {
   const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
+  const [switchingProfileId, setSwitchingProfileId] = useState<string | null>(null);
 
   const calculateAge = (birthDate: string | null) => {
     if (!birthDate) return null;
@@ -60,7 +61,18 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
 
   const handleProfileSwitch = async (profileId: string) => {
     console.log('Profile switch requested for:', profileId);
-    await switchProfile(profileId);
+    setSwitchingProfileId(profileId);
+    
+    try {
+      const success = await switchProfile(profileId);
+      if (success) {
+        console.log('Profile switch successful');
+      }
+    } catch (error) {
+      console.error('Profile switch failed:', error);
+    } finally {
+      setSwitchingProfileId(null);
+    }
   };
 
   if (!activeProfile) {
@@ -123,26 +135,33 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
           <div className="text-sm font-medium text-gray-700 mb-2">Child Profiles</div>
           {profiles.map((profile) => {
             const ProfileRoleIcon = getRoleIcon(profile.user_role || 'owner');
+            const isCurrentlySwitching = switchingProfileId === profile.id;
+            const isCurrentProfile = activeProfile?.id === profile.id;
+            
             return (
               <DropdownMenuItem
                 key={profile.id}
                 className="p-3 cursor-pointer"
                 onClick={() => handleProfileSwitch(profile.id)}
-                disabled={switching}
+                disabled={switching || isCurrentlySwitching || isCurrentProfile}
               >
                 <div className="flex items-center space-x-3 w-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={profile.photo_url || undefined} />
-                    <AvatarFallback className="bg-blue-100 text-blue-600">
-                      {profile.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  {isCurrentlySwitching ? (
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                  ) : (
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={profile.photo_url || undefined} />
+                      <AvatarFallback className="bg-blue-100 text-blue-600">
+                        {profile.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
                       <span className="font-medium">{profile.name}</span>
                       {profile.is_shared && <Users className="h-3 w-3 text-blue-600" />}
-                      {profile.is_active && !profile.is_shared && (
-                        <Badge variant="secondary" className="text-xs">Active</Badge>
+                      {isCurrentProfile && (
+                        <Badge variant="secondary" className="text-xs">Current</Badge>
                       )}
                     </div>
                     <div className="flex items-center space-x-2">

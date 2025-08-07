@@ -247,44 +247,63 @@ export const useBabyProfile = () => {
         return false;
       }
 
-      // Immediately update local state for instant UI feedback
-      console.log('Setting active profile immediately:', targetProfile.name);
-      setActiveProfile(targetProfile);
+      console.log('Switching to profile:', {
+        id: targetProfile.id,
+        name: targetProfile.name,
+        is_shared: targetProfile.is_shared,
+        user_role: targetProfile.user_role
+      });
 
-      // If it's an owned profile, update the database
-      if (!targetProfile.is_shared) {
-        const { error } = await supabase.rpc('set_active_profile', {
-          profile_id: profileId,
-          user_id_param: user.id
-        });
-
-        if (error) {
-          console.error('Error switching profile in database:', error);
-          // Revert local state on database error
-          await fetchProfiles();
-          toast({
-            title: "Error",
-            description: "Failed to switch profile",
-            variant: "destructive",
-          });
-          return false;
-        }
-
-        // Update profiles list to reflect new active state for owned profiles
-        const updatedProfiles = profiles.map(p => ({ 
-          ...p, 
-          is_active: !p.is_shared && p.id === profileId 
-        }));
-        setProfiles(updatedProfiles);
+      // For shared profiles, we only need to update local state
+      if (targetProfile.is_shared) {
+        console.log('Switching to shared profile - updating local state only');
+        setActiveProfile(targetProfile);
+        console.log('Successfully switched to shared profile:', targetProfile.name);
+        return true;
       }
 
-      console.log('Profile switch completed successfully');
+      // For owned profiles, update both local state and database
+      console.log('Switching to owned profile - updating database');
+      
+      // First update local state for immediate UI feedback
+      setActiveProfile(targetProfile);
+
+      // Then update the database
+      const { error } = await supabase.rpc('set_active_profile', {
+        profile_id: profileId,
+        user_id_param: user.id
+      });
+
+      if (error) {
+        console.error('Error switching profile in database:', error);
+        // Don't revert local state since we want the switch to work
+        // The database error just means the active flag won't be persisted
+        toast({
+          title: "Warning",
+          description: "Profile switched but couldn't save preference",
+          variant: "destructive",
+        });
+        return true; // Still return true since local switch worked
+      }
+
+      // Update profiles list to reflect new active state for owned profiles only
+      const updatedProfiles = profiles.map(p => ({ 
+        ...p, 
+        is_active: !p.is_shared && p.id === profileId 
+      }));
+      setProfiles(updatedProfiles);
+
+      console.log('Profile switch completed successfully for owned profile');
       return true;
     } catch (error) {
-      console.error('Error switching profile:', error);
-      // Revert local state on error
-      await fetchProfiles();
-      return false;
+      console.error('Unexpected error switching profile:', error);
+      // Don't revert activeProfile - keep the switch working
+      toast({
+        title: "Warning", 
+        description: "Profile switched but there was an error",
+        variant: "destructive",
+      });
+      return true; // Return true to keep UI working
     } finally {
       setSwitching(false);
     }
@@ -455,6 +474,7 @@ export const useBabyProfile = () => {
   const setSharedBabyAsActive = (babyId: string) => {
     const sharedProfile = profiles.find(p => p.id === babyId && p.is_shared);
     if (sharedProfile) {
+      console.log('Setting shared baby as active via setSharedBabyAsActive:', sharedProfile.name);
       setActiveProfile(sharedProfile);
     }
   };
