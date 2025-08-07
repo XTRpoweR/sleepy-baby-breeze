@@ -229,7 +229,7 @@ const Index = () => {
                   alt="SleepyBabyy - Baby sleeping peacefully on moon" 
                   className="w-full h-auto rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-105" 
                   loading="eager"
-                  fetchpriority="high"
+                  fetchPriority="high"
                   width="600" 
                   height="450"
                   decoding="async"
