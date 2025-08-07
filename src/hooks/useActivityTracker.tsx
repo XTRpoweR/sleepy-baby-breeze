@@ -84,15 +84,50 @@ export const useActivityTracker = (onActivityAdded?: () => void) => {
         return false;
       }
 
+      // Enhanced validation for end time - handle sleep sessions that can span multiple days
       if (sanitizedData.end_time) {
         const endTime = new Date(sanitizedData.end_time);
-        if (endTime < startTime) {
-          toast({
-            title: "Invalid End Time",
-            description: "Activity end time cannot be before start time.",
-            variant: "destructive",
-          });
-          return false;
+        
+        // For sleep activities, allow end time to be up to 24 hours after start time
+        // This handles overnight sleep sessions properly
+        if (sanitizedData.activity_type === 'sleep') {
+          const maxSleepDuration = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+          const timeDifference = endTime.getTime() - startTime.getTime();
+          
+          if (timeDifference < 0) {
+            // If end time appears to be before start time, check if it's the next day
+            const nextDayEndTime = new Date(endTime.getTime() + (24 * 60 * 60 * 1000));
+            const nextDayDifference = nextDayEndTime.getTime() - startTime.getTime();
+            
+            if (nextDayDifference > 0 && nextDayDifference <= maxSleepDuration) {
+              // Adjust the end time to the next day
+              sanitizedData.end_time = nextDayEndTime.toISOString();
+            } else {
+              toast({
+                title: "Invalid Sleep Duration",
+                description: "Sleep duration cannot exceed 24 hours.",
+                variant: "destructive",
+              });
+              return false;
+            }
+          } else if (timeDifference > maxSleepDuration) {
+            toast({
+              title: "Invalid Sleep Duration",
+              description: "Sleep duration cannot exceed 24 hours.",
+              variant: "destructive",
+            });
+            return false;
+          }
+        } else {
+          // For non-sleep activities, use standard validation
+          if (endTime < startTime) {
+            toast({
+              title: "Invalid End Time",
+              description: "Activity end time cannot be before start time.",
+              variant: "destructive",
+            });
+            return false;
+          }
         }
       }
 
