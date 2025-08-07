@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/select';
 import { Plus } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
-import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CustomActivityTrackerProps {
@@ -35,41 +34,65 @@ export const CustomActivityTracker = ({ babyId, onActivityAdded }: CustomActivit
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const isMobile = useIsMobile();
 
+  // Load predefined custom activities from local storage or default list
   useEffect(() => {
     loadCustomActivities();
   }, [babyId]);
 
-  const loadCustomActivities = async () => {
-    const { data, error } = await supabase
-      .from('custom_activities')
-      .select('id, name')
-      .eq('baby_id', babyId)
-      .order('name');
+  const loadCustomActivities = () => {
+    // Load from localStorage for this baby, or use default activities
+    const storageKey = `custom_activities_${babyId}`;
+    const stored = localStorage.getItem(storageKey);
+    
+    const defaultActivities = [
+      { id: 'tummy_time', name: 'Tummy Time' },
+      { id: 'bath', name: 'Bath Time' },
+      { id: 'play', name: 'Play Time' },
+      { id: 'walk', name: 'Walk/Outing' },
+      { id: 'medication', name: 'Medication' },
+      { id: 'doctor_visit', name: 'Doctor Visit' }
+    ];
 
-    if (error) {
-      console.error('Error loading custom activities:', error);
-      return;
+    if (stored) {
+      try {
+        const parsedActivities = JSON.parse(stored);
+        setCustomActivities([...defaultActivities, ...parsedActivities]);
+      } catch (error) {
+        console.error('Error parsing stored activities:', error);
+        setCustomActivities(defaultActivities);
+      }
+    } else {
+      setCustomActivities(defaultActivities);
     }
-
-    setCustomActivities(data || []);
   };
 
-  const createCustomActivity = async () => {
+  const createCustomActivity = () => {
     if (!newActivityName.trim()) return;
 
-    const { data, error } = await supabase
-      .from('custom_activities')
-      .insert({ baby_id: babyId, name: newActivityName.trim() })
-      .select()
-      .single();
+    const newActivity = {
+      id: `custom_${Date.now()}`,
+      name: newActivityName.trim()
+    };
 
-    if (error) {
-      console.error('Error creating custom activity:', error);
-      return;
+    // Save to localStorage
+    const storageKey = `custom_activities_${babyId}`;
+    const existingCustom = localStorage.getItem(storageKey);
+    let customList = [];
+    
+    if (existingCustom) {
+      try {
+        customList = JSON.parse(existingCustom);
+      } catch (error) {
+        console.error('Error parsing existing custom activities:', error);
+      }
     }
+    
+    customList.push(newActivity);
+    localStorage.setItem(storageKey, JSON.stringify(customList));
 
-    setCustomActivities(prev => [...prev, data]);
-    setSelectedActivity(data.id);
+    // Update state
+    setCustomActivities(prev => [...prev, newActivity]);
+    setSelectedActivity(newActivity.id);
     setNewActivityName('');
     setIsCreatingNew(false);
   };
