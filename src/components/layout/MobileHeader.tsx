@@ -77,8 +77,8 @@ export const MobileHeader = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80">
-              <div className="flex flex-col space-y-6 pt-6">
+            <SheetContent side="left" className="w-80 overflow-y-auto">
+              <div className="flex flex-col space-y-6 pt-6 pb-24">
                 {/* User Info */}
                 <div className="flex items-center space-x-3 pb-4 border-b">
                   <div className="bg-blue-100 rounded-full p-2">
