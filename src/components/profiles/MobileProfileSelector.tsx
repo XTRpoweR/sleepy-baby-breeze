@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sheet';
 import { Baby, ChevronDown, Plus, Settings, Loader2, Users, Crown, Heart, Shield } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 
 interface MobileProfileSelectorProps {
   onAddProfile: () => void;
@@ -39,7 +40,9 @@ const getRoleColor = (role: string) => {
 
 export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: MobileProfileSelectorProps) => {
   const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
+  const { role } = useProfilePermissions(activeProfile?.id || null);
   const [isOpen, setIsOpen] = useState(false);
+  const [switchingProfileId, setSwitchingProfileId] = useState<string | null>(null);
 
   const calculateAge = (birthDate: string | null) => {
     if (!birthDate) return null;
@@ -58,8 +61,20 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
   };
 
   const handleProfileSwitch = async (profileId: string) => {
-    await switchProfile(profileId);
-    setIsOpen(false);
+    console.log('Profile switch requested for:', profileId);
+    setSwitchingProfileId(profileId);
+    
+    try {
+      const success = await switchProfile(profileId);
+      if (success) {
+        console.log('Profile switch successful');
+        setIsOpen(false);
+      }
+    } catch (error) {
+      console.error('Profile switch failed:', error);
+    } finally {
+      setSwitchingProfileId(null);
+    }
   };
 
   const handleAddProfile = () => {
@@ -93,7 +108,12 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="w-full h-auto p-3 justify-between" disabled={switching}>
+        <Button 
+          variant="outline" 
+          className="w-full h-auto p-3 justify-between" 
+          disabled={switching}
+          onClick={() => setIsOpen(true)}
+        >
           <div className="flex items-center space-x-3 min-w-0 flex-1">
             {switching ? (
               <Loader2 className="h-8 w-8 animate-spin text-blue-600 flex-shrink-0" />
@@ -127,35 +147,42 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
         </Button>
       </SheetTrigger>
       
-      <SheetContent side="bottom" className="h-[65vh] overflow-y-auto z-[60]">
-        <SheetHeader>
-          <SheetTitle>Child Profiles</SheetTitle>
+      <SheetContent side="bottom" className="h-[75vh] overflow-y-auto z-[100] border-t-2">
+        <SheetHeader className="pb-4">
+          <SheetTitle className="text-lg font-semibold">Child Profiles</SheetTitle>
         </SheetHeader>
         
-        <div className="mt-6 space-y-3">
+        <div className="space-y-3 pb-6">
           {profiles.map((profile) => {
             const ProfileRoleIcon = getRoleIcon(profile.user_role || 'owner');
+            const isCurrentlySwitching = switchingProfileId === profile.id;
+            const isCurrentProfile = activeProfile?.id === profile.id;
+            
             return (
               <Button
                 key={profile.id}
-                variant="ghost"
+                variant={isCurrentProfile ? "default" : "ghost"}
                 className="w-full h-auto p-4 justify-start"
                 onClick={() => handleProfileSwitch(profile.id)}
-                disabled={switching}
+                disabled={switching || isCurrentlySwitching || isCurrentProfile}
               >
                 <div className="flex items-center space-x-3 w-full">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={profile.photo_url || undefined} />
-                    <AvatarFallback className="bg-blue-100 text-blue-600">
-                      {profile.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  {isCurrentlySwitching ? (
+                    <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+                  ) : (
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={profile.photo_url || undefined} />
+                      <AvatarFallback className="bg-blue-100 text-blue-600">
+                        {profile.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  )}
                   <div className="flex-1 text-left">
                     <div className="flex items-center space-x-2">
                       <span className="font-medium">{profile.name}</span>
                       {profile.is_shared && <Users className="h-3 w-3 text-blue-600" />}
-                      {profile.is_active && !profile.is_shared && (
-                        <Badge variant="secondary" className="text-xs">Active</Badge>
+                      {isCurrentProfile && (
+                        <Badge variant="secondary" className="text-xs">Current</Badge>
                       )}
                     </div>
                     <div className="flex items-center space-x-2">
@@ -176,10 +203,13 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
           })}
           
           <div className="pt-4 border-t space-y-2">
-            <Button onClick={handleAddProfile} className="w-full" disabled={switching}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add New Profile
-            </Button>
+            {/* Add New Profile - Only show for owners */}
+            {role === 'owner' && (
+              <Button onClick={handleAddProfile} className="w-full" disabled={switching}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add New Profile
+              </Button>
+            )}
             
             <Button onClick={handleManageProfiles} variant="outline" className="w-full" disabled={switching}>
               <Settings className="h-4 w-4 mr-2" />

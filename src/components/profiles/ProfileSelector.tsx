@@ -42,6 +42,7 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
   const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
   const [switchingProfileId, setSwitchingProfileId] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const calculateAge = (birthDate: string | null) => {
     if (!birthDate) return null;
@@ -67,6 +68,7 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
       const success = await switchProfile(profileId);
       if (success) {
         console.log('Profile switch successful');
+        setIsOpen(false);
       }
     } catch (error) {
       console.error('Profile switch failed:', error);
@@ -94,9 +96,14 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
   const RoleIcon = getRoleIcon(activeProfile.user_role || 'owner');
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="h-auto p-3 justify-between min-w-[200px]" disabled={switching}>
+        <Button 
+          variant="outline" 
+          className="h-auto p-3 justify-between min-w-[200px]" 
+          disabled={switching}
+          onClick={() => setIsOpen(!isOpen)}
+        >
           <div className="flex items-center space-x-3">
             {switching ? (
               <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
@@ -130,7 +137,7 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent className="w-64 z-[60]" align="start">
+      <DropdownMenuContent className="w-64 z-[100]" align="start">
         <div className="p-2">
           <div className="text-sm font-medium text-gray-700 mb-2">Child Profiles</div>
           {profiles.map((profile) => {
@@ -186,13 +193,27 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
         
         {/* Add New Profile - Only show for owners */}
         {role === 'owner' && (
-          <DropdownMenuItem onClick={onAddProfile} className="p-3 cursor-pointer" disabled={switching}>
+          <DropdownMenuItem 
+            onClick={() => {
+              onAddProfile();
+              setIsOpen(false);
+            }} 
+            className="p-3 cursor-pointer" 
+            disabled={switching}
+          >
             <Plus className="h-4 w-4 mr-3" />
             Add New Profile
           </DropdownMenuItem>
         )}
         
-        <DropdownMenuItem onClick={onManageProfiles} className="p-3 cursor-pointer" disabled={switching}>
+        <DropdownMenuItem 
+          onClick={() => {
+            onManageProfiles();
+            setIsOpen(false);
+          }} 
+          className="p-3 cursor-pointer" 
+          disabled={switching}
+        >
           <Settings className="h-4 w-4 mr-3" />
           Manage Profiles
         </DropdownMenuItem>
