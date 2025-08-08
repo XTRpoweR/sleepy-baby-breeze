@@ -130,7 +130,7 @@ export const ProfileSelector = ({ onAddProfile, onManageProfiles }: ProfileSelec
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent className="w-64" align="start">
+      <DropdownMenuContent className="w-64 z-[60]" align="start">
         <div className="p-2">
           <div className="text-sm font-medium text-gray-700 mb-2">Child Profiles</div>
           {profiles.map((profile) => {

@@ -127,7 +127,7 @@ export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: Mobile
         </Button>
       </SheetTrigger>
       
-      <SheetContent side="bottom" className="h-[60vh]">
+      <SheetContent side="bottom" className="h-[65vh] overflow-y-auto z-[60]">
         <SheetHeader>
           <SheetTitle>Child Profiles</SheetTitle>
         </SheetHeader>
