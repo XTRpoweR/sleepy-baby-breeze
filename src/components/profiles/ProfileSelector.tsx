@@ -13,18 +13,36 @@ export const ProfileSelector = () => {
   const [showManagement, setShowManagement] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Debug logging
+  console.log('ProfileSelector render:', { profiles, activeProfile, switching });
+
   const handleProfileSwitch = async (profileId: string) => {
+    console.log('Switching to profile:', profileId);
     const success = await switchProfile(profileId);
     if (success) {
       setDropdownOpen(false);
     }
   };
 
-  if (!activeProfile) return null;
+  const handleDropdownOpenChange = (open: boolean) => {
+    console.log('Dropdown open change:', open);
+    setDropdownOpen(open);
+  };
+
+  const handleManageProfiles = () => {
+    console.log('Opening profile management');
+    setDropdownOpen(false);
+    setShowManagement(true);
+  };
+
+  if (!activeProfile) {
+    console.log('No active profile, not rendering ProfileSelector');
+    return null;
+  }
 
   return (
     <>
-      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+      <DropdownMenu open={dropdownOpen} onOpenChange={handleDropdownOpenChange}>
         <DropdownMenuTrigger asChild>
           <Button 
             variant="ghost" 
@@ -49,71 +67,74 @@ export const ProfileSelector = () => {
 
         <DropdownMenuContent 
           align="start" 
-          className="w-80 max-h-[500px] overflow-y-auto z-[70]"
+          className="w-80 max-h-[500px] overflow-y-auto bg-white border border-gray-200 shadow-lg z-[100]"
           sideOffset={4}
-          style={{ zIndex: 70 }}
+          style={{ zIndex: 100 }}
         >
-          <div className="p-2">
+          <div className="p-2 bg-white">
             <h4 className="font-medium text-sm text-muted-foreground mb-3 flex items-center">
               <Baby className="h-4 w-4 mr-2 text-purple-600" />
               Child Profiles
             </h4>
             
-            {profiles.map((profile) => (
-              <DropdownMenuItem
-                key={profile.id}
-                className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 ${
-                  activeProfile?.id === profile.id
-                    ? 'bg-purple-50 text-purple-900'
-                    : 'hover:bg-gray-50'
-                }`}
-                onClick={() => handleProfileSwitch(profile.id)}
-              >
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={profile.photo_url || ''} />
-                  <AvatarFallback className="bg-purple-100 text-purple-700">
-                    <Baby className="h-5 w-5" />
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <span className="font-medium truncate">{profile.name}</span>
-                    {activeProfile?.id === profile.id && (
-                      <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700">
-                        Active
-                      </Badge>
-                    )}
-                  </div>
+            {profiles.length === 0 ? (
+              <div className="text-center py-4 text-sm text-gray-500">
+                No profiles found
+              </div>
+            ) : (
+              profiles.map((profile) => (
+                <DropdownMenuItem
+                  key={profile.id}
+                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 ${
+                    activeProfile?.id === profile.id
+                      ? 'bg-purple-50 text-purple-900'
+                      : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleProfileSwitch(profile.id)}
+                >
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={profile.photo_url || ''} />
+                    <AvatarFallback className="bg-purple-100 text-purple-700">
+                      <Baby className="h-5 w-5" />
+                    </AvatarFallback>
+                  </Avatar>
                   
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                    {profile.birth_date && (
-                      <span>{new Date(profile.birth_date).toLocaleDateString()}</span>
-                    )}
-                    {profile.is_shared && (
-                      <Badge variant="outline" className="text-xs">
-                        {profile.user_role === 'viewer' ? 'Viewer' : 
-                         profile.user_role === 'caregiver' ? 'Caregiver' : 'Shared'}
-                      </Badge>
-                    )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <span className="font-medium truncate">{profile.name}</span>
+                      {activeProfile?.id === profile.id && (
+                        <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                      {profile.birth_date && (
+                        <span>{new Date(profile.birth_date).toLocaleDateString()}</span>
+                      )}
+                      {profile.is_shared && (
+                        <Badge variant="outline" className="text-xs">
+                          {profile.user_role === 'viewer' ? 'Viewer' : 
+                           profile.user_role === 'caregiver' ? 'Caregiver' : 'Shared'}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {activeProfile?.id === profile.id && (
-                  <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
-                )}
-              </DropdownMenuItem>
-            ))}
+                  {activeProfile?.id === profile.id && (
+                    <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
+                  )}
+                </DropdownMenuItem>
+              ))
+            )}
           </div>
           
           <DropdownMenuSeparator />
           
           <DropdownMenuItem
-            onClick={() => {
-              setDropdownOpen(false);
-              setShowManagement(true);
-            }}
-            className="flex items-center space-x-2 p-3 cursor-pointer"
+            onClick={handleManageProfiles}
+            className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:bg-gray-50"
           >
             <Settings className="h-4 w-4" />
             <span>Manage Profiles</span>
