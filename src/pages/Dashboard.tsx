@@ -226,25 +226,48 @@ const Dashboard = () => {
             </Button>
           </div>
           
-          {/* Profile Selector */}
-          <div className="mb-2 lg:mb-3">
-            <h2 className="text-base lg:text-lg font-medium text-foreground mb-1 lg:mb-2">{t('dashboard.childProfiles')}</h2>
-            
-            {/* Desktop Profile Selector */}
-            <div className="hidden lg:block">
-              <ProfileSelector />
+          {/* Profile Selector or Create Profile Section */}
+          {!isNewUser ? (
+            <div className="mb-2 lg:mb-3">
+              <h2 className="text-base lg:text-lg font-medium text-foreground mb-1 lg:mb-2">{t('dashboard.childProfiles')}</h2>
+              
+              {/* Desktop Profile Selector */}
+              <div className="hidden lg:block">
+                <ProfileSelector />
+              </div>
+              
+              {/* Mobile Profile Selector */}
+              <div className="lg:hidden">
+                <MobileProfileSelector />
+              </div>
+              
+              {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
+                  <Crown className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
+                  Upgrade to Premium for unlimited baby profiles
+                </p>}
             </div>
-            
-            {/* Mobile Profile Selector */}
-            <div className="lg:hidden">
-              <MobileProfileSelector />
-            </div>
-            
-            {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
-                <Crown className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
-                Upgrade to Premium for unlimited baby profiles
-              </p>}
-          </div>
+          ) : (
+            <Card className="mb-3 lg:mb-4 border-2 border-dashed border-info/20 bg-gradient-to-r from-info/5 to-info/10">
+              <CardContent className="p-4 lg:p-6 text-center">
+                <div className="bg-info/20 rounded-full w-16 h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3 lg:mb-4">
+                  <Baby className="h-8 w-8 lg:h-10 lg:w-10 text-info" />
+                </div>
+                <h3 className="text-lg lg:text-xl font-semibold text-foreground mb-2">
+                  {t('dashboard.createProfile')}
+                </h3>
+                <p className="text-muted-foreground mb-4 text-sm lg:text-base max-w-md mx-auto">
+                  {t('dashboard.noProfileMessage')}
+                </p>
+                <Button 
+                  className="bg-info hover:bg-info/90 text-white px-6 py-2 lg:px-8 lg:py-3 text-sm lg:text-base" 
+                  onClick={handleAddProfile}
+                >
+                  <Plus className="h-4 w-4 lg:h-5 lg:w-5 mr-2" />
+                  {t('dashboard.addProfile')}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Upgrade Banner for Basic Users */}
@@ -404,14 +427,10 @@ const Dashboard = () => {
                   </Button>
                 </div> : <div className="text-center py-3 lg:py-4">
                   <Baby className="h-10 w-10 lg:h-12 lg:w-12 text-gray-300 mx-auto mb-1 lg:mb-2" />
-                  <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">{t('dashboard.createProfile')}</h3>
+                  <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">No Profile Selected</h3>
                   <p className="text-gray-600 mb-2 text-xs lg:text-sm">
-                    {t('dashboard.noProfileMessage')}
+                    Select a child profile to view today's activity
                   </p>
-                  <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" onClick={handleAddProfile} size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    {t('dashboard.addProfile')}
-                  </Button>
                 </div>}
             </CardContent>
           </Card>
