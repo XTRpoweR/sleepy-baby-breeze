@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -26,11 +27,11 @@ import { format } from 'date-fns';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ProfileManagementDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDialogProps) => {
+export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagementDialogProps) => {
   const { t } = useTranslation();
   const { profiles, activeProfile, createProfile, deleteProfile, switchProfile, loading } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
@@ -95,7 +96,7 @@ export const ProfileManagementDialog = ({ isOpen, onClose }: ProfileManagementDi
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center space-x-2">

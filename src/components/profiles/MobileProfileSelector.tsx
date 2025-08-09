@@ -47,15 +47,19 @@ export const MobileProfileSelector = () => {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="bottom" className="h-[80vh] flex flex-col">
-          <SheetHeader className="pb-4">
+        <SheetContent 
+          side="bottom" 
+          className="h-[90vh] flex flex-col z-[60] overflow-hidden"
+          style={{ zIndex: 60 }}
+        >
+          <SheetHeader className="pb-4 flex-shrink-0">
             <SheetTitle className="flex items-center space-x-2">
               <Baby className="h-5 w-5 text-purple-600" />
               <span>Child Profiles</span>
             </SheetTitle>
           </SheetHeader>
 
-          <div className="flex-1 overflow-y-auto space-y-3">
+          <div className="flex-1 overflow-y-auto space-y-3 pb-4">
             {profiles.map((profile) => (
               <div
                 key={profile.id}
@@ -103,7 +107,7 @@ export const MobileProfileSelector = () => {
             ))}
           </div>
 
-          <div className="pt-4 border-t">
+          <div className="pt-4 border-t flex-shrink-0">
             <Button
               onClick={() => {
                 setSheetOpen(false);

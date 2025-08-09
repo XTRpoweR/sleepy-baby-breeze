@@ -49,8 +49,9 @@ export const ProfileSelector = () => {
 
         <DropdownMenuContent 
           align="start" 
-          className="w-80 max-h-[500px] overflow-y-auto z-[9999]"
+          className="w-80 max-h-[500px] overflow-y-auto z-[70]"
           sideOffset={4}
+          style={{ zIndex: 70 }}
         >
           <div className="p-2">
             <h4 className="font-medium text-sm text-muted-foreground mb-3 flex items-center">
