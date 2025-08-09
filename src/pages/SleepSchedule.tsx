@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -198,17 +199,11 @@ const SleepSchedule = () => {
             
             <div className="flex items-center space-x-4">
               <div className="hidden lg:block">
-                <ProfileSelector 
-                  onAddProfile={handleAddProfile}
-                  onManageProfiles={handleManageProfiles}
-                />
+                <ProfileSelector />
               </div>
               
               <div className="lg:hidden w-full">
-                <MobileProfileSelector 
-                  onAddProfile={handleAddProfile}
-                  onManageProfiles={handleManageProfiles}
-                />
+                <MobileProfileSelector />
               </div>
             </div>
           </div>
@@ -288,8 +283,8 @@ const SleepSchedule = () => {
       </main>
 
       <ProfileManagementDialog 
-        isOpen={showProfileManagement}
-        onClose={() => setShowProfileManagement(false)}
+        open={showProfileManagement}
+        onOpenChange={setShowProfileManagement}
       />
     </div>
   );
