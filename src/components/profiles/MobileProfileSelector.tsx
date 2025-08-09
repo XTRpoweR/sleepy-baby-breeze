@@ -1,223 +1,128 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { Baby, ChevronDown, Plus, Settings, Loader2, Users, Crown, Heart, Shield } from 'lucide-react';
+import { ChevronDown, Plus, Settings, User, Baby } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
-import { useProfilePermissions } from '@/hooks/useProfilePermissions';
+import { ProfileManagementDialog } from './ProfileManagementDialog';
 
-interface MobileProfileSelectorProps {
-  onAddProfile: () => void;
-  onManageProfiles: () => void;
-}
-
-const getRoleIcon = (role: string) => {
-  switch (role) {
-    case 'owner': return Crown;
-    case 'caregiver': return Heart;
-    case 'viewer': return Shield;
-    default: return Users;
-  }
-};
-
-const getRoleColor = (role: string) => {
-  switch (role) {
-    case 'owner': return 'bg-yellow-100 text-yellow-800';
-    case 'caregiver': return 'bg-blue-100 text-blue-800';
-    case 'viewer': return 'bg-gray-100 text-gray-800';
-    default: return 'bg-gray-100 text-gray-800';
-  }
-};
-
-export const MobileProfileSelector = ({ onAddProfile, onManageProfiles }: MobileProfileSelectorProps) => {
-  const { activeProfile, profiles, switching, switchProfile } = useBabyProfile();
-  const { role } = useProfilePermissions(activeProfile?.id || null);
-  const [isOpen, setIsOpen] = useState(false);
-  const [switchingProfileId, setSwitchingProfileId] = useState<string | null>(null);
-
-  const calculateAge = (birthDate: string | null) => {
-    if (!birthDate) return null;
-    const birth = new Date(birthDate);
-    const today = new Date();
-    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 + 
-                       (today.getMonth() - birth.getMonth());
-    
-    if (ageInMonths < 12) {
-      return `${ageInMonths}mo`;
-    } else {
-      const years = Math.floor(ageInMonths / 12);
-      const months = ageInMonths % 12;
-      return months > 0 ? `${years}y ${months}mo` : `${years}y`;
-    }
-  };
+export const MobileProfileSelector = () => {
+  const { profiles, activeProfile, switching, switchProfile } = useBabyProfile();
+  const [showManagement, setShowManagement] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const handleProfileSwitch = async (profileId: string) => {
-    console.log('Profile switch requested for:', profileId);
-    setSwitchingProfileId(profileId);
-    
-    try {
-      const success = await switchProfile(profileId);
-      if (success) {
-        console.log('Profile switch successful');
-        setIsOpen(false);
-      }
-    } catch (error) {
-      console.error('Profile switch failed:', error);
-    } finally {
-      setSwitchingProfileId(null);
+    const success = await switchProfile(profileId);
+    if (success) {
+      setSheetOpen(false);
     }
   };
 
-  const handleAddProfile = () => {
-    onAddProfile();
-    setIsOpen(false);
-  };
-
-  const handleManageProfiles = () => {
-    onManageProfiles();
-    setIsOpen(false);
-  };
-
-  if (!activeProfile) {
-    return (
-      <Card className="border-2 border-dashed border-gray-300">
-        <CardContent className="p-4 text-center">
-          <Baby className="h-10 w-10 text-gray-400 mx-auto mb-3" />
-          <h3 className="font-medium text-gray-900 mb-2 text-sm">No Child Profiles</h3>
-          <p className="text-gray-600 mb-3 text-xs">Create your first child profile to get started</p>
-          <Button onClick={onAddProfile} size="sm" className="bg-blue-600 hover:bg-blue-700 w-full">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Child Profile
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const RoleIcon = getRoleIcon(activeProfile.user_role || 'owner');
+  if (!activeProfile) return null;
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button 
-          variant="outline" 
-          className="w-full h-auto p-3 justify-between" 
-          disabled={switching}
-          onClick={() => setIsOpen(true)}
-        >
-          <div className="flex items-center space-x-3 min-w-0 flex-1">
-            {switching ? (
-              <Loader2 className="h-8 w-8 animate-spin text-blue-600 flex-shrink-0" />
-            ) : (
-              <Avatar className="h-8 w-8 flex-shrink-0">
-                <AvatarImage src={activeProfile.photo_url || undefined} />
-                <AvatarFallback className="bg-blue-100 text-blue-600 text-sm">
-                  {activeProfile.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-            )}
-            <div className="text-left min-w-0 flex-1">
-              <div className="flex items-center space-x-2">
-                <span className="font-medium text-sm truncate">{activeProfile.name}</span>
-                {activeProfile.is_shared && <Users className="h-3 w-3 text-blue-600 flex-shrink-0" />}
-              </div>
-              <div className="flex items-center space-x-2">
-                {activeProfile.birth_date && (
-                  <span className="text-xs text-gray-500">
-                    {calculateAge(activeProfile.birth_date)}
-                  </span>
-                )}
-                <Badge className={`text-xs ${getRoleColor(activeProfile.user_role || 'owner')}`}>
-                  <RoleIcon className="h-3 w-3 mr-1" />
-                  {activeProfile.user_role || 'owner'}
-                </Badge>
+    <>
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetTrigger asChild>
+          <Button 
+            variant="ghost" 
+            className="flex items-center space-x-2 p-2 h-auto justify-start w-full max-w-[200px]"
+            disabled={switching}
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={activeProfile.photo_url || ''} />
+              <AvatarFallback className="bg-purple-100 text-purple-700">
+                <Baby className="h-4 w-4" />
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0 text-left">
+              <div className="font-medium text-sm truncate">{activeProfile.name}</div>
+              <div className="text-xs text-muted-foreground">
+                {profiles.length} profile{profiles.length !== 1 ? 's' : ''}
               </div>
             </div>
-          </div>
-          <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
-        </Button>
-      </SheetTrigger>
-      
-      <SheetContent side="bottom" className="h-[75vh] overflow-y-auto z-[100] border-t-2">
-        <SheetHeader className="pb-4">
-          <SheetTitle className="text-lg font-semibold">Child Profiles</SheetTitle>
-        </SheetHeader>
-        
-        <div className="space-y-3 pb-6">
-          {profiles.map((profile) => {
-            const ProfileRoleIcon = getRoleIcon(profile.user_role || 'owner');
-            const isCurrentlySwitching = switchingProfileId === profile.id;
-            const isCurrentProfile = activeProfile?.id === profile.id;
-            
-            return (
-              <Button
+            <ChevronDown className="h-4 w-4 opacity-50" />
+          </Button>
+        </SheetTrigger>
+
+        <SheetContent side="bottom" className="h-[80vh] flex flex-col">
+          <SheetHeader className="pb-4">
+            <SheetTitle className="flex items-center space-x-2">
+              <Baby className="h-5 w-5 text-purple-600" />
+              <span>Child Profiles</span>
+            </SheetTitle>
+          </SheetHeader>
+
+          <div className="flex-1 overflow-y-auto space-y-3">
+            {profiles.map((profile) => (
+              <div
                 key={profile.id}
-                variant={isCurrentProfile ? "default" : "ghost"}
-                className="w-full h-auto p-4 justify-start"
+                className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                  activeProfile?.id === profile.id
+                    ? 'bg-purple-50 border-purple-200 ring-2 ring-purple-100'
+                    : 'bg-white border-gray-200 hover:bg-gray-50'
+                }`}
                 onClick={() => handleProfileSwitch(profile.id)}
-                disabled={switching || isCurrentlySwitching || isCurrentProfile}
               >
-                <div className="flex items-center space-x-3 w-full">
-                  {isCurrentlySwitching ? (
-                    <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
-                  ) : (
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={profile.photo_url || undefined} />
-                      <AvatarFallback className="bg-blue-100 text-blue-600">
-                        {profile.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                  <div className="flex-1 text-left">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-medium">{profile.name}</span>
-                      {profile.is_shared && <Users className="h-3 w-3 text-blue-600" />}
-                      {isCurrentProfile && (
-                        <Badge variant="secondary" className="text-xs">Current</Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {profile.birth_date && (
-                        <span className="text-sm text-gray-500">
-                          {calculateAge(profile.birth_date)}
-                        </span>
-                      )}
-                      <Badge className={`text-xs ${getRoleColor(profile.user_role || 'owner')}`}>
-                        <ProfileRoleIcon className="h-3 w-3 mr-1" />
-                        {profile.user_role || 'owner'}
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={profile.photo_url || ''} />
+                  <AvatarFallback className="bg-purple-100 text-purple-700">
+                    <Baby className="h-6 w-6" />
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h3 className="font-medium text-base truncate">{profile.name}</h3>
+                    {activeProfile?.id === profile.id && (
+                      <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700">
+                        Active
                       </Badge>
-                    </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    {profile.birth_date && (
+                      <span>{new Date(profile.birth_date).toLocaleDateString()}</span>
+                    )}
+                    {profile.is_shared && (
+                      <Badge variant="outline" className="text-xs">
+                        {profile.user_role === 'viewer' ? 'Viewer' : 
+                         profile.user_role === 'caregiver' ? 'Caregiver' : 'Shared'}
+                      </Badge>
+                    )}
                   </div>
                 </div>
-              </Button>
-            );
-          })}
-          
-          <div className="pt-4 border-t space-y-2">
-            {/* Add New Profile - Only show for owners */}
-            {role === 'owner' && (
-              <Button onClick={handleAddProfile} className="w-full" disabled={switching}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add New Profile
-              </Button>
-            )}
-            
-            <Button onClick={handleManageProfiles} variant="outline" className="w-full" disabled={switching}>
-              <Settings className="h-4 w-4 mr-2" />
-              Manage Profiles
+
+                {activeProfile?.id === profile.id && (
+                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-4 border-t">
+            <Button
+              onClick={() => {
+                setSheetOpen(false);
+                setShowManagement(true);
+              }}
+              className="w-full flex items-center space-x-2"
+              variant="outline"
+            >
+              <Settings className="h-4 w-4" />
+              <span>Manage Profiles</span>
             </Button>
           </div>
-        </div>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
+
+      <ProfileManagementDialog 
+        open={showManagement}
+        onOpenChange={setShowManagement}
+      />
+    </>
   );
 };
