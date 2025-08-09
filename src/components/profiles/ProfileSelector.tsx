@@ -67,12 +67,11 @@ export const ProfileSelector = () => {
 
         <DropdownMenuContent 
           align="start" 
-          className="w-80 max-w-[90vw] max-h-[70vh] overflow-y-auto !bg-white border border-gray-200 shadow-xl !z-[9999] scrollbar-thin"
+          className="w-80 max-w-[90vw] max-h-[70vh] overflow-y-auto bg-white border border-gray-200 shadow-xl z-[1000] scrollbar-thin"
           sideOffset={4}
           style={{ 
-            zIndex: 9999, 
-            backgroundColor: 'white',
-            position: 'fixed'
+            zIndex: 1000, 
+            backgroundColor: 'white'
           }}
         >
           <div className="p-3 bg-white">
@@ -89,9 +88,9 @@ export const ProfileSelector = () => {
               profiles.map((profile) => (
                 <DropdownMenuItem
                   key={profile.id}
-                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 bg-white hover:!bg-gray-50 touch-manipulation min-h-[56px] ${
+                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[56px] ${
                     activeProfile?.id === profile.id
-                      ? '!bg-purple-50 text-purple-900'
+                      ? 'bg-purple-50 text-purple-900'
                       : ''
                   }`}
                   onClick={() => handleProfileSwitch(profile.id)}
@@ -139,7 +138,7 @@ export const ProfileSelector = () => {
           
           <DropdownMenuItem
             onClick={handleManageProfiles}
-            className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:!bg-gray-50 touch-manipulation min-h-[48px]"
+            className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[48px]"
             onSelect={handleManageProfiles}
           >
             <Settings className="h-4 w-4" />
