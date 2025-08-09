@@ -18,6 +18,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+
 const Dashboard = () => {
   const {
     user,
@@ -72,6 +73,7 @@ const Dashboard = () => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [checkSubscription]);
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
@@ -161,6 +163,7 @@ const Dashboard = () => {
   const handleContact = () => {
     navigate('/contact');
   };
+
   if (loading) {
     return <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center">
         <div className="text-center">
@@ -229,12 +232,12 @@ const Dashboard = () => {
             
             {/* Desktop Profile Selector */}
             <div className="hidden lg:block">
-              <ProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
+              <ProfileSelector />
             </div>
             
             {/* Mobile Profile Selector */}
             <div className="lg:hidden">
-              <MobileProfileSelector onAddProfile={handleAddProfile} onManageProfiles={handleManageProfiles} />
+              <MobileProfileSelector />
             </div>
             
             {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
@@ -478,10 +481,14 @@ const Dashboard = () => {
       </main>
 
       {/* Profile Management Dialog */}
-      <ProfileManagementDialog isOpen={showProfileManagement} onClose={() => setShowProfileManagement(false)} />
+      <ProfileManagementDialog 
+        open={showProfileManagement} 
+        onOpenChange={setShowProfileManagement} 
+      />
 
       {/* Upgrade Prompt */}
       <UpgradePrompt isOpen={showUpgradePrompt} onClose={() => setShowUpgradePrompt(false)} feature={upgradeFeature} />
     </div>;
 };
+
 export default Dashboard;
