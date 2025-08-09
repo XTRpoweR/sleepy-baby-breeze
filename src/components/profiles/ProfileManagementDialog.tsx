@@ -97,15 +97,27 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent 
+          className="sm:max-w-2xl w-[95vw] max-h-[95vh] overflow-hidden flex flex-col"
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 10000,
+            margin: '0',
+            maxWidth: 'min(95vw, 42rem)',
+            maxHeight: '95vh'
+          }}
+        >
+          <DialogHeader className="flex-shrink-0 p-6 pb-4">
             <DialogTitle className="flex items-center space-x-2">
               <Baby className="h-5 w-5" />
               <span>{t('profiles.manage')}</span>
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-6">
+          <div className="flex-1 overflow-y-auto p-6 pt-0 space-y-6">
             {/* Role-based messaging for non-owners */}
             {role !== 'owner' && (
               <Alert className="border-blue-200 bg-blue-50">

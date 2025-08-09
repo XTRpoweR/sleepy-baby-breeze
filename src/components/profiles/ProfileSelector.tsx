@@ -13,13 +13,16 @@ export const ProfileSelector = () => {
   const [showManagement, setShowManagement] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Debug logging
-  console.log('ProfileSelector render:', { profiles, activeProfile, switching });
-
   const handleProfileSwitch = async (profileId: string) => {
+    if (activeProfile?.id === profileId) {
+      setDropdownOpen(false);
+      return;
+    }
+    
     console.log('Switching to profile:', profileId);
     const success = await switchProfile(profileId);
     if (success) {
+      // Close dropdown immediately after successful switch - no page refresh needed
       setDropdownOpen(false);
     }
   };
@@ -67,14 +70,14 @@ export const ProfileSelector = () => {
 
         <DropdownMenuContent 
           align="start" 
-          className="w-80 max-w-[90vw] max-h-[70vh] overflow-y-auto bg-white border border-gray-200 shadow-xl z-[1000] scrollbar-thin"
+          className="w-80 max-w-[90vw] max-h-[70vh] overflow-y-auto !bg-white border border-gray-200 shadow-xl z-[1000] scrollbar-thin"
           sideOffset={4}
           style={{ 
             zIndex: 1000, 
             backgroundColor: 'white'
           }}
         >
-          <div className="p-3 bg-white">
+          <div className="p-3 !bg-white">
             <h4 className="font-medium text-sm text-muted-foreground mb-3 flex items-center">
               <Baby className="h-4 w-4 mr-2 text-purple-600" />
               Child Profiles
@@ -88,9 +91,9 @@ export const ProfileSelector = () => {
               profiles.map((profile) => (
                 <DropdownMenuItem
                   key={profile.id}
-                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[56px] ${
+                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 !bg-white hover:!bg-gray-50 focus:!bg-gray-50 touch-manipulation min-h-[56px] ${
                     activeProfile?.id === profile.id
-                      ? 'bg-purple-50 text-purple-900'
+                      ? '!bg-purple-50 text-purple-900'
                       : ''
                   }`}
                   onClick={() => handleProfileSwitch(profile.id)}
@@ -138,7 +141,7 @@ export const ProfileSelector = () => {
           
           <DropdownMenuItem
             onClick={handleManageProfiles}
-            className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[48px]"
+            className="flex items-center space-x-2 p-3 cursor-pointer !bg-white hover:!bg-gray-50 focus:!bg-gray-50 touch-manipulation min-h-[48px]"
             onSelect={handleManageProfiles}
           >
             <Settings className="h-4 w-4" />
