@@ -67,8 +67,8 @@ export const MobileProfileSelector = () => {
 
         <SheetContent 
           side="bottom" 
-          className="h-[90vh] flex flex-col z-[100] overflow-hidden bg-white border-t border-gray-200 shadow-xl"
-          style={{ zIndex: 100 }}
+          className="h-[90vh] flex flex-col !z-[1000] overflow-hidden !bg-white border-t border-gray-200 shadow-2xl"
+          style={{ zIndex: 1000, backgroundColor: 'white' }}
         >
           <SheetHeader className="pb-4 flex-shrink-0 bg-white border-b border-gray-100">
             <SheetTitle className="flex items-center space-x-2">
@@ -87,10 +87,10 @@ export const MobileProfileSelector = () => {
               profiles.map((profile) => (
                 <div
                   key={profile.id}
-                  className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                  className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all bg-white ${
                     activeProfile?.id === profile.id
-                      ? 'bg-purple-50 border-purple-200 ring-2 ring-purple-100'
-                      : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                      ? '!bg-purple-50 border-purple-200 ring-2 ring-purple-100'
+                      : 'border-gray-200 hover:!bg-gray-50 hover:border-gray-300'
                   }`}
                   onClick={() => handleProfileSwitch(profile.id)}
                 >

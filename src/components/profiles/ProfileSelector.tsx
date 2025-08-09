@@ -67,9 +67,9 @@ export const ProfileSelector = () => {
 
         <DropdownMenuContent 
           align="start" 
-          className="w-80 max-h-[500px] overflow-y-auto bg-white border border-gray-200 shadow-lg z-[100]"
+          className="w-80 max-h-[500px] overflow-y-auto !bg-white border border-gray-200 shadow-xl !z-[1000]"
           sideOffset={4}
-          style={{ zIndex: 100 }}
+          style={{ zIndex: 1000, backgroundColor: 'white' }}
         >
           <div className="p-2 bg-white">
             <h4 className="font-medium text-sm text-muted-foreground mb-3 flex items-center">
@@ -85,10 +85,10 @@ export const ProfileSelector = () => {
               profiles.map((profile) => (
                 <DropdownMenuItem
                   key={profile.id}
-                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 ${
+                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 bg-white hover:!bg-gray-50 ${
                     activeProfile?.id === profile.id
-                      ? 'bg-purple-50 text-purple-900'
-                      : 'hover:bg-gray-50'
+                      ? '!bg-purple-50 text-purple-900'
+                      : ''
                   }`}
                   onClick={() => handleProfileSwitch(profile.id)}
                 >
@@ -130,11 +130,11 @@ export const ProfileSelector = () => {
             )}
           </div>
           
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="bg-gray-200" />
           
           <DropdownMenuItem
             onClick={handleManageProfiles}
-            className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:bg-gray-50"
+            className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:!bg-gray-50"
           >
             <Settings className="h-4 w-4" />
             <span>Manage Profiles</span>
