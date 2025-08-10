@@ -43,16 +43,7 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent 
-          className="w-[95vw] max-w-md max-h-[90vh] flex flex-col p-0 gap-0"
-          style={{ 
-            position: 'fixed',
-            top: '5vh',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 9999
-          }}
-        >
+        <DialogContent className="w-[95vw] max-w-md max-h-[85vh] sm:max-h-[80vh] flex flex-col p-0 gap-0 mx-4 sm:mx-0">
           <DialogHeader className="p-6 pb-4 border-b bg-white flex-shrink-0">
             <DialogTitle className="flex items-center space-x-2 text-lg">
               <Baby className="h-5 w-5 text-purple-600" />
