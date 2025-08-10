@@ -96,19 +96,8 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent 
-          className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 m-4 sm:m-0"
-          style={{
-            position: 'fixed',
-            top: '5vh',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 10000,
-            maxWidth: 'min(95vw, 42rem)',
-            maxHeight: '90vh'
-          }}
-        >
-          <DialogHeader className="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b bg-white">
+        <DialogContent className="w-[95vw] sm:w-full sm:max-w-2xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
+          <DialogHeader className="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b">
             <DialogTitle className="flex items-center space-x-2 text-lg">
               <Baby className="h-5 w-5" />
               <span>{t('profiles.manage')}</span>
