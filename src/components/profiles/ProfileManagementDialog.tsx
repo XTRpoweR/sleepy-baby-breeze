@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -96,12 +97,15 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden flex flex-col p-0 gap-0 mx-4 sm:mx-0">
+        <DialogContent className="w-[90vw] sm:max-w-2xl max-h-[80vh] overflow-hidden flex flex-col p-0 gap-0">
           <DialogHeader className="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b bg-white">
             <DialogTitle className="flex items-center space-x-2 text-lg">
               <Baby className="h-5 w-5" />
               <span>{t('profiles.manage')}</span>
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Create, edit, and manage child profiles for tracking baby activities
+            </DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto min-h-0" style={{ WebkitOverflowScrolling: 'touch' }}>

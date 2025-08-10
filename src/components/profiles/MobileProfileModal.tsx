@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -43,12 +43,15 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="w-[95vw] max-w-md max-h-[85vh] sm:max-h-[80vh] flex flex-col p-0 gap-0 mx-4 sm:mx-0">
+        <DialogContent className="w-[90vw] max-w-md max-h-[80vh] flex flex-col p-0 gap-0">
           <DialogHeader className="p-6 pb-4 border-b bg-white flex-shrink-0">
             <DialogTitle className="flex items-center space-x-2 text-lg">
               <Baby className="h-5 w-5 text-purple-600" />
               <span>Child Profiles</span>
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Select or manage child profiles for tracking activities
+            </DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white min-h-0">
