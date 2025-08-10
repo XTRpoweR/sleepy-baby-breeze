@@ -52,16 +52,23 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     if (!newProfileName.trim()) return;
 
     setIsCreating(true);
-    const success = await createProfile({
-      name: newProfileName.trim(),
-      birth_date: newProfileBirthDate || null,
-    });
+    try {
+      const success = await createProfile({
+        name: newProfileName.trim(),
+        birth_date: newProfileBirthDate || null,
+      });
 
-    if (success) {
-      setNewProfileName('');
-      setNewProfileBirthDate('');
+      if (success) {
+        setNewProfileName('');
+        setNewProfileBirthDate('');
+        // Force a small delay to ensure UI updates are processed
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    } catch (error) {
+      console.error('Error creating profile:', error);
+    } finally {
+      setIsCreating(false);
     }
-    setIsCreating(false);
   };
 
   const handleDeleteClick = (profileId: string, profileName: string) => {
