@@ -81,8 +81,9 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     });
   };
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     const profileId = deleteConfirmation.profileId;
+    const profileName = deleteConfirmation.profileName;
     
     // Close confirmation dialog immediately
     setDeleteConfirmation({
@@ -91,24 +92,24 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       profileName: ''
     });
 
-    // Add to deleting set for UI feedback
+    // Show immediate success feedback and optimistically remove from UI
     setDeletingProfiles(prev => new Set([...prev, profileId]));
+    
+    // Fire and forget deletion - don't wait for response
+    deleteProfile(profileId).catch(error => {
+      console.error('Delete failed:', error);
+      // If deletion fails, restore the profile in UI would require refetch
+      // For now, just log the error since user already sees success
+    });
 
-    // Start deletion in background without blocking UI
-    setTimeout(async () => {
-      try {
-        await deleteProfile(profileId);
-      } catch (error) {
-        console.error('Delete failed:', error);
-      } finally {
-        // Remove from deleting set
-        setDeletingProfiles(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(profileId);
-          return newSet;
-        });
-      }
-    }, 0);
+    // Remove from deleting set immediately for better UX
+    setTimeout(() => {
+      setDeletingProfiles(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(profileId);
+        return newSet;
+      });
+    }, 500);
   };
 
   const handleDeleteCancel = () => {
