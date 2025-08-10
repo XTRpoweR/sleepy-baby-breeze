@@ -20,7 +20,8 @@ import {
   Edit, 
   Trash2, 
   UserCheck,
-  Shield
+  Shield,
+  Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -46,7 +47,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     profileId: '',
     profileName: ''
   });
-
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProfileName.trim()) return;
@@ -61,8 +62,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       if (success) {
         setNewProfileName('');
         setNewProfileBirthDate('');
-        // Refresh the profile list immediately
-        refetch();
+        // Profiles update immediately without full refetch
       }
     } catch (error) {
       console.error('Error creating profile:', error);
@@ -80,15 +80,20 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   };
 
   const handleDeleteConfirm = async () => {
-    const success = await deleteProfile(deleteConfirmation.profileId);
-    if (success) {
-      refetch(); // Refresh the profile list immediately
-    }
+    const id = deleteConfirmation.profileId;
+    // Close the confirmation immediately and show row-level progress
     setDeleteConfirmation({
       isOpen: false,
       profileId: '',
       profileName: ''
     });
+    setIsDeletingId(id);
+    try {
+      await deleteProfile(id);
+      // Rely on hook's local state update; no refetch needed
+    } finally {
+      setIsDeletingId(null);
+    }
   };
 
   const handleDeleteCancel = () => {
@@ -286,8 +291,13 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                   size="sm"
                                   className="text-red-600 hover:text-red-700 p-1.5 sm:p-2 touch-manipulation"
                                   onClick={() => handleDeleteClick(profile.id, profile.name)}
+                                  disabled={isDeletingId === profile.id}
                                 >
-                                  <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                  {isDeletingId === profile.id ? (
+                                    <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                  )}
                                 </Button>
                               </PermissionAwareActions>
                             </div>
@@ -311,6 +321,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         profileName={deleteConfirmation.profileName}
+        isProcessing={isDeletingId === deleteConfirmation.profileId}
       />
     </>
   );

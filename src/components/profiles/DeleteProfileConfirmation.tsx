@@ -15,16 +15,18 @@ interface DeleteProfileConfirmationProps {
   onClose: () => void;
   onConfirm: () => void;
   profileName: string;
+  isProcessing?: boolean;
 }
 
 export const DeleteProfileConfirmation = ({ 
   isOpen, 
   onClose, 
   onConfirm, 
-  profileName 
+  profileName,
+  isProcessing = false
 }: DeleteProfileConfirmationProps) => {
   return (
-    <AlertDialog open={isOpen} onOpenChange={onClose}>
+    <AlertDialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-red-600">
@@ -51,8 +53,9 @@ export const DeleteProfileConfirmation = ({
           <AlertDialogAction
             onClick={onConfirm}
             className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            disabled={isProcessing}
           >
-            Delete Profile
+            {isProcessing ? 'Deleting…' : 'Delete Profile'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
