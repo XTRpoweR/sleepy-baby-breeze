@@ -32,7 +32,7 @@ interface ProfileManagementDialogProps {
 
 export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagementDialogProps) => {
   const { t } = useTranslation();
-  const { profiles, activeProfile, createProfile, deleteProfile, switchProfile, loading } = useBabyProfile();
+  const { profiles, activeProfile, createProfile, deleteProfile, switchProfile, loading, refetch } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
@@ -61,8 +61,8 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       if (success) {
         setNewProfileName('');
         setNewProfileBirthDate('');
-        // Force a small delay to ensure UI updates are processed
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Refresh the profile list immediately
+        refetch();
       }
     } catch (error) {
       console.error('Error creating profile:', error);
@@ -80,7 +80,10 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   };
 
   const handleDeleteConfirm = async () => {
-    await deleteProfile(deleteConfirmation.profileId);
+    const success = await deleteProfile(deleteConfirmation.profileId);
+    if (success) {
+      refetch(); // Refresh the profile list immediately
+    }
     setDeleteConfirmation({
       isOpen: false,
       profileId: '',
@@ -276,19 +279,17 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                 </Button>
                               )}
                               
-                              {/* Delete action - Only for owned profiles */}
-                              {!profile.is_shared && profile.user_role === 'owner' && (
-                                <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-600 hover:text-red-700 p-1.5 sm:p-2 touch-manipulation"
-                                    onClick={() => handleDeleteClick(profile.id, profile.name)}
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                  </Button>
-                                </PermissionAwareActions>
-                              )}
+                              {/* Delete action - Only show for profiles you can delete */}
+                              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-red-600 hover:text-red-700 p-1.5 sm:p-2 touch-manipulation"
+                                  onClick={() => handleDeleteClick(profile.id, profile.name)}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                </Button>
+                              </PermissionAwareActions>
                             </div>
                           </div>
                         </div>
