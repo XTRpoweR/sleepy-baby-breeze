@@ -44,14 +44,7 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent 
-          className="w-[95vw] max-w-md max-h-[90vh] flex flex-col p-0 gap-0"
-          style={{ 
-            position: 'fixed',
-            top: '5vh',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: 9999
-          }}
+          className="w-[95vw] max-w-md max-h-[90dvh] flex flex-col p-0 gap-0"
         >
           <DialogHeader className="p-6 pb-4 border-b bg-white flex-shrink-0">
             <DialogTitle className="flex items-center space-x-2 text-lg">
@@ -60,7 +53,7 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white min-h-0">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white min-h-0" style={{ WebkitOverflowScrolling: 'touch' }}>
             {profiles.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Baby className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -116,7 +109,7 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
             )}
           </div>
 
-          <div className="p-4 border-t bg-white flex-shrink-0">
+          <div className="p-4 border-t bg-white flex-shrink-0 pb-[env(safe-area-inset-bottom)]">
             <Button
               onClick={handleManageProfiles}
               className="w-full flex items-center space-x-2 h-12 text-base touch-manipulation"

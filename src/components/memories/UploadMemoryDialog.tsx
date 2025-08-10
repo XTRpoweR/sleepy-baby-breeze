@@ -132,7 +132,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
   if (showCamera) {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-hidden">
+        <DialogContent className="sm:max-w-lg max-h-[90dvh] overflow-hidden">
           <DialogHeader>
             <DialogTitle className="text-gradient">Camera</DialogTitle>
           </DialogHeader>
@@ -238,7 +238,7 @@ export const UploadMemoryDialog = ({ isOpen, onClose, onUpload, babyName }: Uplo
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-hidden">
+      <DialogContent className="sm:max-w-md max-h-[90dvh] overflow-hidden">
         <DialogHeader>
           <DialogTitle className="text-gradient">Add Photo Memory for {babyName}</DialogTitle>
         </DialogHeader>
