@@ -58,7 +58,13 @@ export const LanguageSelector = () => {
           <span className="hidden md:inline">{currentLanguage.name}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-56 bg-white shadow-lg border z-50 max-h-80 overflow-y-auto"
+        sideOffset={4}
+        avoidCollisions={true}
+        collisionPadding={8}
+      >
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}
