@@ -97,7 +97,16 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent 
-          className="w-[95vw] sm:max-w-2xl max-h-[90dvh] overflow-hidden flex flex-col p-0 gap-0 m-4 sm:m-0"
+          className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 m-4 sm:m-0"
+          style={{
+            position: 'fixed',
+            top: '5vh',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10000,
+            maxWidth: 'min(95vw, 42rem)',
+            maxHeight: '90vh'
+          }}
         >
           <DialogHeader className="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b bg-white">
             <DialogTitle className="flex items-center space-x-2 text-lg">
@@ -107,7 +116,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto min-h-0" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <div className="p-4 sm:p-6 pb-[env(safe-area-inset-bottom)] sm:pb-6 space-y-4 sm:space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Role-based messaging for non-owners */}
               {role !== 'owner' && (
                 <Alert className="border-blue-200 bg-blue-50">
