@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -47,7 +48,8 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     profileId: '',
     profileName: ''
   });
-  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [deletingProfiles, setDeletingProfiles] = useState<Set<string>>(new Set());
+
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProfileName.trim()) return;
@@ -80,20 +82,33 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   };
 
   const handleDeleteConfirm = async () => {
-    const id = deleteConfirmation.profileId;
-    // Close the confirmation immediately and show row-level progress
+    const profileId = deleteConfirmation.profileId;
+    
+    // Close confirmation dialog immediately
     setDeleteConfirmation({
       isOpen: false,
       profileId: '',
       profileName: ''
     });
-    setIsDeletingId(id);
-    try {
-      await deleteProfile(id);
-      // Rely on hook's local state update; no refetch needed
-    } finally {
-      setIsDeletingId(null);
-    }
+
+    // Add to deleting set for UI feedback
+    setDeletingProfiles(prev => new Set([...prev, profileId]));
+
+    // Start deletion in background without blocking UI
+    setTimeout(async () => {
+      try {
+        await deleteProfile(profileId);
+      } catch (error) {
+        console.error('Delete failed:', error);
+      } finally {
+        // Remove from deleting set
+        setDeletingProfiles(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(profileId);
+          return newSet;
+        });
+      }
+    }, 0);
   };
 
   const handleDeleteCancel = () => {
@@ -231,79 +246,82 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                     </div>
                   ) : (
                     <div className="space-y-2 sm:space-y-3">
-                      {profiles.map((profile) => (
-                        <div 
-                          key={profile.id} 
-                          className={`p-3 sm:p-4 border rounded-lg transition-colors touch-manipulation ${
-                            activeProfile?.id === profile.id 
-                              ? 'border-blue-500 bg-blue-50' 
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
-                              <div className="bg-blue-100 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center flex-shrink-0">
-                                <Baby className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center space-x-2 mb-0.5 sm:mb-1">
-                                  <h3 className="font-medium text-gray-900 text-sm sm:text-base truncate">{profile.name}</h3>
-                                  {activeProfile?.id === profile.id && (
-                                    <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
-                                      <UserCheck className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                                      <span className="hidden sm:inline">{t('profiles.active')}</span>
-                                      <span className="sm:hidden">Active</span>
-                                    </span>
-                                  )}
-                                  {profile.is_shared && (
-                                    <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 flex-shrink-0">
-                                      <Shield className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
-                                      <span className="hidden sm:inline">Shared ({profile.user_role})</span>
-                                      <span className="sm:hidden">{profile.user_role}</span>
-                                    </span>
+                      {profiles.map((profile) => {
+                        const isDeleting = deletingProfiles.has(profile.id);
+                        return (
+                          <div 
+                            key={profile.id} 
+                            className={`p-3 sm:p-4 border rounded-lg transition-all touch-manipulation ${
+                              activeProfile?.id === profile.id 
+                                ? 'border-blue-500 bg-blue-50' 
+                                : 'border-gray-200 hover:border-gray-300'
+                            } ${isDeleting ? 'opacity-50' : ''}`}
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                                <div className="bg-blue-100 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center flex-shrink-0">
+                                  <Baby className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center space-x-2 mb-0.5 sm:mb-1">
+                                    <h3 className="font-medium text-gray-900 text-sm sm:text-base truncate">{profile.name}</h3>
+                                    {activeProfile?.id === profile.id && (
+                                      <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
+                                        <UserCheck className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                        <span className="hidden sm:inline">{t('profiles.active')}</span>
+                                        <span className="sm:hidden">Active</span>
+                                      </span>
+                                    )}
+                                    {profile.is_shared && (
+                                      <span className="inline-flex items-center px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 flex-shrink-0">
+                                        <Shield className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+                                        <span className="hidden sm:inline">Shared ({profile.user_role})</span>
+                                        <span className="sm:hidden">{profile.user_role}</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                  {profile.birth_date && (
+                                    <p className="text-xs sm:text-sm text-gray-600">
+                                      {t('profiles.born')} {format(new Date(profile.birth_date), 'MMM dd, yyyy')}
+                                    </p>
                                   )}
                                 </div>
-                                {profile.birth_date && (
-                                  <p className="text-xs sm:text-sm text-gray-600">
-                                    {t('profiles.born')} {format(new Date(profile.birth_date), 'MMM dd, yyyy')}
-                                  </p>
+                              </div>
+                              
+                              <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                                {activeProfile?.id !== profile.id && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 touch-manipulation"
+                                    onClick={() => handleSetActive(profile.id)}
+                                  >
+                                    <span className="hidden sm:inline">{t('profiles.setActive')}</span>
+                                    <span className="sm:hidden">Set Active</span>
+                                  </Button>
                                 )}
+                                
+                                {/* Delete action - Only show for profiles you can delete */}
+                                <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-red-600 hover:text-red-700 p-1.5 sm:p-2 touch-manipulation"
+                                    onClick={() => handleDeleteClick(profile.id, profile.name)}
+                                    disabled={isDeleting}
+                                  >
+                                    {isDeleting ? (
+                                      <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
+                                    ) : (
+                                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                    )}
+                                  </Button>
+                                </PermissionAwareActions>
                               </div>
                             </div>
-                            
-                            <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                              {activeProfile?.id !== profile.id && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 touch-manipulation"
-                                  onClick={() => handleSetActive(profile.id)}
-                                >
-                                  <span className="hidden sm:inline">{t('profiles.setActive')}</span>
-                                  <span className="sm:hidden">Set Active</span>
-                                </Button>
-                              )}
-                              
-                              {/* Delete action - Only show for profiles you can delete */}
-                              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-600 hover:text-red-700 p-1.5 sm:p-2 touch-manipulation"
-                                  onClick={() => handleDeleteClick(profile.id, profile.name)}
-                                  disabled={isDeletingId === profile.id}
-                                >
-                                  {isDeletingId === profile.id ? (
-                                    <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                  )}
-                                </Button>
-                              </PermissionAwareActions>
-                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </CardContent>
@@ -321,7 +339,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         profileName={deleteConfirmation.profileName}
-        isProcessing={isDeletingId === deleteConfirmation.profileId}
+        isProcessing={false}
       />
     </>
   );
