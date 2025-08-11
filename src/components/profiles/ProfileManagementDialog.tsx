@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -48,7 +47,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     profileId: '',
     profileName: ''
   });
-  const [deletingProfiles, setDeletingProfiles] = useState<Set<string>>(new Set());
+  const [deletingProfileId, setDeletingProfileId] = useState<string | null>(null);
 
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,9 +80,8 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     });
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     const profileId = deleteConfirmation.profileId;
-    const profileName = deleteConfirmation.profileName;
     
     // Close confirmation dialog immediately
     setDeleteConfirmation({
@@ -92,24 +90,24 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       profileName: ''
     });
 
-    // Show immediate success feedback and optimistically remove from UI
-    setDeletingProfiles(prev => new Set([...prev, profileId]));
+    // Set deleting state
+    setDeletingProfileId(profileId);
     
-    // Fire and forget deletion - don't wait for response
-    deleteProfile(profileId).catch(error => {
-      console.error('Delete failed:', error);
-      // If deletion fails, restore the profile in UI would require refetch
-      // For now, just log the error since user already sees success
-    });
-
-    // Remove from deleting set immediately for better UX
-    setTimeout(() => {
-      setDeletingProfiles(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(profileId);
-        return newSet;
-      });
-    }, 500);
+    try {
+      console.log('Starting deletion for profile:', profileId);
+      const success = await deleteProfile(profileId);
+      
+      if (success) {
+        console.log('Profile deleted successfully');
+      } else {
+        console.error('Profile deletion failed');
+      }
+    } catch (error) {
+      console.error('Error during profile deletion:', error);
+    } finally {
+      // Clear deleting state
+      setDeletingProfileId(null);
+    }
   };
 
   const handleDeleteCancel = () => {
@@ -248,7 +246,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                   ) : (
                     <div className="space-y-2 sm:space-y-3">
                       {profiles.map((profile) => {
-                        const isDeleting = deletingProfiles.has(profile.id);
+                        const isDeleting = deletingProfileId === profile.id;
                         return (
                           <div 
                             key={profile.id} 
@@ -256,7 +254,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                               activeProfile?.id === profile.id 
                                 ? 'border-blue-500 bg-blue-50' 
                                 : 'border-gray-200 hover:border-gray-300'
-                            } ${isDeleting ? 'opacity-50' : ''}`}
+                            } ${isDeleting ? 'opacity-50 pointer-events-none' : ''}`}
                           >
                             <div className="flex items-center justify-between gap-3">
                               <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
@@ -290,7 +288,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                               </div>
                               
                               <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                                {activeProfile?.id !== profile.id && (
+                                {activeProfile?.id !== profile.id && !isDeleting && (
                                   <Button
                                     variant="outline"
                                     size="sm"
@@ -307,7 +305,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                   <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="text-red-600 hover:text-red-700 p-1.5 sm:p-2 touch-manipulation"
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 sm:p-2 touch-manipulation"
                                     onClick={() => handleDeleteClick(profile.id, profile.name)}
                                     disabled={isDeleting}
                                   >
@@ -340,7 +338,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         profileName={deleteConfirmation.profileName}
-        isProcessing={false}
+        isProcessing={deletingProfileId !== null}
       />
     </>
   );
