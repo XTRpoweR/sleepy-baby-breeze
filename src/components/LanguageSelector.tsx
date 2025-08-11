@@ -60,10 +60,12 @@ export const LanguageSelector = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
+        side="bottom"
         className="w-56 bg-white shadow-lg border z-50 max-h-80 overflow-y-auto"
         sideOffset={4}
         avoidCollisions={true}
-        collisionPadding={8}
+        collisionPadding={20}
+        sticky="always"
       >
         {languages.map((language) => (
           <DropdownMenuItem
