@@ -159,9 +159,6 @@ const Index = () => {
                 <a href="#insights" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.insights')}</a>
                 <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">Pricing</a>
                 <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.reviews')}</a>
-                <div className="pt-2 border-t border-gray-200">
-                  <LanguageSelector />
-                </div>
                 {user ? <Button onClick={() => {
               navigate('/dashboard');
               setMobileMenuOpen(false);
