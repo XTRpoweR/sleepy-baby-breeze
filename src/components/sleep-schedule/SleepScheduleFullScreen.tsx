@@ -98,7 +98,7 @@ export const SleepScheduleFullScreen = ({ isOpen, onClose, schedule }: SleepSche
         onClick={handleClose}
       />
       
-      {/* Content Container */}
+      {/* Content Container - Changed animation to slide from top */}
       <div 
         className={`fixed inset-0 bg-white overflow-y-auto transition-transform duration-300 ease-out ${
           isAnimating ? 'translate-y-0' : '-translate-y-full'
