@@ -78,13 +78,13 @@ export const SleepScheduleReportDialog = ({ isOpen, onClose, schedule }: SleepSc
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-background">
+      <DialogContent className="w-full max-w-full sm:max-w-4xl h-screen sm:h-auto max-h-screen sm:max-h-[90vh] overflow-y-auto bg-background p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
+          <DialogTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="flex items-center space-x-2">
               <Moon className="h-5 w-5 text-purple-600" />
-              <span>Sleep Schedule Report</span>
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+              <span className="text-lg sm:text-xl">Sleep Schedule Report</span>
+              <Badge variant="secondary" className="bg-purple-100 text-purple-800 text-xs">
                 {schedule.child_age} months old
               </Badge>
             </div>
@@ -93,10 +93,10 @@ export const SleepScheduleReportDialog = ({ isOpen, onClose, schedule }: SleepSc
               size="sm"
               onClick={handleExport}
               disabled={isExporting}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 w-full sm:w-auto"
             >
               <Download className="h-4 w-4" />
-              <span>{isExporting ? 'Exporting...' : 'Export PDF'}</span>
+              <span className="text-sm">{isExporting ? 'Exporting...' : 'Export PDF'}</span>
             </Button>
           </DialogTitle>
         </DialogHeader>
