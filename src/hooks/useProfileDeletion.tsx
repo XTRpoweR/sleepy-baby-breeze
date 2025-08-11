@@ -19,9 +19,9 @@ export const useProfileDeletion = () => {
     setIsDeletingProfile(profileId);
 
     try {
-      // Try the RPC function first - using any to bypass TypeScript until types are regenerated
+      // Try the RPC function first
       console.log('Calling delete_baby_profile_completely RPC...');
-      const { data, error } = await (supabase as any).rpc('delete_baby_profile_completely', {
+      const { data, error } = await supabase.rpc('delete_baby_profile_completely', {
         profile_id: profileId,
         user_id_param: user.id
       });
@@ -29,7 +29,8 @@ export const useProfileDeletion = () => {
       if (error) {
         console.error('RPC deletion failed:', error);
         // Fallback to manual deletion
-        return await manualProfileDeletion(profileId, profileName);
+        const manualResult = await manualProfileDeletion(profileId, profileName);
+        return manualResult;
       }
 
       console.log('Profile deleted successfully via RPC');
@@ -42,7 +43,8 @@ export const useProfileDeletion = () => {
     } catch (error) {
       console.error('Unexpected error during RPC deletion:', error);
       // Fallback to manual deletion
-      return await manualProfileDeletion(profileId, profileName);
+      const manualResult = await manualProfileDeletion(profileId, profileName);
+      return manualResult;
     } finally {
       setIsDeletingProfile(null);
     }
@@ -53,8 +55,6 @@ export const useProfileDeletion = () => {
     
     try {
       // Delete in specific order to avoid foreign key constraints
-      // Using explicit table names for TypeScript compatibility
-      
       console.log('Deleting family members...');
       const { error: familyError } = await supabase
         .from('family_members')

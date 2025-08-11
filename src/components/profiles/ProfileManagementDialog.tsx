@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -297,7 +298,12 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                     variant="ghost"
                                     size="sm"
                                     className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 sm:p-2 touch-manipulation"
-                                    onClick={() => handleDeleteClick(profile.id, profile.name)}
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      console.log('Delete button clicked for:', profile.id, profile.name);
+                                      handleDeleteClick(profile.id, profile.name);
+                                    }}
                                     disabled={isProfileDeleting || !!isDeletingProfile}
                                   >
                                     {isProfileDeleting ? (
