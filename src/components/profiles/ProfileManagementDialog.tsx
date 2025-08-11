@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -13,12 +12,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
+import { useProfileDeletion } from '@/hooks/useProfileDeletion';
 import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
 import { DeleteProfileConfirmation } from './DeleteProfileConfirmation';
 import { 
   Baby, 
   Plus, 
-  Edit, 
   Trash2, 
   UserCheck,
   Shield,
@@ -26,7 +25,6 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/hooks/use-toast';
 
 interface ProfileManagementDialogProps {
   open: boolean;
@@ -35,9 +33,10 @@ interface ProfileManagementDialogProps {
 
 export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagementDialogProps) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const { profiles, activeProfile, createProfile, deleteProfile, switchProfile, loading, refetch } = useBabyProfile();
+  const { profiles, activeProfile, createProfile, switchProfile, loading, refetch } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
+  const { deleteProfileCompletely, isDeletingProfile } = useProfileDeletion();
+  
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileBirthDate, setNewProfileBirthDate] = useState('');
@@ -50,8 +49,6 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     profileId: '',
     profileName: ''
   });
-  const [deletingProfileId, setDeletingProfileId] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,10 +64,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       if (success) {
         setNewProfileName('');
         setNewProfileBirthDate('');
-        // Profiles update immediately without full refetch
       }
-    } catch (error) {
-      console.error('Error creating profile:', error);
     } finally {
       setIsCreating(false);
     }
@@ -86,67 +80,28 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   };
 
   const handleDeleteConfirm = async () => {
-    if (isDeleting) {
-      console.log('Already deleting, ignoring...');
-      return;
-    }
-
-    const profileId = deleteConfirmation.profileId;
-    const profileName = deleteConfirmation.profileName;
+    const { profileId, profileName } = deleteConfirmation;
     
-    console.log('Starting deletion process for:', profileId, profileName);
+    console.log('Confirming deletion for:', profileId, profileName);
     
-    // Set deleting states immediately
-    setIsDeleting(true);
-    setDeletingProfileId(profileId);
-    
-    // Close confirmation dialog
+    // Close confirmation dialog immediately
     setDeleteConfirmation({
       isOpen: false,
       profileId: '',
       profileName: ''
     });
 
-    try {
-      console.log('Calling deleteProfile function...');
-      const success = await deleteProfile(profileId);
-      
-      console.log('Delete profile result:', success);
-      
-      if (success) {
-        console.log('Profile deleted successfully');
-        toast({
-          title: "Success",
-          description: `${profileName}'s profile has been deleted`,
-        });
-        
-        // Force refresh the profiles list
-        await refetch();
-      } else {
-        console.error('Profile deletion failed - deleteProfile returned false');
-        toast({
-          title: "Error",
-          description: "Failed to delete profile. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error('Error during profile deletion:', error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred while deleting the profile",
-        variant: "destructive",
-      });
-    } finally {
-      // Clear deleting states
-      console.log('Clearing deleting states...');
-      setIsDeleting(false);
-      setDeletingProfileId(null);
+    // Perform deletion
+    const success = await deleteProfileCompletely(profileId, profileName);
+    
+    if (success) {
+      console.log('Deletion successful, refreshing profiles...');
+      // Force refresh profiles list
+      await refetch();
     }
   };
 
   const handleDeleteCancel = () => {
-    console.log('Delete cancelled');
     setDeleteConfirmation({
       isOpen: false,
       profileId: '',
@@ -282,7 +237,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                   ) : (
                     <div className="space-y-2 sm:space-y-3">
                       {profiles.map((profile) => {
-                        const isProfileDeleting = deletingProfileId === profile.id;
+                        const isProfileDeleting = isDeletingProfile === profile.id;
                         return (
                           <div 
                             key={profile.id} 
@@ -343,7 +298,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                     size="sm"
                                     className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5 sm:p-2 touch-manipulation"
                                     onClick={() => handleDeleteClick(profile.id, profile.name)}
-                                    disabled={isProfileDeleting || isDeleting}
+                                    disabled={isProfileDeleting || !!isDeletingProfile}
                                   >
                                     {isProfileDeleting ? (
                                       <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" />
@@ -374,7 +329,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
         profileName={deleteConfirmation.profileName}
-        isProcessing={isDeleting}
+        isProcessing={!!isDeletingProfile}
       />
     </>
   );
