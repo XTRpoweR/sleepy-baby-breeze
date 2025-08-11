@@ -78,7 +78,7 @@ export const SleepScheduleReportDialog = ({ isOpen, onClose, schedule }: SleepSc
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-full sm:max-w-4xl h-screen sm:h-auto max-h-screen sm:max-h-[90vh] overflow-y-auto bg-background p-4 sm:p-6">
+      <DialogContent className="inset-0 left-0 top-0 translate-x-0 translate-y-0 w-screen h-[100dvh] rounded-none bg-background p-0 overflow-y-auto sm:left-1/2 sm:top-1/2 sm:translate-x-[-50%] sm:translate-y-[-50%] sm:w-full sm:max-w-4xl sm:h-auto sm:max-h-[90vh] sm:rounded-lg sm:p-6">
         <DialogHeader>
           <DialogTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="flex items-center space-x-2">
