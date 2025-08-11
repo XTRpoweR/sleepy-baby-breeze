@@ -6,7 +6,7 @@ import { Tables } from '@/integrations/supabase/types';
 import { Nap } from '@/types/sleepSchedule';
 import { exportSleepScheduleAsPDF } from '@/utils/exportSleepSchedule';
 import { useToast } from '@/hooks/use-toast';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface SleepScheduleFullScreenProps {
   isOpen: boolean;
@@ -18,10 +18,17 @@ export const SleepScheduleFullScreen = ({ isOpen, onClose, schedule }: SleepSche
   const [isExporting, setIsExporting] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const { toast } = useToast();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
+      // Reset scroll position to top when opening
+      setTimeout(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = 0;
+        }
+      }, 50);
     }
   }, [isOpen]);
 
@@ -98,8 +105,9 @@ export const SleepScheduleFullScreen = ({ isOpen, onClose, schedule }: SleepSche
         onClick={handleClose}
       />
       
-      {/* Content Container - Changed animation to slide from top */}
+      {/* Content Container - Slides down from top */}
       <div 
+        ref={scrollContainerRef}
         className={`fixed inset-0 bg-white overflow-y-auto transition-transform duration-300 ease-out ${
           isAnimating ? 'translate-y-0' : '-translate-y-full'
         }`}
