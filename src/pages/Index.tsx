@@ -526,8 +526,8 @@ const Index = () => {
         </div>
       </footer>
       
-      {/* Fixed floating language selector - mobile only */}
-      <div className="fixed bottom-4 right-4 z-50 md:hidden">
+      {/* Fixed language selector hamburger menu - mobile only */}
+      <div className="fixed top-4 right-4 z-50 md:hidden">
         <LanguageSelector />
       </div>
     </div>;
