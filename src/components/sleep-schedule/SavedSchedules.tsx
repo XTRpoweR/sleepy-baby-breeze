@@ -1,3 +1,4 @@
+
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { History, Trash2, Eye, Calendar } from 'lucide-react';
 import { Tables } from '@/integrations/supabase/types';
 import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
 import { useState } from 'react';
-import { SleepScheduleReportDialog } from './SleepScheduleReportDialog';
+import { SleepScheduleFullScreen } from './SleepScheduleFullScreen';
 
 interface SavedSchedulesProps {
   babyId: string;
@@ -27,7 +28,7 @@ export const SavedSchedules = ({
 }: SavedSchedulesProps) => {
   const { t } = useTranslation();
   const [selectedScheduleForReport, setSelectedScheduleForReport] = useState<Tables<'sleep_schedules'> | null>(null);
-  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [isFullScreenOpen, setIsFullScreenOpen] = useState(false);
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':');
@@ -54,7 +55,7 @@ export const SavedSchedules = ({
 
   const handleViewScheduleReport = (schedule: Tables<'sleep_schedules'>) => {
     setSelectedScheduleForReport(schedule);
-    setIsReportDialogOpen(true);
+    setIsFullScreenOpen(true);
   };
 
   const handleViewScheduleInline = (schedule: Tables<'sleep_schedules'>) => {
@@ -173,10 +174,10 @@ export const SavedSchedules = ({
         </CardContent>
       </Card>
 
-      <SleepScheduleReportDialog
-        isOpen={isReportDialogOpen}
+      <SleepScheduleFullScreen
+        isOpen={isFullScreenOpen}
         onClose={() => {
-          setIsReportDialogOpen(false);
+          setIsFullScreenOpen(false);
           setSelectedScheduleForReport(null);
         }}
         schedule={selectedScheduleForReport}
