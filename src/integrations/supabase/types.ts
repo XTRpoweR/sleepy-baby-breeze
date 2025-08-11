@@ -521,6 +521,10 @@ export type Database = {
         Args: { user_uuid: string; baby_uuid: string }
         Returns: boolean
       }
+      delete_baby_profile_completely: {
+        Args: { profile_id: string; user_id_param: string }
+        Returns: boolean
+      }
       get_family_member_role: {
         Args: { user_uuid: string; baby_uuid: string }
         Returns: string

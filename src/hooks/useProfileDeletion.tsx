@@ -19,9 +19,9 @@ export const useProfileDeletion = () => {
     setIsDeletingProfile(profileId);
 
     try {
-      // Use a single RPC call to delete everything in the correct order
+      // Try the RPC function first - using any to bypass TypeScript until types are regenerated
       console.log('Calling delete_baby_profile_completely RPC...');
-      const { data, error } = await supabase.rpc('delete_baby_profile_completely', {
+      const { data, error } = await (supabase as any).rpc('delete_baby_profile_completely', {
         profile_id: profileId,
         user_id_param: user.id
       });
@@ -53,25 +53,56 @@ export const useProfileDeletion = () => {
     
     try {
       // Delete in specific order to avoid foreign key constraints
-      const deletions = [
-        { table: 'family_members', condition: { baby_id: profileId } },
-        { table: 'baby_activities', condition: { baby_id: profileId } },
-        { table: 'baby_memories', condition: { baby_id: profileId } },
-        { table: 'sleep_schedules', condition: { baby_id: profileId } },
-        { table: 'family_invitations', condition: { baby_id: profileId } },
-      ];
+      // Using explicit table names for TypeScript compatibility
+      
+      console.log('Deleting family members...');
+      const { error: familyError } = await supabase
+        .from('family_members')
+        .delete()
+        .eq('baby_id', profileId);
+      
+      if (familyError) {
+        console.warn('Warning deleting family members:', familyError);
+      }
 
-      for (const deletion of deletions) {
-        console.log(`Deleting from ${deletion.table}...`);
-        const { error } = await supabase
-          .from(deletion.table)
-          .delete()
-          .match(deletion.condition);
-        
-        if (error) {
-          console.warn(`Warning deleting from ${deletion.table}:`, error);
-          // Continue with other deletions
-        }
+      console.log('Deleting baby activities...');
+      const { error: activitiesError } = await supabase
+        .from('baby_activities')
+        .delete()
+        .eq('baby_id', profileId);
+      
+      if (activitiesError) {
+        console.warn('Warning deleting activities:', activitiesError);
+      }
+
+      console.log('Deleting baby memories...');
+      const { error: memoriesError } = await supabase
+        .from('baby_memories')
+        .delete()
+        .eq('baby_id', profileId);
+      
+      if (memoriesError) {
+        console.warn('Warning deleting memories:', memoriesError);
+      }
+
+      console.log('Deleting sleep schedules...');
+      const { error: sleepError } = await supabase
+        .from('sleep_schedules')
+        .delete()
+        .eq('baby_id', profileId);
+      
+      if (sleepError) {
+        console.warn('Warning deleting sleep schedules:', sleepError);
+      }
+
+      console.log('Deleting family invitations...');
+      const { error: invitationsError } = await supabase
+        .from('family_invitations')
+        .delete()
+        .eq('baby_id', profileId);
+      
+      if (invitationsError) {
+        console.warn('Warning deleting invitations:', invitationsError);
       }
 
       // Finally delete the profile
