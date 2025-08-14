@@ -19,63 +19,26 @@ export const useProfileDeletion = () => {
     setIsDeletingProfile(profileId);
 
     try {
-      // Show initial toast for user feedback
-      toast({
-        title: "Deleting profile...",
-        description: `Removing ${profileName}'s profile and all associated data`,
-      });
-
+      // Try the RPC function first
       console.log('Calling delete_baby_profile_completely RPC...');
       const { data, error } = await supabase.rpc('delete_baby_profile_completely', {
         profile_id: profileId,
         user_id_param: user.id
       });
 
-      console.log('RPC response:', { data, error });
-
       if (error) {
-        console.error('RPC deletion failed with error:', error);
+        console.error('RPC deletion failed:', error);
         // Fallback to manual deletion
         const manualResult = await manualProfileDeletion(profileId, profileName);
         return manualResult;
       }
 
-      // Handle null data case
-      if (data === null) {
-        console.warn('RPC returned null data, attempting manual deletion');
-        const manualResult = await manualProfileDeletion(profileId, profileName);
-        return manualResult;
-      }
-
-      // Type guard: ensure data is an object with expected properties
-      // At this point we know data is not null due to the check above
-      if (typeof data === 'object' && data !== null && 'success' in data) {
-        const typedData = data as { success: boolean; profile_name?: string; error?: string };
-        
-        if (typedData.success) {
-          console.log('Profile deleted successfully via RPC');
-          const displayName = typedData.profile_name || profileName;
-          toast({
-            title: "Success!",
-            description: `${displayName}'s profile has been permanently deleted`,
-          });
-          return true;
-        } else {
-          const errorMessage = typedData.error || 'Unknown error';
-          console.error('RPC deletion failed with data error:', errorMessage);
-          toast({
-            title: "Deletion Failed",
-            description: errorMessage || "An error occurred during deletion",
-            variant: "destructive",
-          });
-          return false;
-        }
-      } else {
-        console.warn('Unexpected RPC response format, attempting manual deletion');
-        // Fallback to manual deletion if data is null or unexpected format
-        const manualResult = await manualProfileDeletion(profileId, profileName);
-        return manualResult;
-      }
+      console.log('Profile deleted successfully via RPC');
+      toast({
+        title: "Success!",
+        description: `${profileName}'s profile has been permanently deleted`,
+      });
+      return true;
 
     } catch (error) {
       console.error('Unexpected error during RPC deletion:', error);
@@ -91,12 +54,6 @@ export const useProfileDeletion = () => {
     console.log('Starting manual profile deletion...');
     
     try {
-      // Show progress toast
-      toast({
-        title: "Manual deletion in progress...",
-        description: "Removing profile data step by step",
-      });
-
       // Delete in specific order to avoid foreign key constraints
       console.log('Deleting family members...');
       const { error: familyError } = await supabase
@@ -160,7 +117,7 @@ export const useProfileDeletion = () => {
         console.error('Failed to delete profile:', profileError);
         toast({
           title: "Error",
-          description: `Failed to delete profile: ${profileError.message}`,
+          description: "Failed to delete profile. Please try again.",
           variant: "destructive",
         });
         return false;
@@ -175,10 +132,9 @@ export const useProfileDeletion = () => {
 
     } catch (error) {
       console.error('Manual deletion failed:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Error",
-        description: `Deletion failed: ${errorMessage}`,
+        description: "An error occurred during deletion. Please try again.",
         variant: "destructive",
       });
       return false;
