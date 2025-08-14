@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,26 +39,28 @@ export const useProfileDeletion = () => {
         return manualResult;
       }
 
-      // Check the response data for success/failure
-      if (data && typeof data === 'object' && 'success' in data) {
+      // Check if data exists and has the expected structure
+      if (data && typeof data === 'object' && data !== null && 'success' in data) {
         if (data.success) {
           console.log('Profile deleted successfully via RPC');
+          const displayName = data.profile_name || profileName;
           toast({
             title: "Success!",
-            description: `${profileName}'s profile has been permanently deleted`,
+            description: `${displayName}'s profile has been permanently deleted`,
           });
           return true;
         } else {
-          console.error('RPC deletion failed with data error:', data.error);
+          console.error('RPC deletion failed with data error:', data.error || 'Unknown error');
           toast({
             title: "Deletion Failed",
-            description: data.error || "An error occurred during deletion",
+            description: (data.error as string) || "An error occurred during deletion",
             variant: "destructive",
           });
           return false;
         }
       } else {
         console.warn('Unexpected RPC response format, attempting manual deletion');
+        // Fallback to manual deletion if data is null or unexpected format
         const manualResult = await manualProfileDeletion(profileId, profileName);
         return manualResult;
       }
