@@ -40,20 +40,21 @@ export const useProfileDeletion = () => {
       }
 
       // Check if data exists and has the expected structure
-      if (data && typeof data === 'object' && data !== null && 'success' in data) {
+      if (data !== null && typeof data === 'object' && 'success' in data) {
         if (data.success) {
           console.log('Profile deleted successfully via RPC');
-          const displayName = data.profile_name || profileName;
+          const displayName = ('profile_name' in data && data.profile_name) ? data.profile_name as string : profileName;
           toast({
             title: "Success!",
             description: `${displayName}'s profile has been permanently deleted`,
           });
           return true;
         } else {
-          console.error('RPC deletion failed with data error:', data.error || 'Unknown error');
+          const errorMessage = ('error' in data && data.error) ? data.error as string : 'Unknown error';
+          console.error('RPC deletion failed with data error:', errorMessage);
           toast({
             title: "Deletion Failed",
-            description: (data.error as string) || "An error occurred during deletion",
+            description: errorMessage || "An error occurred during deletion",
             variant: "destructive",
           });
           return false;
