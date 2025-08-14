@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -48,7 +47,8 @@ export const useProfileDeletion = () => {
       }
 
       // Type guard: ensure data is an object with expected properties
-      if (typeof data === 'object' && 'success' in data) {
+      // At this point we know data is not null due to the check above
+      if (typeof data === 'object' && data !== null && 'success' in data) {
         const typedData = data as { success: boolean; profile_name?: string; error?: string };
         
         if (typedData.success) {
