@@ -19,26 +19,50 @@ export const useProfileDeletion = () => {
     setIsDeletingProfile(profileId);
 
     try {
-      // Try the RPC function first
+      // Show initial toast for user feedback
+      toast({
+        title: "Deleting profile...",
+        description: `Removing ${profileName}'s profile and all associated data`,
+      });
+
       console.log('Calling delete_baby_profile_completely RPC...');
       const { data, error } = await supabase.rpc('delete_baby_profile_completely', {
         profile_id: profileId,
         user_id_param: user.id
       });
 
+      console.log('RPC response:', { data, error });
+
       if (error) {
-        console.error('RPC deletion failed:', error);
+        console.error('RPC deletion failed with error:', error);
         // Fallback to manual deletion
         const manualResult = await manualProfileDeletion(profileId, profileName);
         return manualResult;
       }
 
-      console.log('Profile deleted successfully via RPC');
-      toast({
-        title: "Success!",
-        description: `${profileName}'s profile has been permanently deleted`,
-      });
-      return true;
+      // Check the response data for success/failure
+      if (data && typeof data === 'object' && 'success' in data) {
+        if (data.success) {
+          console.log('Profile deleted successfully via RPC');
+          toast({
+            title: "Success!",
+            description: `${profileName}'s profile has been permanently deleted`,
+          });
+          return true;
+        } else {
+          console.error('RPC deletion failed with data error:', data.error);
+          toast({
+            title: "Deletion Failed",
+            description: data.error || "An error occurred during deletion",
+            variant: "destructive",
+          });
+          return false;
+        }
+      } else {
+        console.warn('Unexpected RPC response format, attempting manual deletion');
+        const manualResult = await manualProfileDeletion(profileId, profileName);
+        return manualResult;
+      }
 
     } catch (error) {
       console.error('Unexpected error during RPC deletion:', error);
@@ -54,6 +78,12 @@ export const useProfileDeletion = () => {
     console.log('Starting manual profile deletion...');
     
     try {
+      // Show progress toast
+      toast({
+        title: "Manual deletion in progress...",
+        description: "Removing profile data step by step",
+      });
+
       // Delete in specific order to avoid foreign key constraints
       console.log('Deleting family members...');
       const { error: familyError } = await supabase
@@ -117,7 +147,7 @@ export const useProfileDeletion = () => {
         console.error('Failed to delete profile:', profileError);
         toast({
           title: "Error",
-          description: "Failed to delete profile. Please try again.",
+          description: `Failed to delete profile: ${profileError.message}`,
           variant: "destructive",
         });
         return false;
@@ -132,9 +162,10 @@ export const useProfileDeletion = () => {
 
     } catch (error) {
       console.error('Manual deletion failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Error",
-        description: "An error occurred during deletion. Please try again.",
+        description: `Deletion failed: ${errorMessage}`,
         variant: "destructive",
       });
       return false;
