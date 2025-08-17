@@ -94,13 +94,18 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       profileName: ''
     });
 
-    // Perform deletion
-    const success = await deleteProfileCompletely(profileId, profileName);
-    
-    if (success) {
-      console.log('Deletion successful, refreshing profiles...');
-      // Force refresh profiles list
-      await refetch();
+    try {
+      // Perform deletion
+      const success = await deleteProfileCompletely(profileId, profileName);
+      
+      if (success) {
+        console.log('Deletion successful, refreshing profiles...');
+        // Force refresh profiles list
+        await refetch();
+      }
+    } catch (error) {
+      console.error('Error in handleDeleteConfirm:', error);
+      // Even if there's an error, the deletion state should be cleared by the hook
     }
   };
 
@@ -300,9 +305,12 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                     e.preventDefault();
                                     e.stopPropagation();
                                     console.log('Delete button clicked for:', profile.id, profile.name);
-                                    handleDeleteClick(profile.id, profile.name);
+                                    if (!isProfileDeleting && !isDeletingProfile) {
+                                      handleDeleteClick(profile.id, profile.name);
+                                    }
                                   }}
                                   disabled={isProfileDeleting || !!isDeletingProfile}
+                                  title={isProfileDeleting ? 'Deleting...' : 'Delete profile'}
                                 >
                                   {isProfileDeleting ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -507,9 +515,12 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                     e.preventDefault();
                                     e.stopPropagation();
                                     console.log('Delete button clicked for:', profile.id, profile.name);
-                                    handleDeleteClick(profile.id, profile.name);
+                                    if (!isProfileDeleting && !isDeletingProfile) {
+                                      handleDeleteClick(profile.id, profile.name);
+                                    }
                                   }}
                                   disabled={isProfileDeleting || !!isDeletingProfile}
+                                  title={isProfileDeleting ? 'Deleting...' : 'Delete profile'}
                                 >
                                   {isProfileDeleting ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
