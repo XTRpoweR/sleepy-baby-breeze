@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SwipeableCard } from '@/components/ui/swipeable-card';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { useProfileDeletion } from '@/hooks/useProfileDeletion';
@@ -27,6 +28,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
 
 interface ProfileManagementDialogProps {
   open: boolean;
@@ -38,7 +40,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   const isMobile = useIsMobile();
   const { profiles, activeProfile, createProfile, switchProfile, loading, refetch } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
-  const { deleteProfileCompletely, isDeletingProfile } = useProfileDeletion();
+  const { deleteProfileCompletely, isDeletingProfile, deletionProgress } = useProfileDeletion();
   
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
@@ -74,12 +76,30 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   };
 
   const handleDeleteClick = (profileId: string, profileName: string) => {
+    if (isMobile) {
+      // On mobile, show swipe instruction
+      return;
+    }
+    
     console.log('Delete clicked for profile:', profileId, profileName);
     setDeleteConfirmation({
       isOpen: true,
       profileId,
       profileName
     });
+  };
+
+  const handleSwipeDelete = async (profileId: string, profileName: string) => {
+    console.log('Swipe delete for:', profileId, profileName);
+    
+    // Perform deletion directly without confirmation dialog on mobile
+    const success = await deleteProfileCompletely(profileId, profileName);
+    
+    if (success) {
+      console.log('Swipe deletion successful, refreshing profiles...');
+      // Force refresh profiles list
+      await refetch();
+    }
   };
 
   const handleDeleteConfirm = async () => {
@@ -114,6 +134,118 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
 
   const handleSetActive = async (profileId: string) => {
     await switchProfile(profileId);
+  };
+
+  const renderProfileCard = (profile: any) => {
+    const isProfileDeleting = isDeletingProfile === profile.id;
+    
+    const profileContent = (
+      <div className={`p-4 border rounded-lg transition-all ${
+        activeProfile?.id === profile.id 
+          ? 'border-primary bg-primary/5' 
+          : 'border-border hover:border-primary/50'
+      } ${isProfileDeleting ? 'opacity-50' : ''}`}>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center space-x-3 min-w-0 flex-1">
+            <div className="bg-primary/10 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+              <Baby className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center space-x-2 mb-1">
+                <h3 className="font-medium text-foreground truncate">{profile.name}</h3>
+                {activeProfile?.id === profile.id && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
+                    <UserCheck className="h-3 w-3 mr-1" />
+                    {isMobile ? 'Active' : t('profiles.active')}
+                  </span>
+                )}
+                {profile.is_shared && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 flex-shrink-0">
+                    <Shield className="h-3 w-3 mr-1" />
+                    {profile.user_role}
+                  </span>
+                )}
+              </div>
+              {profile.birth_date && (
+                <p className="text-sm text-muted-foreground">
+                  {t('profiles.born')} {format(new Date(profile.birth_date), 'MMM dd, yyyy')}
+                </p>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            {activeProfile?.id !== profile.id && !isProfileDeleting && (
+              <Button
+                variant="outline"
+                size="sm"
+                className={isMobile ? "px-3 py-2 touch-manipulation" : ""}
+                onClick={() => handleSetActive(profile.id)}
+              >
+                {isMobile ? 'Set Active' : t('profiles.setActive')}
+              </Button>
+            )}
+            
+            {/* Desktop delete button */}
+            {!isMobile && (
+              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDeleteClick(profile.id, profile.name);
+                  }}
+                  disabled={isProfileDeleting || !!isDeletingProfile}
+                >
+                  {isProfileDeleting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                </Button>
+              </PermissionAwareActions>
+            )}
+          </div>
+        </div>
+        
+        {/* Deletion progress */}
+        {isProfileDeleting && (
+          <div className="mt-3 space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Deleting profile...</span>
+              <span className="text-muted-foreground">{Math.round(deletionProgress)}%</span>
+            </div>
+            <Progress value={deletionProgress} className="h-2" />
+          </div>
+        )}
+      </div>
+    );
+
+    // On mobile, wrap with swipeable functionality for deletion
+    if (isMobile) {
+      return (
+        <PermissionAwareActions key={profile.id} requiredPermission="canDelete" showMessage={false}>
+          <SwipeableCard
+            onDelete={() => handleSwipeDelete(profile.id, profile.name)}
+            isDeleting={isProfileDeleting}
+            disabled={isProfileDeleting || !!isDeletingProfile}
+            className="touch-manipulation"
+          >
+            {profileContent}
+          </SwipeableCard>
+        </PermissionAwareActions>
+      );
+    }
+
+    // On desktop, return regular card
+    return (
+      <div key={profile.id}>
+        {profileContent}
+      </div>
+    );
   };
 
   // Mobile full-screen content
@@ -238,84 +370,13 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {profiles.map((profile) => {
-                      const isProfileDeleting = isDeletingProfile === profile.id;
-                      return (
-                        <div 
-                          key={profile.id} 
-                          className={`p-4 border rounded-lg transition-all touch-manipulation ${
-                            activeProfile?.id === profile.id 
-                              ? 'border-primary bg-primary/5' 
-                              : 'border-border hover:border-primary/50'
-                          } ${isProfileDeleting ? 'opacity-50 pointer-events-none' : ''}`}
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center space-x-3 min-w-0 flex-1">
-                              <div className="bg-primary/10 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
-                                <Baby className="h-5 w-5 text-primary" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center space-x-2 mb-1">
-                                  <h3 className="font-medium text-foreground truncate">{profile.name}</h3>
-                                  {activeProfile?.id === profile.id && (
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
-                                      <UserCheck className="h-3 w-3 mr-1" />
-                                      Active
-                                    </span>
-                                  )}
-                                  {profile.is_shared && (
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 flex-shrink-0">
-                                      <Shield className="h-3 w-3 mr-1" />
-                                      {profile.user_role}
-                                    </span>
-                                  )}
-                                </div>
-                                {profile.birth_date && (
-                                  <p className="text-sm text-muted-foreground">
-                                    {t('profiles.born')} {format(new Date(profile.birth_date), 'MMM dd, yyyy')}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2 flex-shrink-0">
-                              {activeProfile?.id !== profile.id && !isProfileDeleting && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="px-3 py-2 touch-manipulation"
-                                  onClick={() => handleSetActive(profile.id)}
-                                >
-                                  Set Active
-                                </Button>
-                              )}
-                              
-                              {/* Delete action - Only show for profiles you can delete */}
-                              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 touch-manipulation"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    console.log('Delete button clicked for:', profile.id, profile.name);
-                                    handleDeleteClick(profile.id, profile.name);
-                                  }}
-                                  disabled={isProfileDeleting || !!isDeletingProfile}
-                                >
-                                  {isProfileDeleting ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="h-4 w-4" />
-                                  )}
-                                </Button>
-                              </PermissionAwareActions>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {profiles.map(renderProfileCard)}
+                    {/* Swipe instruction for mobile */}
+                    <div className="text-center py-4 px-2">
+                      <p className="text-sm text-muted-foreground">
+                        💡 Swipe left on a profile to delete it
+                      </p>
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -446,83 +507,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                   </div>
                 ) : (
                   <div className="grid gap-3">
-                    {profiles.map((profile) => {
-                      const isProfileDeleting = isDeletingProfile === profile.id;
-                      return (
-                        <div 
-                          key={profile.id} 
-                          className={`p-4 border rounded-lg transition-all ${
-                            activeProfile?.id === profile.id 
-                              ? 'border-primary bg-primary/5' 
-                              : 'border-border hover:border-primary/50'
-                          } ${isProfileDeleting ? 'opacity-50 pointer-events-none' : ''}`}
-                        >
-                          <div className="flex items-center justify-between gap-4">
-                            <div className="flex items-center space-x-3 min-w-0 flex-1">
-                              <div className="bg-primary/10 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
-                                <Baby className="h-5 w-5 text-primary" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center space-x-2 mb-1">
-                                  <h3 className="font-medium text-foreground truncate">{profile.name}</h3>
-                                  {activeProfile?.id === profile.id && (
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex-shrink-0">
-                                      <UserCheck className="h-3 w-3 mr-1" />
-                                      {t('profiles.active')}
-                                    </span>
-                                  )}
-                                  {profile.is_shared && (
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 flex-shrink-0">
-                                      <Shield className="h-3 w-3 mr-1" />
-                                      Shared ({profile.user_role})
-                                    </span>
-                                  )}
-                                </div>
-                                {profile.birth_date && (
-                                  <p className="text-sm text-muted-foreground">
-                                    {t('profiles.born')} {format(new Date(profile.birth_date), 'MMM dd, yyyy')}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center space-x-2 flex-shrink-0">
-                              {activeProfile?.id !== profile.id && !isProfileDeleting && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleSetActive(profile.id)}
-                                >
-                                  {t('profiles.setActive')}
-                                </Button>
-                              )}
-                              
-                              {/* Delete action - Only show for profiles you can delete */}
-                              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    console.log('Delete button clicked for:', profile.id, profile.name);
-                                    handleDeleteClick(profile.id, profile.name);
-                                  }}
-                                  disabled={isProfileDeleting || !!isDeletingProfile}
-                                >
-                                  {isProfileDeleting ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <Trash2 className="h-4 w-4" />
-                                  )}
-                                </Button>
-                              </PermissionAwareActions>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {profiles.map(renderProfileCard)}
                   </div>
                 )}
               </CardContent>
