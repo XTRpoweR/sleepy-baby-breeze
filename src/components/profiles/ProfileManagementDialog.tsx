@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
-import { useProfileDeletion } from '@/hooks/useProfileDeletion';
+// Removed useProfileDeletion import - using deleteProfile from useBabyProfile instead
 import { useIsMobile } from '@/hooks/use-mobile';
 import { PermissionAwareActions } from '@/components/tracking/PermissionAwareActions';
 import { DeleteProfileConfirmation } from './DeleteProfileConfirmation';
@@ -27,6 +27,8 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ProfileManagementDialogProps {
   open: boolean;
@@ -36,9 +38,10 @@ interface ProfileManagementDialogProps {
 export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagementDialogProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const { profiles, activeProfile, createProfile, switchProfile, loading, refetch } = useBabyProfile();
+  const { user } = useAuth();
+  const { profiles, activeProfile, createProfile, switchProfile, loading, refetch, deleteProfile } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
-  const { deleteProfileCompletely, isDeletingProfile } = useProfileDeletion();
+  const [isDeletingProfile, setIsDeletingProfile] = useState<string | null>(null);
   
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
@@ -94,13 +97,61 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       profileName: ''
     });
 
-    // Perform deletion
-    const success = await deleteProfileCompletely(profileId, profileName);
-    
-    if (success) {
-      console.log('Deletion successful, refreshing profiles...');
-      // Force refresh profiles list
-      await refetch();
+    // Set deleting state
+    setIsDeletingProfile(profileId);
+
+    // Add a timeout to prevent infinite blocking
+    const timeoutId = setTimeout(() => {
+      console.error('Deletion timeout - clearing state');
+      setIsDeletingProfile(null);
+    }, 15000); // 15 second timeout
+
+    try {
+      console.log('Starting profile deletion...');
+      
+      // Try the built-in deleteProfile method first
+      let success = false;
+      try {
+        success = await Promise.race([
+          deleteProfile(profileId),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Method timeout')), 10000)
+          )
+        ]);
+      } catch (methodError) {
+        console.warn('Built-in deleteProfile failed, trying manual deletion:', methodError);
+        
+        // Fallback: Manual deletion using direct Supabase calls
+        if (user) {
+          const { error } = await supabase
+            .from('baby_profiles')
+            .delete()
+            .eq('id', profileId)
+            .eq('user_id', user.id);
+            
+          if (!error) {
+            success = true;
+            console.log('Manual deletion successful');
+            // Manually update the profiles list
+            await refetch();
+          } else {
+            console.error('Manual deletion failed:', error);
+          }
+        }
+      }
+      
+      if (success) {
+        console.log('Deletion completed successfully');
+      } else {
+        console.log('Deletion failed');
+      }
+    } catch (error) {
+      console.error('Error in handleDeleteConfirm:', error);
+    } finally {
+      // Always clear timeout and deleting state
+      clearTimeout(timeoutId);
+      console.log('Clearing deletion state');
+      setIsDeletingProfile(null);
     }
   };
 
@@ -290,8 +341,8 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                 </Button>
                               )}
                               
-                              {/* Delete action - Only show for profiles you can delete */}
-                              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                              {/* Delete action - Show for owned profiles */}
+                              {(!profile.is_shared || profile.user_role === 'owner') && (
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -299,18 +350,21 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                   onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    console.log('Delete button clicked for:', profile.id, profile.name);
-                                    handleDeleteClick(profile.id, profile.name);
+                                    console.log('Delete button clicked for:', profile.id, profile.name, 'isShared:', profile.is_shared, 'role:', profile.user_role);
+                                    if (!isProfileDeleting && isDeletingProfile !== profile.id) {
+                                      handleDeleteClick(profile.id, profile.name);
+                                    }
                                   }}
-                                  disabled={isProfileDeleting || !!isDeletingProfile}
+                                  disabled={isProfileDeleting || isDeletingProfile === profile.id}
+                                  title={isDeletingProfile === profile.id ? 'Deleting...' : 'Delete profile'}
                                 >
-                                  {isProfileDeleting ? (
+                                  {isDeletingProfile === profile.id ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                   ) : (
                                     <Trash2 className="h-4 w-4" />
                                   )}
                                 </Button>
-                              </PermissionAwareActions>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -497,8 +551,8 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                 </Button>
                               )}
                               
-                              {/* Delete action - Only show for profiles you can delete */}
-                              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                              {/* Delete action - Show for owned profiles */}
+                              {(!profile.is_shared || profile.user_role === 'owner') && (
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -506,18 +560,21 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                                   onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    console.log('Delete button clicked for:', profile.id, profile.name);
-                                    handleDeleteClick(profile.id, profile.name);
+                                    console.log('Delete button clicked for:', profile.id, profile.name, 'isShared:', profile.is_shared, 'role:', profile.user_role);
+                                    if (!isProfileDeleting && isDeletingProfile !== profile.id) {
+                                      handleDeleteClick(profile.id, profile.name);
+                                    }
                                   }}
-                                  disabled={isProfileDeleting || !!isDeletingProfile}
+                                  disabled={isProfileDeleting || isDeletingProfile === profile.id}
+                                  title={isDeletingProfile === profile.id ? 'Deleting...' : 'Delete profile'}
                                 >
-                                  {isProfileDeleting ? (
+                                  {isDeletingProfile === profile.id ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                   ) : (
                                     <Trash2 className="h-4 w-4" />
                                   )}
                                 </Button>
-                              </PermissionAwareActions>
+                              )}
                             </div>
                           </div>
                         </div>

@@ -49,9 +49,15 @@ export const DeleteProfileConfirmation = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isProcessing}>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(e) => {
+              if (!isProcessing) {
+                onConfirm();
+              } else {
+                e.preventDefault();
+              }
+            }}
             className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
             disabled={isProcessing}
           >

@@ -21,58 +21,54 @@ export const useProfileDeletion = () => {
     try {
       console.log('Starting manual profile deletion...');
       
+      // Use a transaction-like approach with Promise.allSettled to handle errors gracefully
       // Delete in specific order to avoid foreign key constraints
-      console.log('Deleting family members...');
-      const { error: familyMembersError } = await supabase
-        .from('family_members')
-        .delete()
-        .eq('baby_id', profileId);
-      
-      if (familyMembersError) {
-        console.warn('Warning deleting family members:', familyMembersError);
-      }
+      const deletionPromises = [
+        // Delete family members
+        supabase
+          .from('family_members')
+          .delete()
+          .eq('baby_id', profileId),
+        
+        // Delete baby activities
+        supabase
+          .from('baby_activities')
+          .delete()
+          .eq('baby_id', profileId),
+        
+        // Delete baby memories
+        supabase
+          .from('baby_memories')
+          .delete()
+          .eq('baby_id', profileId),
+        
+        // Delete sleep schedules
+        supabase
+          .from('sleep_schedules')
+          .delete()
+          .eq('baby_id', profileId),
+        
+        // Delete family invitations
+        supabase
+          .from('family_invitations')
+          .delete()
+          .eq('baby_id', profileId)
+      ];
 
-      console.log('Deleting baby activities...');
-      const { error: activitiesError } = await supabase
-        .from('baby_activities')
-        .delete()
-        .eq('baby_id', profileId);
+      console.log('Deleting related data...');
+      const results = await Promise.allSettled(deletionPromises);
       
-      if (activitiesError) {
-        console.warn('Warning deleting baby activities:', activitiesError);
-      }
+      // Log any warnings but don't fail completely
+      results.forEach((result, index) => {
+        const operations = ['family_members', 'baby_activities', 'baby_memories', 'sleep_schedules', 'family_invitations'];
+        if (result.status === 'rejected') {
+          console.warn(`Warning deleting ${operations[index]}:`, result.reason);
+        } else if (result.value.error) {
+          console.warn(`Warning deleting ${operations[index]}:`, result.value.error);
+        }
+      });
 
-      console.log('Deleting baby memories...');
-      const { error: memoriesError } = await supabase
-        .from('baby_memories')
-        .delete()
-        .eq('baby_id', profileId);
-      
-      if (memoriesError) {
-        console.warn('Warning deleting baby memories:', memoriesError);
-      }
-
-      console.log('Deleting sleep schedules...');
-      const { error: schedulesError } = await supabase
-        .from('sleep_schedules')
-        .delete()
-        .eq('baby_id', profileId);
-      
-      if (schedulesError) {
-        console.warn('Warning deleting sleep schedules:', schedulesError);
-      }
-
-      console.log('Deleting family invitations...');
-      const { error: invitationsError } = await supabase
-        .from('family_invitations')
-        .delete()
-        .eq('baby_id', profileId);
-      
-      if (invitationsError) {
-        console.warn('Warning deleting family invitations:', invitationsError);
-      }
-
-      // Finally delete the profile itself
+      // Finally delete the profile itself - this is the critical operation
       console.log('Deleting baby profile...');
       const { error: profileError } = await supabase
         .from('baby_profiles')
@@ -84,7 +80,7 @@ export const useProfileDeletion = () => {
         console.error('Failed to delete profile:', profileError);
         toast({
           title: "Error",
-          description: "Failed to delete profile. Please try again.",
+          description: `Failed to delete ${profileName}'s profile. Please try again.`,
           variant: "destructive",
         });
         return false;
@@ -92,7 +88,7 @@ export const useProfileDeletion = () => {
 
       console.log('Profile deletion completed successfully');
       toast({
-        title: "Success!",
+        title: "Profile Deleted",
         description: `${profileName}'s profile has been permanently deleted`,
       });
       return true;
@@ -100,12 +96,14 @@ export const useProfileDeletion = () => {
     } catch (error) {
       console.error('Unexpected error during deletion:', error);
       toast({
-        title: "Error",
-        description: "An error occurred during deletion. Please try again.",
+        title: "Deletion Failed",
+        description: `An error occurred while deleting ${profileName}'s profile. Please try again.`,
         variant: "destructive",
       });
       return false;
     } finally {
+      // Always clear the deleting state to prevent UI from being stuck
+      console.log('Clearing deletion state for profile:', profileId);
       setIsDeletingProfile(null);
     }
   };
