@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -514,11 +514,11 @@ export type Database = {
     }
     Functions: {
       can_access_baby: {
-        Args: { user_uuid: string; baby_uuid: string }
+        Args: { baby_uuid: string; user_uuid: string }
         Returns: boolean
       }
       can_edit_baby_activities: {
-        Args: { user_uuid: string; baby_uuid: string }
+        Args: { baby_uuid: string; user_uuid: string }
         Returns: boolean
       }
       delete_baby_profile_completely: {
@@ -526,24 +526,24 @@ export type Database = {
         Returns: boolean
       }
       get_family_member_role: {
-        Args: { user_uuid: string; baby_uuid: string }
+        Args: { baby_uuid: string; user_uuid: string }
         Returns: string
       }
       get_family_members_with_profiles: {
         Args: { baby_uuid: string }
         Returns: {
-          id: string
-          user_id: string
           baby_id: string
-          role: string
-          status: string
-          permissions: Json
-          invited_at: string
-          joined_at: string
-          invited_by: string
           created_at: string
           email: string
           full_name: string
+          id: string
+          invited_at: string
+          invited_by: string
+          joined_at: string
+          permissions: Json
+          role: string
+          status: string
+          user_id: string
         }[]
       }
       get_user_subscription_tier: {
@@ -555,7 +555,7 @@ export type Database = {
         Returns: boolean
       }
       is_baby_owner: {
-        Args: { user_uuid: string; baby_uuid: string }
+        Args: { baby_uuid: string; user_uuid: string }
         Returns: boolean
       }
       set_active_profile: {
