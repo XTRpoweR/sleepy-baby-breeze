@@ -82,7 +82,7 @@ serve(async (req) => {
       return createErrorResponse(`Validation error: ${validation.errors.join(', ')}`, 400, corsHeaders);
     }
 
-    const { name, email, subject, message } = body;
+    const { name, email, subject, message, category } = body;
 
     // Initialize services
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -115,7 +115,7 @@ serve(async (req) => {
     await dbService.storeUserQuery({
       user_id: userId,
       email: email,
-      message_text: `${subject}\n\n${message}`
+      message_text: `Subject: ${subject}${category ? `\nCategory: ${category}` : ''}\n\n${message}`
     });
 
     // Send email
@@ -123,7 +123,8 @@ serve(async (req) => {
       name,
       email,
       subject,
-      message
+      message,
+      category
     });
 
     return createSuccessResponse('Message sent successfully', corsHeaders);

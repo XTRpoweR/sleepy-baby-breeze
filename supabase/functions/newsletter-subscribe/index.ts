@@ -15,6 +15,8 @@ interface NewsletterSubscriptionRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log('Newsletter subscribe function called');
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -29,6 +31,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { email }: NewsletterSubscriptionRequest = await req.json();
+    console.log('Processing subscription for email:', email);
 
     // Validate email
     if (!email || !email.includes('@')) {
@@ -45,11 +48,16 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     // Check if email already exists
-    const { data: existingSubscriber } = await supabase
+    const { data: existingSubscriber, error: selectError } = await supabase
       .from('newsletter_subscribers')
       .select('email, status')
       .eq('email', email.toLowerCase().trim())
       .single();
+
+    if (selectError && selectError.code !== 'PGRST116') { // PGRST116 is "not found" error
+      console.error('Error checking existing subscriber:', selectError);
+      throw selectError;
+    }
 
     if (existingSubscriber) {
       if (existingSubscriber.status === 'active') {
@@ -71,6 +79,7 @@ const handler = async (req: Request): Promise<Response> => {
           .eq('email', email.toLowerCase().trim());
 
         if (updateError) {
+          console.error('Error updating subscriber:', updateError);
           throw updateError;
         }
       }
@@ -79,10 +88,13 @@ const handler = async (req: Request): Promise<Response> => {
       const { error: insertError } = await supabase
         .from('newsletter_subscribers')
         .insert({
-          email: email.toLowerCase().trim()
+          email: email.toLowerCase().trim(),
+          status: 'active',
+          subscribed_at: new Date().toISOString()
         });
 
       if (insertError) {
+        console.error('Error inserting subscriber:', insertError);
         throw insertError;
       }
     }

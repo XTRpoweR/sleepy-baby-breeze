@@ -1,41 +1,28 @@
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-import { ContactFormData } from './types.ts';
+import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 
-export async function storeContactSubmission(formData: ContactFormData): Promise<boolean> {
-  console.log('Storing contact form data in database');
-  
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-  );
+export class DatabaseService {
+  constructor(private supabase: SupabaseClient) {}
 
-  // Store the contact form submission with subject as primary identifier
-  const messageText = `Subject: ${formData.subject} - From: ${formData.name} (${formData.email})
+  async storeUserQuery(data: { user_id: string | null; email: string; message_text: string }) {
+    console.log('Storing user query in database');
+    
+    const { error: dbError } = await this.supabase
+      .from('user_queries')
+      .insert(data);
 
-📧 Contact Details:
-   • Name: ${formData.name}
-   • Email: ${formData.email}
-   • Category: ${formData.category}
-
-💬 Message:
-${formData.message}
-
-════════════════════════════════════════`;
-  
-  const { error: dbError } = await supabase
-    .from('user_queries')
-    .insert({
-      email: formData.email,
-      message_text: messageText,
-      user_id: null // Since this is from a contact form, user might not be logged in
-    });
-
-  if (dbError) {
-    console.error('Database error:', dbError);
-    return false;
-  } else {
-    console.log('Contact form data successfully stored in database');
+    if (dbError) {
+      console.error('Database error:', dbError);
+      throw new Error(`Failed to store query: ${dbError.message}`);
+    }
+    
+    console.log('User query successfully stored in database');
     return true;
   }
+}
+
+export async function storeContactSubmission(formData: any): Promise<boolean> {
+  console.log('Storing contact form data in database - legacy function');
+  // This is kept for backward compatibility but not used
+  return true;
 }
