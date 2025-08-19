@@ -558,10 +558,6 @@ export type Database = {
         Args: { baby_uuid: string; user_uuid: string }
         Returns: boolean
       }
-      safe_newsletter_unsubscribe: {
-        Args: { token_param: string }
-        Returns: boolean
-      }
       set_active_profile: {
         Args: { profile_id: string; user_id_param: string }
         Returns: undefined
