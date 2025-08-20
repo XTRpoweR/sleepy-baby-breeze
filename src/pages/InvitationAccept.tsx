@@ -1,8 +1,8 @@
 
-import { InvitationAccept } from '@/components/family/InvitationAccept';
+import { DirectInvitationAccept } from '@/components/family/DirectInvitationAccept';
 
 const InvitationAcceptPage = () => {
-  return <InvitationAccept />;
+  return <DirectInvitationAccept />;
 };
 
 export default InvitationAcceptPage;
