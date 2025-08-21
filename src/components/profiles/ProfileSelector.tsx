@@ -13,7 +13,10 @@ export const ProfileSelector = () => {
   const [showManagement, setShowManagement] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const handleProfileSwitch = async (profileId: string) => {
+  const handleProfileSwitch = async (profileId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
     if (activeProfile?.id === profileId) {
       setDropdownOpen(false);
       return;
@@ -22,7 +25,6 @@ export const ProfileSelector = () => {
     console.log('Switching to profile:', profileId);
     const success = await switchProfile(profileId);
     if (success) {
-      // Close dropdown immediately after successful switch - no page refresh needed
       setDropdownOpen(false);
     }
   };
@@ -32,10 +34,18 @@ export const ProfileSelector = () => {
     setDropdownOpen(open);
   };
 
-  const handleManageProfiles = () => {
+  const handleManageProfiles = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     console.log('Opening profile management');
     setDropdownOpen(false);
     setShowManagement(true);
+  };
+
+  const handleTriggerClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDropdownOpen(!dropdownOpen);
   };
 
   if (!activeProfile) {
@@ -51,6 +61,7 @@ export const ProfileSelector = () => {
             variant="ghost" 
             className="flex items-center space-x-2 p-2 h-auto justify-start hover:bg-gray-100 touch-manipulation"
             disabled={switching}
+            onClick={handleTriggerClick}
           >
             <Avatar className="h-8 w-8">
               <AvatarImage src={activeProfile.photo_url || ''} />
@@ -70,14 +81,11 @@ export const ProfileSelector = () => {
 
         <DropdownMenuContent 
           align="start" 
-          className="w-80 max-w-[90vw] max-h-[70vh] overflow-y-auto !bg-white border border-gray-200 shadow-xl z-[1000] scrollbar-thin"
+          className="w-80 max-w-[90vw] max-h-[70vh] overflow-y-auto bg-white border border-gray-200 shadow-xl z-[1000] scrollbar-thin"
           sideOffset={4}
-          style={{ 
-            zIndex: 1000, 
-            backgroundColor: 'white'
-          }}
+          onCloseAutoFocus={(e) => e.preventDefault()}
         >
-          <div className="p-3 !bg-white">
+          <div className="p-3 bg-white">
             <h4 className="font-medium text-sm text-muted-foreground mb-3 flex items-center">
               <Baby className="h-4 w-4 mr-2 text-purple-600" />
               Child Profiles
@@ -91,13 +99,13 @@ export const ProfileSelector = () => {
               profiles.map((profile) => (
                 <DropdownMenuItem
                   key={profile.id}
-                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 !bg-white hover:!bg-gray-50 focus:!bg-gray-50 touch-manipulation min-h-[56px] ${
+                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[56px] ${
                     activeProfile?.id === profile.id
-                      ? '!bg-purple-50 text-purple-900'
+                      ? 'bg-purple-50 text-purple-900'
                       : ''
                   }`}
-                  onClick={() => handleProfileSwitch(profile.id)}
-                  onSelect={() => handleProfileSwitch(profile.id)}
+                  onSelect={(e) => e.preventDefault()}
+                  onClick={(e) => handleProfileSwitch(profile.id, e)}
                 >
                   <Avatar className="h-10 w-10 flex-shrink-0">
                     <AvatarImage src={profile.photo_url || ''} />
@@ -140,9 +148,9 @@ export const ProfileSelector = () => {
           <DropdownMenuSeparator className="bg-gray-200" />
           
           <DropdownMenuItem
+            className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[48px]"
+            onSelect={(e) => e.preventDefault()}
             onClick={handleManageProfiles}
-            className="flex items-center space-x-2 p-3 cursor-pointer !bg-white hover:!bg-gray-50 focus:!bg-gray-50 touch-manipulation min-h-[48px]"
-            onSelect={handleManageProfiles}
           >
             <Settings className="h-4 w-4" />
             <span>Manage Profiles</span>
