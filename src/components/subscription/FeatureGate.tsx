@@ -1,6 +1,7 @@
 
 import { ReactNode } from 'react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Crown, Lock } from 'lucide-react';
@@ -21,11 +22,24 @@ export const FeatureGate = ({
   onUpgradeClick 
 }: FeatureGateProps) => {
   const { isPremium, createCheckout, upgrading } = useSubscription();
+  const { profiles } = useBabyProfile();
 
-  // For now, only profiles and notifications features are gated for basic users
-  const isFeatureAllowed = (feature === 'profiles' || feature === 'notifications') ? isPremium : true;
+  // Check feature access based on subscription and current usage
+  const isFeatureAllowed = () => {
+    switch (feature) {
+      case 'profiles':
+        if (isPremium) return true;
+        // Basic users can create profiles if they have 0 owned profiles
+        const ownedProfiles = profiles.filter(p => !p.is_shared);
+        return ownedProfiles.length === 0;
+      case 'notifications':
+        return isPremium;
+      default:
+        return true; // Other features are available to all users for now
+    }
+  };
 
-  if (isFeatureAllowed) {
+  if (isFeatureAllowed()) {
     return <>{children}</>;
   }
 
@@ -43,6 +57,14 @@ export const FeatureGate = ({
     notifications: 'Smart Notifications'
   };
 
+  const getFeatureMessage = () => {
+    if (feature === 'profiles') {
+      const ownedProfiles = profiles.filter(p => !p.is_shared);
+      return `You have ${ownedProfiles.length}/1 profiles used. Upgrade to Premium for unlimited baby profiles, extended history, family sharing, and more.`;
+    }
+    return `Upgrade to Premium to unlock this feature and get access to unlimited baby profiles, extended history, family sharing, and more.`;
+  };
+
   return (
     <Card className="border-dashed border-2 border-orange-200 bg-orange-50/50">
       <CardContent className="p-6 text-center">
@@ -55,8 +77,7 @@ export const FeatureGate = ({
           {featureNames[feature]} - Premium Feature
         </h3>
         <p className="text-sm text-gray-600 mb-4">
-          Upgrade to Premium to unlock this feature and get access to unlimited baby profiles, 
-          extended history, family sharing, and more.
+          {getFeatureMessage()}
         </p>
         {showUpgrade && (
           <Button 
