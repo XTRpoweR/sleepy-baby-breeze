@@ -13,6 +13,40 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
 };
 
+// Currency and pricing configuration
+const PRICING_CONFIG = {
+  "USD": { amount: 999, country_codes: ["US", "CA"] },
+  "EUR": { amount: 999, country_codes: ["DE", "FR", "IT", "ES", "NL", "BE", "AT", "PT", "IE", "FI", "LU", "MT", "CY", "SK", "SI", "EE", "LV", "LT"] },
+  "SEK": { amount: 1099, country_codes: ["SE"] },
+  "GBP": { amount: 899, country_codes: ["GB"] }
+};
+
+const detectCurrencyFromRequest = (req: Request): string => {
+  // Try to get currency from request body or headers
+  const acceptLanguage = req.headers.get("accept-language") || "";
+  const cfIpCountry = req.headers.get("cf-ipcountry") || "";
+  
+  logStep("Detecting currency", { acceptLanguage, cfIpCountry });
+  
+  // Check country from Cloudflare header first
+  if (cfIpCountry) {
+    for (const [currency, config] of Object.entries(PRICING_CONFIG)) {
+      if (config.country_codes.includes(cfIpCountry)) {
+        logStep("Currency detected from CF country", { country: cfIpCountry, currency });
+        return currency;
+      }
+    }
+  }
+  
+  // Fallback to language detection
+  if (acceptLanguage.includes("sv") || acceptLanguage.includes("se")) return "SEK";
+  if (acceptLanguage.includes("de") || acceptLanguage.includes("fr") || acceptLanguage.includes("it") || acceptLanguage.includes("es")) return "EUR";
+  if (acceptLanguage.includes("en-GB") || acceptLanguage.includes("gb")) return "GBP";
+  
+  // Default to EUR for better Klarna coverage
+  return "EUR";
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -89,6 +123,11 @@ serve(async (req) => {
     
     logStep("User authenticated successfully", { userId: user.id, email: user.email });
 
+    // Detect currency for this request
+    const currency = detectCurrencyFromRequest(req);
+    const pricingInfo = PRICING_CONFIG[currency as keyof typeof PRICING_CONFIG];
+    logStep("Currency and pricing determined", { currency, amount: pricingInfo.amount });
+
     // Initialize Stripe
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     logStep("Stripe initialized");
@@ -113,7 +152,7 @@ serve(async (req) => {
       logStep("New customer created", { customerId });
     }
 
-    // Use your specific product ID and get its active price
+    // Use your specific product ID and create/get price for the detected currency
     const PRODUCT_ID = "prod_SngH6Y04uO0jIF";
     let priceId;
     
@@ -124,43 +163,56 @@ serve(async (req) => {
       const product = await stripe.products.retrieve(PRODUCT_ID);
       logStep("Product retrieved", { productId: product.id, name: product.name });
 
-      // Get active prices for this product
+      // Get active prices for this product with the detected currency
       const prices = await stripe.prices.list({
         product: PRODUCT_ID,
         active: true,
+        currency: currency.toLowerCase(),
         limit: 10
       });
 
-      logStep("Retrieved prices for product", { pricesCount: prices.data.length });
+      logStep("Retrieved prices for product and currency", { pricesCount: prices.data.length, currency });
 
-      if (prices.data.length === 0) {
-        logStep("ERROR: No active prices found for product");
-        throw new Error("No active pricing found for this product. Please contact support.");
-      }
-
-      // Find the recurring price (subscription)
+      // Find the recurring price (subscription) for this currency
       const recurringPrice = prices.data.find(price => price.recurring);
       
-      if (!recurringPrice) {
-        logStep("ERROR: No recurring price found");
-        throw new Error("No subscription pricing found for this product.");
+      if (recurringPrice) {
+        priceId = recurringPrice.id;
+        logStep("Found existing recurring price", { 
+          priceId, 
+          amount: recurringPrice.unit_amount, 
+          currency: recurringPrice.currency,
+          interval: recurringPrice.recurring?.interval 
+        });
+      } else {
+        // Create a new price for this currency if it doesn't exist
+        logStep("Creating new price for currency", { currency, amount: pricingInfo.amount });
+        
+        const newPrice = await stripe.prices.create({
+          product: PRODUCT_ID,
+          unit_amount: pricingInfo.amount,
+          currency: currency.toLowerCase(),
+          recurring: {
+            interval: 'month',
+          },
+        });
+        
+        priceId = newPrice.id;
+        logStep("Created new recurring price", { 
+          priceId, 
+          amount: newPrice.unit_amount, 
+          currency: newPrice.currency,
+          interval: newPrice.recurring?.interval 
+        });
       }
 
-      priceId = recurringPrice.id;
-      logStep("Using recurring price", { 
-        priceId, 
-        amount: recurringPrice.unit_amount, 
-        currency: recurringPrice.currency,
-        interval: recurringPrice.recurring?.interval 
-      });
-
     } catch (error) {
-      logStep("Error retrieving product or prices", { error: error.message });
+      logStep("Error retrieving/creating product prices", { error: error.message });
       throw new Error(`Failed to setup subscription pricing: ${error.message}`);
     }
 
     const origin = req.headers.get("origin") || "https://sleepybabyy.com";
-    logStep("Creating checkout session", { origin, priceId, customerId });
+    logStep("Creating checkout session", { origin, priceId, customerId, currency });
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -178,6 +230,22 @@ serve(async (req) => {
       },
       allow_promotion_codes: true,
       billing_address_collection: "auto",
+      // Enable automatic payment methods including Klarna
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      // Explicitly include payment method types for better control
+      payment_method_types: [
+        'card',
+        'klarna',
+        'sepa_debit',
+        'sofort',
+        'bancontact',
+        'ideal',
+        'giropay',
+        'eps',
+        'p24',
+      ],
       subscription_data: {
         metadata: {
           user_id: user.id,
