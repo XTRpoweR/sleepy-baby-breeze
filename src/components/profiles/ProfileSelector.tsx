@@ -18,14 +18,13 @@ export const ProfileSelector = () => {
     event.stopPropagation();
     
     if (activeProfile?.id === profileId) {
-      setDropdownOpen(false);
-      return;
+      return; // Don't close dropdown if clicking on active profile
     }
     
     console.log('Switching to profile:', profileId);
     const success = await switchProfile(profileId);
     if (success) {
-      setDropdownOpen(false);
+      setDropdownOpen(false); // Only close on successful switch
     }
   };
 
@@ -97,15 +96,23 @@ export const ProfileSelector = () => {
               </div>
             ) : (
               profiles.map((profile) => (
-                <DropdownMenuItem
+                <div
                   key={profile.id}
-                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[56px] ${
+                  className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[56px] transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 ${
                     activeProfile?.id === profile.id
                       ? 'bg-purple-50 text-purple-900'
                       : ''
                   }`}
-                  onSelect={(e) => e.preventDefault()}
                   onClick={(e) => handleProfileSwitch(profile.id, e)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Switch to ${profile.name} profile`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleProfileSwitch(profile.id, e as any);
+                    }
+                  }}
                 >
                   <Avatar className="h-10 w-10 flex-shrink-0">
                     <AvatarImage src={profile.photo_url || ''} />
@@ -140,7 +147,7 @@ export const ProfileSelector = () => {
                   {activeProfile?.id === profile.id && (
                     <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
                   )}
-                </DropdownMenuItem>
+                </div>
               ))
             )}
           </div>
