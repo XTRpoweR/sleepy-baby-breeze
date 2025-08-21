@@ -1,11 +1,5 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -250,16 +244,16 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     );
   };
 
-  // Mobile full-screen content
-  if (isMobile && open) {
+  // Full-screen content for all devices
+  if (open) {
     return (
       <>
         <div className="fixed inset-0 z-[100] bg-background animate-slide-in-right">
-          {/* Mobile Header */}
-          <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 lg:p-6 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
             <div className="flex items-center space-x-2">
-              <Baby className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-semibold">{t('profiles.manage')}</h1>
+              <Baby className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
+              <h1 className="text-lg lg:text-xl font-semibold">{t('profiles.manage')}</h1>
             </div>
             <Button
               variant="ghost"
@@ -271,125 +265,131 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
             </Button>
           </div>
 
-          {/* Mobile Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
-            {/* Role-based messaging for non-owners */}
-            {role !== 'owner' && (
-              <Alert className="border-blue-200 bg-blue-50">
-                <Shield className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-800 text-sm">
-                  {role === 'viewer' 
-                    ? "You have view-only access to baby profiles. You can see profile information but cannot create, edit, or delete profiles. Contact the baby's owner for management permissions if needed."
-                    : "As a caregiver, you can track activities but cannot create new profiles or manage account settings. Only the account owner can create new child profiles."
-                  }
-                </AlertDescription>
-              </Alert>
-            )}
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4 lg:space-y-6 pb-20">
+            <div className="max-w-4xl mx-auto space-y-4 lg:space-y-6">
+              {/* Role-based messaging for non-owners */}
+              {role !== 'owner' && (
+                <Alert className="border-blue-200 bg-blue-50">
+                  <Shield className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-blue-800 text-sm lg:text-base">
+                    {role === 'viewer' 
+                      ? "You have view-only access to baby profiles. You can see profile information but cannot create, edit, or delete profiles. Contact the baby's owner for management permissions if needed."
+                      : "As a caregiver, you can track activities but cannot create new profiles or manage account settings. Only the account owner can create new child profiles."
+                    }
+                  </AlertDescription>
+                </Alert>
+              )}
 
-            {/* Create New Profile - Wrapped with FeatureGate */}
-            <FeatureGate feature="profiles" showUpgrade={true}>
-              <PermissionAwareActions 
-                requiredPermission="canInvite" 
-                showMessage={false}
-                fallback={
-                  role !== 'owner' ? (
-                    <Card className="opacity-60">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-between text-base text-gray-500">
-                          <div className="flex items-center space-x-2">
-                            <Plus className="h-4 w-4" />
-                            <span>{t('profiles.addNew')}</span>
-                            <Shield className="h-4 w-4 ml-2" />
+              {/* Create New Profile - Wrapped with FeatureGate */}
+              <FeatureGate feature="profiles" showUpgrade={true}>
+                <PermissionAwareActions 
+                  requiredPermission="canInvite" 
+                  showMessage={false}
+                  fallback={
+                    role !== 'owner' ? (
+                      <Card className="opacity-60">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="flex items-center justify-between text-base lg:text-lg text-gray-500">
+                            <div className="flex items-center space-x-2">
+                              <Plus className="h-4 w-4 lg:h-5 lg:w-5" />
+                              <span>{t('profiles.addNew')}</span>
+                              <Shield className="h-4 w-4 ml-2" />
+                            </div>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-center py-4">
+                            <p className="text-gray-600 text-sm lg:text-base">Only account owners can create new child profiles.</p>
                           </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-center py-4">
-                          <p className="text-gray-600 text-sm">Only account owners can create new child profiles.</p>
+                        </CardContent>
+                      </Card>
+                    ) : null
+                  }
+                >
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center justify-between text-base lg:text-lg">
+                        <div className="flex items-center space-x-2">
+                          <Plus className="h-4 w-4 lg:h-5 lg:w-5" />
+                          <span>{t('profiles.addNew')}</span>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ) : null
-                }
-              >
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center justify-between text-base">
-                      <div className="flex items-center space-x-2">
-                        <Plus className="h-4 w-4" />
-                        <span>{t('profiles.addNew')}</span>
-                      </div>
-                      <ProfileLimitsIndicator />
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleCreateProfile} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="profileName">{t('profiles.babyName')}</Label>
-                        <Input
-                          id="profileName"
-                          value={newProfileName}
-                          onChange={(e) => setNewProfileName(e.target.value)}
-                          placeholder={t('profiles.enterBabyName')}
-                          className="h-12"
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="birthDate">{t('profiles.birthDate')} ({t('common.optional')})</Label>
-                        <Input
-                          id="birthDate"
-                          type="date"
-                          value={newProfileBirthDate}
-                          onChange={(e) => setNewProfileBirthDate(e.target.value)}
-                          className="h-12"
-                        />
-                      </div>
-                      <Button 
-                        type="submit" 
-                        disabled={!newProfileName.trim() || isCreating}
-                        className="w-full h-12 text-base touch-manipulation"
-                      >
-                        {isCreating ? t('common.creating') : t('profiles.createProfile')}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </PermissionAwareActions>
-            </FeatureGate>
+                        <ProfileLimitsIndicator />
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <form onSubmit={handleCreateProfile} className="space-y-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="profileName">{t('profiles.babyName')}</Label>
+                            <Input
+                              id="profileName"
+                              value={newProfileName}
+                              onChange={(e) => setNewProfileName(e.target.value)}
+                              placeholder={t('profiles.enterBabyName')}
+                              className={isMobile ? "h-12" : ""}
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="birthDate">{t('profiles.birthDate')} ({t('common.optional')})</Label>
+                            <Input
+                              id="birthDate"
+                              type="date"
+                              value={newProfileBirthDate}
+                              onChange={(e) => setNewProfileBirthDate(e.target.value)}
+                              className={isMobile ? "h-12" : ""}
+                            />
+                          </div>
+                        </div>
+                        <Button 
+                          type="submit" 
+                          disabled={!newProfileName.trim() || isCreating}
+                          className={`w-full ${isMobile ? 'h-12 text-base touch-manipulation' : ''}`}
+                        >
+                          {isCreating ? t('common.creating') : t('profiles.createProfile')}
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                </PermissionAwareActions>
+              </FeatureGate>
 
-            {/* Existing Profiles */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-base">
-                  <Baby className="h-4 w-4" />
-                  <span>{t('profiles.existing')} ({profiles.length})</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div className="text-center py-6">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
-                    <p className="text-muted-foreground mt-2 text-sm">{t('common.loading')}</p>
-                  </div>
-                ) : profiles.length === 0 ? (
-                  <div className="text-center py-6">
-                    <Baby className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-muted-foreground text-sm">{t('profiles.noProfiles')}</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {profiles.map(renderProfileCard)}
-                    {/* Swipe instruction for mobile */}
-                    <div className="text-center py-3 px-2">
-                      <p className="text-xs text-muted-foreground">
-                        💡 Swipe left on a profile to delete it
-                      </p>
+              {/* Existing Profiles */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center space-x-2 text-base lg:text-lg">
+                    <Baby className="h-4 w-4 lg:h-5 lg:w-5" />
+                    <span>{t('profiles.existing')} ({profiles.length})</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {loading ? (
+                    <div className="text-center py-6 lg:py-8">
+                      <div className="animate-spin rounded-full h-6 w-6 lg:h-8 lg:w-8 border-b-2 border-primary mx-auto"></div>
+                      <p className="text-muted-foreground mt-2 lg:mt-3 text-sm lg:text-base">{t('common.loading')}</p>
                     </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  ) : profiles.length === 0 ? (
+                    <div className="text-center py-6 lg:py-8">
+                      <Baby className="h-8 w-8 lg:h-12 lg:w-12 text-muted-foreground mx-auto mb-3 lg:mb-4" />
+                      <p className="text-muted-foreground text-sm lg:text-base">{t('profiles.noProfiles')}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {profiles.map(renderProfileCard)}
+                      {/* Swipe instruction for mobile */}
+                      {isMobile && (
+                        <div className="text-center py-3 px-2">
+                          <p className="text-xs text-muted-foreground">
+                            💡 Swipe left on a profile to delete it
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
 
@@ -404,141 +404,6 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
     );
   }
 
-  // Desktop modal experience
-  return (
-    <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="w-full max-w-2xl lg:max-w-3xl max-h-[75vh] overflow-hidden flex flex-col p-0 gap-0">
-          <DialogHeader className="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b">
-            <DialogTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-              <Baby className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span>{t('profiles.manage')}</span>
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 space-y-4 sm:space-y-6">
-            {/* Role-based messaging for non-owners */}
-            {role !== 'owner' && (
-              <Alert className="border-blue-200 bg-blue-50">
-                <Shield className="h-4 w-4 text-blue-600" />
-                <AlertDescription className="text-blue-800">
-                  {role === 'viewer' 
-                    ? "You have view-only access to baby profiles. You can see profile information but cannot create, edit, or delete profiles. Contact the baby's owner for management permissions if needed."
-                    : "As a caregiver, you can track activities but cannot create new profiles or manage account settings. Only the account owner can create new child profiles."
-                  }
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Create New Profile - Wrapped with FeatureGate */}
-            <FeatureGate feature="profiles" showUpgrade={true}>
-              <PermissionAwareActions 
-                requiredPermission="canInvite" 
-                showMessage={false}
-                fallback={
-                  role !== 'owner' ? (
-                    <Card className="opacity-60">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-between text-lg text-gray-500">
-                          <div className="flex items-center space-x-2">
-                            <Plus className="h-5 w-5" />
-                            <span>{t('profiles.addNew')}</span>
-                            <Shield className="h-4 w-4 ml-2" />
-                          </div>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-center py-4">
-                          <p className="text-gray-600">Only account owners can create new child profiles.</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ) : null
-                }
-              >
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center justify-between text-lg">
-                      <div className="flex items-center space-x-2">
-                        <Plus className="h-5 w-5" />
-                        <span>{t('profiles.addNew')}</span>
-                      </div>
-                      <ProfileLimitsIndicator />
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleCreateProfile} className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="profileName">{t('profiles.babyName')}</Label>
-                          <Input
-                            id="profileName"
-                            value={newProfileName}
-                            onChange={(e) => setNewProfileName(e.target.value)}
-                            placeholder={t('profiles.enterBabyName')}
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="birthDate">{t('profiles.birthDate')} ({t('common.optional')})</Label>
-                          <Input
-                            id="birthDate"
-                            type="date"
-                            value={newProfileBirthDate}
-                            onChange={(e) => setNewProfileBirthDate(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <Button 
-                        type="submit" 
-                        disabled={!newProfileName.trim() || isCreating}
-                        className="w-full"
-                      >
-                        {isCreating ? t('common.creating') : t('profiles.createProfile')}
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </PermissionAwareActions>
-            </FeatureGate>
-
-            {/* Existing Profiles */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <Baby className="h-5 w-5" />
-                  <span>{t('profiles.existing')} ({profiles.length})</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                    <p className="text-muted-foreground mt-3">{t('common.loading')}</p>
-                  </div>
-                ) : profiles.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Baby className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">{t('profiles.noProfiles')}</p>
-                  </div>
-                ) : (
-                  <div className="grid gap-3">
-                    {profiles.map(renderProfileCard)}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <DeleteProfileConfirmation
-        isOpen={deleteConfirmation.isOpen}
-        onClose={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-        profileName={deleteConfirmation.profileName}
-        isProcessing={!!isDeletingProfile}
-      />
-    </>
-  );
+  // Return null when not open
+  return null;
 };
