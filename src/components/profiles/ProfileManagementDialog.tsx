@@ -272,7 +272,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
           </div>
 
           {/* Mobile Content */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-20">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
             {/* Role-based messaging for non-owners */}
             {role !== 'owner' && (
               <Alert className="border-blue-200 bg-blue-50">
@@ -295,17 +295,17 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                   role !== 'owner' ? (
                     <Card className="opacity-60">
                       <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center justify-between text-lg text-gray-500">
+                        <CardTitle className="flex items-center justify-between text-base text-gray-500">
                           <div className="flex items-center space-x-2">
-                            <Plus className="h-5 w-5" />
+                            <Plus className="h-4 w-4" />
                             <span>{t('profiles.addNew')}</span>
                             <Shield className="h-4 w-4 ml-2" />
                           </div>
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-center py-6">
-                          <p className="text-gray-600">Only account owners can create new child profiles.</p>
+                        <div className="text-center py-4">
+                          <p className="text-gray-600 text-sm">Only account owners can create new child profiles.</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -314,9 +314,9 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
               >
                 <Card>
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center justify-between text-lg">
+                    <CardTitle className="flex items-center justify-between text-base">
                       <div className="flex items-center space-x-2">
-                        <Plus className="h-5 w-5" />
+                        <Plus className="h-4 w-4" />
                         <span>{t('profiles.addNew')}</span>
                       </div>
                       <ProfileLimitsIndicator />
@@ -361,28 +361,28 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
             {/* Existing Profiles */}
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-lg">
-                  <Baby className="h-5 w-5" />
+                <CardTitle className="flex items-center space-x-2 text-base">
+                  <Baby className="h-4 w-4" />
                   <span>{t('profiles.existing')} ({profiles.length})</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                    <p className="text-muted-foreground mt-3">{t('common.loading')}</p>
+                  <div className="text-center py-6">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                    <p className="text-muted-foreground mt-2 text-sm">{t('common.loading')}</p>
                   </div>
                 ) : profiles.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Baby className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">{t('profiles.noProfiles')}</p>
+                  <div className="text-center py-6">
+                    <Baby className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-muted-foreground text-sm">{t('profiles.noProfiles')}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {profiles.map(renderProfileCard)}
                     {/* Swipe instruction for mobile */}
-                    <div className="text-center py-4 px-2">
-                      <p className="text-sm text-muted-foreground">
+                    <div className="text-center py-3 px-2">
+                      <p className="text-xs text-muted-foreground">
                         💡 Swipe left on a profile to delete it
                       </p>
                     </div>
@@ -408,15 +408,15 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-3xl max-h-[85vh] overflow-hidden flex flex-col p-0 gap-0">
-          <DialogHeader className="flex-shrink-0 p-6 pb-4 border-b">
-            <DialogTitle className="flex items-center space-x-2 text-xl">
-              <Baby className="h-6 w-6" />
+        <DialogContent className="w-full max-w-2xl lg:max-w-3xl max-h-[75vh] overflow-hidden flex flex-col p-0 gap-0">
+          <DialogHeader className="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b">
+            <DialogTitle className="flex items-center space-x-2 text-lg sm:text-xl">
+              <Baby className="h-5 w-5 sm:h-6 sm:w-6" />
               <span>{t('profiles.manage')}</span>
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Role-based messaging for non-owners */}
             {role !== 'owner' && (
               <Alert className="border-blue-200 bg-blue-50">
