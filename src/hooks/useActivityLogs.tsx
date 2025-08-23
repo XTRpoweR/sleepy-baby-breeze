@@ -1,36 +1,66 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface ActivityLog {
   id: string;
+  baby_id: string;
   activity_type: 'sleep' | 'feeding' | 'diaper' | 'custom';
   start_time: string;
-  end_time: string | null;
-  duration_minutes: number | null;
-  notes: string | null;
-  metadata: any;
+  end_time?: string;
+  duration_minutes?: number;
+  notes?: string;
+  quantity?: number;
+  unit?: string;
+  diaper_type?: string;
+  custom_activity_name?: string;
   created_at: string;
+  updated_at: string;
 }
 
-export const useActivityLogs = (babyId: string) => {
-  const { toast } = useToast();
+export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const fetchLogs = useCallback(async () => {
+  console.log('useActivityLogs: babyId changed to:', babyId);
+  console.log('useActivityLogs: forceUpdateCounter:', forceUpdateCounter);
+
+  // Clear logs immediately when babyId changes
+  useEffect(() => {
     if (!babyId) {
-      console.log('No babyId provided to fetchLogs');
+      console.log('useActivityLogs: No babyId, clearing logs');
       setLogs([]);
       setLoading(false);
       return;
     }
 
-    console.log('Fetching activity logs for baby:', babyId);
+    console.log('useActivityLogs: babyId changed, clearing logs and fetching new data');
+    setLogs([]); // Clear immediately
     setLoading(true);
+    fetchLogs();
+  }, [babyId]);
+
+  // Also refetch when forceUpdateCounter changes
+  useEffect(() => {
+    if (babyId && forceUpdateCounter && forceUpdateCounter > 0) {
+      console.log('useActivityLogs: Force update triggered, refetching data');
+      setLoading(true);
+      fetchLogs();
+    }
+  }, [forceUpdateCounter]);
+
+  const fetchLogs = async () => {
+    if (!babyId) {
+      setLogs([]);
+      setLoading(false);
+      return;
+    }
 
     try {
+      console.log('useActivityLogs: Fetching logs for baby:', babyId);
+      
       const { data, error } = await supabase
         .from('baby_activities')
         .select('*')
@@ -41,51 +71,29 @@ export const useActivityLogs = (babyId: string) => {
         console.error('Error fetching activity logs:', error);
         toast({
           title: "Error",
-          description: `Failed to load activity logs: ${error.message}`,
+          description: "Failed to load activity logs",
           variant: "destructive",
         });
         setLogs([]);
       } else {
-        console.log('Successfully fetched activity logs:', data?.length || 0, 'records');
-        // Type assertion to ensure activity_type matches our interface
-        const typedData = (data || []).map(log => ({
-          ...log,
-          activity_type: log.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom'
-        }));
-        setLogs(typedData);
+        console.log('useActivityLogs: Fetched', data?.length || 0, 'logs');
+        setLogs(data || []);
       }
     } catch (error) {
-      console.error('Unexpected error fetching activity logs:', error);
-      toast({
-        title: "Error",
-        description: "Unexpected error loading activity logs",
-        variant: "destructive",
-      });
+      console.error('Unexpected error fetching logs:', error);
       setLogs([]);
     } finally {
       setLoading(false);
     }
-  }, [babyId, toast]);
+  };
 
-  // Immediate effect when babyId changes
-  useEffect(() => {
-    console.log('useActivityLogs: babyId changed to:', babyId);
-    
-    // Clear logs immediately for visual feedback
-    setLogs([]);
+  const refetchLogs = async () => {
+    console.log('useActivityLogs: Manual refetch requested');
     setLoading(true);
-    
-    // Fetch new logs immediately
-    if (babyId) {
-      fetchLogs();
-    } else {
-      setLoading(false);
-    }
-  }, [babyId, fetchLogs]);
+    await fetchLogs();
+  };
 
   const deleteLog = async (logId: string): Promise<boolean> => {
-    console.log('Attempting to delete log:', logId);
-    
     try {
       const { error } = await supabase
         .from('baby_activities')
@@ -96,57 +104,55 @@ export const useActivityLogs = (babyId: string) => {
         console.error('Error deleting activity log:', error);
         toast({
           title: "Error",
-          description: `Failed to delete activity log: ${error.message}`,
+          description: "Failed to delete activity log",
           variant: "destructive",
         });
         return false;
       }
 
-      console.log('Successfully deleted log:', logId);
+      // Remove from local state
+      setLogs(prev => prev.filter(log => log.id !== logId));
+      
       toast({
-        title: "Success!",
+        title: "Success",
         description: "Activity log deleted successfully",
       });
-      
-      // Refresh logs
-      await fetchLogs();
       return true;
     } catch (error) {
-      console.error('Unexpected error deleting activity log:', error);
+      console.error('Unexpected error deleting log:', error);
       return false;
     }
   };
 
   const updateLog = async (logId: string, updates: Partial<ActivityLog>): Promise<boolean> => {
-    console.log('Attempting to update log:', logId, 'with updates:', updates);
-    
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('baby_activities')
         .update(updates)
-        .eq('id', logId);
+        .eq('id', logId)
+        .select()
+        .single();
 
       if (error) {
         console.error('Error updating activity log:', error);
         toast({
           title: "Error",
-          description: `Failed to update activity log: ${error.message}`,
+          description: "Failed to update activity log",
           variant: "destructive",
         });
         return false;
       }
 
-      console.log('Successfully updated log:', logId);
+      // Update local state
+      setLogs(prev => prev.map(log => log.id === logId ? { ...log, ...data } : log));
+      
       toast({
-        title: "Success!",
+        title: "Success",
         description: "Activity log updated successfully",
       });
-      
-      // Refresh logs
-      await fetchLogs();
       return true;
     } catch (error) {
-      console.error('Unexpected error updating activity log:', error);
+      console.error('Unexpected error updating log:', error);
       return false;
     }
   };
@@ -156,6 +162,6 @@ export const useActivityLogs = (babyId: string) => {
     loading,
     deleteLog,
     updateLog,
-    refetchLogs: fetchLogs
+    refetchLogs
   };
 };
