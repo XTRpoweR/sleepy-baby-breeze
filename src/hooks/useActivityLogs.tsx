@@ -8,16 +8,16 @@ interface ActivityLog {
   baby_id: string;
   activity_type: 'sleep' | 'feeding' | 'diaper' | 'custom';
   start_time: string;
-  end_time?: string;
-  duration_minutes?: number;
-  notes?: string;
+  end_time: string | null;
+  duration_minutes: number | null;
+  notes: string | null;
+  metadata: any;
+  created_at: string;
+  updated_at?: string;
   quantity?: number;
   unit?: string;
   diaper_type?: string;
   custom_activity_name?: string;
-  created_at: string;
-  updated_at: string;
-  metadata?: any;
 }
 
 export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => {
@@ -88,11 +88,11 @@ export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => 
             baby_id: log.baby_id,
             activity_type: log.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom',
             start_time: log.start_time,
-            end_time: log.end_time || undefined,
-            duration_minutes: log.duration_minutes || undefined,
-            notes: log.notes || undefined,
+            end_time: log.end_time,
+            duration_minutes: log.duration_minutes,
+            notes: log.notes,
             created_at: log.created_at,
-            updated_at: log.created_at, // Use created_at as fallback since updated_at might not exist in DB
+            updated_at: log.created_at,
             metadata: metadata,
             // Add other fields that might be in metadata
             quantity: metadata?.quantity,
@@ -180,9 +180,9 @@ export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => 
             baby_id: data.baby_id,
             activity_type: data.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom',
             start_time: data.start_time,
-            end_time: data.end_time || undefined,
-            duration_minutes: data.duration_minutes || undefined,
-            notes: data.notes || undefined,
+            end_time: data.end_time,
+            duration_minutes: data.duration_minutes,
+            notes: data.notes,
             created_at: data.created_at,
             updated_at: data.created_at,
             metadata: metadata,
