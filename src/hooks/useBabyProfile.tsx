@@ -23,17 +23,29 @@ export const useBabyProfile = () => {
   const [activeProfile, setActiveProfile] = useState<BabyProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState(false);
+  const [forceUpdateCounter, setForceUpdateCounter] = useState(0);
+
+  console.log('useBabyProfile hook render:', {
+    profiles: profiles.length,
+    activeProfile: activeProfile?.name,
+    loading,
+    switching,
+    forceUpdateCounter
+  });
 
   useEffect(() => {
     if (user) {
+      console.log('User available, fetching profiles for user:', user.id);
       fetchProfiles();
     } else {
+      console.log('No user available, setting loading to false');
       setLoading(false);
     }
   }, [user]);
 
   const fetchProfiles = async () => {
     if (!user) return;
+    console.log('=== Starting fetchProfiles ===');
     try {
       const { data: ownedProfiles, error: ownedError } = await supabase
         .from('baby_profiles')
@@ -52,6 +64,8 @@ export const useBabyProfile = () => {
         return;
       }
 
+      console.log('Fetched owned profiles:', ownedProfiles);
+
       // Fetch shared profiles
       const { data: familyMembers, error: familyError } = await supabase
         .from('family_members')
@@ -68,6 +82,8 @@ export const useBabyProfile = () => {
         console.error('Error fetching shared profiles:', familyError);
         // Don't fail completely, just continue with owned profiles
       }
+
+      console.log('Fetched family members:', familyMembers);
 
       // Only show profiles user has valid role for
       const allProfiles = [
@@ -86,26 +102,36 @@ export const useBabyProfile = () => {
           }))
       ];
 
+      console.log('Combined profiles:', allProfiles);
       setProfiles(allProfiles);
 
       // Find the active profile (prioritize owned profiles)
       const ownedActive = ownedProfiles?.find(profile => profile.is_active);
+      let newActiveProfile = null;
+
       if (ownedActive) {
-        setActiveProfile({
+        newActiveProfile = {
           ...ownedActive,
           is_shared: false,
           user_role: 'owner'
-        });
+        };
+        console.log('Found owned active profile:', newActiveProfile);
       } else if (allProfiles.length > 0) {
         // If no owned active profile, use the first profile
-        setActiveProfile(allProfiles[0]);
+        newActiveProfile = allProfiles[0];
+        console.log('Using first available profile as active:', newActiveProfile);
       } else {
-        setActiveProfile(null);
+        console.log('No profiles available');
+        newActiveProfile = null;
       }
+
+      setActiveProfile(newActiveProfile);
+      console.log('Set active profile to:', newActiveProfile);
     } catch (error) {
       console.error('Error fetching baby profiles:', error);
     } finally {
       setLoading(false);
+      console.log('=== Finished fetchProfiles ===');
     }
   };
 
@@ -233,16 +259,27 @@ export const useBabyProfile = () => {
   };
 
   const switchProfile = async (profileId: string) => {
-    if (!user || switching) return false;
+    if (!user || switching) {
+      console.log('Cannot switch profile - user:', !!user, 'switching:', switching);
+      return false;
+    }
 
-    console.log('Starting profile switch to:', profileId);
+    console.log('=== Starting profile switch ===');
+    console.log('Target profile ID:', profileId);
+    console.log('Current active profile ID:', activeProfile?.id);
+    
+    if (activeProfile?.id === profileId) {
+      console.log('Target profile is already active, no switch needed');
+      return true;
+    }
+
     setSwitching(true);
 
     try {
       // Find the target profile
       const targetProfile = profiles.find(p => p.id === profileId);
       if (!targetProfile) {
-        console.error('Target profile not found');
+        console.error('Target profile not found in profiles list');
         setSwitching(false);
         return false;
       }
@@ -254,21 +291,33 @@ export const useBabyProfile = () => {
         user_role: targetProfile.user_role
       });
 
+      // Update local state first for immediate UI feedback
+      console.log('Updating local state - setting active profile to:', targetProfile.name);
+      setActiveProfile(targetProfile);
+      
+      // Force re-render by incrementing counter
+      setForceUpdateCounter(prev => prev + 1);
+
       // For shared profiles, we only need to update local state
       if (targetProfile.is_shared) {
-        console.log('Switching to shared profile - updating local state only');
-        setActiveProfile(targetProfile);
+        console.log('Switching to shared profile - skipping database update');
         console.log('Successfully switched to shared profile:', targetProfile.name);
+        
+        // Small delay to ensure state propagation
+        setTimeout(() => {
+          console.log('Profile switch completed for shared profile');
+          toast({
+            title: "Profile Switched",
+            description: `Now viewing ${targetProfile.name}'s profile`,
+          });
+        }, 100);
+        
         return true;
       }
 
-      // For owned profiles, update both local state and database
+      // For owned profiles, update the database
       console.log('Switching to owned profile - updating database');
       
-      // First update local state for immediate UI feedback
-      setActiveProfile(targetProfile);
-
-      // Then update the database
       const { error } = await supabase.rpc('set_active_profile', {
         profile_id: profileId,
         user_id_param: user.id
@@ -276,11 +325,9 @@ export const useBabyProfile = () => {
 
       if (error) {
         console.error('Error switching profile in database:', error);
-        // Don't revert local state since we want the switch to work
-        // The database error just means the active flag won't be persisted
         toast({
           title: "Warning",
-          description: "Profile switched but couldn't save preference",
+          description: "Profile switched locally but couldn't save preference",
           variant: "destructive",
         });
         return true; // Still return true since local switch worked
@@ -293,11 +340,16 @@ export const useBabyProfile = () => {
       }));
       setProfiles(updatedProfiles);
 
-      console.log('Profile switch completed successfully for owned profile');
+      console.log('Successfully switched to owned profile:', targetProfile.name);
+      
+      toast({
+        title: "Profile Switched",
+        description: `Now viewing ${targetProfile.name}'s profile`,
+      });
+
       return true;
     } catch (error) {
       console.error('Unexpected error switching profile:', error);
-      // Don't revert activeProfile - keep the switch working
       toast({
         title: "Warning", 
         description: "Profile switched but there was an error",
@@ -306,6 +358,7 @@ export const useBabyProfile = () => {
       return true; // Return true to keep UI working
     } finally {
       setSwitching(false);
+      console.log('=== Profile switch completed ===');
     }
   };
 
@@ -476,6 +529,7 @@ export const useBabyProfile = () => {
     if (sharedProfile) {
       console.log('Setting shared baby as active via setSharedBabyAsActive:', sharedProfile.name);
       setActiveProfile(sharedProfile);
+      setForceUpdateCounter(prev => prev + 1);
     }
   };
 
@@ -493,6 +547,7 @@ export const useBabyProfile = () => {
     switchProfile,
     deleteProfile,
     setSharedBabyAsActive,
-    refetch: fetchProfiles
+    refetch: fetchProfiles,
+    forceUpdateCounter
   };
 };

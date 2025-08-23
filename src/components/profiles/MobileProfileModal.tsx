@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,20 +14,59 @@ interface MobileProfileModalProps {
 }
 
 export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps) => {
-  const { profiles, activeProfile, switching, switchProfile } = useBabyProfile();
+  const { profiles, activeProfile, switching, switchProfile, forceUpdateCounter } = useBabyProfile();
   const [showManagement, setShowManagement] = useState(false);
 
+  // Debug logging for modal component
+  useEffect(() => {
+    if (isOpen) {
+      console.log('MobileProfileModal opened with:', {
+        profilesCount: profiles.length,
+        activeProfileName: activeProfile?.name,
+        activeProfileId: activeProfile?.id,
+        switching,
+        forceUpdateCounter
+      });
+    }
+  }, [isOpen, profiles, activeProfile, switching, forceUpdateCounter]);
+
   const handleProfileSwitch = async (profileId: string) => {
+    console.log('MobileProfileModal handleProfileSwitch called:', {
+      targetProfileId: profileId,
+      currentActiveId: activeProfile?.id,
+      switching
+    });
+
+    if (switching) {
+      console.log('Profile switch already in progress, ignoring mobile click');
+      return;
+    }
+
     if (activeProfile?.id === profileId) {
+      console.log('Target profile is already active, closing mobile modal');
       onClose();
       return;
     }
     
-    console.log('Mobile modal switching to profile:', profileId);
+    console.log('Starting mobile profile switch process...');
     const success = await switchProfile(profileId);
+    
+    console.log('Mobile profile switch result:', { success, targetProfileId: profileId });
+    
     if (success) {
-      // Close modal immediately after successful switch - no page refresh needed
+      console.log('Mobile profile switch successful, closing modal');
+      // Close modal immediately after successful switch
       onClose();
+      
+      // Log post-switch state
+      setTimeout(() => {
+        console.log('Post mobile switch state check:', {
+          newActiveProfile: activeProfile?.id,
+          targetProfile: profileId
+        });
+      }, 200);
+    } else {
+      console.log('Mobile profile switch failed');
     }
   };
 
@@ -67,52 +106,61 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
                 <p>No profiles found</p>
               </div>
             ) : (
-              profiles.map((profile) => (
-                <button
-                  key={profile.id}
-                  className={`w-full flex items-center space-x-3 p-4 rounded-lg border text-left transition-all touch-manipulation ${
-                    activeProfile?.id === profile.id
-                      ? 'bg-purple-50 border-purple-200 ring-2 ring-purple-100'
-                      : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 active:bg-gray-100'
-                  }`}
-                  onClick={() => handleProfileSwitch(profile.id)}
-                  disabled={switching}
-                >
-                  <Avatar className="h-12 w-12 flex-shrink-0">
-                    <AvatarImage src={profile.photo_url || ''} />
-                    <AvatarFallback className="bg-purple-100 text-purple-700">
-                      <Baby className="h-6 w-6" />
-                    </AvatarFallback>
-                  </Avatar>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <h3 className="font-medium text-base truncate">{profile.name}</h3>
-                      {activeProfile?.id === profile.id && (
-                        <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 flex-shrink-0">
-                          Active
-                        </Badge>
-                      )}
-                    </div>
+              profiles.map((profile) => {
+                const isActive = activeProfile?.id === profile.id;
+                console.log(`Rendering mobile profile ${profile.name}:`, { 
+                  isActive, 
+                  profileId: profile.id, 
+                  activeId: activeProfile?.id 
+                });
+                
+                return (
+                  <button
+                    key={profile.id}
+                    className={`w-full flex items-center space-x-3 p-4 rounded-lg border text-left transition-all touch-manipulation ${
+                      isActive
+                        ? 'bg-purple-50 border-purple-200 ring-2 ring-purple-100'
+                        : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 active:bg-gray-100'
+                    } ${switching ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={() => !switching && handleProfileSwitch(profile.id)}
+                    disabled={switching}
+                  >
+                    <Avatar className="h-12 w-12 flex-shrink-0">
+                      <AvatarImage src={profile.photo_url || ''} />
+                      <AvatarFallback className="bg-purple-100 text-purple-700">
+                        <Baby className="h-6 w-6" />
+                      </AvatarFallback>
+                    </Avatar>
                     
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      {profile.birth_date && (
-                        <span>{new Date(profile.birth_date).toLocaleDateString()}</span>
-                      )}
-                      {profile.is_shared && (
-                        <Badge variant="outline" className="text-xs">
-                          {profile.user_role === 'viewer' ? 'Viewer' : 
-                           profile.user_role === 'caregiver' ? 'Caregiver' : 'Shared'}
-                        </Badge>
-                      )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="font-medium text-base truncate">{profile.name}</h3>
+                        {isActive && (
+                          <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 flex-shrink-0">
+                            Active
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        {profile.birth_date && (
+                          <span>{new Date(profile.birth_date).toLocaleDateString()}</span>
+                        )}
+                        {profile.is_shared && (
+                          <Badge variant="outline" className="text-xs">
+                            {profile.user_role === 'viewer' ? 'Viewer' : 
+                             profile.user_role === 'caregiver' ? 'Caregiver' : 'Shared'}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {activeProfile?.id === profile.id && (
-                    <Check className="w-5 h-5 text-purple-500 flex-shrink-0" />
-                  )}
-                </button>
-              ))
+                    {isActive && (
+                      <Check className="w-5 h-5 text-purple-500 flex-shrink-0" />
+                    )}
+                  </button>
+                );
+              })
             )}
           </div>
 
@@ -121,6 +169,7 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
               onClick={handleManageProfiles}
               className="w-full flex items-center space-x-2 h-12 text-base touch-manipulation"
               variant="outline"
+              disabled={switching}
             >
               <Settings className="h-4 w-4" />
               <span>Manage Profiles</span>
