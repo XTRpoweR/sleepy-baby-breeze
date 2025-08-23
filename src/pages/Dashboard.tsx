@@ -29,7 +29,8 @@ const Dashboard = () => {
     activeProfile,
     profiles,
     createProfile,
-    forceUpdateCounter
+    forceUpdateCounter,
+    switching
   } = useBabyProfile();
   const {
     subscriptionTier,
@@ -56,7 +57,8 @@ const Dashboard = () => {
   useEffect(() => {
     console.log('Dashboard: forceUpdateCounter changed to:', forceUpdateCounter);
     console.log('Dashboard: Active profile is now:', activeProfile?.name);
-  }, [forceUpdateCounter, activeProfile]);
+    console.log('Dashboard: Switching state:', switching);
+  }, [forceUpdateCounter, activeProfile, switching]);
 
   // Check if user is truly new (no profiles and no family memberships)
   const isNewUser = profiles.length === 0;
@@ -407,43 +409,60 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Activity & Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3" key={`dashboard-stats-${forceUpdateCounter}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3" key={`dashboard-stats-${forceUpdateCounter}-${switching ? 'switching' : 'stable'}`}>
           {/* Today's Summary */}
           <Card className="lg:col-span-2">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
                 <Baby className="h-4 w-4 text-blue-600" />
                 <span>{t('dashboard.todaysActivity')}</span>
-                {activeProfile && <span className="text-xs font-normal text-gray-600">
+                {switching ? (
+                  <span className="text-xs font-normal text-gray-400 animate-pulse">
+                    Switching profiles...
+                  </span>
+                ) : activeProfile ? (
+                  <span className="text-xs font-normal text-gray-600">
                     for {activeProfile.name}
-                  </span>}
+                  </span>
+                ) : null}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {activeProfile ? <div className="text-center py-3 lg:py-4">
+              {switching ? (
+                <div className="text-center py-3 lg:py-4">
+                  <div className="h-10 w-10 lg:h-12 lg:w-12 bg-gray-200 rounded-full mx-auto mb-1 lg:mb-2 animate-pulse" />
+                  <div className="h-4 bg-gray-200 rounded w-32 mx-auto mb-0.5 animate-pulse" />
+                  <div className="h-3 bg-gray-200 rounded w-48 mx-auto mb-2 animate-pulse" />
+                  <div className="h-8 bg-gray-200 rounded w-24 mx-auto animate-pulse" />
+                </div>
+              ) : activeProfile ? (
+                <div className="text-center py-3 lg:py-4">
                   <Moon className="h-10 w-10 lg:h-12 lg:w-12 text-gray-300 mx-auto mb-1 lg:mb-2" />
                   <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">{t('dashboard.startTracking')}</h3>
                   <p className="text-gray-600 mb-2 text-xs lg:text-sm">
                     {t('dashboard.noDataMessage', {
-                  name: activeProfile.name
-                })}
+                      name: activeProfile.name
+                    })}
                   </p>
                   <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" onClick={handleTrackActivity} size="sm">
                     <Plus className="h-4 w-4 mr-2" />
                     {t('dashboard.startTracking')}
                   </Button>
-                </div> : <div className="text-center py-3 lg:py-4">
+                </div>
+              ) : (
+                <div className="text-center py-3 lg:py-4">
                   <Baby className="h-10 w-10 lg:h-12 lg:w-12 text-gray-300 mx-auto mb-1 lg:mb-2" />
                   <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">No Profile Selected</h3>
                   <p className="text-gray-600 mb-2 text-xs lg:text-sm">
                     Select a child profile to view today's activity
                   </p>
-                </div>}
+                </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Quick Stats */}
-          <Card key={`stats-card-${forceUpdateCounter}`}>
+          <Card key={`stats-card-${forceUpdateCounter}-${activeProfile?.id || 'none'}`}>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
                 <TrendingUp className="h-4 w-4 text-green-600" />
@@ -451,7 +470,8 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {statsLoading ? <div className="space-y-2">
+              {statsLoading || switching ? (
+                <div className="space-y-2">
                   <div className="text-center">
                     <div className="h-5 bg-gray-200 rounded w-12 mx-auto mb-1 animate-pulse"></div>
                     <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
@@ -464,7 +484,9 @@ const Dashboard = () => {
                     <div className="h-5 bg-gray-200 rounded w-6 mx-auto mb-1 animate-pulse"></div>
                     <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
                   </div>
-                </div> : hasActiveProfile ? <>
+                </div>
+              ) : hasActiveProfile ? (
+                <>
                   <div className="text-center">
                     <div className="text-lg lg:text-xl font-bold text-gray-900">{stats.weeklyAverageSleep}</div>
                     <div className="text-xs text-gray-600">{t('dashboard.averageSleep')}</div>
@@ -482,7 +504,9 @@ const Dashboard = () => {
                       Data from this week (Monday-Sunday)
                     </p>
                   </div>
-                </> : <>
+                </>
+              ) : (
+                <>
                   <div className="text-center">
                     <div className="text-lg lg:text-xl font-bold text-gray-900">0h 0m</div>
                     <div className="text-xs text-gray-600">{t('dashboard.averageSleep')}</div>
@@ -500,7 +524,8 @@ const Dashboard = () => {
                       {t('dashboard.noProfileMessage')}
                     </p>
                   </div>
-                </>}
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
