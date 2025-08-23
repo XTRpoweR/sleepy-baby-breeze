@@ -127,6 +127,10 @@ export const useBabyProfile = () => {
 
       setActiveProfile(newActiveProfile);
       console.log('Set active profile to:', newActiveProfile);
+      
+      // Force update counter to ensure all components re-render
+      setForceUpdateCounter(prev => prev + 1);
+      
     } catch (error) {
       console.error('Error fetching baby profiles:', error);
     } finally {
@@ -295,22 +299,22 @@ export const useBabyProfile = () => {
       console.log('Updating local state - setting active profile to:', targetProfile.name);
       setActiveProfile(targetProfile);
       
-      // Force re-render by incrementing counter
-      setForceUpdateCounter(prev => prev + 1);
+      // Immediately force re-render of all components
+      setForceUpdateCounter(prev => {
+        const newValue = prev + 1;
+        console.log('Force update counter incremented to:', newValue);
+        return newValue;
+      });
 
       // For shared profiles, we only need to update local state
       if (targetProfile.is_shared) {
         console.log('Switching to shared profile - skipping database update');
         console.log('Successfully switched to shared profile:', targetProfile.name);
         
-        // Small delay to ensure state propagation
-        setTimeout(() => {
-          console.log('Profile switch completed for shared profile');
-          toast({
-            title: "Profile Switched",
-            description: `Now viewing ${targetProfile.name}'s profile`,
-          });
-        }, 100);
+        toast({
+          title: "Profile Switched",
+          description: `Now viewing ${targetProfile.name}'s profile`,
+        });
         
         return true;
       }

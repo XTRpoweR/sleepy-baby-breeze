@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -46,29 +45,26 @@ export const ProfileSelector = () => {
     }
     
     console.log('Starting profile switch process...');
+    
+    // Close dropdown immediately to show something is happening
+    setDropdownOpen(false);
+    
     const success = await switchProfile(profileId);
     
     console.log('Profile switch result:', { success, targetProfileId: profileId });
     
-    if (success) {
-      console.log('Profile switch successful, closing dropdown');
-      setDropdownOpen(false);
-      
-      // Force a small delay to ensure state has propagated
-      setTimeout(() => {
-        console.log('Post-switch state check:', {
-          newActiveProfile: activeProfile?.id,
-          targetProfile: profileId
-        });
-      }, 200);
-    } else {
-      console.log('Profile switch failed');
+    if (!success) {
+      console.log('Profile switch failed, reopening dropdown');
+      // Reopen dropdown if switch failed
+      setTimeout(() => setDropdownOpen(true), 100);
     }
   };
 
   const handleDropdownOpenChange = (open: boolean) => {
     console.log('ProfileSelector dropdown open change:', open);
-    setDropdownOpen(open);
+    if (!switching) { // Only allow dropdown changes when not switching
+      setDropdownOpen(open);
+    }
   };
 
   const handleManageProfiles = (event: React.MouseEvent) => {
@@ -101,7 +97,13 @@ export const ProfileSelector = () => {
             variant="ghost" 
             className="flex items-center space-x-2 p-2 h-auto justify-start hover:bg-gray-100 touch-manipulation"
             disabled={switching}
-            onClick={handleTriggerClick}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!switching) {
+                setDropdownOpen(!dropdownOpen);
+              }
+            }}
           >
             <Avatar className="h-8 w-8">
               <AvatarImage src={activeProfile.photo_url || ''} />
@@ -110,7 +112,9 @@ export const ProfileSelector = () => {
               </AvatarFallback>
             </Avatar>
             <div className="text-left min-w-0">
-              <div className="font-medium text-sm truncate max-w-[150px]">{activeProfile.name}</div>
+              <div className="font-medium text-sm truncate max-w-[150px]">
+                {switching ? 'Switching...' : activeProfile.name}
+              </div>
               <div className="text-xs text-muted-foreground">
                 {profiles.length} profile{profiles.length !== 1 ? 's' : ''}
               </div>
@@ -141,12 +145,13 @@ export const ProfileSelector = () => {
                 console.log(`Rendering profile ${profile.name}:`, { 
                   isActive, 
                   profileId: profile.id, 
-                  activeId: activeProfile?.id 
+                  activeId: activeProfile?.id,
+                  forceUpdateCounter
                 });
                 
                 return (
                   <div
-                    key={profile.id}
+                    key={`${profile.id}-${forceUpdateCounter}`} // Force re-render with counter
                     className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 min-h-[56px] ${
                       isActive
                         ? 'bg-purple-50 text-purple-900 border border-purple-200'
@@ -156,12 +161,6 @@ export const ProfileSelector = () => {
                     role="button"
                     tabIndex={switching ? -1 : 0}
                     aria-label={`Switch to ${profile.name} profile`}
-                    onKeyDown={(e) => {
-                      if (!switching && (e.key === 'Enter' || e.key === ' ')) {
-                        e.preventDefault();
-                        handleProfileSwitch(profile.id, e as any);
-                      }
-                    }}
                   >
                     <Avatar className="h-10 w-10 flex-shrink-0">
                       <AvatarImage src={profile.photo_url || ''} />
@@ -207,7 +206,12 @@ export const ProfileSelector = () => {
           <DropdownMenuItem
             className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[48px]"
             onSelect={(e) => e.preventDefault()}
-            onClick={handleManageProfiles}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setDropdownOpen(false);
+              setShowManagement(true);
+            }}
           >
             <Settings className="h-4 w-4" />
             <span>Manage Profiles</span>
