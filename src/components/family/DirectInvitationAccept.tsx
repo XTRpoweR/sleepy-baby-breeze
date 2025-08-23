@@ -196,77 +196,51 @@ export const DirectInvitationAccept = () => {
     console.log('Direct acceptance for matching email:', user.email);
 
     try {
-      // Use a transaction to ensure both operations succeed or fail together
-      const { data, error } = await supabase.rpc('accept_family_invitation_atomically', {
-        invitation_id: invitation.id,
-        user_id: user.id,
-        baby_id: invitation.baby_id,
-        role: invitation.role,
-        invited_by: invitation.invited_by,
-        invited_at: invitation.created_at,
-        permissions: invitation.permissions || (invitation.role === 'caregiver' 
-          ? { can_edit: true, can_delete: false, can_invite: false }
-          : { can_edit: false, can_delete: false, can_invite: false })
-      });
+      // Create family member record first
+      const { error: memberError } = await supabase
+        .from('family_members')
+        .insert({
+          baby_id: invitation.baby_id,
+          user_id: user.id,
+          role: invitation.role,
+          status: 'active',
+          invited_by: invitation.invited_by,
+          invited_at: invitation.created_at,
+          joined_at: new Date().toISOString(),
+          permissions: invitation.permissions || (invitation.role === 'caregiver' 
+            ? { can_edit: true, can_delete: false, can_invite: false }
+            : { can_edit: false, can_delete: false, can_invite: false })
+        });
 
-      if (error) {
-        console.error('Error accepting invitation atomically:', error);
-        
-        // Fallback to manual process with better error handling
-        const { error: memberError } = await supabase
-          .from('family_members')
-          .insert({
-            baby_id: invitation.baby_id,
-            user_id: user.id,
-            role: invitation.role,
-            status: 'active',
-            invited_by: invitation.invited_by,
-            invited_at: invitation.created_at,
-            joined_at: new Date().toISOString(),
-            permissions: invitation.permissions || (invitation.role === 'caregiver' 
-              ? { can_edit: true, can_delete: false, can_invite: false }
-              : { can_edit: false, can_delete: false, can_invite: false })
-          });
+      if (memberError) {
+        console.error('Error creating family member:', memberError);
+        toast({
+          title: "Error",
+          description: `Failed to accept invitation: ${memberError.message}`,
+          variant: "destructive",
+        });
+        setProcessing(false);
+        return;
+      }
 
-        if (memberError) {
-          console.error('Error creating family member:', memberError);
-          toast({
-            title: "Error",
-            description: `Failed to accept invitation: ${memberError.message}`,
-            variant: "destructive",
-          });
-          setProcessing(false);
-          return;
-        }
+      console.log('Successfully created family member');
 
-        // Update invitation status with retry logic
-        let updateAttempts = 0;
-        const maxAttempts = 3;
-        
-        while (updateAttempts < maxAttempts) {
-          const { error: updateError } = await supabase
-            .from('family_invitations')
-            .update({ status: 'accepted' })
-            .eq('id', invitation.id);
+      // Update invitation status with improved error handling
+      const { error: updateError } = await supabase
+        .from('family_invitations')
+        .update({ status: 'accepted' })
+        .eq('id', invitation.id);
 
-          if (!updateError) {
-            console.log('Successfully updated invitation status to accepted');
-            break;
-          }
-
-          updateAttempts++;
-          console.error(`Attempt ${updateAttempts} failed to update invitation status:`, updateError);
-          
-          if (updateAttempts === maxAttempts) {
-            console.error('Failed to update invitation status after maximum attempts');
-            // Don't fail the whole process, just log the issue
-            toast({
-              title: "Warning",
-              description: "You've joined the family successfully, but there may be a display issue with the invitation status.",
-              variant: "default",
-            });
-          }
-        }
+      if (updateError) {
+        console.error('Error updating invitation status:', updateError);
+        // Don't fail the whole process, just log the issue
+        toast({
+          title: "Warning",
+          description: "You've joined the family successfully, but there may be a display issue with the invitation status.",
+          variant: "default",
+        });
+      } else {
+        console.log('Successfully updated invitation status to accepted');
       }
 
       // Refresh profiles and set as active
