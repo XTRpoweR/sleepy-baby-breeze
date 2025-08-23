@@ -28,7 +28,8 @@ const Dashboard = () => {
   const {
     activeProfile,
     profiles,
-    createProfile
+    createProfile,
+    forceUpdateCounter
   } = useBabyProfile();
   const {
     subscriptionTier,
@@ -50,6 +51,12 @@ const Dashboard = () => {
   const [showNewUserOnboarding, setShowNewUserOnboarding] = useState(false);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician' | 'notifications'>('profiles');
+
+  // Debug log for force update counter changes
+  useEffect(() => {
+    console.log('Dashboard: forceUpdateCounter changed to:', forceUpdateCounter);
+    console.log('Dashboard: Active profile is now:', activeProfile?.name);
+  }, [forceUpdateCounter, activeProfile]);
 
   // Check if user is truly new (no profiles and no family memberships)
   const isNewUser = profiles.length === 0;
@@ -228,7 +235,7 @@ const Dashboard = () => {
           
           {/* Profile Selector or Create Profile Section */}
           {!isNewUser ? (
-            <div className="mb-2 lg:mb-3">
+            <div className="mb-2 lg:mb-3" key={`profile-selector-${forceUpdateCounter}`}>
               <h2 className="text-base lg:text-lg font-medium text-foreground mb-1 lg:mb-2">{t('dashboard.childProfiles')}</h2>
               
               {/* Desktop Profile Selector */}
@@ -400,7 +407,7 @@ const Dashboard = () => {
         </div>
 
         {/* Recent Activity & Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3" key={`dashboard-stats-${forceUpdateCounter}`}>
           {/* Today's Summary */}
           <Card className="lg:col-span-2">
             <CardHeader className="pb-2">
@@ -436,7 +443,7 @@ const Dashboard = () => {
           </Card>
 
           {/* Quick Stats */}
-          <Card>
+          <Card key={`stats-card-${forceUpdateCounter}`}>
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
                 <TrendingUp className="h-4 w-4 text-green-600" />

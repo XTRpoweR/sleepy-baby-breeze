@@ -1,5 +1,5 @@
 
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 
@@ -10,11 +10,25 @@ interface DashboardStats {
 }
 
 export const useDashboardStats = () => {
-  const { activeProfile } = useBabyProfile();
-  const { logs, loading } = useActivityLogs(activeProfile?.id || '');
+  const { activeProfile, forceUpdateCounter } = useBabyProfile();
+  const { logs, loading, refetch } = useActivityLogs(activeProfile?.id || '');
+  const [isRefetching, setIsRefetching] = useState(false);
+
+  // Force refetch when profile changes (indicated by forceUpdateCounter)
+  useEffect(() => {
+    if (activeProfile?.id && forceUpdateCounter > 0) {
+      console.log('useDashboardStats: Force refetching data due to profile change');
+      setIsRefetching(true);
+      refetch().finally(() => {
+        setIsRefetching(false);
+      });
+    }
+  }, [activeProfile?.id, forceUpdateCounter, refetch]);
 
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
+    console.log('Active profile:', activeProfile?.name);
+    console.log('Force update counter:', forceUpdateCounter);
     console.log('Total logs:', logs.length);
     
     if (!logs.length) {
@@ -125,11 +139,11 @@ export const useDashboardStats = () => {
     console.log('=== End useDashboardStats Debug ===');
 
     return finalStats;
-  }, [logs]);
+  }, [logs, forceUpdateCounter]);
 
   return {
     stats,
-    loading,
+    loading: loading || isRefetching,
     hasActiveProfile: !!activeProfile
   };
 };
