@@ -17,6 +17,7 @@ interface ActivityLog {
   custom_activity_name?: string;
   created_at: string;
   updated_at: string;
+  metadata?: any;
 }
 
 export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => {
@@ -77,7 +78,25 @@ export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => 
         setLogs([]);
       } else {
         console.log('useActivityLogs: Fetched', data?.length || 0, 'logs');
-        setLogs(data || []);
+        // Map the database data to match our ActivityLog interface
+        const mappedLogs: ActivityLog[] = (data || []).map(log => ({
+          id: log.id,
+          baby_id: log.baby_id,
+          activity_type: log.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom',
+          start_time: log.start_time,
+          end_time: log.end_time || undefined,
+          duration_minutes: log.duration_minutes || undefined,
+          notes: log.notes || undefined,
+          created_at: log.created_at,
+          updated_at: log.created_at, // Use created_at as fallback since updated_at might not exist in DB
+          metadata: log.metadata || undefined,
+          // Add other fields that might be in metadata
+          quantity: log.metadata?.quantity,
+          unit: log.metadata?.unit,
+          diaper_type: log.metadata?.diaper_type,
+          custom_activity_name: log.metadata?.custom_activity_name,
+        }));
+        setLogs(mappedLogs);
       }
     } catch (error) {
       console.error('Unexpected error fetching logs:', error);
@@ -143,8 +162,26 @@ export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => 
         return false;
       }
 
-      // Update local state
-      setLogs(prev => prev.map(log => log.id === logId ? { ...log, ...data } : log));
+      // Update local state with proper mapping
+      setLogs(prev => prev.map(log => {
+        if (log.id === logId) {
+          return {
+            ...log,
+            ...updates,
+            id: data.id,
+            baby_id: data.baby_id,
+            activity_type: data.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom',
+            start_time: data.start_time,
+            end_time: data.end_time || undefined,
+            duration_minutes: data.duration_minutes || undefined,
+            notes: data.notes || undefined,
+            created_at: data.created_at,
+            updated_at: data.created_at,
+            metadata: data.metadata || undefined,
+          };
+        }
+        return log;
+      }));
       
       toast({
         title: "Success",

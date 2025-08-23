@@ -91,7 +91,7 @@ export const ProfileSelector = () => {
     return null;
   }
 
-  const isCurrentlySwitching = switching || localSwitching;
+  const isCurrentlySwitching = switching || localSwitching !== null;
   const switchingToProfile = localSwitching ? profiles.find(p => p.id === localSwitching) : null;
 
   console.log('Rendering ProfileSelector with active profile:', activeProfile.name);
