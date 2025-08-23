@@ -26,6 +26,17 @@ export const useFamilyData = (babyId: string | null, checkOwnerPermission: () =>
     console.log('Fetching family members for baby:', babyId, 'user:', user.id, 'forceRefresh:', forceRefresh);
 
     try {
+      // Clean up any inconsistent invitation states before fetching
+      try {
+        await supabase.rpc('cleanup_inconsistent_invitations', {
+          baby_uuid: babyId
+        });
+        console.log('Cleaned up inconsistent invitations for baby:', babyId);
+      } catch (cleanupError) {
+        console.warn('Failed to cleanup inconsistent invitations:', cleanupError);
+        // Don't fail the whole operation if cleanup fails
+      }
+
       const { data: familyMembersData, error: membersError } = await supabase.rpc('get_family_members_with_profiles', {
         baby_uuid: babyId
       });
@@ -55,6 +66,7 @@ export const useFamilyData = (babyId: string | null, checkOwnerPermission: () =>
         console.error('Error fetching invitations:', invitationsError);
         setInvitations([]);
       } else {
+        console.log('Successfully fetched invitations:', familyInvitations);
         setInvitations(familyInvitations || []);
       }
     } catch (error) {
