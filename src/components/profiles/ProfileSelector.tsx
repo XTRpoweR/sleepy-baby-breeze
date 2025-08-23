@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, Settings, Baby, Loader2 } from 'lucide-react';
+import { ChevronDown, Settings, Baby, User } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { ProfileManagementDialog } from './ProfileManagementDialog';
 
@@ -12,7 +11,6 @@ export const ProfileSelector = () => {
   const { profiles, activeProfile, switching, switchProfile, forceUpdateCounter } = useBabyProfile();
   const [showManagement, setShowManagement] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [localSwitching, setLocalSwitching] = useState<string | null>(null);
 
   // Debug logging for component updates
   useEffect(() => {
@@ -21,10 +19,9 @@ export const ProfileSelector = () => {
       activeProfileName: activeProfile?.name,
       activeProfileId: activeProfile?.id,
       switching,
-      localSwitching,
       forceUpdateCounter
     });
-  }, [profiles, activeProfile, switching, localSwitching, forceUpdateCounter]);
+  }, [profiles, activeProfile, switching, forceUpdateCounter]);
 
   const handleProfileSwitch = async (profileId: string, event: React.MouseEvent) => {
     event.preventDefault();
@@ -33,11 +30,10 @@ export const ProfileSelector = () => {
     console.log('ProfileSelector handleProfileSwitch called:', {
       targetProfileId: profileId,
       currentActiveId: activeProfile?.id,
-      switching,
-      localSwitching
+      switching
     });
     
-    if (switching || localSwitching) {
+    if (switching) {
       console.log('Profile switch already in progress, ignoring click');
       return;
     }
@@ -50,30 +46,23 @@ export const ProfileSelector = () => {
     
     console.log('Starting profile switch process...');
     
-    // Set local switching state for immediate UI feedback
-    setLocalSwitching(profileId);
-    
-    // Close dropdown immediately
+    // Close dropdown immediately to show something is happening
     setDropdownOpen(false);
     
-    try {
-      const success = await switchProfile(profileId);
-      console.log('Profile switch result:', { success, targetProfileId: profileId });
-      
-      if (!success) {
-        console.log('Profile switch failed');
-        // Reopen dropdown if switch failed
-        setTimeout(() => setDropdownOpen(true), 100);
-      }
-    } finally {
-      // Clear local switching state
-      setLocalSwitching(null);
+    const success = await switchProfile(profileId);
+    
+    console.log('Profile switch result:', { success, targetProfileId: profileId });
+    
+    if (!success) {
+      console.log('Profile switch failed, reopening dropdown');
+      // Reopen dropdown if switch failed
+      setTimeout(() => setDropdownOpen(true), 100);
     }
   };
 
   const handleDropdownOpenChange = (open: boolean) => {
     console.log('ProfileSelector dropdown open change:', open);
-    if (!switching && !localSwitching) {
+    if (!switching) { // Only allow dropdown changes when not switching
       setDropdownOpen(open);
     }
   };
@@ -86,13 +75,17 @@ export const ProfileSelector = () => {
     setShowManagement(true);
   };
 
+  const handleTriggerClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log('ProfileSelector trigger clicked, current state:', dropdownOpen);
+    setDropdownOpen(!dropdownOpen);
+  };
+
   if (!activeProfile) {
     console.log('No active profile, not rendering ProfileSelector');
     return null;
   }
-
-  const isCurrentlySwitching = switching || localSwitching !== null;
-  const switchingToProfile = localSwitching ? profiles.find(p => p.id === localSwitching) : null;
 
   console.log('Rendering ProfileSelector with active profile:', activeProfile.name);
 
@@ -103,11 +96,11 @@ export const ProfileSelector = () => {
           <Button 
             variant="ghost" 
             className="flex items-center space-x-2 p-2 h-auto justify-start hover:bg-gray-100 touch-manipulation"
-            disabled={isCurrentlySwitching}
+            disabled={switching}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              if (!isCurrentlySwitching) {
+              if (!switching) {
                 setDropdownOpen(!dropdownOpen);
               }
             }}
@@ -119,15 +112,8 @@ export const ProfileSelector = () => {
               </AvatarFallback>
             </Avatar>
             <div className="text-left min-w-0">
-              <div className="font-medium text-sm truncate max-w-[150px] flex items-center space-x-1">
-                {isCurrentlySwitching && (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                )}
-                <span>
-                  {switchingToProfile ? `Switching to ${switchingToProfile.name}...` : 
-                   switching ? 'Switching...' : 
-                   activeProfile.name}
-                </span>
+              <div className="font-medium text-sm truncate max-w-[150px]">
+                {switching ? 'Switching...' : activeProfile.name}
               </div>
               <div className="text-xs text-muted-foreground">
                 {profiles.length} profile{profiles.length !== 1 ? 's' : ''}
@@ -156,19 +142,24 @@ export const ProfileSelector = () => {
             ) : (
               profiles.map((profile) => {
                 const isActive = activeProfile?.id === profile.id;
-                const isSwitchingToThis = localSwitching === profile.id;
+                console.log(`Rendering profile ${profile.name}:`, { 
+                  isActive, 
+                  profileId: profile.id, 
+                  activeId: activeProfile?.id,
+                  forceUpdateCounter
+                });
                 
                 return (
                   <div
-                    key={`${profile.id}-${forceUpdateCounter}`}
+                    key={`${profile.id}-${forceUpdateCounter}`} // Force re-render with counter
                     className={`flex items-center space-x-3 p-3 cursor-pointer rounded-lg mb-1 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 min-h-[56px] ${
                       isActive
                         ? 'bg-purple-50 text-purple-900 border border-purple-200'
                         : 'bg-white hover:bg-gray-50 focus:bg-gray-50'
-                    } ${isCurrentlySwitching ? 'opacity-50 cursor-not-allowed' : 'touch-manipulation'}`}
-                    onClick={(e) => !isCurrentlySwitching && handleProfileSwitch(profile.id, e)}
+                    } ${switching ? 'opacity-50 cursor-not-allowed' : 'touch-manipulation'}`}
+                    onClick={(e) => !switching && handleProfileSwitch(profile.id, e)}
                     role="button"
-                    tabIndex={isCurrentlySwitching ? -1 : 0}
+                    tabIndex={switching ? -1 : 0}
                     aria-label={`Switch to ${profile.name} profile`}
                   >
                     <Avatar className="h-10 w-10 flex-shrink-0">
@@ -180,20 +171,10 @@ export const ProfileSelector = () => {
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-medium truncate flex items-center space-x-1">
-                          {isSwitchingToThis && (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          )}
-                          <span>{profile.name}</span>
-                        </span>
-                        {isActive && !isSwitchingToThis && (
+                        <span className="font-medium truncate">{profile.name}</span>
+                        {isActive && (
                           <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 flex-shrink-0">
                             Active
-                          </Badge>
-                        )}
-                        {isSwitchingToThis && (
-                          <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 flex-shrink-0">
-                            Switching...
                           </Badge>
                         )}
                       </div>
@@ -211,7 +192,7 @@ export const ProfileSelector = () => {
                       </div>
                     </div>
 
-                    {isActive && !isSwitchingToThis && (
+                    {isActive && (
                       <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
                     )}
                   </div>
@@ -225,7 +206,12 @@ export const ProfileSelector = () => {
           <DropdownMenuItem
             className="flex items-center space-x-2 p-3 cursor-pointer bg-white hover:bg-gray-50 focus:bg-gray-50 touch-manipulation min-h-[48px]"
             onSelect={(e) => e.preventDefault()}
-            onClick={handleManageProfiles}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setDropdownOpen(false);
+              setShowManagement(true);
+            }}
           >
             <Settings className="h-4 w-4" />
             <span>Manage Profiles</span>
