@@ -18,7 +18,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -26,13 +26,12 @@ const Auth = () => {
   const redirectTo = searchParams.get('redirect');
 
   useEffect(() => {
-    if (user) {
-      // If user is already authenticated and there's a redirect, go there
+    // If user is already authenticated, redirect them
+    if (user && session) {
+      console.log('User already authenticated, redirecting...');
       if (redirectTo) {
-        // Check if the redirect URL contains success parameter to avoid loops
         const redirectUrl = new URL(redirectTo, window.location.origin);
         if (redirectUrl.searchParams.get('success') === 'true') {
-          // If already marked as success, go directly to dashboard
           navigate('/dashboard');
         } else {
           navigate(redirectTo);
@@ -41,7 +40,7 @@ const Auth = () => {
         navigate('/dashboard');
       }
     }
-  }, [user, navigate, redirectTo]);
+  }, [user, session, navigate, redirectTo]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,31 +48,33 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
           password,
         });
 
         if (error) {
+          console.error('Sign-in error:', error);
           toast({
-            title: "Error",
+            title: "Sign In Failed",
             description: error.message,
             variant: "destructive",
           });
         } else {
+          console.log('Sign-in successful:', data.user?.email);
           toast({
             title: "Success",
             description: "Successfully signed in!",
           });
-          // Navigation will be handled by the useEffect above
+          // Navigation will be handled by useEffect when user state updates
         }
       } else {
-        const { error } = await supabase.auth.signUp({
-          email,
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(),
           password,
           options: {
             data: {
-              full_name: fullName,
+              full_name: fullName.trim(),
             },
             emailRedirectTo: redirectTo ? 
               `${window.location.origin}${redirectTo}` : 
@@ -91,13 +92,22 @@ const Auth = () => {
             variant: "destructive",
           });
         } else {
-          toast({
-            title: "Success",
-            description: "Account created! Please check your email for verification.",
-          });
+          console.log('Sign-up successful:', data.user?.email);
+          if (data.user && !data.session) {
+            toast({
+              title: "Success",
+              description: "Account created! Please check your email for verification.",
+            });
+          } else {
+            toast({
+              title: "Success",
+              description: "Account created and signed in!",
+            });
+          }
         }
       }
     } catch (error) {
+      console.error('Auth error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -121,6 +131,7 @@ const Auth = () => {
       });
 
       if (error) {
+        console.error('Google auth error:', error);
         toast({
           title: "Error",
           description: error.message,
@@ -128,6 +139,7 @@ const Auth = () => {
         });
       }
     } catch (error) {
+      console.error('Google auth error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -137,6 +149,18 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  // Show loading state while checking authentication
+  if (user && session) {
+    return (
+      <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center p-4">
