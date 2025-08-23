@@ -11,7 +11,7 @@ interface DashboardStats {
 
 export const useDashboardStats = () => {
   const { activeProfile, forceUpdateCounter } = useBabyProfile();
-  const { logs, loading, refetch } = useActivityLogs(activeProfile?.id || '');
+  const { logs, loading, refetchLogs } = useActivityLogs(activeProfile?.id || '');
   const [isRefetching, setIsRefetching] = useState(false);
 
   // Force refetch when profile changes (indicated by forceUpdateCounter)
@@ -19,11 +19,11 @@ export const useDashboardStats = () => {
     if (activeProfile?.id && forceUpdateCounter > 0) {
       console.log('useDashboardStats: Force refetching data due to profile change');
       setIsRefetching(true);
-      refetch().finally(() => {
+      refetchLogs().finally(() => {
         setIsRefetching(false);
       });
     }
-  }, [activeProfile?.id, forceUpdateCounter, refetch]);
+  }, [activeProfile?.id, forceUpdateCounter, refetchLogs]);
 
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
