@@ -79,23 +79,28 @@ export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => 
       } else {
         console.log('useActivityLogs: Fetched', data?.length || 0, 'logs');
         // Map the database data to match our ActivityLog interface
-        const mappedLogs: ActivityLog[] = (data || []).map(log => ({
-          id: log.id,
-          baby_id: log.baby_id,
-          activity_type: log.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom',
-          start_time: log.start_time,
-          end_time: log.end_time || undefined,
-          duration_minutes: log.duration_minutes || undefined,
-          notes: log.notes || undefined,
-          created_at: log.created_at,
-          updated_at: log.created_at, // Use created_at as fallback since updated_at might not exist in DB
-          metadata: log.metadata || undefined,
-          // Add other fields that might be in metadata
-          quantity: log.metadata?.quantity,
-          unit: log.metadata?.unit,
-          diaper_type: log.metadata?.diaper_type,
-          custom_activity_name: log.metadata?.custom_activity_name,
-        }));
+        const mappedLogs: ActivityLog[] = (data || []).map(log => {
+          // Safely parse metadata as an object
+          const metadata = typeof log.metadata === 'object' && log.metadata !== null ? log.metadata as any : {};
+          
+          return {
+            id: log.id,
+            baby_id: log.baby_id,
+            activity_type: log.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom',
+            start_time: log.start_time,
+            end_time: log.end_time || undefined,
+            duration_minutes: log.duration_minutes || undefined,
+            notes: log.notes || undefined,
+            created_at: log.created_at,
+            updated_at: log.created_at, // Use created_at as fallback since updated_at might not exist in DB
+            metadata: metadata,
+            // Add other fields that might be in metadata
+            quantity: metadata?.quantity,
+            unit: metadata?.unit,
+            diaper_type: metadata?.diaper_type,
+            custom_activity_name: metadata?.custom_activity_name,
+          };
+        });
         setLogs(mappedLogs);
       }
     } catch (error) {
@@ -165,6 +170,9 @@ export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => 
       // Update local state with proper mapping
       setLogs(prev => prev.map(log => {
         if (log.id === logId) {
+          // Safely parse metadata as an object
+          const metadata = typeof data.metadata === 'object' && data.metadata !== null ? data.metadata as any : {};
+          
           return {
             ...log,
             ...updates,
@@ -177,7 +185,7 @@ export const useActivityLogs = (babyId: string, forceUpdateCounter?: number) => 
             notes: data.notes || undefined,
             created_at: data.created_at,
             updated_at: data.created_at,
-            metadata: data.metadata || undefined,
+            metadata: metadata,
           };
         }
         return log;
