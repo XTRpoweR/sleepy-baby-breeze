@@ -14,21 +14,14 @@ export const useDashboardStats = () => {
   const { logs, loading, refetchLogs } = useActivityLogs(activeProfile?.id || '', forceUpdateCounter);
   const [isRefetching, setIsRefetching] = useState(false);
   const [currentProfileId, setCurrentProfileId] = useState<string | null>(null);
-  const [immediateSwitch, setImmediateSwitch] = useState(false);
 
-  // Immediately detect profile changes and clear stats
+  // Track profile changes but don't use immediateSwitch flag
   useEffect(() => {
     const newProfileId = activeProfile?.id || null;
     
     if (currentProfileId !== newProfileId) {
       console.log('useDashboardStats: Profile changed from', currentProfileId, 'to', newProfileId);
       setCurrentProfileId(newProfileId);
-      setImmediateSwitch(true);
-      
-      // Clear immediate switch flag after a short delay
-      const timer = setTimeout(() => {
-        setImmediateSwitch(false);
-      }, 100);
       
       // Force immediate refetch when profile changes
       if (newProfileId) {
@@ -38,14 +31,12 @@ export const useDashboardStats = () => {
           setIsRefetching(false);
         });
       }
-      
-      return () => clearTimeout(timer);
     }
   }, [activeProfile?.id, refetchLogs]);
 
   // Additional force refetch when forceUpdateCounter changes
   useEffect(() => {
-    if (activeProfile?.id && forceUpdateCounter > 0) {
+    if (activeProfile?.id && forceUpdateCounter && forceUpdateCounter > 0) {
       console.log('useDashboardStats: Force refetching data due to forceUpdateCounter change');
       setIsRefetching(true);
       refetchLogs().finally(() => {
@@ -59,14 +50,23 @@ export const useDashboardStats = () => {
     console.log('Active profile:', activeProfile?.name);
     console.log('Profile ID:', activeProfile?.id);
     console.log('Switching:', switching);
-    console.log('Immediate switch:', immediateSwitch);
     console.log('Force update counter:', forceUpdateCounter);
     console.log('Total logs:', logs.length);
     console.log('Current profile ID tracked:', currentProfileId);
     
-    // Return empty stats immediately if switching profiles, no profile, or immediate switch
-    if (switching || immediateSwitch || !activeProfile || !logs.length) {
-      console.log('No data available - switching:', switching, 'immediateSwitch:', immediateSwitch, 'activeProfile:', !!activeProfile, 'logs:', logs.length);
+    // Return empty stats only if switching profiles or no profile
+    if (switching || !activeProfile) {
+      console.log('No data available - switching:', switching, 'activeProfile:', !!activeProfile);
+      return {
+        weeklyAverageSleep: '0h 0m',
+        weeklyFeedings: 0,
+        weeklyDiaperChanges: 0
+      };
+    }
+
+    // If no logs, return zero stats but don't treat as loading
+    if (!logs.length) {
+      console.log('No logs available for profile:', activeProfile.name);
       return {
         weeklyAverageSleep: '0h 0m',
         weeklyFeedings: 0,
@@ -125,11 +125,11 @@ export const useDashboardStats = () => {
     console.log('=== End useDashboardStats Debug ===');
 
     return finalStats;
-  }, [logs, forceUpdateCounter, activeProfile, switching, immediateSwitch]);
+  }, [logs, forceUpdateCounter, activeProfile, switching]);
 
   return {
     stats,
-    loading: loading || isRefetching || switching || immediateSwitch,
-    hasActiveProfile: !!activeProfile && !switching && !immediateSwitch
+    loading: loading || isRefetching || switching,
+    hasActiveProfile: !!activeProfile && !switching
   };
 };
