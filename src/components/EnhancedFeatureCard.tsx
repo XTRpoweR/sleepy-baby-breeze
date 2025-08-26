@@ -23,30 +23,30 @@ const EnhancedFeatureCard = memo(({ feature, index }: EnhancedFeatureCardProps) 
       }`}
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      <CardContent className={`p-4 sm:p-6 md:p-8 ${hasIllustration ? 'text-center' : ''}`}>
+      <CardContent className={`p-6 sm:p-8 ${hasIllustration ? 'text-center' : ''}`}>
         {hasIllustration ? (
           <div className="mb-6">
-            <div className="inline-flex p-4 rounded-2xl gradient-dynamic-slow mb-4 transition-transform duration-300 group-hover:scale-105">
+            <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 mb-6 transition-transform duration-300 group-hover:scale-105 border border-blue-100">
               <img 
                 src={feature.illustration} 
                 alt={`${feature.title} illustration`}
-                className="w-16 h-16 sm:w-20 sm:h-20"
+                className="w-24 h-18 sm:w-32 sm:h-24 object-contain"
                 loading="lazy"
               />
             </div>
           </div>
         ) : (
-          <div className="inline-flex p-2 sm:p-3 rounded-2xl gradient-dynamic-slow mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110">
-            <IconComponent className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+          <div className="inline-flex p-3 rounded-2xl gradient-dynamic-slow mb-6 transition-transform duration-300 group-hover:scale-110">
+            <IconComponent className="h-8 w-8 text-white" />
           </div>
         )}
         
-        <h3 className={`text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight leading-tight ${
+        <h3 className={`text-xl font-bold text-gray-900 mb-4 tracking-tight leading-tight ${
           hasIllustration ? 'text-center' : ''
         }`}>
           {feature.title}
         </h3>
-        <p className={`text-sm sm:text-base text-gray-600 leading-relaxed font-light ${
+        <p className={`text-base text-gray-600 leading-relaxed font-light ${
           hasIllustration ? 'text-center max-w-md mx-auto' : ''
         }`}>
           {feature.description}

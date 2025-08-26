@@ -1,43 +1,70 @@
 
-<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
-  <rect width="320" height="240" rx="16" fill="url(#gradient1)"/>
+  <rect width="400" height="300" rx="20" fill="url(#gradient1)"/>
   
   <!-- Mobile Device -->
-  <rect x="80" y="60" width="160" height="120" rx="12" fill="white" stroke="#E2E8F0" stroke-width="2"/>
-  <rect x="90" y="80" width="140" height="80" rx="4" fill="#F8FAFC"/>
+  <rect x="50" y="40" width="200" height="160" rx="16" fill="white" stroke="#E2E8F0" stroke-width="3"/>
+  <rect x="65" y="60" width="170" height="120" rx="8" fill="#F8FAFC"/>
   
-  <!-- App Interface Elements -->
-  <circle cx="110" cy="100" r="8" fill="#10B981"/>
-  <rect x="125" y="95" width="80" height="4" rx="2" fill="#10B981"/>
-  <rect x="125" y="105" width="60" height="3" rx="1.5" fill="#94A3B8"/>
+  <!-- App Interface Header -->
+  <rect x="75" y="70" width="150" height="20" rx="10" fill="#6366F1"/>
+  <circle cx="90" cy="80" r="4" fill="white"/>
+  <rect x="100" y="77" width="80" height="6" rx="3" fill="white"/>
+  <rect x="190" y="77" width="25" height="6" rx="3" fill="white"/>
   
-  <circle cx="110" cy="120" r="8" fill="#F59E0B"/>
-  <rect x="125" y="115" width="70" height="4" rx="2" fill="#F59E0B"/>
-  <rect x="125" y="125" width="50" height="3" rx="1.5" fill="#94A3B8"/>
+  <!-- Sleep Entry -->
+  <circle cx="95" cy="105" r="12" fill="#10B981"/>
+  <path d="M91 105l3 3 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="115" y="98" width="80" height="6" rx="3" fill="#10B981"/>
+  <rect x="115" y="108" width="60" height="4" rx="2" fill="#94A3B8"/>
   
-  <circle cx="110" cy="140" r="8" fill="#EF4444"/>
-  <rect x="125" y="135" width="85" height="4" rx="2" fill="#EF4444"/>
-  <rect x="125" y="145" width="65" height="3" rx="1.5" fill="#94A3B8"/>
+  <!-- Feeding Entry -->
+  <circle cx="95" cy="130" r="12" fill="#F59E0B"/>
+  <path d="M89 130h12M95 124v12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <rect x="115" y="123" width="75" height="6" rx="3" fill="#F59E0B"/>
+  <rect x="115" y="133" width="50" height="4" rx="2" fill="#94A3B8"/>
+  
+  <!-- Diaper Entry -->
+  <circle cx="95" cy="155" r="12" fill="#EF4444"/>
+  <rect x="89" y="149" width="12" height="12" rx="6" fill="white"/>
+  <rect x="115" y="148" width="70" height="6" rx="3" fill="#EF4444"/>
+  <rect x="115" y="158" width="45" height="4" rx="2" fill="#94A3B8"/>
   
   <!-- Parent Figure -->
-  <circle cx="200" cy="45" r="12" fill="#FEF3C7"/>
-  <rect x="185" y="55" width="30" height="40" rx="15" fill="#DBEAFE"/>
-  <rect x="190" y="70" width="8" height="25" rx="4" fill="#FEF3C7"/>
-  <rect x="202" y="70" width="8" height="25" rx="4" fill="#FEF3C7"/>
+  <circle cx="300" cy="60" r="20" fill="#FEF3C7"/>
+  <circle cx="295" cy="55" r="3" fill="#F59E0B"/>
+  <circle cx="305" cy="55" r="3" fill="#F59E0B"/>
+  <path d="M295 65c0-5 4-9 10-9s10 4 10 9" stroke="#F59E0B" stroke-width="2" fill="none"/>
+  <rect x="275" y="78" width="50" height="60" rx="25" fill="#DBEAFE"/>
+  <rect x="285" y="95" width="12" height="35" rx="6" fill="#FEF3C7"/>
+  <rect x="303" y="95" width="12" height="35" rx="6" fill="#FEF3C7"/>
   
-  <!-- Activity Icons -->
-  <circle cx="50" cy="200" r="16" fill="#DBEAFE" opacity="0.8"/>
-  <path d="M42 200h16M50 192v16" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+  <!-- Activity Icons Around -->
+  <circle cx="80" cy="230" r="20" fill="#DBEAFE" opacity="0.9"/>
+  <path d="M72 230h16M80 222v16" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
   
-  <circle cx="270" cy="200" r="16" fill="#FEF3C7" opacity="0.8"/>
-  <circle cx="270" cy="196" r="3" fill="#F59E0B"/>
-  <circle cx="270" cy="204" r="3" fill="#F59E0B"/>
+  <circle cx="170" cy="240" r="20" fill="#FEF3C7" opacity="0.9"/>
+  <circle cx="170" cy="235" r="4" fill="#F59E0B"/>
+  <circle cx="170" cy="245" r="4" fill="#F59E0B"/>
+  
+  <circle cx="280" cy="220" r="20" fill="#FEE2E2" opacity="0.9"/>
+  <rect x="270" y="210" width="20" height="20" rx="10" fill="#EF4444"/>
+  <circle cx="275" cy="215" r="2" fill="white"/>
+  <circle cx="285" cy="215" r="2" fill="white"/>
+  
+  <!-- Time Indicators -->
+  <text x="320" y="190" fill="#64748B" font-size="14" font-family="Arial, sans-serif">9:30 PM</text>
+  <text x="320" y="210" fill="#64748B" font-size="14" font-family="Arial, sans-serif">Sleep</text>
+  
+  <text x="320" y="240" fill="#64748B" font-size="14" font-family="Arial, sans-serif">2:15 AM</text>
+  <text x="320" y="260" fill="#64748B" font-size="14" font-family="Arial, sans-serif">Wake</text>
   
   <defs>
     <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#EEF2FF;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#E0F2FE;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#E0F2FE;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0FDF4;stop-opacity:1" />
     </linearGradient>
   </defs>
 </svg>
