@@ -1,0 +1,43 @@
+
+<svg width="320" height="240" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="320" height="240" rx="16" fill="url(#gradient1)"/>
+  
+  <!-- Mobile Device -->
+  <rect x="80" y="60" width="160" height="120" rx="12" fill="white" stroke="#E2E8F0" stroke-width="2"/>
+  <rect x="90" y="80" width="140" height="80" rx="4" fill="#F8FAFC"/>
+  
+  <!-- App Interface Elements -->
+  <circle cx="110" cy="100" r="8" fill="#10B981"/>
+  <rect x="125" y="95" width="80" height="4" rx="2" fill="#10B981"/>
+  <rect x="125" y="105" width="60" height="3" rx="1.5" fill="#94A3B8"/>
+  
+  <circle cx="110" cy="120" r="8" fill="#F59E0B"/>
+  <rect x="125" y="115" width="70" height="4" rx="2" fill="#F59E0B"/>
+  <rect x="125" y="125" width="50" height="3" rx="1.5" fill="#94A3B8"/>
+  
+  <circle cx="110" cy="140" r="8" fill="#EF4444"/>
+  <rect x="125" y="135" width="85" height="4" rx="2" fill="#EF4444"/>
+  <rect x="125" y="145" width="65" height="3" rx="1.5" fill="#94A3B8"/>
+  
+  <!-- Parent Figure -->
+  <circle cx="200" cy="45" r="12" fill="#FEF3C7"/>
+  <rect x="185" y="55" width="30" height="40" rx="15" fill="#DBEAFE"/>
+  <rect x="190" y="70" width="8" height="25" rx="4" fill="#FEF3C7"/>
+  <rect x="202" y="70" width="8" height="25" rx="4" fill="#FEF3C7"/>
+  
+  <!-- Activity Icons -->
+  <circle cx="50" cy="200" r="16" fill="#DBEAFE" opacity="0.8"/>
+  <path d="M42 200h16M50 192v16" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
+  
+  <circle cx="270" cy="200" r="16" fill="#FEF3C7" opacity="0.8"/>
+  <circle cx="270" cy="196" r="3" fill="#F59E0B"/>
+  <circle cx="270" cy="204" r="3" fill="#F59E0B"/>
+  
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EEF2FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0F2FE;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

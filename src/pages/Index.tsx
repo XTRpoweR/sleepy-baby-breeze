@@ -7,6 +7,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState } from "react";
+import EnhancedFeatureCard from "@/components/EnhancedFeatureCard";
 
 // Memoized components for better performance
 const FeatureCard = memo(({
@@ -51,16 +52,11 @@ const TestimonialCard = memo(({
   </Card>);
 const Index = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-  const {
-    t
-  } = useTranslation();
-  const {
-    toast
-  } = useToast();
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -68,9 +64,11 @@ const Index = () => {
       navigate('/auth');
     }
   };
+
   const handleViewPricing = () => {
     navigate('/pricing');
   };
+
   const handleDownloadComingSoon = () => {
     toast({
       title: "Coming Soon",
@@ -78,32 +76,40 @@ const Index = () => {
     });
   };
 
-  // Memoized data to prevent recalculation
-  const features = useMemo(() => [{
-    icon: Clock,
-    title: t('features.trackEverything.title'),
-    description: t('features.trackEverything.description')
-  }, {
-    icon: Calendar,
-    title: t('features.customSchedules.title'),
-    description: t('features.customSchedules.description')
-  }, {
-    icon: Volume2,
-    title: t('features.soothingSounds.title'),
-    description: t('features.soothingSounds.description')
-  }, {
-    icon: Users,
-    title: t('features.multiCaregiver.title'),
-    description: t('features.multiCaregiver.description')
-  }, {
-    icon: BarChart3,
-    title: t('features.insights.title'),
-    description: t('features.insights.description')
-  }, {
-    icon: Globe,
-    title: t('features.multilingual.title'),
-    description: t('features.multilingual.description')
-  }], [t]);
+  // Updated features array with illustrations for specific features
+  const features = useMemo(() => [
+    {
+      illustration: "/lovable-uploads/track-everything-illustration.svg",
+      title: t('features.trackEverything.title'),
+      description: t('features.trackEverything.description')
+    },
+    {
+      illustration: "/lovable-uploads/sleep-schedule-illustration.svg", 
+      title: t('features.customSchedules.title'),
+      description: t('features.customSchedules.description')
+    },
+    {
+      icon: Volume2,
+      title: t('features.soothingSounds.title'),
+      description: t('features.soothingSounds.description')
+    },
+    {
+      icon: Users,
+      title: t('features.multiCaregiver.title'),
+      description: t('features.multiCaregiver.description')
+    },
+    {
+      icon: BarChart3,
+      title: t('features.insights.title'),
+      description: t('features.insights.description')
+    },
+    {
+      icon: Globe,
+      title: t('features.multilingual.title'),
+      description: t('features.multilingual.description')
+    }
+  ], [t]);
+
   const testimonials = useMemo(() => [{
     name: "Sarah M.",
     role: "New Mom",
@@ -120,7 +126,9 @@ const Index = () => {
     content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
     rating: 5
   }], []);
-  return <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
+
+  return (
+    <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
       {/* Navigation */}
       <nav className="bg-white/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in safe-area-top">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
@@ -243,7 +251,9 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {features.map((feature, index) => <FeatureCard key={index} feature={feature} index={index} />)}
+            {features.map((feature, index) => (
+              <EnhancedFeatureCard key={index} feature={feature} index={index} />
+            ))}
           </div>
         </div>
       </section>
@@ -521,6 +531,8 @@ const Index = () => {
       <div className="fixed top-4 right-20 z-50 md:hidden">
         <LanguageSelector />
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
