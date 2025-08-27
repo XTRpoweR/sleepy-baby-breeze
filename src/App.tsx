@@ -1,9 +1,10 @@
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/hooks/useAuth';
 import { SubscriptionProvider } from '@/hooks/useSubscription';
 import { TranslationWrapper } from '@/components/TranslationWrapper';
-import Landing from '@/pages/Landing';
+import Index from '@/pages/Index';
 import Dashboard from '@/pages/Dashboard';
 import Auth from '@/pages/Auth';
 import Account from '@/pages/Account';
@@ -23,7 +24,7 @@ function App() {
             <TranslationWrapper>
               <div className="min-h-screen bg-background">
                 <Routes>
-                  <Route path="/" element={<Landing />} />
+                  <Route path="/" element={<Index />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/account" element={<Account />} />

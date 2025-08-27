@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -27,8 +28,8 @@ import { MobileHeader } from '@/components/layout/MobileHeader';
 import { useGuestCheckout } from '@/hooks/useGuestCheckout';
 
 const Pricing = () => {
-  const { user } = useAuth();
-  const { createCheckout, upgrading } = useSubscription();
+  const { user, loading, signOut } = useAuth();
+  const { createCheckout, upgrading, openCustomerPortal, isPremium } = useSubscription();
   const { createGuestCheckout, loading: guestLoading } = useGuestCheckout();
   const navigate = useNavigate();
   const { t } = useTranslation();
