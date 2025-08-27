@@ -1,304 +1,355 @@
-
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Moon, 
-  User,
-  LogOut,
-  Crown,
-  Settings,
-  ArrowLeft,
-  Check,
-  Star,
-  Shield,
-  Zap,
-  Users,
-  Calendar,
-  BarChart3
-} from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
-import { LanguageSelector } from '@/components/LanguageSelector';
-import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
-import { DesktopHeader } from '@/components/layout/DesktopHeader';
-import { MobileHeader } from '@/components/layout/MobileHeader';
-import { useGuestCheckout } from '@/hooks/useGuestCheckout';
-
+import React, { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
+import { DesktopHeader } from "@/components/layout/DesktopHeader";
+import { MobileHeader } from "@/components/layout/MobileHeader";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
 const Pricing = () => {
-  const { user, loading, signOut } = useAuth();
-  const { createCheckout, upgrading, openCustomerPortal, isPremium } = useSubscription();
-  const { createGuestCheckout, loading: guestLoading } = useGuestCheckout();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useTranslation();
+  const [isAnnual, setIsAnnual] = useState(true);
 
+  // Scroll to top when component mounts
   useEffect(() => {
-    if (!loading && !user) {
+    window.scrollTo(0, 0);
+  }, []);
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
       navigate('/auth');
     }
-  }, [user, loading, navigate]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
   };
-
-  const handleManageSubscription = () => {
-    openCustomerPortal();
+  const handleBackNavigation = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/');
+    }
   };
+  const features = {
+    basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
+    premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
+  };
+  const monthlyPrice = 9.99;
+  const annualPrice = 99.99;
+  const originalPrice = 14.99;
+  const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Conditional Navigation */}
+      {user ? <>
+          <DesktopHeader />
+          <MobileHeader />
+        </> : <>
+          {/* Landing-style Desktop Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center h-16">
+                <div className="flex items-center space-x-2">
+                  <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-12 w-auto" />
+                  <span className="text-xl font-bold text-gray-900">{t('app.name')}</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <LanguageSelector />
+                  <Button variant="ghost" onClick={() => navigate('/')}>
+                    Home
+                  </Button>
+                  <Button variant="ghost" onClick={() => navigate('/features')}>
+                    Features
+                  </Button>
+                  <Button variant="outline" onClick={() => navigate('/auth')}>
+                    Sign In
+                  </Button>
+                  <Button onClick={() => navigate('/auth')}>
+                    Get Started
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </header>
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <Moon className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600 text-sm sm:text-base">{t('common.loading')}</p>
+          {/* Landing-style Mobile Header */}
+          <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
+            <div className="flex justify-between items-center h-16 px-4">
+              <div className="flex items-center space-x-2">
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-10 w-auto" />
+                <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <LanguageSelector />
+                <Button size="sm" onClick={() => navigate('/auth')}>
+                  Get Started
+                </Button>
+              </div>
+            </div>
+          </header>
+        </>}
+
+      {/* Back Button */}
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
+        <div className="max-w-6xl mx-auto">
+          <Button variant="ghost" onClick={handleBackNavigation} className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base">
+            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>{user ? t('navigation.backToDashboard') : 'Back to Home'}</span>
+          </Button>
         </div>
       </div>
-    );
-  }
 
-  if (!user) {
-    return null;
-  }
+      {/* Hero Section */}
+      <section className="py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
+            Simple, Transparent
+            <span className="text-blue-600 block">Pricing</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 mb-6 md:mb-8 leading-relaxed">
+            Choose the plan that works best for your family. Start with our free Basic plan 
+            or unlock premium features with our affordable Premium plan.
+          </p>
 
-  const features = [
-    {
-      icon: Shield,
-      title: "Secure & Private",
-      description: "Your baby's data is encrypted and secure with bank-level security."
-    },
-    {
-      icon: Zap,
-      title: "Real-time Sync",
-      description: "Data syncs instantly across all your devices and family members."
-    },
-    {
-      icon: Users,
-      title: "Family Collaboration",
-      description: "Share tracking with partners, grandparents, and caregivers seamlessly."
-    },
-    {
-      icon: BarChart3,
-      title: "Advanced Analytics",
-      description: "Get detailed insights and patterns to optimize your baby's routine."
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah M.",
-      role: "Mom of 2",
-      content: "The premium features helped us understand our baby's sleep patterns so much better!",
-      rating: 5
-    },
-    {
-      name: "David & Lisa",
-      role: "New Parents",
-      content: "Family sharing is a game-changer. Both grandparents can help track feeding times.",
-      rating: 5
-    }
-  ];
-
-  const faqs = [
-    {
-      question: "Can I cancel anytime?",
-      answer: "Yes! You can cancel your subscription at any time through the customer portal. No questions asked."
-    },
-    {
-      question: "What happens to my data if I downgrade?",
-      answer: "Your data is always safe. You'll keep access to basic features and recent activity history."
-    },
-    {
-      question: "Do you offer refunds?",
-      answer: "We offer a 7-day free trial and a 30-day money-back guarantee for your peace of mind."
-    },
-    {
-      question: "How many family members can I add?",
-      answer: "Premium plans include unlimited family member access with full collaboration features."
-    }
-  ];
-
-  const handleUpgrade = () => {
-    if (user) {
-      // Authenticated user - use regular checkout
-      createCheckout();
-    } else {
-      // Guest user - use guest checkout
-      createGuestCheckout();
-    }
-  };
-
-  const isLoading = upgrading || guestLoading;
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Headers */}
-      <DesktopHeader />
-      <MobileHeader />
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
-        {/* Page Header */}
-        <div className="mb-6 lg:mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/dashboard')}
-            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
-          >
-            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>Back to Dashboard</span>
-          </Button>
-          
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-                Choose Your Plan
-              </h1>
-              <p className="text-gray-600 text-sm sm:text-base lg:text-xl max-w-3xl">
-                Get the most out of your baby tracking experience with features designed for modern families.
-              </p>
-            </div>
-            
-            {/* Subscription Status & Language - Mobile */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-              {/* Subscription Status */}
-              <div className="flex items-center space-x-2">
-                {isPremium ? (
-                  <div className="flex items-center space-x-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
-                    <Crown className="h-4 w-4" />
-                    <span>Premium</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                    <User className="h-4 w-4" />
-                    <span>Basic</span>
-                  </div>
-                )}
-                {isPremium && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleManageSubscription}
-                    className="flex items-center space-x-1"
-                  >
-                    <Settings className="h-4 w-4" />
-                    <span>Manage</span>
-                  </Button>
-                )}
-              </div>
-
-              {/* Mobile Language Selector */}
-              <div className="sm:hidden">
-                <LanguageSelector />
-              </div>
-            </div>
+          {/* Special Offer Banner */}
+          <div className="mb-6 md:mb-8 inline-flex items-center space-x-2 bg-red-100 px-4 md:px-6 py-2 md:py-3 rounded-full border-2 border-red-200">
+            <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold">LIMITED TIME</Badge>
+            <span className="text-base md:text-lg text-gray-600 line-through">$14.99/month</span>
+            <span className="text-xl md:text-2xl font-bold text-red-600">$9.99/month</span>
+            <span className="text-red-600 font-semibold text-sm md:text-base">(40% OFF)</span>
           </div>
         </div>
+      </section>
 
-        {/* Subscription Plans */}
-        <div className="mb-12 lg:mb-16">
-          <SubscriptionPlans />
-        </div>
+      {/* Pricing Cards */}
+      <section className="py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+            {/* Basic Plan */}
+            <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
+              <CardHeader className="text-center pb-4 md:pb-6">
+                <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
+                  <Baby className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
+                  <CardTitle className="text-xl md:text-2xl">SleepyBabyy Basic</CardTitle>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-3xl md:text-4xl font-bold text-gray-900">Free</div>
+                  <CardDescription className="text-base md:text-lg">
+                    Perfect for getting started with baby tracking
+                  </CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4 md:space-y-6">
+                <Button className="w-full" variant="outline" onClick={handleGetStarted}>
+                  Get Started Free
+                </Button>
+                
+                <div className="space-y-3 md:space-y-4">
+                  <h4 className="font-semibold text-gray-900">What's included:</h4>
+                  <ul className="space-y-2 md:space-y-3">
+                    {features.basic.map((feature, index) => <li key={index} className="flex items-center space-x-3">
+                        <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
+                        <span className="text-sm md:text-base text-gray-700">{feature}</span>
+                      </li>)}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Features Section */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8 lg:mb-12">
-            Why Families Love SleepyBaby Premium
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Card key={index} className="text-center border-0 shadow-lg">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="bg-blue-100 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                      <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+            {/* Premium Plan */}
+            <Card className="border-2 border-orange-500 hover:shadow-xl transition-all duration-300 relative">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-orange-500 text-white px-3 md:px-4 py-1">
+                  <Crown className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  Most Popular
+                </Badge>
+              </div>
+              <CardHeader className="text-center pb-4 md:pb-6">
+                <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
+                  <Crown className="h-6 w-6 md:h-8 md:w-8 text-orange-600" />
+                  <CardTitle className="text-xl md:text-2xl">SleepyBabyy Premium</CardTitle>
+                </div>
+                
+                {/* Discount Badge */}
+                <div className="mb-3 md:mb-4">
+                  <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold px-2 md:px-3 py-1">40% OFF LIMITED TIME</Badge>
+                </div>
+                
+                <div className="space-y-2">
+                  {/* Pricing with old price crossed out */}
+                  <div className="flex items-center justify-center space-x-2 md:space-x-3">
+                    <span className="text-lg md:text-xl text-gray-500 line-through font-medium">${originalPrice.toFixed(2)}</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-3xl md:text-4xl font-bold text-gray-900">
+                        $9.99
+                      </span>
+                      <span className="text-gray-600 text-sm md:text-base">/month</span>
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{feature.title}</h3>
-                    <p className="text-xs sm:text-sm text-gray-600">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                  </div>
+                  <p className="text-red-600 text-xs md:text-sm font-medium">Save $5.00 per month!</p>
+                  <CardDescription className="text-base md:text-lg">
+                    Complete baby tracking solution for modern families
+                  </CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4 md:space-y-6">
+                <Button className="w-full bg-orange-600 hover:bg-orange-700" onClick={user ? () => navigate('/subscription') : handleGetStarted}>
+                  {user ? 'Upgrade to Premium' : 'Start Premium Trial'}
+                </Button>
+                
+                <div className="space-y-3 md:space-y-4">
+                  <h4 className="font-semibold text-gray-900">Everything in Basic, plus:</h4>
+                  <ul className="space-y-2 md:space-y-3">
+                    {features.premium.map((feature, index) => <li key={index} className="flex items-center space-x-3">
+                        <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
+                        <span className="text-sm md:text-base text-gray-700">{feature}</span>
+                      </li>)}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
+      </section>
 
-        {/* Testimonials */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8 lg:mb-12">
-            What Parents Say
+      {/* Feature Comparison */}
+      <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8 md:mb-12">
+            Detailed Feature Comparison
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex space-x-1 mb-3 sm:mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <p className="text-gray-600 mb-3 sm:mb-4 italic text-sm sm:text-base">"{testimonial.content}"</p>
-                  <div>
-                    <div className="font-semibold text-gray-900 text-sm sm:text-base">{testimonial.name}</div>
-                    <div className="text-xs sm:text-sm text-gray-500">{testimonial.role}</div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse min-w-[600px]">
+              <thead>
+                <tr className="border-b-2 border-gray-200">
+                  <th className="text-left py-3 md:py-4 pr-4 md:pr-8 font-semibold text-gray-900 text-sm md:text-base">Features</th>
+                  <th className="text-center py-3 md:py-4 px-2 md:px-4 font-semibold text-gray-900 text-sm md:text-base">Basic</th>
+                  <th className="text-center py-3 md:py-4 px-2 md:px-4 font-semibold text-gray-900 text-sm md:text-base">
+                    Premium
+                    <div className="text-xs font-normal text-red-600 mt-1">
+                      <span className="line-through">$14.99</span> $9.99/mo
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {[{
+                feature: "Baby Profiles",
+                basic: "1",
+                premium: "Unlimited"
+              }, {
+                feature: "Activity History",
+                basic: "Current day",
+                premium: "Extended history"
+              }, {
+                feature: "Family Sharing",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Advanced Analytics",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Photo Storage",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Smart Notifications",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Pediatrician Reports",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Data Export",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Priority Support",
+                basic: false,
+                premium: true
+              }, {
+                feature: "Sleep Coaching",
+                basic: false,
+                premium: true
+              }].map((row, index) => <tr key={index} className="hover:bg-gray-50">
+                    <td className="py-3 md:py-4 pr-4 md:pr-8 font-medium text-gray-900 text-sm md:text-base">{row.feature}</td>
+                    <td className="text-center py-3 md:py-4 px-2 md:px-4">
+                      {typeof row.basic === 'boolean' ? row.basic ? <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" /> : <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" /> : <span className="text-gray-700 text-sm md:text-base">{row.basic}</span>}
+                    </td>
+                    <td className="text-center py-3 md:py-4 px-2 md:px-4">
+                      {typeof row.premium === 'boolean' ? row.premium ? <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 mx-auto" /> : <X className="h-4 w-4 md:h-5 md:w-5 text-gray-400 mx-auto" /> : <span className="text-gray-700 text-sm md:text-base">{row.premium}</span>}
+                    </td>
+                  </tr>)}
+              </tbody>
+            </table>
           </div>
         </div>
+      </section>
 
-        {/* FAQ Section */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8 lg:mb-12">
+      {/* FAQ Section */}
+      <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-8 md:mb-12">
             Frequently Asked Questions
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-            {faqs.map((faq, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg">{faq.question}</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-gray-600 text-sm sm:text-base">{faq.answer}</p>
+          
+          <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+            {[{
+            question: "Can I switch plans anytime?",
+            answer: "Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately."
+          }, {
+            question: "Is there a free trial?",
+            answer: "Yes, Premium comes with a 7-day free trial. No credit card required to start."
+          }, {
+            question: "What if I have multiple babies?",
+            answer: "Basic includes 1 baby profile. Premium includes unlimited baby profiles for your growing family."
+          }, {
+            question: "Do you offer refunds?",
+            answer: "Yes, we offer a 30-day money-back guarantee if you're not completely satisfied."
+          }, {
+            question: "Is my data secure?",
+            answer: "Absolutely. We use enterprise-grade encryption and never share your personal data."
+          }, {
+            question: "Can I cancel anytime?",
+            answer: "Yes, you can cancel your subscription at any time. Your data remains accessible during your billing period."
+          }].map((faq, index) => <Card key={index} className="border-0 shadow-sm">
+                <CardContent className="p-4 md:p-6">
+                  <h3 className="font-semibold text-gray-900 mb-2 text-sm md:text-base">{faq.question}</h3>
+                  <p className="text-gray-600 text-sm md:text-base">{faq.answer}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
+      </section>
 
-        {/* Money Back Guarantee */}
-        <div className="text-center bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 sm:p-8">
-          <div className="flex justify-center mb-3 sm:mb-4">
-            <div className="bg-green-100 rounded-full p-2 sm:p-3">
-              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
-            </div>
+      <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6">
+            Ready to Get Better Sleep?
+          </h2>
+          <p className="text-lg md:text-xl text-blue-100 mb-6 md:mb-8">Join thousands of families who've transformed their sleep experience with SleepyBabyy.</p>
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+            <Button onClick={handleGetStarted} className="bg-white text-blue-600 hover:bg-blue-50">
+              Start Free Today
+            </Button>
+            
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">30-Day Money-Back Guarantee</h3>
-          <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">
-            Try SleepyBaby Premium risk-free. If you're not completely satisfied, we'll refund your money within 30 days.
+          <p className="text-blue-100 text-xs md:text-sm mt-4 md:mt-6">
+            7-day free trial • No credit card required • Cancel anytime
           </p>
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 text-sm text-gray-600">
-            <div className="flex items-center justify-center space-x-1">
-              <Check className="h-4 w-4 text-green-500" />
-              <span>No questions asked</span>
-            </div>
-            <div className="flex items-center justify-center space-x-1">
-              <Check className="h-4 w-4 text-green-500" />
-              <span>Full refund</span>
-            </div>
-            <div className="flex items-center justify-center space-x-1">
-              <Check className="h-4 w-4 text-green-500" />
-              <span>Cancel anytime</span>
-            </div>
-          </div>
         </div>
-      </main>
-    </div>
-  );
+      </section>
+    </div>;
 };
-
 export default Pricing;
