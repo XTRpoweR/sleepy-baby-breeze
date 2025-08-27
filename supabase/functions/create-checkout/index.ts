@@ -46,71 +46,63 @@ serve(async (req) => {
 
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
+    // Check for authentication (optional for guest checkout)
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      logStep("ERROR: No authorization header provided");
-      return new Response(
-        JSON.stringify({ error: "Authentication required. Please log in and try again." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
-      );
-    }
+    let user = null;
+    let isGuestCheckout = false;
 
-    const token = authHeader.replace("Bearer ", "");
-    logStep("Authenticating user with token", { tokenLength: token.length });
-    
-    const { data, error: authError } = await supabaseClient.auth.getUser(token);
-    
-    if (authError) {
-      logStep("Auth error", { error: authError.message, code: authError.status });
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      logStep("Authenticating user with token", { tokenLength: token.length });
       
-      if (authError.message?.includes("JWT expired") || 
-          authError.message?.includes("session_not_found") ||
-          authError.status === 401) {
-        return new Response(
-          JSON.stringify({ error: "Your login session has expired. Please sign in again to continue." }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
-        );
+      const { data, error: authError } = await supabaseClient.auth.getUser(token);
+      
+      if (authError) {
+        logStep("Auth error, proceeding as guest", { error: authError.message });
+        isGuestCheckout = true;
+      } else {
+        user = data.user;
+        logStep("User authenticated successfully", { userId: user?.id, email: user?.email });
       }
-      
-      return new Response(
-        JSON.stringify({ error: "Authentication failed. Please try logging in again." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
-      );
+    } else {
+      logStep("No authorization header, proceeding as guest checkout");
+      isGuestCheckout = true;
     }
-    
-    const user = data.user;
-    if (!user?.email) {
-      logStep("ERROR: User not authenticated or email not available");
-      return new Response(
-        JSON.stringify({ error: "User authentication failed. Please log in again." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401 }
-      );
-    }
-    
-    logStep("User authenticated successfully", { userId: user.id, email: user.email });
 
     // Initialize Stripe
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     logStep("Stripe initialized");
 
-    // Check if customer already exists
-    logStep("Checking for existing customer");
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    // For guest checkout, we'll let Stripe collect the email
+    // For authenticated users, we'll use their existing email
     let customerId;
-    
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      logStep("Existing customer found", { customerId });
+    let customerEmail;
+
+    if (!isGuestCheckout && user?.email) {
+      // Check if customer already exists for authenticated users
+      logStep("Checking for existing customer");
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+        logStep("Existing customer found", { customerId });
+      } else {
+        logStep("Creating new customer");
+        const customer = await stripe.customers.create({
+          email: user.email,
+          metadata: {
+            user_id: user.id,
+          },
+        });
+        customerId = customer.id;
+        logStep("New customer created", { customerId });
+      }
+      customerEmail = user.email;
     } else {
-      logStep("Creating new customer");
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          user_id: user.id,
-        },
-      });
-      customerId = customer.id;
-      logStep("New customer created", { customerId });
+      // Guest checkout - let Stripe collect email
+      logStep("Guest checkout - Stripe will collect email");
+      customerEmail = undefined;
+      customerId = undefined;
     }
 
     // Use your specific product ID and get its active price
@@ -160,10 +152,15 @@ serve(async (req) => {
     }
 
     const origin = req.headers.get("origin") || "https://sleepybabyy.com";
-    logStep("Creating checkout session", { origin, priceId, customerId });
+    
+    // Different success URLs for guest vs authenticated users
+    const successUrl = isGuestCheckout 
+      ? `${origin}/complete-setup?session_id={CHECKOUT_SESSION_ID}`
+      : `${origin}/dashboard?success=true`;
+    
+    logStep("Creating checkout session", { origin, priceId, customerId, isGuestCheckout });
 
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
+    const sessionConfig: any = {
       line_items: [
         {
           price: priceId,
@@ -171,19 +168,29 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: `${origin}/dashboard?success=true`,
-      cancel_url: `${origin}/dashboard?canceled=true`,
-      metadata: {
-        user_id: user.id,
-      },
+      success_url: successUrl,
+      cancel_url: `${origin}?canceled=true`,
       allow_promotion_codes: true,
       billing_address_collection: "auto",
-      subscription_data: {
-        metadata: {
-          user_id: user.id,
-        },
-      },
-    });
+    };
+
+    // Add customer info if available
+    if (customerId) {
+      sessionConfig.customer = customerId;
+    } else if (customerEmail) {
+      sessionConfig.customer_email = customerEmail;
+    }
+
+    // Add metadata
+    if (user?.id) {
+      sessionConfig.metadata = { user_id: user.id };
+      sessionConfig.subscription_data = { metadata: { user_id: user.id } };
+    } else {
+      sessionConfig.metadata = { guest_checkout: "true" };
+      sessionConfig.subscription_data = { metadata: { guest_checkout: "true" } };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     logStep("Checkout session created successfully", { sessionId: session.id, url: session.url });
 
@@ -195,31 +202,6 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in create-checkout", { message: errorMessage, stack: error instanceof Error ? error.stack : undefined });
     
-    // Enhanced error categorization
-    if (errorMessage.includes("User not authenticated") ||
-        errorMessage.includes("User session invalid") ||
-        errorMessage.includes("authorization header") ||
-        errorMessage.includes("JWT expired") ||
-        errorMessage.includes("session_not_found")) {
-      return new Response(JSON.stringify({ 
-        error: "Your login session has expired. Please sign in again to continue with checkout." 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 401,
-      });
-    }
-    
-    if (errorMessage.includes("STRIPE_SECRET_KEY") || 
-        errorMessage.includes("Payment system not configured")) {
-      return new Response(JSON.stringify({ 
-        error: "Payment system configuration error. Please contact support." 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
-      });
-    }
-    
-    // Generic error response
     return new Response(JSON.stringify({ 
       error: "An error occurred while setting up checkout. Please try again or contact support if the problem persists." 
     }), {
