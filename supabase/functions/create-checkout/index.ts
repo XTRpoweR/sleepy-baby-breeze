@@ -34,6 +34,23 @@ serve(async (req) => {
       );
     }
 
+    // Check if the key looks like a publishable key instead of secret key
+    if (stripeKey.startsWith("pk_")) {
+      logStep("ERROR: Using publishable key instead of secret key");
+      return new Response(
+        JSON.stringify({ error: "Invalid payment configuration. Please use a secret key, not a publishable key." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
+
+    if (!stripeKey.startsWith("sk_")) {
+      logStep("ERROR: Invalid Stripe key format");
+      return new Response(
+        JSON.stringify({ error: "Invalid Stripe key format. Secret keys must start with 'sk_'." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
+
     if (!supabaseUrl || !supabaseAnonKey) {
       logStep("ERROR: Supabase configuration missing");
       return new Response(
@@ -89,13 +106,35 @@ serve(async (req) => {
     
     logStep("User authenticated successfully", { userId: user.id, email: user.email });
 
-    // Initialize Stripe
-    const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
-    logStep("Stripe initialized");
+    // Initialize Stripe with enhanced error handling
+    let stripe;
+    try {
+      stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+      logStep("Stripe initialized");
+    } catch (error) {
+      logStep("Stripe initialization error", { error: error.message });
+      return new Response(
+        JSON.stringify({ error: "Payment system initialization failed." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+      );
+    }
 
     // Check if customer already exists
     logStep("Checking for existing customer");
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    let customers;
+    try {
+      customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    } catch (error) {
+      logStep("Error listing customers", { error: error.message });
+      if (error.message?.includes("publishable API key")) {
+        return new Response(
+          JSON.stringify({ error: "Invalid payment configuration. Please use a secret key, not a publishable key." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+        );
+      }
+      throw error;
+    }
+
     let customerId;
     
     if (customers.data.length > 0) {
@@ -103,14 +142,25 @@ serve(async (req) => {
       logStep("Existing customer found", { customerId });
     } else {
       logStep("Creating new customer");
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          user_id: user.id,
-        },
-      });
-      customerId = customer.id;
-      logStep("New customer created", { customerId });
+      try {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          metadata: {
+            user_id: user.id,
+          },
+        });
+        customerId = customer.id;
+        logStep("New customer created", { customerId });
+      } catch (error) {
+        logStep("Error creating customer", { error: error.message });
+        if (error.message?.includes("publishable API key")) {
+          return new Response(
+            JSON.stringify({ error: "Invalid payment configuration. Please use a secret key, not a publishable key." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+          );
+        }
+        throw error;
+      }
     }
 
     // Use your specific product ID and get its active price
@@ -156,34 +206,52 @@ serve(async (req) => {
 
     } catch (error) {
       logStep("Error retrieving product or prices", { error: error.message });
+      if (error.message?.includes("publishable API key")) {
+        return new Response(
+          JSON.stringify({ error: "Invalid payment configuration. Please use a secret key, not a publishable key." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+        );
+      }
       throw new Error(`Failed to setup subscription pricing: ${error.message}`);
     }
 
     const origin = req.headers.get("origin") || "https://sleepybabyy.com";
     logStep("Creating checkout session", { origin, priceId, customerId });
 
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: "subscription",
-      success_url: `${origin}/dashboard?success=true`,
-      cancel_url: `${origin}/dashboard?canceled=true`,
-      metadata: {
-        user_id: user.id,
-      },
-      allow_promotion_codes: true,
-      billing_address_collection: "auto",
-      subscription_data: {
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: "subscription",
+        success_url: `${origin}/dashboard?success=true`,
+        cancel_url: `${origin}/dashboard?canceled=true`,
         metadata: {
           user_id: user.id,
         },
-      },
-    });
+        allow_promotion_codes: true,
+        billing_address_collection: "auto",
+        subscription_data: {
+          metadata: {
+            user_id: user.id,
+          },
+        },
+      });
+    } catch (error) {
+      logStep("Error creating checkout session", { error: error.message });
+      if (error.message?.includes("publishable API key")) {
+        return new Response(
+          JSON.stringify({ error: "Invalid payment configuration. Please use a secret key, not a publishable key." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
+        );
+      }
+      throw error;
+    }
 
     logStep("Checkout session created successfully", { sessionId: session.id, url: session.url });
 
@@ -196,6 +264,15 @@ serve(async (req) => {
     logStep("ERROR in create-checkout", { message: errorMessage, stack: error instanceof Error ? error.stack : undefined });
     
     // Enhanced error categorization
+    if (errorMessage.includes("publishable API key")) {
+      return new Response(JSON.stringify({ 
+        error: "Invalid payment configuration. Please use a Stripe secret key (starts with 'sk_'), not a publishable key (starts with 'pk_')." 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
+
     if (errorMessage.includes("User not authenticated") ||
         errorMessage.includes("User session invalid") ||
         errorMessage.includes("authorization header") ||
