@@ -1,7 +1,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Baby, Crown, Star } from 'lucide-react';
+import { ArrowRight, Baby, Crown, Star, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useGuestCheckout } from '@/hooks/useGuestCheckout';
@@ -14,11 +14,15 @@ export const HeroSection = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
+    console.log('Get Started clicked:', { user: user?.email || 'guest' });
+    
     if (user) {
       // Authenticated user - use regular checkout
+      console.log('Using authenticated checkout for user:', user.email);
       createCheckout();
     } else {
       // Guest user - use guest checkout
+      console.log('Using guest checkout');
       createGuestCheckout();
     }
   };
@@ -97,10 +101,13 @@ export const HeroSection = () => {
             <Button 
               onClick={handleGetStarted}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-lg"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
-                'Processing...'
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  {guestLoading ? 'Setting up checkout...' : 'Processing...'}
+                </>
               ) : (
                 <>
                   Start Premium Now
@@ -122,6 +129,7 @@ export const HeroSection = () => {
               variant="outline" 
               onClick={() => navigate('/auth')}
               className="mx-2 border-gray-300 hover:border-gray-400 transition-colors"
+              disabled={isLoading}
             >
               Try Basic Version Free
             </Button>
@@ -129,6 +137,20 @@ export const HeroSection = () => {
               No payment required • Start tracking immediately
             </p>
           </div>
+
+          {/* Loading state message */}
+          {isLoading && (
+            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800 text-sm font-medium">
+                {guestLoading 
+                  ? "🔄 Preparing your secure checkout session..." 
+                  : "🔄 Processing your request..."}
+              </p>
+              <p className="text-blue-600 text-xs mt-1">
+                This may take a moment. Please don't refresh the page.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>

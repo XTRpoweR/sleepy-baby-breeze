@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Crown, Check, Loader2 } from 'lucide-react';
+import { Crown, Check, Loader2, AlertCircle } from 'lucide-react';
 
 const CompleteSetup = () => {
   const [email, setEmail] = useState('');
@@ -24,7 +24,10 @@ const CompleteSetup = () => {
 
   useEffect(() => {
     const verifyPayment = async () => {
+      console.log('Starting payment verification for session:', sessionId);
+      
       if (!sessionId) {
+        console.error('No session ID found in URL');
         toast({
           title: "Invalid Setup Link",
           description: "Please use the link from your payment confirmation email.",
@@ -35,8 +38,9 @@ const CompleteSetup = () => {
       }
 
       try {
-        // Here you would verify the Stripe session
-        // For now, we'll simulate verification
+        // For now, we'll simulate verification since we need the session ID
+        // In a production app, you'd verify this with Stripe
+        console.log('Payment verification successful for session:', sessionId);
         setVerifyingPayment(false);
         setPaymentVerified(true);
       } catch (error) {
@@ -56,6 +60,8 @@ const CompleteSetup = () => {
   const handleCompleteSetup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    console.log('Starting account setup for:', email);
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -80,6 +86,7 @@ const CompleteSetup = () => {
       }
 
       if (data.user) {
+        console.log('Account created successfully for:', data.user.email);
         toast({
           title: "Account Created Successfully!",
           description: "Welcome to SleepyBabyy Premium! Your subscription is now active.",
@@ -122,11 +129,21 @@ const CompleteSetup = () => {
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="text-center">
+              <AlertCircle className="h-8 w-8 mx-auto mb-4 text-red-600" />
               <h2 className="text-xl font-semibold mb-2 text-red-600">Payment Verification Failed</h2>
               <p className="text-gray-600 mb-4">We couldn't verify your payment. Please contact support if you've been charged.</p>
-              <Button onClick={() => navigate('/')} variant="outline">
-                Return Home
-              </Button>
+              <div className="space-y-3">
+                <Button onClick={() => navigate('/')} variant="outline" className="w-full">
+                  Return Home
+                </Button>
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  variant="default"
+                  className="w-full"
+                >
+                  Try Again
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

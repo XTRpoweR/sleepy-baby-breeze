@@ -21,7 +21,7 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    // Validate environment variables
+    // Validate environment variables first
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
