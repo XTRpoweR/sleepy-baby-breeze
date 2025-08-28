@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +5,6 @@ import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkl
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-
 export const SubscriptionPlans = () => {
   const {
     subscriptionTier,
@@ -18,16 +16,13 @@ export const SubscriptionPlans = () => {
     user
   } = useAuth();
   const navigate = useNavigate();
-
   const handleUpgrade = () => {
     if (!user) {
-      // Redirect to auth with premium intent
-      navigate('/auth?premium=true');
+      navigate('/auth');
       return;
     }
     createCheckout();
   };
-
   const basicFeatures = [{
     icon: Baby,
     text: "1 baby profile",
@@ -45,7 +40,6 @@ export const SubscriptionPlans = () => {
     text: "Simple sleep schedule",
     available: true
   }];
-
   const premiumFeatures = [{
     icon: Baby,
     text: "Unlimited baby profiles",
@@ -75,7 +69,6 @@ export const SubscriptionPlans = () => {
     text: "Premium sounds library",
     available: true
   }];
-
   return <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
       {/* Basic Plan */}
       <Card className={`relative transition-all duration-300 hover:shadow-xl ${user && subscriptionTier === 'basic' ? 'ring-2 ring-blue-500' : 'hover:-translate-y-1'}`}>
@@ -152,7 +145,7 @@ export const SubscriptionPlans = () => {
           <Button className="w-full bg-orange-600 hover:bg-orange-700 transition-all duration-300 hover:scale-105 touch-target" onClick={handleUpgrade} disabled={upgrading || user && isPremium}>
             {upgrading ? 'Processing...' : user && isPremium ? 'Current Plan' : user ? 'Upgrade to Premium' : 'Start Premium Trial'}
           </Button>
-          {(!user || !isPremium) && <p className="text-xs text-center text-gray-500"> • Cancel anytime</p>}
+          {(!user || !isPremium) && <p className="text-xs text-center text-gray-500"> • Cancel anytime</p>}
         </CardContent>
       </Card>
     </div>;

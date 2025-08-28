@@ -7,7 +7,6 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 // Memoized components for better performance
 const FeatureCard = memo(({
@@ -62,7 +61,6 @@ const Index = () => {
     toast
   } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -75,32 +73,9 @@ const Index = () => {
   };
   const handleDownloadComingSoon = () => {
     toast({
-      title: "Coming Soon!",
-      description: "Mobile app downloads will be available soon. Sign up to get notified!",
+      title: "Coming Soon",
+      description: "The Download feature is not available yet. Stay tuned!"
     });
-  };
-
-  const handlePremiumCheckout = async () => {
-    setCheckoutLoading(true);
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('create-guest-checkout');
-      
-      if (error) throw error;
-      
-      if (data?.url) {
-        // Open Stripe checkout in a new tab
-        window.open(data.url, '_blank');
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to start checkout. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setCheckoutLoading(false);
-    }
   };
 
   // Memoized data to prevent recalculation
@@ -430,19 +405,8 @@ const Index = () => {
                       <span className="text-sm sm:text-base">Advanced analytics & trends</span>
                     </li>
                   </ul>
-                  <Button 
-                    className="w-full bg-orange-600 hover:bg-orange-700 touch-target" 
-                    onClick={handlePremiumCheckout}
-                    disabled={checkoutLoading}
-                  >
-                    {checkoutLoading ? (
-                      <>
-                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent" />
-                        Processing...
-                      </>
-                    ) : (
-                      'Start Premium Trial'
-                    )}
+                  <Button className="w-full bg-orange-600 hover:bg-orange-700 touch-target" onClick={handleViewPricing}>
+                    {user ? 'View All Features' : 'Start Premium Trial'}
                   </Button>
                 </CardContent>
               </Card>
