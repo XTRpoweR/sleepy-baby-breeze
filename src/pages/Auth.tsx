@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
-import { Mail, Lock, User, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, ArrowLeft, Crown } from 'lucide-react';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,16 +20,26 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const { user, session } = useAuth();
+  const { createCheckout } = useSubscription();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   
   const redirectTo = searchParams.get('redirect');
+  const isPremiumFlow = searchParams.get('premium') === 'true';
 
   useEffect(() => {
-    // If user is already authenticated, redirect them
+    // If user is already authenticated, handle redirect or premium flow
     if (user && session) {
       console.log('User already authenticated, redirecting...');
+      
+      if (isPremiumFlow) {
+        // Auto-trigger premium checkout
+        console.log('Triggering premium checkout for authenticated user');
+        createCheckout();
+        return;
+      }
+      
       if (redirectTo) {
         const redirectUrl = new URL(redirectTo, window.location.origin);
         if (redirectUrl.searchParams.get('success') === 'true') {
@@ -40,7 +51,7 @@ const Auth = () => {
         navigate('/dashboard');
       }
     }
-  }, [user, session, navigate, redirectTo]);
+  }, [user, session, navigate, redirectTo, isPremiumFlow, createCheckout]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +77,13 @@ const Auth = () => {
             title: "Success",
             description: "Successfully signed in!",
           });
-          // Navigation will be handled by useEffect when user state updates
+          
+          // If this is premium flow, trigger checkout after successful login
+          if (isPremiumFlow) {
+            setTimeout(() => {
+              createCheckout();
+            }, 1000);
+          }
         }
       } else {
         const { data, error } = await supabase.auth.signUp({
@@ -76,9 +93,11 @@ const Auth = () => {
             data: {
               full_name: fullName.trim(),
             },
-            emailRedirectTo: redirectTo ? 
-              `${window.location.origin}${redirectTo}` : 
-              `${window.location.origin}/dashboard`,
+            emailRedirectTo: isPremiumFlow ? 
+              `${window.location.origin}/auth?premium=true` : 
+              redirectTo ? 
+                `${window.location.origin}${redirectTo}` : 
+                `${window.location.origin}/dashboard`,
           },
         });
 
@@ -103,6 +122,13 @@ const Auth = () => {
               title: "Success",
               description: "Account created and signed in!",
             });
+            
+            // If this is premium flow and user is immediately signed in, trigger checkout
+            if (isPremiumFlow && data.session) {
+              setTimeout(() => {
+                createCheckout();
+              }, 1000);
+            }
           }
         }
       }
@@ -124,9 +150,11 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: redirectTo ? 
-            `${window.location.origin}${redirectTo}` : 
-            `${window.location.origin}/dashboard`,
+          redirectTo: isPremiumFlow ? 
+            `${window.location.origin}/auth?premium=true` :
+            redirectTo ? 
+              `${window.location.origin}${redirectTo}` : 
+              `${window.location.origin}/dashboard`,
         },
       });
 
@@ -156,7 +184,9 @@ const Auth = () => {
       <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center p-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Redirecting...</p>
+          <p className="mt-4 text-muted-foreground">
+            {isPremiumFlow ? 'Redirecting to checkout...' : 'Redirecting...'}
+          </p>
         </div>
       </div>
     );
@@ -177,10 +207,17 @@ const Auth = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-center">
-              {isLogin ? 'Sign In' : 'Create Account'}
+            <CardTitle className="text-center flex items-center justify-center space-x-2">
+              {isPremiumFlow && <Crown className="h-5 w-5 text-orange-500" />}
+              <span>{isLogin ? 'Sign In' : 'Create Account'}</span>
+              {isPremiumFlow && <Crown className="h-5 w-5 text-orange-500" />}
             </CardTitle>
-            {redirectTo && (
+            {isPremiumFlow && (
+              <p className="text-sm text-center text-orange-600 font-medium">
+                Get premium access after creating your account
+              </p>
+            )}
+            {redirectTo && !isPremiumFlow && (
               <p className="text-sm text-center text-gray-600">
                 Sign in to continue with your invitation
               </p>
@@ -251,11 +288,12 @@ const Auth = () => {
 
               <Button 
                 type="submit" 
-                variant="gradient"
-                className="w-full" 
+                variant={isPremiumFlow ? "default" : "gradient"}
+                className={isPremiumFlow ? "w-full bg-orange-600 hover:bg-orange-700" : "w-full"}
                 disabled={loading}
               >
                 {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+                {isPremiumFlow && !loading && <Crown className="ml-2 h-4 w-4" />}
               </Button>
             </form>
 
