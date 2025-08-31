@@ -75,17 +75,27 @@ export const useActivityLogs = (babyId: string) => {
     }
   }, [babyId, toast]);
 
-  // Listen for profile changes to immediately clear data
+  // Listen for profile changes to immediately clear data and refetch
   useEffect(() => {
     const unsubscribe = profileEventManager.subscribe((newProfileId) => {
       console.log('useActivityLogs: Profile changed, clearing data for new profile:', newProfileId);
       // Clear data immediately when profile changes
       setLogs([]);
       setLoading(true);
+      
+      // If we have a new profile ID, trigger an immediate fetch
+      if (newProfileId && newProfileId !== currentBabyIdRef.current) {
+        console.log('Triggering immediate fetch for new profile:', newProfileId);
+        currentBabyIdRef.current = newProfileId;
+        // Small delay to ensure the profile switch is complete
+        setTimeout(() => {
+          fetchLogs();
+        }, 10);
+      }
     });
 
     return unsubscribe;
-  }, []); // Remove fetchLogs dependency to avoid circular reference
+  }, [fetchLogs]);
 
   // Immediate effect when babyId changes
   useEffect(() => {
