@@ -24,6 +24,38 @@ export const lazyLoadImage = (img: HTMLImageElement, src: string) => {
   observer.observe(img);
 };
 
+// Enhanced lazy loading function for better performance
+export const setupLazyLoading = () => {
+  if (typeof window === 'undefined') return;
+
+  // Use native lazy loading if supported, fallback to Intersection Observer
+  const supportsNativeLazyLoading = 'loading' in HTMLImageElement.prototype;
+  
+  if (!supportsNativeLazyLoading) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+            img.classList.remove('lazy-loading');
+            observer.unobserve(img);
+          }
+        }
+      });
+    }, {
+      rootMargin: '50px 0px', // Start loading 50px before the image enters viewport
+      threshold: 0.01
+    });
+
+    // Observe all images with data-src attribute
+    document.querySelectorAll('img[data-src]').forEach(img => {
+      imageObserver.observe(img);
+    });
+  }
+};
+
 export const preloadCriticalResources = () => {
   // Preload critical fonts
   const fontLink = document.createElement('link');
@@ -56,6 +88,13 @@ if (typeof window !== 'undefined') {
     document.documentElement.style.scrollBehavior = 'smooth';
   }
 
+  // Initialize lazy loading when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupLazyLoading);
+  } else {
+    setupLazyLoading();
+  }
+
   // Optimize image loading performance
   document.addEventListener('DOMContentLoaded', () => {
     // Force repaint for critical images
@@ -68,5 +107,8 @@ if (typeof window !== 'undefined') {
         }, { once: true });
       }
     });
+
+    // Setup lazy loading for images that don't have native support
+    setupLazyLoading();
   });
 }
