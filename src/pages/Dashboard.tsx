@@ -28,7 +28,8 @@ const Dashboard = () => {
   const {
     activeProfile,
     profiles,
-    createProfile
+    createProfile,
+    switching
   } = useBabyProfile();
   const {
     subscriptionTier,
@@ -53,6 +54,10 @@ const Dashboard = () => {
 
   // Check if user is truly new (no profiles and no family memberships)
   const isNewUser = profiles.length === 0;
+  
+  // Track if we're in a switching state (either profile switching or stats loading)
+  const isDataLoading = switching || statsLoading;
+
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
@@ -410,6 +415,11 @@ const Dashboard = () => {
                 {activeProfile && <span className="text-xs font-normal text-gray-600">
                     for {activeProfile.name}
                   </span>}
+                {isDataLoading && (
+                  <div className="ml-2 flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  </div>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -441,10 +451,15 @@ const Dashboard = () => {
               <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
                 <TrendingUp className="h-4 w-4 text-green-600" />
                 <span>{t('dashboard.weekOverview')}</span>
+                {isDataLoading && (
+                  <div className="ml-2 flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                  </div>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {statsLoading ? <div className="space-y-2">
+              {isDataLoading ? <div className="space-y-2">
                   <div className="text-center">
                     <div className="h-5 bg-gray-200 rounded w-12 mx-auto mb-1 animate-pulse"></div>
                     <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>

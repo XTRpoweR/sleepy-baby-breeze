@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -18,6 +18,7 @@ export const useActivityLogs = (babyId: string) => {
   const { toast } = useToast();
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const currentBabyIdRef = useRef(babyId);
 
   const fetchLogs = useCallback(async () => {
     if (!babyId) {
@@ -36,6 +37,12 @@ export const useActivityLogs = (babyId: string) => {
         .select('*')
         .eq('baby_id', babyId)
         .order('start_time', { ascending: false });
+
+      // Check if babyId changed during the request
+      if (currentBabyIdRef.current !== babyId) {
+        console.log('BabyId changed during fetch, ignoring results');
+        return;
+      }
 
       if (error) {
         console.error('Error fetching activity logs:', error);
@@ -69,9 +76,12 @@ export const useActivityLogs = (babyId: string) => {
 
   // Immediate effect when babyId changes
   useEffect(() => {
-    console.log('useActivityLogs: babyId changed to:', babyId);
+    console.log('useActivityLogs: babyId changed from', currentBabyIdRef.current, 'to:', babyId);
     
-    // Clear logs immediately for visual feedback
+    // Update the ref immediately
+    currentBabyIdRef.current = babyId;
+    
+    // Clear logs immediately for visual feedback and set loading state
     setLogs([]);
     setLoading(true);
     

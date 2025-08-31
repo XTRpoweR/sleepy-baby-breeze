@@ -15,8 +15,20 @@ export const useDashboardStats = () => {
 
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
+    console.log('Active Profile ID:', activeProfile?.id);
     console.log('Total logs:', logs.length);
+    console.log('Loading state:', loading);
     
+    // If we're loading or have no active profile, return zero stats but indicate loading
+    if (loading || !activeProfile) {
+      console.log('Returning zero stats due to loading or no profile');
+      return {
+        weeklyAverageSleep: '0h 0m',
+        weeklyFeedings: 0,
+        weeklyDiaperChanges: 0
+      };
+    }
+
     if (!logs.length) {
       console.log('No logs found, returning zero stats');
       return {
@@ -125,8 +137,9 @@ export const useDashboardStats = () => {
     console.log('=== End useDashboardStats Debug ===');
 
     return finalStats;
-  }, [logs]);
+  }, [logs, loading, activeProfile?.id]);
 
+  // Return loading state that matches the activity logs loading state
   return {
     stats,
     loading,
