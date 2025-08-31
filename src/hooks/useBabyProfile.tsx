@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { profileEventManager } from '@/utils/profileEvents';
 
 interface BabyProfile {
   id: string;
@@ -254,20 +255,24 @@ export const useBabyProfile = () => {
         user_role: targetProfile.user_role
       });
 
+      // Emit profile change event AFTER updating state to ensure proper order
+      setActiveProfile(targetProfile);
+      
+      // Small delay to ensure state is updated before emitting event
+      setTimeout(() => {
+        console.log('Emitting profile change event to refresh data');
+        profileEventManager.emit(targetProfile.id);
+      }, 0);
+
       // For shared profiles, we only need to update local state
       if (targetProfile.is_shared) {
         console.log('Switching to shared profile - updating local state only');
-        setActiveProfile(targetProfile);
         console.log('Successfully switched to shared profile:', targetProfile.name);
         return true;
       }
 
       // For owned profiles, update both local state and database
       console.log('Switching to owned profile - updating database');
-      
-      // First update local state for immediate UI feedback
-      setActiveProfile(targetProfile);
-
       // Then update the database
       const { error } = await supabase.rpc('set_active_profile', {
         profile_id: profileId,

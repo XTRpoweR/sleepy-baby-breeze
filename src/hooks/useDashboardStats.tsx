@@ -1,7 +1,8 @@
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { profileEventManager } from '@/utils/profileEvents';
 
 interface DashboardStats {
   weeklyAverageSleep: string;
@@ -12,6 +13,16 @@ interface DashboardStats {
 export const useDashboardStats = () => {
   const { activeProfile } = useBabyProfile();
   const { logs, loading } = useActivityLogs(activeProfile?.id || '');
+
+  // Listen for profile changes to force stats reset
+  useEffect(() => {
+    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
+      console.log('useDashboardStats: Profile changed to:', newProfileId);
+      // The stats will automatically recalculate when logs change due to useMemo dependencies
+    });
+
+    return unsubscribe;
+  }, []);
 
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
