@@ -70,7 +70,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
       src={shouldLoad ? imgSrc : undefined}
       alt={alt}
       loading={supportsNativeLazyLoading ? loading : undefined}
-      fetchpriority={fetchPriority}
+      fetchPriority={fetchPriority}
       onError={handleError}
       className={cn(
         'transition-opacity duration-300',
