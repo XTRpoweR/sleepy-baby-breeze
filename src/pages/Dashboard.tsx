@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
@@ -18,6 +19,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { MobileDashboard } from '@/components/dashboard/MobileDashboard';
 
 const Dashboard = () => {
   const {
@@ -46,6 +48,7 @@ const Dashboard = () => {
   const {
     t
   } = useTranslation();
+  const isMobile = useIsMobile();
   const [showProfileManagement, setShowProfileManagement] = useState(false);
   const [showProfileCreation, setShowProfileCreation] = useState(false);
   const [showNewUserOnboarding, setShowNewUserOnboarding] = useState(false);
@@ -169,6 +172,11 @@ const Dashboard = () => {
     navigate('/contact');
   };
 
+  const handleUpgrade = (feature: string) => {
+    setUpgradeFeature(feature as any);
+    setShowUpgradePrompt(true);
+  };
+
   if (loading) {
     return <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center">
         <div className="text-center">
@@ -203,6 +211,52 @@ const Dashboard = () => {
       </div>;
   }
   const userName = user.user_metadata?.full_name?.split(' ')[0];
+
+  // Mobile-specific rendering
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-soft gradient-dynamic-slow">
+        <MobileHeader />
+        <MobileDashboard
+          user={user}
+          userName={userName}
+          isNewUser={isNewUser}
+          isPremium={isPremium}
+          profiles={profiles}
+          stats={stats}
+          isDataLoading={isDataLoading}
+          showProfileCreation={showProfileCreation}
+          onTrackActivity={handleTrackActivity}
+          onSleepSchedule={handleSleepSchedule}
+          onViewReports={handleViewReports}
+          onFamilySharing={handleFamilySharing}
+          onMemories={handleMemories}
+          onAddProfile={handleAddProfile}
+          onManageProfiles={handleManageProfiles}
+          onProfileCreated={handleProfileCreated}
+          onManageSubscription={handleManageSubscription}
+          onPediatricianReports={handlePediatricianReports}
+          onNotifications={handleNotifications}
+          onContact={handleContact}
+          onSetShowProfileCreation={setShowProfileCreation}
+          onUpgrade={handleUpgrade}
+        />
+        
+        {/* Dialogs */}
+        <ProfileManagementDialog
+          open={showProfileManagement}
+          onOpenChange={setShowProfileManagement}
+        />
+        <UpgradePrompt
+          isOpen={showUpgradePrompt}
+          onClose={() => setShowUpgradePrompt(false)}
+          feature={upgradeFeature}
+        />
+      </div>
+    );
+  }
+
+  // Desktop rendering (unchanged)
   return <div className="min-h-screen bg-soft gradient-dynamic-slow">
       {/* Headers */}
       <DesktopHeader />
