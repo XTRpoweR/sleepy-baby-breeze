@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   Moon, Clock, Calendar, BarChart3, User, Baby, Plus, TrendingUp, 
   Activity, Users, Crown, ArrowRight, Sparkles, GraduationCap,
-  Camera, FileText, Bell, MessageCircle, Zap 
+  Camera, FileText, Bell, MessageCircle, Zap, Milk, Shield 
 } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -66,6 +67,9 @@ export const MobileDashboard = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Get enhanced dashboard stats from the dedicated hook
+  const { stats: dashboardStats, loading: statsLoading } = useDashboardStats();
 
   const handlePullToRefresh = async () => {
     setIsRefreshing(true);
@@ -353,22 +357,100 @@ export const MobileDashboard = ({
           </div>
         </div>
 
-        {/* Today's Stats */}
-        {stats && !isDataLoading && (
+        {/* Enhanced Baby Insights */}
+        {!isNewUser && (
           <div className="mb-8">
-            <h3 className="text-xl font-bold text-foreground mb-4">Today's Overview</h3>
+            <h3 className="text-xl font-bold text-foreground mb-4">Weekly Insights</h3>
             <div className="grid grid-cols-2 gap-4">
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl">
+              {/* Weekly Average Sleep */}
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">{stats.todayActivities || 0}</div>
-                  <div className="text-sm text-muted-foreground">Activities</div>
+                  {statsLoading ? (
+                    <>
+                      <Skeleton className="w-8 h-8 rounded-full mx-auto mb-3" />
+                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
+                      <Skeleton className="h-4 w-12 mx-auto" />
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <Moon className="h-6 w-6 text-indigo-600" />
+                      </div>
+                      <div className="text-lg font-bold text-indigo-600 mb-1">
+                        {dashboardStats.weeklyAverageSleep}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Avg Sleep</div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
               
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl">
+              {/* Weekly Feedings */}
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-purple-600 mb-1">{stats.weekActivities || 0}</div>
-                  <div className="text-sm text-muted-foreground">This Week</div>
+                  {statsLoading ? (
+                    <>
+                      <Skeleton className="w-8 h-8 rounded-full mx-auto mb-3" />
+                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
+                      <Skeleton className="h-4 w-12 mx-auto" />
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <Milk className="h-6 w-6 text-green-600" />
+                      </div>
+                      <div className="text-lg font-bold text-green-600 mb-1">
+                        {dashboardStats.weeklyFeedings}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Feedings</div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Weekly Diaper Changes */}
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl">
+                <CardContent className="p-4 text-center">
+                  {statsLoading ? (
+                    <>
+                      <Skeleton className="w-8 h-8 rounded-full mx-auto mb-3" />
+                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
+                      <Skeleton className="h-4 w-12 mx-auto" />
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-gradient-to-br from-orange-200 to-orange-300 rounded-xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <Shield className="h-6 w-6 text-orange-600" />
+                      </div>
+                      <div className="text-lg font-bold text-orange-600 mb-1">
+                        {dashboardStats.weeklyDiaperChanges}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Diapers</div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+              
+              {/* Today's Activities */}
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl">
+                <CardContent className="p-4 text-center">
+                  {statsLoading ? (
+                    <>
+                      <Skeleton className="w-8 h-8 rounded-full mx-auto mb-3" />
+                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
+                      <Skeleton className="h-4 w-12 mx-auto" />
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-gradient-to-br from-blue-200 to-blue-300 rounded-xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                        <Activity className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div className="text-lg font-bold text-blue-600 mb-1">
+                        {stats?.todayActivities || 0}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Today</div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </div>
