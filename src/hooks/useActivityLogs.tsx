@@ -19,6 +19,7 @@ export const useActivityLogs = (babyId: string) => {
   const { toast } = useToast();
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profileSwitching, setProfileSwitching] = useState(false);
   const currentBabyIdRef = useRef(babyId);
 
   const fetchLogs = useCallback(async () => {
@@ -75,27 +76,34 @@ export const useActivityLogs = (babyId: string) => {
     }
   }, [babyId, toast]);
 
-  // Listen for profile changes to immediately clear data and refetch
+  // Listen for profile switching to show immediate loading state
   useEffect(() => {
-    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
-      console.log('useActivityLogs: Profile changed, clearing data for new profile:', newProfileId);
-      // Clear data immediately when profile changes
+    const unsubscribeSwitching = profileEventManager.subscribeToSwitching(() => {
+      console.log('useActivityLogs: Profile switching started - showing immediate loading state');
+      setProfileSwitching(true);
+      setLoading(true);
+    });
+
+    const unsubscribe = profileEventManager.subscribe((newProfileId, isImmediate) => {
+      console.log('useActivityLogs: Profile changed to:', newProfileId, 'immediate:', isImmediate);
+      
+      // Always clear data immediately when profile changes
       setLogs([]);
       setLoading(true);
+      setProfileSwitching(false);
       
-      // If we have a new profile ID, trigger an immediate fetch
-      if (newProfileId && newProfileId !== currentBabyIdRef.current) {
-        console.log('Triggering immediate fetch for new profile:', newProfileId);
-        currentBabyIdRef.current = newProfileId;
-        // Small delay to ensure the profile switch is complete
-        setTimeout(() => {
-          fetchLogs();
-        }, 10);
+      // Update the ref to track the current profile
+      if (newProfileId !== currentBabyIdRef.current) {
+        console.log('Profile ID changed, updating ref and clearing stale data');
+        currentBabyIdRef.current = newProfileId || '';
       }
     });
 
-    return unsubscribe;
-  }, [fetchLogs]);
+    return () => {
+      unsubscribeSwitching();
+      unsubscribe();
+    };
+  }, []);
 
   // Immediate effect when babyId changes
   useEffect(() => {
@@ -186,7 +194,7 @@ export const useActivityLogs = (babyId: string) => {
 
   return {
     logs,
-    loading,
+    loading: loading || profileSwitching,
     deleteLog,
     updateLog,
     refetchLogs: fetchLogs

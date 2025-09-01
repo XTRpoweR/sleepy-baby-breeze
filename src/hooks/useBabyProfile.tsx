@@ -255,14 +255,14 @@ export const useBabyProfile = () => {
         user_role: targetProfile.user_role
       });
 
-      // Emit profile change event AFTER updating state to ensure proper order
+      // Emit switching start event immediately for instant visual feedback
+      profileEventManager.emitSwitchingStart();
+      
+      // Update state immediately
       setActiveProfile(targetProfile);
       
-      // Small delay to ensure state is updated before emitting event
-      setTimeout(() => {
-        console.log('Emitting profile change event to refresh data');
-        profileEventManager.emit(targetProfile.id);
-      }, 0);
+      // Emit profile change event immediately with immediate flag
+      profileEventManager.emit(targetProfile.id, true);
 
       // For shared profiles, we only need to update local state
       if (targetProfile.is_shared) {

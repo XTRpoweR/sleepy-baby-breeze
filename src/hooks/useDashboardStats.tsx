@@ -1,5 +1,5 @@
 
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { profileEventManager } from '@/utils/profileEvents';
@@ -13,16 +13,35 @@ interface DashboardStats {
 export const useDashboardStats = () => {
   const { activeProfile } = useBabyProfile();
   const { logs, loading } = useActivityLogs(activeProfile?.id || '');
+  const [profileSwitching, setProfileSwitching] = useState(false);
+  const [currentProfileId, setCurrentProfileId] = useState<string | null>(activeProfile?.id || null);
 
-  // Listen for profile changes to force stats reset
+  // Listen for profile switching and changes
   useEffect(() => {
-    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
-      console.log('useDashboardStats: Profile changed to:', newProfileId);
-      // The stats will automatically recalculate when logs change due to useMemo dependencies
+    const unsubscribeSwitching = profileEventManager.subscribeToSwitching(() => {
+      console.log('useDashboardStats: Profile switching started - showing loading state');
+      setProfileSwitching(true);
     });
 
-    return unsubscribe;
+    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
+      console.log('useDashboardStats: Profile changed to:', newProfileId);
+      setCurrentProfileId(newProfileId);
+      setProfileSwitching(false);
+    });
+
+    return () => {
+      unsubscribeSwitching();
+      unsubscribe();
+    };
   }, []);
+
+  // Update current profile ID when activeProfile changes
+  useEffect(() => {
+    const newProfileId = activeProfile?.id || null;
+    if (newProfileId !== currentProfileId) {
+      setCurrentProfileId(newProfileId);
+    }
+  }, [activeProfile?.id, currentProfileId]);
 
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
@@ -30,9 +49,20 @@ export const useDashboardStats = () => {
     console.log('Total logs:', logs.length);
     console.log('Loading state:', loading);
     
-    // If we're loading or have no active profile, return zero stats but indicate loading
-    if (loading || !activeProfile) {
-      console.log('Returning zero stats due to loading or no profile');
+    // If we're loading, switching profiles, or have no active profile, return zero stats
+    if (loading || profileSwitching || !activeProfile || !currentProfileId) {
+      console.log('Returning zero stats due to loading, switching, or no profile');
+      return {
+        weeklyAverageSleep: '0h 0m',
+        weeklyFeedings: 0,
+        weeklyDiaperChanges: 0
+      };
+    }
+
+    // Safety check: only calculate stats if logs belong to current active profile
+    const logsMatchProfile = logs.length === 0 || currentProfileId === activeProfile.id;
+    if (!logsMatchProfile) {
+      console.log('Logs do not match current profile, returning zero stats during transition');
       return {
         weeklyAverageSleep: '0h 0m',
         weeklyFeedings: 0,
@@ -148,12 +178,12 @@ export const useDashboardStats = () => {
     console.log('=== End useDashboardStats Debug ===');
 
     return finalStats;
-  }, [logs, loading, activeProfile?.id]);
+  }, [logs, loading, activeProfile?.id, profileSwitching, currentProfileId]);
 
-  // Return loading state that matches the activity logs loading state
+  // Return loading state that includes profile switching
   return {
     stats,
-    loading,
+    loading: loading || profileSwitching,
     hasActiveProfile: !!activeProfile
   };
 };
