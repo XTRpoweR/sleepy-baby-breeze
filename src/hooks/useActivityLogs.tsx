@@ -79,24 +79,21 @@ export const useActivityLogs = (babyId: string) => {
   // Listen for profile switching to show immediate loading state
   useEffect(() => {
     const unsubscribeSwitching = profileEventManager.subscribeToSwitching(() => {
-      console.log('useActivityLogs: Profile switching started - showing immediate loading state');
+      console.log('useActivityLogs: Profile switching started - clearing logs immediately');
+      setLogs([]); // Clear logs immediately
       setProfileSwitching(true);
       setLoading(true);
+      currentBabyIdRef.current = null; // Reset to prevent stale data
     });
 
     const unsubscribe = profileEventManager.subscribe((newProfileId, isImmediate) => {
       console.log('useActivityLogs: Profile changed to:', newProfileId, 'immediate:', isImmediate);
       
-      // Always clear data immediately when profile changes
-      setLogs([]);
-      setLoading(true);
+      // Update the ref to track the current profile
+      currentBabyIdRef.current = newProfileId || '';
       setProfileSwitching(false);
       
-      // Update the ref to track the current profile
-      if (newProfileId !== currentBabyIdRef.current) {
-        console.log('Profile ID changed, updating ref and clearing stale data');
-        currentBabyIdRef.current = newProfileId || '';
-      }
+      // The fetchLogs effect will handle loading new data when babyId changes
     });
 
     return () => {

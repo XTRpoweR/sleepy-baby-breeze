@@ -16,20 +16,43 @@ export const useDashboardStats = () => {
   const [profileSwitching, setProfileSwitching] = useState(false);
   const [currentProfileId, setCurrentProfileId] = useState<string | null>(activeProfile?.id || null);
 
-  // Listen for profile switching and changes
+  // Listen for profile switching and changes with timeout protection
   useEffect(() => {
+    let switchingTimeout: NodeJS.Timeout | null = null;
+
     const unsubscribeSwitching = profileEventManager.subscribeToSwitching(() => {
       console.log('useDashboardStats: Profile switching started - showing loading state');
       setProfileSwitching(true);
+      
+      // Clear any existing timeout
+      if (switchingTimeout) {
+        clearTimeout(switchingTimeout);
+      }
+      
+      // Failsafe: reset switching state after 3 seconds if no profile change event
+      switchingTimeout = setTimeout(() => {
+        console.log('useDashboardStats: Switching timeout - forcing reset');
+        setProfileSwitching(false);
+      }, 3000);
     });
 
     const unsubscribe = profileEventManager.subscribe((newProfileId) => {
       console.log('useDashboardStats: Profile changed to:', newProfileId);
+      
+      // Clear the timeout since we got the change event
+      if (switchingTimeout) {
+        clearTimeout(switchingTimeout);
+        switchingTimeout = null;
+      }
+      
       setCurrentProfileId(newProfileId);
       setProfileSwitching(false);
     });
 
     return () => {
+      if (switchingTimeout) {
+        clearTimeout(switchingTimeout);
+      }
       unsubscribeSwitching();
       unsubscribe();
     };
