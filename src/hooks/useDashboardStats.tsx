@@ -69,11 +69,13 @@ export const useDashboardStats = () => {
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
     console.log('Active Profile ID:', activeProfile?.id);
+    console.log('Current Profile ID:', currentProfileId);
     console.log('Total logs:', logs.length);
     console.log('Loading state:', loading);
+    console.log('Profile switching:', profileSwitching);
     
     // If we're loading, switching profiles, or have no active profile, return zero stats
-    if (loading || profileSwitching || !activeProfile || !currentProfileId) {
+    if (loading || profileSwitching || !activeProfile) {
       console.log('Returning zero stats due to loading, switching, or no profile');
       return {
         weeklyAverageSleep: '0h 0m',
