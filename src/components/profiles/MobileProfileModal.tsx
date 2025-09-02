@@ -44,7 +44,7 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent 
-          className="w-[95vw] max-w-md max-h-[90vh] flex flex-col p-0 gap-0"
+          className="w-[95vw] max-w-md max-h-[90vh] flex flex-col p-0 gap-0 bg-soft gradient-dynamic-slow border-0 shadow-2xl rounded-3xl"
           style={{ 
             position: 'fixed',
             top: '5vh',
@@ -53,54 +53,60 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
             zIndex: 9999
           }}
         >
-          <DialogHeader className="p-6 pb-4 border-b bg-white flex-shrink-0">
-            <DialogTitle className="flex items-center space-x-2 text-lg">
-              <Baby className="h-5 w-5 text-purple-600" />
-              <span>Child Profiles</span>
+          <DialogHeader className="p-6 pb-4 border-b border-border/10 bg-gradient-to-br from-primary/5 to-primary/10 flex-shrink-0 rounded-t-3xl">
+            <DialogTitle className="flex items-center space-x-3 text-xl font-bold">
+              <div className="bg-gradient-to-br from-primary/20 to-primary/30 rounded-2xl p-2">
+                <Baby className="h-6 w-6 text-primary" />
+              </div>
+              <span className="text-foreground">Child Profiles</span>
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white min-h-0">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-background/50 backdrop-blur-sm min-h-0">
             {profiles.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Baby className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <p>No profiles found</p>
+              <div className="text-center py-12">
+                <div className="bg-gradient-to-br from-muted/50 to-muted/70 rounded-3xl w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                  <Baby className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <p className="text-muted-foreground text-lg">No profiles found</p>
               </div>
             ) : (
               profiles.map((profile) => (
                 <button
                   key={profile.id}
-                  className={`w-full flex items-center space-x-3 p-4 rounded-lg border text-left transition-all touch-manipulation ${
+                  className={`w-full flex items-center space-x-4 p-5 rounded-2xl border-2 text-left transition-all duration-300 touch-manipulation transform hover:scale-[1.02] ${
                     activeProfile?.id === profile.id
-                      ? 'bg-purple-50 border-purple-200 ring-2 ring-purple-100'
-                      : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 active:bg-gray-100'
+                      ? 'bg-gradient-to-br from-primary/10 to-primary/20 border-primary/30 shadow-xl ring-2 ring-primary/20'
+                      : 'bg-white/70 backdrop-blur-sm border-border/20 hover:bg-white/90 hover:border-border/40 hover:shadow-lg active:scale-[0.98]'
                   }`}
                   onClick={() => handleProfileSwitch(profile.id)}
                   disabled={switching}
                 >
-                  <Avatar className="h-12 w-12 flex-shrink-0">
+                  <Avatar className="h-14 w-14 flex-shrink-0 shadow-lg ring-2 ring-white/50">
                     <AvatarImage src={profile.photo_url || ''} />
-                    <AvatarFallback className="bg-purple-100 text-purple-700">
-                      <Baby className="h-6 w-6" />
+                    <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/30 text-primary">
+                      <Baby className="h-7 w-7" />
                     </AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <h3 className="font-medium text-base truncate">{profile.name}</h3>
+                    <div className="flex items-center space-x-3 mb-2">
+                      <h3 className="font-bold text-lg text-foreground truncate">{profile.name}</h3>
                       {activeProfile?.id === profile.id && (
-                        <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700 flex-shrink-0">
+                        <Badge className="text-xs bg-gradient-to-r from-primary/90 to-primary text-primary-foreground font-semibold px-3 py-1 flex-shrink-0 shadow-sm">
                           Active
                         </Badge>
                       )}
                     </div>
                     
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-3 text-sm">
                       {profile.birth_date && (
-                        <span>{new Date(profile.birth_date).toLocaleDateString()}</span>
+                        <span className="text-muted-foreground font-medium">
+                          {new Date(profile.birth_date).toLocaleDateString()}
+                        </span>
                       )}
                       {profile.is_shared && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs bg-gradient-to-r from-info/10 to-info/20 border-info/30 text-info font-medium">
                           {profile.user_role === 'viewer' ? 'Viewer' : 
                            profile.user_role === 'caregiver' ? 'Caregiver' : 'Shared'}
                         </Badge>
@@ -109,20 +115,24 @@ export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps)
                   </div>
 
                   {activeProfile?.id === profile.id && (
-                    <Check className="w-5 h-5 text-purple-500 flex-shrink-0" />
+                    <div className="bg-gradient-to-br from-primary/20 to-primary/30 rounded-full p-2 flex-shrink-0">
+                      <Check className="w-5 h-5 text-primary" />
+                    </div>
                   )}
                 </button>
               ))
             )}
           </div>
 
-          <div className="p-4 border-t bg-white flex-shrink-0">
+          <div className="p-6 border-t border-border/10 bg-gradient-to-br from-muted/5 to-muted/10 flex-shrink-0 rounded-b-3xl">
             <Button
               onClick={handleManageProfiles}
-              className="w-full flex items-center space-x-2 h-12 text-base touch-manipulation"
+              className="w-full flex items-center justify-center space-x-3 h-14 text-base font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-accent/10 to-accent/20 hover:from-accent/20 hover:to-accent/30 border-2 border-accent/20 hover:border-accent/30 text-accent hover:text-accent"
               variant="outline"
             >
-              <Settings className="h-4 w-4" />
+              <div className="bg-gradient-to-br from-accent/20 to-accent/30 rounded-lg p-1">
+                <Settings className="h-4 w-4 text-accent" />
+              </div>
               <span>Manage Profiles</span>
             </Button>
           </div>
