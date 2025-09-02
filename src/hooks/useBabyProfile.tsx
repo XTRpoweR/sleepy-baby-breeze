@@ -255,21 +255,18 @@ export const useBabyProfile = () => {
         user_role: targetProfile.user_role
       });
 
-      // Emit switching start event immediately for instant visual feedback
-      profileEventManager.emitSwitchingStart();
-      
-      // Update state immediately
+      // Emit profile change event AFTER updating state to ensure proper order
       setActiveProfile(targetProfile);
       
+      // Small delay to ensure state is updated before emitting event
+      setTimeout(() => {
+        console.log('Emitting profile change event to refresh data');
+        profileEventManager.emit(targetProfile.id);
+      }, 0);
+
       // For shared profiles, we only need to update local state
       if (targetProfile.is_shared) {
         console.log('Switching to shared profile - updating local state only');
-        
-        // Emit profile change event after a small delay for shared profiles
-        setTimeout(() => {
-          profileEventManager.emit(targetProfile.id, true);
-        }, 100);
-        
         console.log('Successfully switched to shared profile:', targetProfile.name);
         return true;
       }
@@ -291,6 +288,7 @@ export const useBabyProfile = () => {
           description: "Profile switched but couldn't save preference",
           variant: "destructive",
         });
+        return true; // Still return true since local switch worked
       }
 
       // Update profiles list to reflect new active state for owned profiles only
@@ -299,9 +297,6 @@ export const useBabyProfile = () => {
         is_active: !p.is_shared && p.id === profileId 
       }));
       setProfiles(updatedProfiles);
-      
-      // Emit profile change event after database update for owned profiles
-      profileEventManager.emit(targetProfile.id, true);
 
       console.log('Profile switch completed successfully for owned profile');
       return true;

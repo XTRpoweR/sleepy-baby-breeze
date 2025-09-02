@@ -19,7 +19,6 @@ export const useActivityLogs = (babyId: string) => {
   const { toast } = useToast();
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profileSwitching, setProfileSwitching] = useState(false);
   const currentBabyIdRef = useRef(babyId);
 
   const fetchLogs = useCallback(async () => {
@@ -76,31 +75,27 @@ export const useActivityLogs = (babyId: string) => {
     }
   }, [babyId, toast]);
 
-  // Listen for profile switching to show immediate loading state
+  // Listen for profile changes to immediately clear data and refetch
   useEffect(() => {
-    const unsubscribeSwitching = profileEventManager.subscribeToSwitching(() => {
-      console.log('useActivityLogs: Profile switching started - clearing logs immediately');
-      setLogs([]); // Clear logs immediately
-      setProfileSwitching(true);
+    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
+      console.log('useActivityLogs: Profile changed, clearing data for new profile:', newProfileId);
+      // Clear data immediately when profile changes
+      setLogs([]);
       setLoading(true);
-      currentBabyIdRef.current = null; // Reset to prevent stale data
+      
+      // If we have a new profile ID, trigger an immediate fetch
+      if (newProfileId && newProfileId !== currentBabyIdRef.current) {
+        console.log('Triggering immediate fetch for new profile:', newProfileId);
+        currentBabyIdRef.current = newProfileId;
+        // Small delay to ensure the profile switch is complete
+        setTimeout(() => {
+          fetchLogs();
+        }, 10);
+      }
     });
 
-    const unsubscribe = profileEventManager.subscribe((newProfileId, isImmediate) => {
-      console.log('useActivityLogs: Profile changed to:', newProfileId, 'immediate:', isImmediate);
-      
-      // Update the ref to track the current profile
-      currentBabyIdRef.current = newProfileId || '';
-      setProfileSwitching(false);
-      
-      // The fetchLogs effect will handle loading new data when babyId changes
-    });
-
-    return () => {
-      unsubscribeSwitching();
-      unsubscribe();
-    };
-  }, []);
+    return unsubscribe;
+  }, [fetchLogs]);
 
   // Immediate effect when babyId changes
   useEffect(() => {
@@ -191,7 +186,7 @@ export const useActivityLogs = (babyId: string) => {
 
   return {
     logs,
-    loading: loading || profileSwitching,
+    loading,
     deleteLog,
     updateLog,
     refetchLogs: fetchLogs

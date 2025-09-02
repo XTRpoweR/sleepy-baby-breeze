@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+
+import { useMemo, useEffect } from 'react';
 import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
+import { profileEventManager } from '@/utils/profileEvents';
 
 interface DashboardStats {
   weeklyAverageSleep: string;
@@ -12,13 +14,23 @@ export const useDashboardStats = () => {
   const { activeProfile } = useBabyProfile();
   const { logs, loading } = useActivityLogs(activeProfile?.id || '');
 
+  // Listen for profile changes to force stats reset
+  useEffect(() => {
+    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
+      console.log('useDashboardStats: Profile changed to:', newProfileId);
+      // The stats will automatically recalculate when logs change due to useMemo dependencies
+    });
+
+    return unsubscribe;
+  }, []);
+
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
     console.log('Active Profile ID:', activeProfile?.id);
     console.log('Total logs:', logs.length);
     console.log('Loading state:', loading);
     
-    // If we're loading or have no active profile, return zero stats
+    // If we're loading or have no active profile, return zero stats but indicate loading
     if (loading || !activeProfile) {
       console.log('Returning zero stats due to loading or no profile');
       return {
@@ -138,6 +150,7 @@ export const useDashboardStats = () => {
     return finalStats;
   }, [logs, loading, activeProfile?.id]);
 
+  // Return loading state that matches the activity logs loading state
   return {
     stats,
     loading,
