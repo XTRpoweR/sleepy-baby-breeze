@@ -1,8 +1,7 @@
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
-import { profileEventManager } from '@/utils/profileEvents';
 
 interface DashboardStats {
   weeklyAverageSleep: string;
@@ -13,81 +12,16 @@ interface DashboardStats {
 export const useDashboardStats = () => {
   const { activeProfile } = useBabyProfile();
   const { logs, loading } = useActivityLogs(activeProfile?.id || '');
-  const [profileSwitching, setProfileSwitching] = useState(false);
-  const [currentProfileId, setCurrentProfileId] = useState<string | null>(activeProfile?.id || null);
-
-  // Listen for profile switching and changes with timeout protection
-  useEffect(() => {
-    let switchingTimeout: NodeJS.Timeout | null = null;
-
-    const unsubscribeSwitching = profileEventManager.subscribeToSwitching(() => {
-      console.log('useDashboardStats: Profile switching started - showing loading state');
-      setProfileSwitching(true);
-      
-      // Clear any existing timeout
-      if (switchingTimeout) {
-        clearTimeout(switchingTimeout);
-      }
-      
-      // Failsafe: reset switching state after 3 seconds if no profile change event
-      switchingTimeout = setTimeout(() => {
-        console.log('useDashboardStats: Switching timeout - forcing reset');
-        setProfileSwitching(false);
-      }, 3000);
-    });
-
-    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
-      console.log('useDashboardStats: Profile changed to:', newProfileId);
-      
-      // Clear the timeout since we got the change event
-      if (switchingTimeout) {
-        clearTimeout(switchingTimeout);
-        switchingTimeout = null;
-      }
-      
-      setCurrentProfileId(newProfileId);
-      setProfileSwitching(false);
-    });
-
-    return () => {
-      if (switchingTimeout) {
-        clearTimeout(switchingTimeout);
-      }
-      unsubscribeSwitching();
-      unsubscribe();
-    };
-  }, []);
-
-  // Update current profile ID when activeProfile changes
-  useEffect(() => {
-    const newProfileId = activeProfile?.id || null;
-    if (newProfileId !== currentProfileId) {
-      setCurrentProfileId(newProfileId);
-    }
-  }, [activeProfile?.id, currentProfileId]);
 
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
     console.log('Active Profile ID:', activeProfile?.id);
-    console.log('Current Profile ID:', currentProfileId);
     console.log('Total logs:', logs.length);
     console.log('Loading state:', loading);
-    console.log('Profile switching:', profileSwitching);
     
-    // If we're loading, switching profiles, or have no active profile, return zero stats
-    if (loading || profileSwitching || !activeProfile) {
-      console.log('Returning zero stats due to loading, switching, or no profile');
-      return {
-        weeklyAverageSleep: '0h 0m',
-        weeklyFeedings: 0,
-        weeklyDiaperChanges: 0
-      };
-    }
-
-    // Safety check: only calculate stats if logs belong to current active profile
-    const logsMatchProfile = logs.length === 0 || currentProfileId === activeProfile.id;
-    if (!logsMatchProfile) {
-      console.log('Logs do not match current profile, returning zero stats during transition');
+    // If we're loading or have no active profile, return zero stats
+    if (loading || !activeProfile) {
+      console.log('Returning zero stats due to loading or no profile');
       return {
         weeklyAverageSleep: '0h 0m',
         weeklyFeedings: 0,
@@ -203,12 +137,12 @@ export const useDashboardStats = () => {
     console.log('=== End useDashboardStats Debug ===');
 
     return finalStats;
-  }, [logs, loading, activeProfile?.id, profileSwitching, currentProfileId]);
+  }, [logs, loading, activeProfile?.id]);
 
-  // Return loading state that includes profile switching
+  // Return simplified loading state
   return {
     stats,
-    loading: loading || profileSwitching,
+    loading,
     hasActiveProfile: !!activeProfile
   };
 };
