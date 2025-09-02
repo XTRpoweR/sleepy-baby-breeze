@@ -10,8 +10,11 @@ export const MobileProfileSelector = () => {
   const { profiles, activeProfile, switching } = useBabyProfile();
   const [showModal, setShowModal] = useState(false);
 
+  // Debug logging
+  console.log('MobileProfileSelector render:', { profiles, activeProfile, switching });
 
   if (!activeProfile) {
+    console.log('No active profile, not rendering MobileProfileSelector');
     return null;
   }
 

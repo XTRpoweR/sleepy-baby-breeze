@@ -255,23 +255,25 @@ export const useBabyProfile = () => {
         user_role: targetProfile.user_role
       });
 
+      // Emit profile change event AFTER updating state to ensure proper order
+      setActiveProfile(targetProfile);
+      
+      // Small delay to ensure state is updated before emitting event
+      setTimeout(() => {
+        console.log('Emitting profile change event to refresh data');
+        profileEventManager.emit(targetProfile.id);
+      }, 0);
+
       // For shared profiles, we only need to update local state
       if (targetProfile.is_shared) {
         console.log('Switching to shared profile - updating local state only');
-        setActiveProfile(targetProfile);
-        
-        // Emit profile change event for shared profiles
-        setTimeout(() => {
-          console.log('Emitting profile change event to refresh data');
-          profileEventManager.emit(targetProfile.id);
-        }, 0);
-        
         console.log('Successfully switched to shared profile:', targetProfile.name);
         return true;
       }
 
-      // For owned profiles, update database first, then local state
+      // For owned profiles, update both local state and database
       console.log('Switching to owned profile - updating database');
+      // Then update the database
       const { error } = await supabase.rpc('set_active_profile', {
         profile_id: profileId,
         user_id_param: user.id
@@ -279,45 +281,28 @@ export const useBabyProfile = () => {
 
       if (error) {
         console.error('Error switching profile in database:', error);
-        // Still update local state to make the switch work
-        setActiveProfile(targetProfile);
-        
+        // Don't revert local state since we want the switch to work
+        // The database error just means the active flag won't be persisted
         toast({
           title: "Warning",
           description: "Profile switched but couldn't save preference",
           variant: "destructive",
         });
-      } else {
-        // Update profiles list to reflect new active state
-        const updatedProfiles = profiles.map(p => ({ 
-          ...p, 
-          is_active: p.id === profileId 
-        }));
-        setProfiles(updatedProfiles);
-        
-        // Set the active profile after database update
-        setActiveProfile({
-          ...targetProfile,
-          is_active: true
-        });
+        return true; // Still return true since local switch worked
       }
 
-      // Emit profile change event after state is properly set
-      setTimeout(() => {
-        console.log('Emitting profile change event to refresh data');
-        profileEventManager.emit(targetProfile.id);
-      }, 100); // Slightly longer delay to ensure state is updated
+      // Update profiles list to reflect new active state for owned profiles only
+      const updatedProfiles = profiles.map(p => ({ 
+        ...p, 
+        is_active: !p.is_shared && p.id === profileId 
+      }));
+      setProfiles(updatedProfiles);
 
       console.log('Profile switch completed successfully for owned profile');
       return true;
     } catch (error) {
       console.error('Unexpected error switching profile:', error);
-      // Still try to update local state
-      const targetProfile = profiles.find(p => p.id === profileId);
-      if (targetProfile) {
-        setActiveProfile(targetProfile);
-      }
-      
+      // Don't revert activeProfile - keep the switch working
       toast({
         title: "Warning", 
         description: "Profile switched but there was an error",
