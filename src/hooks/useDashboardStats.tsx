@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { useActivityLogs } from '@/hooks/useActivityLogs';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
@@ -139,7 +138,6 @@ export const useDashboardStats = () => {
     return finalStats;
   }, [logs, loading, activeProfile?.id]);
 
-  // Return simplified loading state
   return {
     stats,
     loading,
