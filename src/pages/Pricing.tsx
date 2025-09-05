@@ -129,94 +129,13 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* Pricing Cards */}
+      {/* Stripe Pricing Table */}
       <section className="py-8 md:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-            {/* Basic Plan */}
-            <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
-              <CardHeader className="text-center pb-4 md:pb-6">
-                <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
-                  <Baby className="h-6 w-6 md:h-8 md:w-8 text-blue-600" />
-                  <CardTitle className="text-xl md:text-2xl">SleepyBabyy Basic</CardTitle>
-                </div>
-                <div className="space-y-2">
-                  <div className="text-3xl md:text-4xl font-bold text-gray-900">Free</div>
-                  <CardDescription className="text-base md:text-lg">
-                    Perfect for getting started with baby tracking
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4 md:space-y-6">
-                <Button className="w-full" variant="outline" onClick={handleGetStarted}>
-                  Get Started Free
-                </Button>
-                
-                <div className="space-y-3 md:space-y-4">
-                  <h4 className="font-semibold text-gray-900">What's included:</h4>
-                  <ul className="space-y-2 md:space-y-3">
-                    {features.basic.map((feature, index) => <li key={index} className="flex items-center space-x-3">
-                        <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>)}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Premium Plan */}
-            <Card className="border-2 border-orange-500 hover:shadow-xl transition-all duration-300 relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-orange-500 text-white px-3 md:px-4 py-1">
-                  <Crown className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                  Most Popular
-                </Badge>
-              </div>
-              <CardHeader className="text-center pb-4 md:pb-6">
-                <div className="flex items-center justify-center space-x-2 mb-3 md:mb-4">
-                  <Crown className="h-6 w-6 md:h-8 md:w-8 text-orange-600" />
-                  <CardTitle className="text-xl md:text-2xl">SleepyBabyy Premium</CardTitle>
-                </div>
-                
-                {/* Discount Badge */}
-                <div className="mb-3 md:mb-4">
-                  <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold px-2 md:px-3 py-1">40% OFF LIMITED TIME</Badge>
-                </div>
-                
-                <div className="space-y-2">
-                  {/* Pricing with old price crossed out */}
-                  <div className="flex items-center justify-center space-x-2 md:space-x-3">
-                    <span className="text-lg md:text-xl text-gray-500 line-through font-medium">${originalPrice.toFixed(2)}</span>
-                    <div className="flex items-center space-x-1">
-                      <span className="text-3xl md:text-4xl font-bold text-gray-900">
-                        $29.99
-                      </span>
-                      <span className="text-gray-600 text-sm md:text-base">/month</span>
-                    </div>
-                  </div>
-                  <p className="text-red-600 text-xs md:text-sm font-medium">Save $20.00 per month!</p>
-                  <CardDescription className="text-base md:text-lg">
-                    Complete baby tracking solution for modern families
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4 md:space-y-6">
-                <Button className="w-full bg-orange-600 hover:bg-orange-700" onClick={user ? () => navigate('/subscription') : handleGetStarted}>
-                  {user ? 'Upgrade to Premium' : 'Start Premium Trial'}
-                </Button>
-                
-                <div className="space-y-3 md:space-y-4">
-                  <h4 className="font-semibold text-gray-900">Everything in Basic, plus:</h4>
-                  <ul className="space-y-2 md:space-y-3">
-                    {features.premium.map((feature, index) => <li key={index} className="flex items-center space-x-3">
-                        <Check className="h-4 w-4 md:h-5 md:w-5 text-green-500 flex-shrink-0" />
-                        <span className="text-sm md:text-base text-gray-700">{feature}</span>
-                      </li>)}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <stripe-pricing-table 
+            pricing-table-id="prctbl_1S47kXKxuyUBlfIJtoR1f6a4"
+            publishable-key="pk_live_51RVFtVKxuyUBlfIJsr75K3hDv2yTrySwB6WHRFJ0Hom525KyP9UzUWgdAhoISUgTC7IHDNyszOkFGpP1eGaR5ldG00lkSelsRu"
+          />
         </div>
       </section>
 
