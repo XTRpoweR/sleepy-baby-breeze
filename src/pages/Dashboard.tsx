@@ -342,7 +342,7 @@ const Dashboard = () => {
                       Unlock Premium Features
                     </h3>
                     <p className="text-muted-foreground text-xs lg:text-sm">
-                      Get unlimited profiles, extended history, family sharing, and more for just $9.99/month
+                      Get unlimited profiles, extended history, family sharing, and more for just $29.99/month
                     </p>
                   </div>
                 </div>

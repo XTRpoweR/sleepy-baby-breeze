@@ -252,8 +252,8 @@ const Features = () => {
             </p>
             {/* Added discount info */}
             <div className="mt-4 inline-flex items-center space-x-2 bg-red-100 px-4 py-2 rounded-full">
-              <span className="text-lg text-gray-500 line-through">$14.99/month</span>
-              <span className="text-xl font-bold text-red-600">$9.99/month</span>
+              <span className="text-lg text-gray-500 line-through">$49.99/month</span>
+              <span className="text-xl font-bold text-red-600">$29.99/month</span>
               <Badge className="bg-red-500 text-white text-xs">40% OFF</Badge>
             </div>
           </div>

@@ -299,7 +299,7 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
       const amount = price.unit_amount || 0;
       
       // Map pricing to tiers - adjust these amounts based on your actual pricing
-      if (amount >= 999) { // $9.99 or more
+      if (amount >= 2999) { // $29.99 or more
         subscriptionTier = 'premium';
       }
       

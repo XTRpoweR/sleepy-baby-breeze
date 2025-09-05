@@ -316,8 +316,8 @@ const HelpCenter = () => {
                         <h3 className="font-bold text-base md:text-lg">Premium Support</h3>
                         <p className="text-sm md:text-base text-gray-600 mb-2">Priority support for Premium users</p>
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-sm text-gray-500 line-through">$14.99/month</span>
-                          <span className="text-lg font-bold text-orange-600">$9.99/month</span>
+                          <span className="text-sm text-gray-500 line-through">$49.99/month</span>
+                          <span className="text-lg font-bold text-orange-600">$29.99/month</span>
                           <Badge className="bg-red-500 text-white text-xs">40% OFF</Badge>
                         </div>
                       </div>

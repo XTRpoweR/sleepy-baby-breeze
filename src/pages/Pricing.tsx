@@ -43,9 +43,9 @@ const Pricing = () => {
     basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
     premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
   };
-  const monthlyPrice = 9.99;
-  const annualPrice = 99.99;
-  const originalPrice = 14.99;
+  const monthlyPrice = 29.99;
+  const annualPrice = 299.99;
+  const originalPrice = 49.99;
   const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Navigation */}
@@ -122,8 +122,8 @@ const Pricing = () => {
           {/* Special Offer Banner */}
           <div className="mb-6 md:mb-8 inline-flex items-center space-x-2 bg-red-100 px-4 md:px-6 py-2 md:py-3 rounded-full border-2 border-red-200">
             <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold">LIMITED TIME</Badge>
-            <span className="text-base md:text-lg text-gray-600 line-through">$14.99/month</span>
-            <span className="text-xl md:text-2xl font-bold text-red-600">$9.99/month</span>
+            <span className="text-base md:text-lg text-gray-600 line-through">$49.99/month</span>
+            <span className="text-xl md:text-2xl font-bold text-red-600">$29.99/month</span>
             <span className="text-red-600 font-semibold text-sm md:text-base">(40% OFF)</span>
           </div>
         </div>
@@ -189,12 +189,12 @@ const Pricing = () => {
                     <span className="text-lg md:text-xl text-gray-500 line-through font-medium">${originalPrice.toFixed(2)}</span>
                     <div className="flex items-center space-x-1">
                       <span className="text-3xl md:text-4xl font-bold text-gray-900">
-                        $9.99
+                        $29.99
                       </span>
                       <span className="text-gray-600 text-sm md:text-base">/month</span>
                     </div>
                   </div>
-                  <p className="text-red-600 text-xs md:text-sm font-medium">Save $5.00 per month!</p>
+                  <p className="text-red-600 text-xs md:text-sm font-medium">Save $20.00 per month!</p>
                   <CardDescription className="text-base md:text-lg">
                     Complete baby tracking solution for modern families
                   </CardDescription>
@@ -236,7 +236,7 @@ const Pricing = () => {
                   <th className="text-center py-3 md:py-4 px-2 md:px-4 font-semibold text-gray-900 text-sm md:text-base">
                     Premium
                     <div className="text-xs font-normal text-red-600 mt-1">
-                      <span className="line-through">$14.99</span> $9.99/mo
+                      <span className="line-through">$49.99</span> $29.99/mo
                     </div>
                   </th>
                 </tr>

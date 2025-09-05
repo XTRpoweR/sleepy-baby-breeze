@@ -190,9 +190,9 @@ export const MobileDashboard = ({
                   <h3 className="text-lg font-bold text-foreground mb-1">
                     Unlock Premium
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Unlimited profiles, family sharing & more for $9.99/month
-                  </p>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      Unlimited profiles, family sharing & more for $29.99/month
+                    </p>
                 </div>
               </div>
               <Button 

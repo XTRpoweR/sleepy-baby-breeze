@@ -380,11 +380,11 @@ const Index = () => {
                   
                   {/* Pricing with old price crossed out */}
                   <div className="flex items-center justify-center space-x-2 mb-1">
-                    <span className="text-base sm:text-lg text-gray-500 line-through font-medium">$14.99</span>
-                    <span className="text-3xl sm:text-4xl font-bold text-gray-900">$9.99</span>
+                    <span className="text-base sm:text-lg text-gray-500 line-through font-medium">$49.99</span>
+                    <span className="text-3xl sm:text-4xl font-bold text-gray-900">$29.99</span>
                     <span className="text-sm sm:text-base text-gray-600">/month</span>
                   </div>
-                  <p className="text-red-600 text-xs sm:text-sm font-medium mb-3 sm:mb-4">Save $5.00 per month!</p>
+                  <p className="text-red-600 text-xs sm:text-sm font-medium mb-3 sm:mb-4">Save $20.00 per month!</p>
                   <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Complete baby tracking solution</p>
                   
                   <ul className="space-y-2 sm:space-y-3 text-left mb-6 sm:mb-8">

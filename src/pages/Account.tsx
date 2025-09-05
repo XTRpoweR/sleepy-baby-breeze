@@ -404,7 +404,7 @@ const Account = () => {
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold text-gray-900">
-                      {isPremium ? '$9.99/mo' : 'Free'}
+                      {isPremium ? '$29.99/mo' : 'Free'}
                     </div>
                   </div>
                 </div>
@@ -461,7 +461,7 @@ const Account = () => {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium text-orange-600 mb-3">Premium Plan ($9.99/mo)</h4>
+                    <h4 className="font-medium text-orange-600 mb-3">Premium Plan ($29.99/mo)</h4>
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-center space-x-2">
                         <Check className="h-3 w-3 text-green-500" />
