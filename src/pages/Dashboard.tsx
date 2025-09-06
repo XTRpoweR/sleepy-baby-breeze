@@ -36,6 +36,7 @@ const Dashboard = () => {
   const {
     subscriptionTier,
     isPremium,
+    loading: subscriptionLoading,
     openCustomerPortal,
     checkSubscription
   } = useSubscription();
@@ -330,7 +331,7 @@ const Dashboard = () => {
         </div>
 
         {/* Upgrade Banner for Basic Users */}
-        {!isPremium && <Card className="mb-3 lg:mb-4 border-2 border-dashed border-warning/20 bg-gradient-to-r from-warning/5 to-warning/10 card-glow">
+        {!subscriptionLoading && !isPremium && <Card className="mb-3 lg:mb-4 border-2 border-dashed border-warning/20 bg-gradient-to-r from-warning/5 to-warning/10 card-glow">
             <CardContent className="p-2 lg:p-3">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-2 lg:space-y-0">
                 <div className="flex items-start lg:items-center space-x-2">
