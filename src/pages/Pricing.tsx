@@ -119,11 +119,35 @@ const Pricing = () => {
             or unlock premium features with our affordable Premium plan.
           </p>
 
+          {/* Billing Toggle */}
+          <div className="mb-6 md:mb-8 flex items-center justify-center space-x-4">
+            <span className={`text-sm md:text-base font-medium ${!isAnnual ? 'text-gray-900' : 'text-gray-600'}`}>
+              Monthly
+            </span>
+            <Switch 
+              checked={isAnnual} 
+              onCheckedChange={setIsAnnual}
+              className="data-[state=checked]:bg-blue-600"
+            />
+            <span className={`text-sm md:text-base font-medium ${isAnnual ? 'text-gray-900' : 'text-gray-600'}`}>
+              Annual
+            </span>
+            {isAnnual && (
+              <Badge className="bg-green-500 text-white text-xs font-bold ml-2">
+                Save ${annualSavings}
+              </Badge>
+            )}
+          </div>
+
           {/* Special Offer Banner */}
           <div className="mb-6 md:mb-8 inline-flex items-center space-x-2 bg-red-100 px-4 md:px-6 py-2 md:py-3 rounded-full border-2 border-red-200">
             <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold">LIMITED TIME</Badge>
-            <span className="text-base md:text-lg text-gray-600 line-through">$49.99/month</span>
-            <span className="text-xl md:text-2xl font-bold text-red-600">$29.99/month</span>
+            <span className="text-base md:text-lg text-gray-600 line-through">
+              ${originalPrice.toFixed(2)}{isAnnual ? '/year' : '/month'}
+            </span>
+            <span className="text-xl md:text-2xl font-bold text-red-600">
+              ${isAnnual ? annualPrice.toFixed(2) : monthlyPrice.toFixed(2)}{isAnnual ? '/year' : '/month'}
+            </span>
             <span className="text-red-600 font-semibold text-sm md:text-base">(40% OFF)</span>
           </div>
         </div>
@@ -186,15 +210,26 @@ const Pricing = () => {
                 <div className="space-y-2">
                   {/* Pricing with old price crossed out */}
                   <div className="flex items-center justify-center space-x-2 md:space-x-3">
-                    <span className="text-lg md:text-xl text-gray-500 line-through font-medium">${originalPrice.toFixed(2)}</span>
+                    <span className="text-lg md:text-xl text-gray-500 line-through font-medium">
+                      ${isAnnual ? (originalPrice * 12).toFixed(2) : originalPrice.toFixed(2)}
+                    </span>
                     <div className="flex items-center space-x-1">
                       <span className="text-3xl md:text-4xl font-bold text-gray-900">
-                        $29.99
+                        ${isAnnual ? annualPrice.toFixed(2) : monthlyPrice.toFixed(2)}
                       </span>
-                      <span className="text-gray-600 text-sm md:text-base">/month</span>
+                      <span className="text-gray-600 text-sm md:text-base">
+                        {isAnnual ? '/year' : '/month'}
+                      </span>
                     </div>
                   </div>
-                  <p className="text-red-600 text-xs md:text-sm font-medium">Save $20.00 per month!</p>
+                  {isAnnual ? (
+                    <div className="space-y-1">
+                      <p className="text-green-600 text-xs md:text-sm font-medium">Save ${annualSavings} per year!</p>
+                      <p className="text-gray-600 text-xs">That's only ${(annualPrice / 12).toFixed(2)}/month</p>
+                    </div>
+                  ) : (
+                    <p className="text-red-600 text-xs md:text-sm font-medium">Save ${(originalPrice - monthlyPrice).toFixed(2)} per month!</p>
+                  )}
                   <CardDescription className="text-base md:text-lg">
                     Complete baby tracking solution for modern families
                   </CardDescription>
@@ -236,7 +271,10 @@ const Pricing = () => {
                   <th className="text-center py-3 md:py-4 px-2 md:px-4 font-semibold text-gray-900 text-sm md:text-base">
                     Premium
                     <div className="text-xs font-normal text-red-600 mt-1">
-                      <span className="line-through">$49.99</span> $29.99/mo
+                      <span className="line-through">
+                        ${isAnnual ? (originalPrice * 12).toFixed(2) : originalPrice.toFixed(2)}{isAnnual ? '/yr' : '/mo'}
+                      </span>{' '}
+                      ${isAnnual ? annualPrice.toFixed(2) : monthlyPrice.toFixed(2)}{isAnnual ? '/yr' : '/mo'}
                     </div>
                   </th>
                 </tr>
