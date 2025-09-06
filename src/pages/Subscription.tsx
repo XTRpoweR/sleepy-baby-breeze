@@ -265,7 +265,7 @@ const Subscription = () => {
           </div>
           <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">30-Day Money-Back Guarantee</h3>
           <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">
-            Try SleepyBaby Premium risk-free. If you're not completely satisfied, we'll refund your money within 30 days.
+            Try SleepyBabyy Premium risk-free. If you're not completely satisfied, we'll refund your money within 30 days.
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 text-sm text-gray-600">
             <div className="flex items-center justify-center space-x-1">
