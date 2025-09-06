@@ -101,10 +101,23 @@ serve(async (req) => {
     let isTrial = false;
     let trialStart = null;
     let trialEnd = null;
+    let billingCycle = 'monthly';
 
     if (subscriptions.data.length > 0) {
       const subscription = subscriptions.data[0];
-      subscriptionTier = 'premium';
+      
+      // Determine subscription tier based on pricing interval
+      const priceId = subscription.items.data[0].price.id;
+      const price = await stripe.prices.retrieve(priceId);
+      
+      if (price.recurring?.interval === 'year') {
+        subscriptionTier = 'premium_annual';
+        billingCycle = 'yearly';
+      } else {
+        subscriptionTier = 'premium';
+        billingCycle = 'monthly';
+      }
+      
       subscriptionStatus = subscription.status;
       currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString();
       currentPeriodStart = new Date(subscription.current_period_start * 1000).toISOString();
@@ -142,6 +155,7 @@ serve(async (req) => {
       is_trial: isTrial,
       trial_start: trialStart,
       trial_end: trialEnd,
+      billing_cycle: billingCycle,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' });
 

@@ -20,6 +20,20 @@ serve(async (req) => {
 
   try {
     logStep("Function started");
+    
+    // Get request body for pricing plan selection
+    const requestBody = await req.text();
+    let pricingPlan = 'monthly'; // default
+    
+    if (requestBody) {
+      try {
+        const body = JSON.parse(requestBody);
+        pricingPlan = body.pricingPlan || 'monthly';
+        logStep("Pricing plan selected", { pricingPlan });
+      } catch (e) {
+        logStep("No valid JSON body, using default pricing");
+      }
+    }
 
     // Validate environment variables
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
@@ -138,20 +152,43 @@ serve(async (req) => {
         throw new Error("No active pricing found for this product. Please contact support.");
       }
 
-      // Find the recurring price (subscription)
-      const recurringPrice = prices.data.find(price => price.recurring);
+      // Find the appropriate price based on billing cycle
+      let selectedPrice;
       
-      if (!recurringPrice) {
-        logStep("ERROR: No recurring price found");
+      if (pricingPlan === 'annual') {
+        // Look for yearly pricing (amount should be around 29900 for annual)
+        selectedPrice = prices.data.find(price => 
+          price.recurring && 
+          price.recurring.interval === 'year'
+        );
+        
+        if (!selectedPrice) {
+          logStep("No annual pricing found, falling back to monthly");
+          selectedPrice = prices.data.find(price => 
+            price.recurring && 
+            price.recurring.interval === 'month'
+          );
+        }
+      } else {
+        // Default to monthly
+        selectedPrice = prices.data.find(price => 
+          price.recurring && 
+          price.recurring.interval === 'month'
+        );
+      }
+      
+      if (!selectedPrice) {
+        logStep("ERROR: No suitable price found");
         throw new Error("No subscription pricing found for this product.");
       }
 
-      priceId = recurringPrice.id;
-      logStep("Using recurring price", { 
+      priceId = selectedPrice.id;
+      logStep("Using selected price", { 
         priceId, 
-        amount: recurringPrice.unit_amount, 
-        currency: recurringPrice.currency,
-        interval: recurringPrice.recurring?.interval 
+        amount: selectedPrice.unit_amount, 
+        currency: selectedPrice.currency,
+        interval: selectedPrice.recurring?.interval,
+        billingCycle: pricingPlan
       });
 
     } catch (error) {

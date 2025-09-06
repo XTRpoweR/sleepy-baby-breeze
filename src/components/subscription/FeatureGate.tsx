@@ -81,7 +81,7 @@ export const FeatureGate = ({
         </p>
         {showUpgrade && (
           <Button 
-            onClick={onUpgradeClick || createCheckout}
+            onClick={onUpgradeClick || (() => createCheckout())}
             disabled={upgrading}
             className="bg-orange-600 hover:bg-orange-700"
           >

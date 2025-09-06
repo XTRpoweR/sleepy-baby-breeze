@@ -5,15 +5,16 @@ import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SubscriptionContextType {
-  subscriptionTier: 'basic' | 'premium';
+  subscriptionTier: 'basic' | 'premium' | 'premium_annual';
   status: string;
   currentPeriodEnd: string | null;
   loading: boolean;
   upgrading: boolean;
   checkSubscription: () => Promise<void>;
-  createCheckout: () => Promise<void>;
+  createCheckout: (pricingPlan?: 'monthly' | 'annual') => Promise<void>;
   openCustomerPortal: () => Promise<void>;
   isPremium: boolean;
+  isPremiumAnnual: boolean;
   isBasic: boolean;
   isTrial: boolean;
   trialEnd: string | null;
@@ -34,7 +35,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const { user, session, loading: authLoading, refreshSession } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [subscriptionTier, setSubscriptionTier] = useState<'basic' | 'premium'>('basic');
+  const [subscriptionTier, setSubscriptionTier] = useState<'basic' | 'premium' | 'premium_annual'>('basic');
   const [status, setStatus] = useState('active');
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -171,7 +172,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const createCheckout = async () => {
+  const createCheckout = async (pricingPlan: 'monthly' | 'annual' = 'monthly') => {
     if (upgrading) {
       console.log('Already processing upgrade, skipping...');
       return;
@@ -208,6 +209,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        body: { pricingPlan },
       });
 
       console.log('Checkout response:', { data, error });
@@ -386,7 +388,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   }, [user, authLoading]);
 
-  const isPremium = subscriptionTier === 'premium';
+  const isPremium = subscriptionTier === 'premium' || subscriptionTier === 'premium_annual';
+  const isPremiumAnnual = subscriptionTier === 'premium_annual';
   const isBasic = subscriptionTier === 'basic';
   
   // Calculate trial days left
@@ -403,6 +406,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       createCheckout,
       openCustomerPortal,
       isPremium,
+      isPremiumAnnual,
       isBasic,
       isTrial,
       trialEnd,
