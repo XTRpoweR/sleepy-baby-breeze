@@ -202,7 +202,8 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://sleepybabyy.com";
     logStep("Creating checkout session", { origin, priceId, customerId });
 
-    const session = await stripe.checkout.sessions.create({
+    // Create checkout session with explicit trial settings
+    const sessionParams: any = {
       customer: customerId,
       line_items: [
         {
@@ -224,7 +225,19 @@ serve(async (req) => {
           user_id: user.id,
         },
       },
-    });
+    };
+
+    // For annual subscriptions, be more explicit about trial settings
+    if (pricingPlan === 'annual') {
+      logStep("Setting explicit trial configuration for annual subscription");
+      sessionParams.subscription_data.trial_settings = {
+        end_behavior: {
+          missing_payment_method: 'pause'
+        }
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     logStep("Checkout session created successfully", { sessionId: session.id, url: session.url });
 
