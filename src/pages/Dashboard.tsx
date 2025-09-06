@@ -301,7 +301,7 @@ const Dashboard = () => {
                 <MobileProfileSelector />
               </div>
               
-              {!isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
+              {!subscriptionLoading && !isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
                   <Crown className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
                   Upgrade to Premium for unlimited baby profiles
                 </p>}
@@ -385,7 +385,7 @@ const Dashboard = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Smart Notifications</h3>
               <p className="text-xs text-gray-600">Intelligent care reminders</p>
-              {!isPremium && <div className="absolute top-1 right-1">
+              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
                   <Crown className="h-3 w-3 text-orange-500" />
                 </div>}
             </CardContent>
@@ -398,7 +398,7 @@ const Dashboard = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Photo & Memories</h3>
               <p className="text-xs text-gray-600">Capture precious moments</p>
-              {!isPremium && <div className="absolute top-1 right-1">
+              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
                   <Crown className="h-3 w-3 text-orange-500" />
                 </div>}
             </CardContent>
@@ -415,7 +415,7 @@ const Dashboard = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.familySharing')}</h3>
               <p className="text-xs text-gray-600">{t('dashboard.familySharingDesc')}</p>
-              {!isPremium && <div className="absolute top-1 right-1">
+              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
                   <Crown className="h-3 w-3 text-orange-500" />
                 </div>}
             </CardContent>
@@ -428,7 +428,7 @@ const Dashboard = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.pediatricianReports')}</h3>
               <p className="text-xs text-gray-600">{t('dashboard.pediatricianReportsDesc')}</p>
-              {!isPremium && <div className="absolute top-1 right-1">
+              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
                   <Crown className="h-3 w-3 text-orange-500" />
                 </div>}
             </CardContent>
