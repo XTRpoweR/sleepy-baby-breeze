@@ -28,12 +28,7 @@ export const SubscriptionPlans = () => {
       return;
     }
     
-    if (pricingPlan === 'annual') {
-      // Direct Stripe payment link for annual plan
-      window.open('https://buy.stripe.com/aFafZifkJbNk50uew83Nm00', '_blank');
-    } else {
-      createCheckout(pricingPlan);
-    }
+    createCheckout(pricingPlan);
   };
 
   const basicFeatures = [
