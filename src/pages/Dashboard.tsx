@@ -301,7 +301,7 @@ const Dashboard = () => {
                 <MobileProfileSelector />
               </div>
               
-              {!subscriptionLoading && !isPremium && profiles.length >= 1 && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
+              {!subscriptionLoading && !isPremium && <p className="text-xs lg:text-sm text-warning mt-1 flex items-center">
                   <Crown className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
                   Upgrade to Premium for unlimited baby profiles
                 </p>}
