@@ -31,7 +31,8 @@ const Dashboard = () => {
     activeProfile,
     profiles,
     createProfile,
-    switching
+    switching,
+    loading: profilesLoading
   } = useBabyProfile();
   const {
     subscriptionTier,
@@ -56,8 +57,8 @@ const Dashboard = () => {
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<'profiles' | 'history' | 'sharing' | 'reports' | 'sounds' | 'memories' | 'pediatrician' | 'notifications'>('profiles');
 
-  // Check if user is truly new (no profiles and no family memberships)
-  const isNewUser = profiles.length === 0;
+  // Check if user is truly new (no profiles and no family memberships) - only when profiles are loaded
+  const isNewUser = !profilesLoading && profiles.length === 0;
   
   // Track if we're in a switching state (either profile switching or stats loading)
   const isDataLoading = switching || statsLoading;
@@ -178,7 +179,7 @@ const Dashboard = () => {
     setShowUpgradePrompt(true);
   };
 
-  if (loading) {
+  if (loading || profilesLoading) {
     return <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
