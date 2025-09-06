@@ -153,36 +153,31 @@ serve(async (req) => {
       }
 
       // Find the appropriate price based on billing cycle
-      let selectedPrice;
-      
       if (pricingPlan === 'annual') {
-        // Look for yearly pricing (amount should be around 29900 for annual)
-        selectedPrice = prices.data.find(price => 
-          price.recurring && 
-          price.recurring.interval === 'year'
-        );
-        
-        if (!selectedPrice) {
-          logStep("No annual pricing found, falling back to monthly");
-          selectedPrice = prices.data.find(price => 
-            price.recurring && 
-            price.recurring.interval === 'month'
-          );
-        }
+        // Use specific annual price ID
+        priceId = 'price_1S4MDsKxuyUBlfIJ2zvZjYFB';
+        logStep("Using hardcoded annual price", { priceId, billingCycle: pricingPlan });
       } else {
-        // Default to monthly
-        selectedPrice = prices.data.find(price => 
+        // Default to monthly - find monthly price from available prices
+        const monthlyPrice = prices.data.find(price => 
           price.recurring && 
           price.recurring.interval === 'month'
         );
+        
+        if (!monthlyPrice) {
+          logStep("ERROR: No monthly price found");
+          throw new Error("No monthly subscription pricing found for this product.");
+        }
+        
+        priceId = monthlyPrice.id;
+        logStep("Using monthly price", { 
+          priceId, 
+          amount: monthlyPrice.unit_amount, 
+          currency: monthlyPrice.currency,
+          interval: monthlyPrice.recurring?.interval,
+          billingCycle: pricingPlan
+        });
       }
-      
-      if (!selectedPrice) {
-        logStep("ERROR: No suitable price found");
-        throw new Error("No subscription pricing found for this product.");
-      }
-
-      priceId = selectedPrice.id;
       logStep("Using selected price", { 
         priceId, 
         amount: selectedPrice.unit_amount, 
