@@ -444,6 +444,7 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          billing_cycle: string | null
           created_at: string
           current_period_end: string | null
           current_period_start: string | null
@@ -460,6 +461,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          billing_cycle?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
@@ -476,6 +478,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          billing_cycle?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
