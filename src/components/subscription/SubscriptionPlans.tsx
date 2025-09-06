@@ -11,7 +11,8 @@ export const SubscriptionPlans = () => {
   const {
     subscriptionTier,
     createCheckout,
-    upgrading,
+    upgradingMonthly,
+    upgradingAnnual,
     isPremium,
     isPremiumAnnual,
     isTrial,
@@ -180,9 +181,9 @@ export const SubscriptionPlans = () => {
                 selectedPlan === 'monthly' ? 'bg-orange-600 hover:bg-orange-700' : 'bg-gray-600 hover:bg-gray-700'
               }`}
               onClick={() => handleUpgrade('monthly')} 
-              disabled={upgrading || isCurrentPlan('premium_monthly')}
+              disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
             >
-              {upgrading ? 'Processing...' : 
+              {upgradingMonthly ? 'Processing...' : 
                isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' : 
                user && isTrial && subscriptionTier === 'premium' ? `Trial (${trialDaysLeft} days left)` : 
                user ? 'Start Free Trial' : 'Start Free Trial'}
@@ -254,9 +255,9 @@ export const SubscriptionPlans = () => {
                 selectedPlan === 'annual' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-600 hover:bg-gray-700'
               }`}
               onClick={() => handleUpgrade('annual')} 
-              disabled={upgrading || isCurrentPlan('premium_annual')}
+              disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
             >
-              {upgrading ? 'Processing...' : 
+              {upgradingAnnual ? 'Processing...' : 
                isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' : 
                user && isTrial && subscriptionTier === 'premium_annual' ? `Trial (${trialDaysLeft} days left)` : 
                user ? 'Start Free Trial' : 'Start Free Trial'}

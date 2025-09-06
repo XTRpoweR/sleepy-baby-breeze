@@ -10,6 +10,8 @@ interface SubscriptionContextType {
   currentPeriodEnd: string | null;
   loading: boolean;
   upgrading: boolean;
+  upgradingMonthly: boolean;
+  upgradingAnnual: boolean;
   checkSubscription: () => Promise<void>;
   createCheckout: (pricingPlan?: 'monthly' | 'annual') => Promise<void>;
   openCustomerPortal: () => Promise<void>;
@@ -39,7 +41,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [status, setStatus] = useState('active');
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [upgrading, setUpgrading] = useState(false);
+  const [upgradingMonthly, setUpgradingMonthly] = useState(false);
+  const [upgradingAnnual, setUpgradingAnnual] = useState(false);
   const [isTrial, setIsTrial] = useState(false);
   const [trialEnd, setTrialEnd] = useState<string | null>(null);
 
@@ -173,13 +176,18 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   };
 
   const createCheckout = async (pricingPlan: 'monthly' | 'annual' = 'monthly') => {
-    if (upgrading) {
+    const isUpgrading = pricingPlan === 'monthly' ? upgradingMonthly : upgradingAnnual;
+    if (isUpgrading) {
       console.log('Already processing upgrade, skipping...');
       return;
     }
     
     try {
-      setUpgrading(true);
+      if (pricingPlan === 'monthly') {
+        setUpgradingMonthly(true);
+      } else {
+        setUpgradingAnnual(true);
+      }
       console.log('Starting checkout process...');
       
       if (!user) {
@@ -277,7 +285,11 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       }
     } finally {
       setTimeout(() => {
-        setUpgrading(false);
+        if (pricingPlan === 'monthly') {
+          setUpgradingMonthly(false);
+        } else {
+          setUpgradingAnnual(false);
+        }
       }, 2000);
     }
   };
@@ -392,6 +404,9 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const isPremiumAnnual = subscriptionTier === 'premium_annual';
   const isBasic = subscriptionTier === 'basic';
   
+  // Computed upgrading state for backward compatibility
+  const upgrading = upgradingMonthly || upgradingAnnual;
+  
   // Calculate trial days left
   const trialDaysLeft = trialEnd ? Math.max(0, Math.ceil((new Date(trialEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))) : null;
 
@@ -402,6 +417,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       currentPeriodEnd,
       loading,
       upgrading,
+      upgradingMonthly,
+      upgradingAnnual,
       checkSubscription,
       createCheckout,
       openCustomerPortal,
