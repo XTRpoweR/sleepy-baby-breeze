@@ -98,6 +98,9 @@ serve(async (req) => {
     let currentPeriodEnd = null;
     let stripeSubscriptionId = null;
     let currentPeriodStart = null;
+    let isTrial = false;
+    let trialStart = null;
+    let trialEnd = null;
 
     if (subscriptions.data.length > 0) {
       const subscription = subscriptions.data[0];
@@ -106,10 +109,23 @@ serve(async (req) => {
       currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString();
       currentPeriodStart = new Date(subscription.current_period_start * 1000).toISOString();
       stripeSubscriptionId = subscription.id;
-      logStep("Active premium subscription found", { 
-        subscriptionId: subscription.id, 
-        endDate: currentPeriodEnd 
-      });
+      
+      // Check for trial period
+      if (subscription.status === 'trialing') {
+        isTrial = true;
+        trialStart = subscription.trial_start ? new Date(subscription.trial_start * 1000).toISOString() : currentPeriodStart;
+        trialEnd = subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null;
+        logStep("Active trial subscription found", { 
+          subscriptionId: subscription.id, 
+          trialEnd: trialEnd,
+          endDate: currentPeriodEnd 
+        });
+      } else {
+        logStep("Active premium subscription found", { 
+          subscriptionId: subscription.id, 
+          endDate: currentPeriodEnd 
+        });
+      }
     } else {
       logStep("No active subscription found, checking for basic");
     }
@@ -123,6 +139,9 @@ serve(async (req) => {
       status: subscriptionStatus,
       current_period_start: currentPeriodStart,
       current_period_end: currentPeriodEnd,
+      is_trial: isTrial,
+      trial_start: trialStart,
+      trial_end: trialEnd,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'user_id' });
 
@@ -134,7 +153,9 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       subscription_tier: subscriptionTier,
       status: subscriptionStatus,
-      current_period_end: currentPeriodEnd
+      current_period_end: currentPeriodEnd,
+      is_trial: isTrial,
+      trial_end: trialEnd
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

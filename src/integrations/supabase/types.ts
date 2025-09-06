@@ -449,10 +449,13 @@ export type Database = {
           current_period_start: string | null
           email: string
           id: string
+          is_trial: boolean | null
           status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           subscription_tier: string
+          trial_end: string | null
+          trial_start: string | null
           updated_at: string
           user_id: string
         }
@@ -462,10 +465,13 @@ export type Database = {
           current_period_start?: string | null
           email: string
           id?: string
+          is_trial?: boolean | null
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_tier?: string
+          trial_end?: string | null
+          trial_start?: string | null
           updated_at?: string
           user_id: string
         }
@@ -475,10 +481,13 @@ export type Database = {
           current_period_start?: string | null
           email?: string
           id?: string
+          is_trial?: boolean | null
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           subscription_tier?: string
+          trial_end?: string | null
+          trial_start?: string | null
           updated_at?: string
           user_id?: string
         }

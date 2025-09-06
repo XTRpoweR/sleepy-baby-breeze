@@ -15,6 +15,9 @@ interface SubscriptionContextType {
   openCustomerPortal: () => Promise<void>;
   isPremium: boolean;
   isBasic: boolean;
+  isTrial: boolean;
+  trialEnd: string | null;
+  trialDaysLeft: number | null;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -36,6 +39,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [upgrading, setUpgrading] = useState(false);
+  const [isTrial, setIsTrial] = useState(false);
+  const [trialEnd, setTrialEnd] = useState<string | null>(null);
 
   // Initialize subscription record for new users
   useEffect(() => {
@@ -125,6 +130,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         setSubscriptionTier('basic');
         setStatus('active');
         setCurrentPeriodEnd(null);
+        setIsTrial(false);
+        setTrialEnd(null);
         return;
       }
 
@@ -140,6 +147,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         setSubscriptionTier('basic');
         setStatus('active');
         setCurrentPeriodEnd(null);
+        setIsTrial(false);
+        setTrialEnd(null);
         return;
       }
 
@@ -147,12 +156,16 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setSubscriptionTier(data.subscription_tier || 'basic');
       setStatus(data.status || 'active');
       setCurrentPeriodEnd(data.current_period_end);
+      setIsTrial(data.is_trial || false);
+      setTrialEnd(data.trial_end);
     } catch (error) {
       console.error('Error checking subscription:', error);
       // Fallback to basic subscription
       setSubscriptionTier('basic');
       setStatus('active');
       setCurrentPeriodEnd(null);
+      setIsTrial(false);
+      setTrialEnd(null);
     } finally {
       setLoading(false);
     }
@@ -368,11 +381,16 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setSubscriptionTier('basic');
       setStatus('active');
       setCurrentPeriodEnd(null);
+      setIsTrial(false);
+      setTrialEnd(null);
     }
   }, [user, authLoading]);
 
   const isPremium = subscriptionTier === 'premium';
   const isBasic = subscriptionTier === 'basic';
+  
+  // Calculate trial days left
+  const trialDaysLeft = trialEnd ? Math.max(0, Math.ceil((new Date(trialEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))) : null;
 
   return (
     <SubscriptionContext.Provider value={{
@@ -386,6 +404,9 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       openCustomerPortal,
       isPremium,
       isBasic,
+      isTrial,
+      trialEnd,
+      trialDaysLeft,
     }}>
       {children}
     </SubscriptionContext.Provider>
