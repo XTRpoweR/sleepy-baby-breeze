@@ -21,8 +21,13 @@ export const FeatureGate = ({
   showUpgrade = true, 
   onUpgradeClick 
 }: FeatureGateProps) => {
-  const { isPremium, createCheckout, upgrading } = useSubscription();
+  const { isPremium, createCheckout, upgrading, loading } = useSubscription();
   const { profiles } = useBabyProfile();
+
+  // Show loading state while subscription is being checked
+  if (loading) {
+    return null; // Don't show anything while loading to prevent flash
+  }
 
   // Check feature access based on subscription and current usage
   const isFeatureAllowed = () => {

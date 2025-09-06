@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const UserProfileDropdown = () => {
   const { user, signOut } = useAuth();
-  const { isPremium } = useSubscription();
+  const { isPremium, loading } = useSubscription();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -62,7 +62,7 @@ export const UserProfileDropdown = () => {
             <span className="text-sm font-medium text-gray-900 truncate max-w-32">
               {userDisplayName}
             </span>
-            {isPremium && (
+            {!loading && isPremium && (
               <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">
                 <Crown className="h-3 w-3 mr-1" />
                 Premium

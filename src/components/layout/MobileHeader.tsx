@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { 
   User,
@@ -19,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 
 export const MobileHeader = () => {
   const { user, signOut } = useAuth();
-  const { isPremium } = useSubscription();
+  const { isPremium, loading } = useSubscription();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -146,7 +147,9 @@ export const MobileHeader = () => {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Subscription</span>
-                    {isPremium ? (
+                    {loading ? (
+                      <Skeleton className="h-6 w-16 rounded-full" />
+                    ) : isPremium ? (
                       <div className="flex items-center space-x-1 bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs">
                         <Crown className="h-3 w-3" />
                         <span>Premium</span>
