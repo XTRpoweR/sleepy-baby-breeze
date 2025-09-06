@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState } from "react";
@@ -68,8 +69,9 @@ const Index = () => {
       navigate('/auth');
     }
   };
-  const handleViewPricing = () => {
-    navigate('/pricing');
+  const handleScrollToPricing = () => {
+    const element = document.getElementById('pricing');
+    element?.scrollIntoView({ behavior: 'smooth' });
   };
   const handleDownloadComingSoon = () => {
     toast({
@@ -326,95 +328,10 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="animate-fade-in-up text-center" style={{
-          animationDelay: '200ms'
-        }}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto mb-6 sm:mb-8">
-              {/* Basic Plan Preview */}
-              <Card className="border-2 border-gray-200 hover:shadow-lg transition-all duration-300">
-                <CardContent className="p-4 sm:p-6 md:p-8 text-center">
-                  <div className="flex items-center justify-center space-x-2 mb-3 sm:mb-4">
-                    <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                    <h3 className="text-xl sm:text-2xl font-bold">SleepyBabyy Basic</h3>
-                  </div>
-                  <div className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Free</div>
-                  <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Perfect for getting started</p>
-                  <ul className="space-y-2 sm:space-y-3 text-left mb-6 sm:mb-8">
-                    <li className="flex items-center">
-                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">1 baby profile</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Current day tracking</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Basic sleep reports</span>
-                    </li>
-                  </ul>
-                  <Button className="w-full touch-target" variant="outline" onClick={handleGetStarted}>
-                    Get Started Free
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Premium Plan Preview */}
-              <Card className="border-2 border-orange-500 hover:shadow-xl transition-all duration-300 relative">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-orange-500 text-white text-xs sm:text-sm">
-                    <Crown className="h-3 w-3 mr-1" />
-                    Most Popular
-                  </Badge>
-                </div>
-                <CardContent className="p-4 sm:p-6 md:p-8 text-center">
-                  <div className="flex items-center justify-center space-x-2 mb-3 sm:mb-4">
-                    <Crown className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
-                    <h3 className="text-xl sm:text-2xl font-bold">SleepyBabyy Premium</h3>
-                  </div>
-                  
-                  {/* Discount Badge */}
-                  <div className="inline-flex items-center justify-center bg-red-100 text-red-800 text-xs sm:text-sm font-bold px-3 py-1 rounded-full mb-3 sm:mb-4 animate-pulse">
-                    40% OFF LIMITED TIME
-                  </div>
-                  
-                  {/* Pricing with old price crossed out */}
-                  <div className="flex items-center justify-center space-x-2 mb-1">
-                    <span className="text-base sm:text-lg text-gray-500 line-through font-medium">$49.99</span>
-                    <span className="text-3xl sm:text-4xl font-bold text-gray-900">$29.99</span>
-                    <span className="text-sm sm:text-base text-gray-600">/month</span>
-                  </div>
-                  <p className="text-red-600 text-xs sm:text-sm font-medium mb-3 sm:mb-4">Save $20.00 per month!</p>
-                  <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Complete baby tracking solution</p>
-                  
-                  <ul className="space-y-2 sm:space-y-3 text-left mb-6 sm:mb-8">
-                    <li className="flex items-center">
-                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Unlimited baby profiles</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Extended activity history</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Family sharing & collaboration</span>
-                    </li>
-                    <li className="flex items-center">
-                      <Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 sm:mr-3 flex-shrink-0" />
-                      <span className="text-sm sm:text-base">Advanced analytics & trends</span>
-                    </li>
-                  </ul>
-                  <Button className="w-full bg-orange-600 hover:bg-orange-700 touch-target" onClick={handleViewPricing}>
-                    {user ? 'View All Features' : 'Start Premium Trial'}
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 touch-target">
-              View Detailed Pricing & Features
-            </Button>
+          <div className="animate-fade-in-up" style={{
+           animationDelay: '200ms'
+         }}>
+            <SubscriptionPlans />
           </div>
         </div>
       </section>
@@ -456,9 +373,9 @@ const Index = () => {
              <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium touch-target w-full sm:w-auto" onClick={handleGetStarted}>
                Start Free Trial
              </Button>
-             <Button size="lg" variant="outline" onClick={handleViewPricing} className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 border-white transition-all duration-300 hover:scale-105 font-medium bg-white/10 text-white hover:bg-white/20 touch-target w-full sm:w-auto">
-               View Pricing
-             </Button>
+             <Button size="lg" variant="outline" onClick={handleScrollToPricing} className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 border-white transition-all duration-300 hover:scale-105 font-medium bg-white/10 text-white hover:bg-white/20 touch-target w-full sm:w-auto">
+                View Plans
+              </Button>
           </div>
           
           <p className="text-blue-100 text-xs sm:text-sm mt-4 sm:mt-6 font-medium leading-relaxed">Free trial • No credit card required • Coming soon on iOS & Android</p>
