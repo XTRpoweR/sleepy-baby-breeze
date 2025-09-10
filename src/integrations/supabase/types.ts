@@ -386,6 +386,42 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          created_at: string
+          event_description: string
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          severity: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_description: string
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          severity?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_description?: string
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       sleep_schedules: {
         Row: {
           baby_id: string
@@ -520,6 +556,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string
+          device_info: string | null
+          expires_at: string | null
+          id: string
+          ip_address: unknown | null
+          is_active: boolean
+          last_activity_at: string
+          location_info: Json | null
+          login_at: string
+          session_id: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_info?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          last_activity_at?: string
+          location_info?: Json | null
+          login_at?: string
+          session_id: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_info?: string | null
+          expires_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          is_active?: boolean
+          last_activity_at?: string
+          location_info?: Json | null
+          login_at?: string
+          session_id?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -570,9 +654,25 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: boolean
       }
+      invalidate_other_sessions: {
+        Args: { current_session_id?: string; user_uuid: string }
+        Returns: number
+      }
       is_baby_owner: {
         Args: { baby_uuid: string; user_uuid: string }
         Returns: boolean
+      }
+      log_security_event: {
+        Args: {
+          event_description: string
+          event_type: string
+          ip_address?: unknown
+          metadata?: Json
+          severity?: string
+          user_agent?: string
+          user_uuid: string
+        }
+        Returns: string
       }
       safe_newsletter_unsubscribe: {
         Args: { token_param: string }
