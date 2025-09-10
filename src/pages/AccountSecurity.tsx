@@ -7,12 +7,14 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useSessionManager } from '@/hooks/useSessionManager';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, Monitor, MapPin, Clock, AlertTriangle, LogOut, RefreshCw } from 'lucide-react';
+import { Shield, Monitor, MapPin, Clock, AlertTriangle, LogOut, RefreshCw, ArrowLeft } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 const AccountSecurity = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const {
     sessions,
     securityEvents,
@@ -106,11 +108,21 @@ const AccountSecurity = () => {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Account Security</h1>
-            <p className="text-muted-foreground">
-              Monitor your account activity and manage active sessions
-            </p>
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={() => navigate(-1)} 
+              variant="outline"
+              size="sm"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">Account Security</h1>
+              <p className="text-muted-foreground">
+                Monitor your account activity and manage active sessions
+              </p>
+            </div>
           </div>
           <Button 
             onClick={handleRefresh} 
