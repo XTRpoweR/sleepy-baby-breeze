@@ -36,6 +36,8 @@ import PediatricianReports from "./pages/PediatricianReports";
 import Notifications from "./pages/Notifications";
 import BlogArticle from "./pages/BlogArticle";
 import ResetPassword from "./pages/ResetPassword";
+import AccountSecurity from "./pages/AccountSecurity";
+import EnhancedPasswordReset from "./components/auth/EnhancedPasswordReset";
 
 // Create queryClient outside of component to avoid recreation on each render
 const queryClient = new QueryClient({
@@ -63,7 +65,8 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/reset-password" element={<EnhancedPasswordReset />} />
+                  <Route path="/security" element={<AccountSecurity />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/track" element={<TrackActivity />} />
                   <Route path="/reports" element={<Reports />} />

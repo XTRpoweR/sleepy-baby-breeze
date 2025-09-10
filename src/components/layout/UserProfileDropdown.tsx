@@ -19,6 +19,7 @@ import {
   Crown,
   Settings,
   Bell,
+  Shield,
   ChevronDown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -40,6 +41,10 @@ export const UserProfileDropdown = () => {
 
   const handleNotifications = () => {
     navigate('/notifications');
+  };
+
+  const handleSecurity = () => {
+    navigate('/security');
   };
 
   const userDisplayName = user?.user_metadata?.full_name || user?.email || 'User';
@@ -84,6 +89,11 @@ export const UserProfileDropdown = () => {
         <DropdownMenuItem onClick={handleNotifications} className="cursor-pointer">
           <Bell className="h-4 w-4 mr-2" />
           <span>{t('notifications.title')}</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem onClick={handleSecurity} className="cursor-pointer">
+          <Shield className="h-4 w-4 mr-2" />
+          <span>Security</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={handleManageSubscription} className="cursor-pointer">

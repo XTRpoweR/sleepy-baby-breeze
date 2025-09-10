@@ -21,6 +21,11 @@ enable_signup = true
 [db]
 port = 54323
 
+[storage]
+enabled = true
+port = 54324
+file_size_limit = "50MiB"
+
 [functions.check-subscription]
 verify_jwt = false
 
@@ -51,7 +56,8 @@ verify_jwt = false
 [functions.convert-video]
 verify_jwt = false
 
-[storage]
-enabled = true
-port = 54324
-file_size_limit = "50MiB"
+[functions.session-manager]
+verify_jwt = true
+
+[functions.security-notifications]
+verify_jwt = true
