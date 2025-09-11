@@ -82,10 +82,21 @@ export const MobileHeader = () => {
           {/* Tutorial Button */}
           <Button
             onClick={handleTutorial}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="absolute right-16 top-1/2 -translate-y-1/2 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
             size="icon"
           >
             <GraduationCap className="h-5 w-5" />
+          </Button>
+          
+          {/* Hexagonal Icon */}
+          <Button
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800 hover:bg-gray-900 text-white w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            style={{
+              clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)'
+            }}
+            size="icon"
+          >
+            <div className="w-4 h-4 bg-white rounded-full"></div>
           </Button>
         </div>
         
