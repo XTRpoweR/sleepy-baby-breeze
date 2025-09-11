@@ -59,8 +59,15 @@ serve(async (req) => {
       )
     }
 
-    // Generate secure reset token
-    const resetRedirectUrl = redirectTo || 'https://sleepy-baby-breeze.lovable.app/reset-password'
+    // Generate secure reset token - always ensure /reset-password path
+    let resetRedirectUrl = redirectTo || 'https://www.sleepybabyy.com/reset-password'
+    
+    // Ensure the URL always ends with /reset-password
+    if (resetRedirectUrl && !resetRedirectUrl.includes('/reset-password')) {
+      // Remove trailing slash if present and add /reset-password
+      resetRedirectUrl = resetRedirectUrl.replace(/\/$/, '') + '/reset-password'
+    }
+    
     console.log('Using redirect URL:', resetRedirectUrl)
     
     const { data, error } = await supabaseClient.auth.admin.generateLink({
