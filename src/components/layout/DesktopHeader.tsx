@@ -48,7 +48,7 @@ export const DesktopHeader = () => {
             </div>
           </div>
           
-          {/* Right side - Tutorial button, Hexagonal button and User profile dropdown */}
+          {/* Right side - Tutorial button and User profile dropdown */}
           <div className="flex items-center space-x-3">
             <Button
               onClick={handleTutorial}
@@ -57,17 +57,6 @@ export const DesktopHeader = () => {
             >
               <GraduationCap className="h-5 w-5" />
             </Button>
-            
-            <Button
-              className="bg-gray-800 hover:bg-gray-900 text-white w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
-              style={{
-                clipPath: 'polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%)'
-              }}
-              size="icon"
-            >
-              <div className="w-4 h-4 bg-white rounded-full"></div>
-            </Button>
-            
             <UserProfileDropdown />
           </div>
         </div>
