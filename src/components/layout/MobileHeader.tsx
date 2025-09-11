@@ -76,7 +76,7 @@ export const MobileHeader = () => {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-80 bg-gradient-to-br from-slate-50 to-slate-100/50 p-0">
-            <div className="flex flex-col space-y-4 pt-6 pb-6 px-6 h-screen overflow-y-auto scroll-smooth" style={{WebkitOverflowScrolling: 'touch'}}>
+            <div className="flex flex-col space-y-4 pt-6 pb-20 px-6 max-h-screen overflow-y-auto scroll-smooth" style={{WebkitOverflowScrolling: 'touch'}}>
               {/* User Profile Card */}
               <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
                 <div className="flex items-center space-x-3">
