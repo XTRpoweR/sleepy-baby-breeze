@@ -12,7 +12,10 @@ import {
   Menu,
   Bell,
   HelpCircle,
-  MessageCircle
+  MessageCircle,
+  Shield,
+  Sparkles,
+  Globe
 } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useNavigate } from 'react-router-dom';
@@ -55,6 +58,11 @@ export const MobileHeader = () => {
     setIsOpen(false);
   };
 
+  const handleSecurity = () => {
+    navigate('/security');
+    setIsOpen(false);
+  };
+
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
       <div className="flex flex-col">
@@ -78,114 +86,165 @@ export const MobileHeader = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80 overflow-y-auto">
-              <div className="flex flex-col space-y-6 pt-6 pb-24">
-                {/* User Info */}
-                <div className="flex items-center space-x-3 pb-4 border-b">
-                  <div className="bg-blue-100 rounded-full p-2">
-                    <User className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <div className="font-medium text-sm">
-                      {user?.user_metadata?.full_name || user?.email}
+            <SheetContent side="left" className="w-80 overflow-y-auto bg-gradient-to-br from-slate-50 to-slate-100/50">
+              <div className="flex flex-col space-y-4 pt-6 pb-24">
+                {/* User Profile Card */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-gradient-to-br from-primary to-primary/80 rounded-xl p-3 shadow-sm">
+                      <User className="h-5 w-5 text-white" />
                     </div>
-                    <div className="text-xs text-gray-500">
-                      {user?.email}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-sm text-foreground truncate">
+                        {user?.user_metadata?.full_name || user?.email}
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {user?.email}
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                {/* Help & Support */}
-                <div className="space-y-3">
-                  <span className="text-sm font-medium">Help & Support</span>
-                  <div className="space-y-2">
-                    <Button 
-                      variant="outline"
-                      size="sm" 
-                      onClick={handleHelp}
-                      className="w-full justify-start"
-                    >
-                      <HelpCircle className="h-4 w-4 mr-2" />
-                      <span>Help Center</span>
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      size="sm" 
-                      onClick={handleContact}
-                      className="w-full justify-start"
-                    >
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      <span>Contact Support</span>
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      size="sm" 
-                      onClick={handleTutorial}
-                      className="w-full justify-start"
-                    >
-                      <Settings className="h-4 w-4 mr-2" />
-                      <span>Tutorial</span>
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Notifications */}
-                <div className="space-y-3">
-                  <span className="text-sm font-medium">{t('notifications.title')}</span>
-                  <Button 
-                    variant="outline"
-                    size="sm" 
-                    onClick={handleNotifications}
-                    className="w-full"
-                  >
-                    <Bell className="h-4 w-4 mr-2" />
-                    <span>{t('notifications.title')}</span>
-                  </Button>
-                </div>
-
-                {/* Subscription Status */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Subscription</span>
                     {loading ? (
                       <Skeleton className="h-6 w-16 rounded-full" />
                     ) : isPremium ? (
-                      <div className="flex items-center space-x-1 bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs">
+                      <div className="flex items-center space-x-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-sm">
                         <Crown className="h-3 w-3" />
                         <span>Premium</span>
                       </div>
                     ) : (
-                      <div className="flex items-center space-x-1 bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                      <div className="flex items-center space-x-1 bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
                         <span>Basic</span>
                       </div>
                     )}
                   </div>
-                  <Button 
-                    variant="outline"
-                    size="sm" 
-                    onClick={handleManageSubscription}
-                    className="w-full"
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    <span>Account Settings</span>
-                  </Button>
                 </div>
 
-                {/* Language Selector */}
-                <div className="space-y-3">
-                  <span className="text-sm font-medium">Language</span>
-                  <LanguageSelector />
+                {/* Account & Security Card */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <div className="w-1 h-4 bg-gradient-to-b from-primary to-primary/60 rounded-full"></div>
+                      <span className="text-sm font-semibold text-foreground">Account & Security</span>
+                    </div>
+                    
+                    <button 
+                      onClick={handleManageSubscription}
+                      className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
+                    >
+                      <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                        <Settings className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium text-foreground">Account Settings</div>
+                        <div className="text-xs text-muted-foreground">Manage subscription & preferences</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={handleSecurity}
+                      className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
+                    >
+                      <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                        <Shield className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium text-foreground">Security</div>
+                        <div className="text-xs text-muted-foreground">Sessions & security events</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={handleNotifications}
+                      className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
+                    >
+                      <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                        <Bell className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium text-foreground">{t('notifications.title')}</div>
+                        <div className="text-xs text-muted-foreground">Alerts & updates</div>
+                      </div>
+                    </button>
+                  </div>
                 </div>
 
-                {/* Sign Out */}
-                <Button 
-                  variant="outline" 
+                {/* Help & Support Card */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-indigo-600 rounded-full"></div>
+                      <span className="text-sm font-semibold text-foreground">Help & Support</span>
+                    </div>
+                    
+                    <button 
+                      onClick={handleHelp}
+                      className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
+                    >
+                      <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                        <HelpCircle className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium text-foreground">Help Center</div>
+                        <div className="text-xs text-muted-foreground">FAQ & documentation</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={handleContact}
+                      className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
+                    >
+                      <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                        <MessageCircle className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium text-foreground">Contact Support</div>
+                        <div className="text-xs text-muted-foreground">Get help from our team</div>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={handleTutorial}
+                      className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
+                    >
+                      <div className="bg-gradient-to-br from-rose-500 to-rose-600 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                        <Sparkles className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium text-foreground">Tutorial</div>
+                        <div className="text-xs text-muted-foreground">Learn how to use the app</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Preferences Card */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <div className="w-1 h-4 bg-gradient-to-b from-slate-500 to-slate-600 rounded-full"></div>
+                      <span className="text-sm font-semibold text-foreground">Preferences</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3 p-3 rounded-xl bg-slate-50/50">
+                      <div className="bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg p-2 shadow-sm">
+                        <Globe className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-foreground mb-1">Language</div>
+                        <div className="w-full">
+                          <LanguageSelector />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sign Out Button */}
+                <button 
                   onClick={handleSignOut}
-                  className="w-full flex items-center justify-center space-x-2"
+                  className="w-full flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 font-medium touch-manipulation"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Sign Out</span>
-                </Button>
+                </button>
               </div>
             </SheetContent>
           </Sheet>
