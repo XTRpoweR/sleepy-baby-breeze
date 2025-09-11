@@ -87,9 +87,9 @@ export const MobileHeader = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80 bg-gradient-to-br from-slate-50 to-slate-100/50 p-0">
-              <ScrollArea className="h-full">
-                <div className="flex flex-col space-y-4 pt-6 pb-24 px-6">
+            <SheetContent side="left" className="w-80 bg-gradient-to-br from-slate-50 to-slate-100/50 p-0 flex flex-col">
+              <ScrollArea className="flex-1 px-6">
+                <div className="flex flex-col space-y-4 pt-6 pb-6">
                 {/* User Profile Card */}
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
                   <div className="flex items-center space-x-3">
