@@ -1,7 +1,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, GraduationCap } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { UserProfileDropdown } from '@/components/layout/UserProfileDropdown';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,10 @@ export const DesktopHeader = () => {
 
   const handleHelp = () => {
     navigate('/help');
+  };
+
+  const handleTutorial = () => {
+    navigate('/tutorial');
   };
 
   return (
@@ -44,8 +48,15 @@ export const DesktopHeader = () => {
             </div>
           </div>
           
-          {/* Right side - User profile dropdown */}
-          <div className="flex items-center">
+          {/* Right side - Tutorial button and User profile dropdown */}
+          <div className="flex items-center space-x-3">
+            <Button
+              onClick={handleTutorial}
+              className="bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
+              size="icon"
+            >
+              <GraduationCap className="h-5 w-5" />
+            </Button>
             <UserProfileDropdown />
           </div>
         </div>

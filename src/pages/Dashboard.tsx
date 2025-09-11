@@ -279,12 +279,6 @@ const Dashboard = () => {
                 {t('dashboard.subtitle')}
               </p>
             </div>
-            
-            {/* Tutorial Button */}
-            <Button onClick={() => navigate('/tutorial')} variant="outline" className="w-full lg:w-auto flex items-center space-x-2 mb-2 lg:mb-0">
-              <GraduationCap className="h-4 w-4" />
-              <span>Quick Tutorial</span>
-            </Button>
           </div>
           
           {/* Profile Selector or Create Profile Section */}

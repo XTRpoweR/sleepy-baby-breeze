@@ -124,17 +124,6 @@ export const MobileDashboard = ({
             <p className="text-muted-foreground text-base mb-4">
               {t('dashboard.subtitle')}
             </p>
-            
-            {/* Floating Tutorial Button */}
-            <Button 
-              onClick={() => navigate('/tutorial')} 
-              variant="outline" 
-              className="rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-              size="sm"
-            >
-              <GraduationCap className="h-4 w-4 mr-2" />
-              Quick Tutorial
-            </Button>
           </div>
 
           {/* Profile Section */}
