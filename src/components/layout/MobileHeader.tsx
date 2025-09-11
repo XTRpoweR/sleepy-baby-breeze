@@ -82,7 +82,7 @@ export const MobileHeader = () => {
           {/* Tutorial Button */}
           <Button
             onClick={handleTutorial}
-            className="absolute right-4 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
             size="icon"
           >
             <GraduationCap className="h-5 w-5" />
