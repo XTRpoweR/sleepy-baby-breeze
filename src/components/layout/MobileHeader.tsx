@@ -4,6 +4,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   User,
   LogOut,
@@ -86,8 +87,9 @@ export const MobileHeader = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-80 overflow-y-auto bg-gradient-to-br from-slate-50 to-slate-100/50">
-              <div className="flex flex-col space-y-4 pt-6 pb-24">
+            <SheetContent side="left" className="w-80 bg-gradient-to-br from-slate-50 to-slate-100/50 p-0">
+              <ScrollArea className="h-full">
+                <div className="flex flex-col space-y-4 pt-6 pb-24 px-6">
                 {/* User Profile Card */}
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/50">
                   <div className="flex items-center space-x-3">
@@ -245,7 +247,8 @@ export const MobileHeader = () => {
                   <LogOut className="h-4 w-4" />
                   <span>Sign Out</span>
                 </button>
-              </div>
+                </div>
+              </ScrollArea>
             </SheetContent>
           </Sheet>
         </div>
