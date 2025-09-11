@@ -69,7 +69,7 @@ export const MobileHeader = () => {
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
       <div className="flex flex-col">
         {/* Logo Row */}
-        <div className="relative flex justify-center items-center h-16 px-4">
+        <div className="flex justify-center items-center h-16 px-4">
           <div className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
@@ -78,19 +78,10 @@ export const MobileHeader = () => {
             />
             <span className="text-lg font-bold text-gray-900">SleepyBabyy</span>
           </div>
-          
-          {/* Tutorial Button */}
-          <Button
-            onClick={handleTutorial}
-            className="absolute right-4 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
-            size="icon"
-          >
-            <GraduationCap className="h-5 w-5" />
-          </Button>
         </div>
         
         {/* Menu Button Row */}
-        <div className="flex justify-start px-4 pb-2">
+        <div className="flex justify-between items-center px-4 pb-2">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm" className="p-2">
@@ -259,6 +250,15 @@ export const MobileHeader = () => {
                 </div>
             </SheetContent>
           </Sheet>
+          
+          {/* Tutorial Button */}
+          <Button
+            onClick={handleTutorial}
+            className="bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            size="icon"
+          >
+            <GraduationCap className="h-5 w-5" />
+          </Button>
         </div>
       </div>
     </header>
