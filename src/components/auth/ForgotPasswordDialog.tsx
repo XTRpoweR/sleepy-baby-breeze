@@ -93,7 +93,7 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
 
   const FormContent = () => (
     !sent ? (
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" data-vaul-no-drag>
         <div className="space-y-2">
           <Label htmlFor="reset-email">Email Address</Label>
           <Input
@@ -153,8 +153,8 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={handleClose} shouldScaleBackground={false}>
-        <DrawerContent className="px-4 pb-[env(safe-area-inset-bottom)] h-[70dvh] max-h-[85dvh] flex flex-col overscroll-contain">
+      <Drawer open={open} onOpenChange={(next) => { if (!next) handleClose(); }} shouldScaleBackground={false}>
+        <DrawerContent className="px-4 pb-[env(safe-area-inset-bottom)] h-[70dvh] max-h-[85dvh] flex flex-col overscroll-contain touch-pan-y">
           <DrawerHeader className="text-center pb-2">
             <DrawerTitle className="flex items-center justify-center gap-2 text-lg">
               <Mail className="h-5 w-5 text-info" />
@@ -167,7 +167,7 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
               }
             </DrawerDescription>
           </DrawerHeader>
-          <div className="px-2 flex-1 min-h-0 overflow-y-auto">
+          <div className="px-2 flex-1 min-h-0 overflow-y-auto" data-vaul-no-drag>
             <FormContent />
           </div>
         </DrawerContent>
@@ -176,7 +176,7 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={open} onOpenChange={(next) => { if (!next) handleClose(); }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
