@@ -104,6 +104,11 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
             onChange={(e) => setEmail(e.target.value)}
             required
             disabled={loading}
+            inputMode="email"
+            autoComplete="email"
+            autoCapitalize="none"
+            enterKeyHint="send"
+            className="text-base"
           />
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
@@ -148,8 +153,8 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={handleClose}>
-        <DrawerContent className="px-4 pb-4 max-h-[85vh] flex flex-col">
+      <Drawer open={open} onOpenChange={handleClose} shouldScaleBackground={false}>
+        <DrawerContent className="px-4 pb-[env(safe-area-inset-bottom)] h-[70dvh] max-h-[85dvh] flex flex-col overscroll-contain">
           <DrawerHeader className="text-center pb-2">
             <DrawerTitle className="flex items-center justify-center gap-2 text-lg">
               <Mail className="h-5 w-5 text-info" />
@@ -162,7 +167,7 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
               }
             </DrawerDescription>
           </DrawerHeader>
-          <div className="px-2 flex-1 min-h-0">
+          <div className="px-2 flex-1 min-h-0 overflow-y-auto">
             <FormContent />
           </div>
         </DrawerContent>
