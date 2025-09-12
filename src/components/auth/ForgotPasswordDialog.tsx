@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Mail } from 'lucide-react';
+import { Mail, Info } from 'lucide-react';
 
 interface ForgotPasswordDialogProps {
   open: boolean;
@@ -35,6 +35,20 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
   const [sent, setSent] = useState(false);
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  
+  // Detect iOS devices specifically
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  
+  // Auto-focus email input when dialog opens (but not on iOS due to keyboard issues)
+  useEffect(() => {
+    if (open && !sent && !isIOS) {
+      const timer = setTimeout(() => {
+        emailInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open, sent, isIOS]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,6 +111,7 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
         <div className="space-y-2">
           <Label htmlFor="reset-email">Email Address</Label>
           <Input
+            ref={emailInputRef}
             id="reset-email"
             type="email"
             placeholder="Enter your email"
@@ -110,6 +125,14 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
             enterKeyHint="send"
             className="text-base"
           />
+        </div>
+        <div className="rounded-lg bg-muted/50 p-3 border">
+          <div className="flex items-start gap-2">
+            <Info className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-muted-foreground">
+              We'll email you a secure link that expires in 1 hour. Check your spam folder if you don't see it.
+            </p>
+          </div>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
           <Button
@@ -151,7 +174,8 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
     )
   );
 
-  if (isMobile) {
+  // Use Dialog for iOS to avoid keyboard issues, Drawer for other mobile devices
+  if (isMobile && !isIOS) {
     return (
       <Drawer open={open} onOpenChange={(next) => { if (!next) handleClose(); }} shouldScaleBackground={false}>
         <DrawerContent className="px-4 pb-[env(safe-area-inset-bottom)] h-[70dvh] max-h-[85dvh] flex flex-col overscroll-contain touch-pan-y">
