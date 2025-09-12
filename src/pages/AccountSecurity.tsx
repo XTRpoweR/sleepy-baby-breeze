@@ -91,6 +91,50 @@ const AccountSecurity = () => {
     }
   };
 
+  const getEventDisplayInfo = (event: any) => {
+    // Handle session invalidation events with better UX
+    if (event.event_description.includes('Invalidated') && event.metadata?.invalidated_count !== undefined) {
+      const count = event.metadata.invalidated_count;
+      if (count === 0) {
+        return {
+          description: "Attempted to sign out all other devices (no other active sessions found)",
+          severity: 'info',
+          isRoutine: true
+        };
+      } else {
+        return {
+          description: `Successfully signed out ${count} other device${count === 1 ? '' : 's'}`,
+          severity: count > 3 ? 'warning' : 'info',
+          isRoutine: false
+        };
+      }
+    }
+
+    // Handle other event types with improved descriptions
+    if (event.event_type === 'session_started') {
+      return {
+        description: "New sign-in detected",
+        severity: event.severity,
+        isRoutine: true
+      };
+    }
+
+    if (event.event_type === 'password_changed') {
+      return {
+        description: "Password was successfully changed",
+        severity: 'info',
+        isRoutine: false
+      };
+    }
+
+    // Default case
+    return {
+      description: event.event_description,
+      severity: event.severity,
+      isRoutine: event.severity === 'info'
+    };
+  };
+
   if (!user) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -133,6 +177,17 @@ const AccountSecurity = () => {
             Refresh
           </Button>
         </div>
+
+        {/* Security Overview Alert */}
+        <Alert>
+          <Shield className="h-4 w-4" />
+          <AlertDescription>
+            <strong>About Security Events:</strong> We log various account activities for your security. 
+            "Routine" events like sign-ins and session management are normal. Only pay attention to 
+            unexpected activities or "high" severity events. Events showing "0" indicate actions 
+            where nothing needed to be done (like signing out when no other sessions exist).
+          </AlertDescription>
+        </Alert>
 
         {/* Active Sessions */}
         <Card>
@@ -234,7 +289,7 @@ const AccountSecurity = () => {
               Recent Security Events
             </CardTitle>
             <CardDescription>
-              Track important security activities on your account
+              Track important security activities on your account. Routine events like sign-ins and session management are displayed for transparency.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -251,48 +306,75 @@ const AccountSecurity = () => {
               <p className="text-muted-foreground">No security events recorded.</p>
             ) : (
               <div className="space-y-4">
-                {securityEvents.slice(0, 10).map((event) => (
-                  <div key={event.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2 flex-1">
-                        <div className="flex items-center gap-2">
-                          {getEventIcon(event.event_type)}
-                          <span className="font-medium">
-                            {event.event_description}
-                          </span>
-                          <Badge variant={getSeverityColor(event.severity)}>
-                            {event.severity}
-                          </Badge>
-                        </div>
-                        
-                        <div className="space-y-1 text-sm text-muted-foreground">
+                {securityEvents.slice(0, 10).map((event) => {
+                  const eventInfo = getEventDisplayInfo(event);
+                  return (
+                    <div 
+                      key={event.id} 
+                      className={`border rounded-lg p-4 ${eventInfo.isRoutine ? 'bg-muted/20' : ''}`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-2 flex-1">
                           <div className="flex items-center gap-2">
-                            <Clock className="h-3 w-3" />
-                            {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
+                            {getEventIcon(event.event_type)}
+                            <span className="font-medium">
+                              {eventInfo.description}
+                            </span>
+                            <Badge variant={getSeverityColor(eventInfo.severity)}>
+                              {eventInfo.severity}
+                            </Badge>
+                            {eventInfo.isRoutine && (
+                              <Badge variant="outline" className="text-xs">
+                                routine
+                              </Badge>
+                            )}
                           </div>
-                          {event.ip_address && (
+                          
+                          <div className="space-y-1 text-sm text-muted-foreground">
                             <div className="flex items-center gap-2">
-                              <MapPin className="h-3 w-3" />
-                              IP: {event.ip_address}
+                              <Clock className="h-3 w-3" />
+                              {formatDistanceToNow(new Date(event.created_at), { addSuffix: true })}
                             </div>
-                          )}
-                          {event.metadata && Object.keys(event.metadata).length > 0 && (
-                            <div className="mt-2">
-                              <details className="text-xs">
-                                <summary className="cursor-pointer hover:text-primary">
-                                  View details
-                                </summary>
-                                <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
-                                  {JSON.stringify(event.metadata, null, 2)}
-                                </pre>
-                              </details>
-                            </div>
-                          )}
+                            {event.ip_address && (
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-3 w-3" />
+                                IP: {event.ip_address}
+                              </div>
+                            )}
+                            {event.metadata && Object.keys(event.metadata).length > 0 && (
+                              <div className="mt-2">
+                                <details className="text-xs">
+                                  <summary className="cursor-pointer hover:text-primary">
+                                    View technical details
+                                  </summary>
+                                  <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-auto">
+                                    {JSON.stringify(event.metadata, null, 2)}
+                                  </pre>
+                                </details>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
+                  );
+                })}
+                
+                {securityEvents.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p className="text-lg font-medium mb-2">No Security Events</p>
+                    <p>Your account security activity will appear here</p>
                   </div>
-                ))}
+                )}
+
+                {securityEvents.length > 10 && (
+                  <div className="text-center pt-4 border-t">
+                    <p className="text-sm text-muted-foreground">
+                      Showing the 10 most recent events. Older events are automatically archived.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
