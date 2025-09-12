@@ -8,6 +8,7 @@ import { useSessionManager } from '@/hooks/useSessionManager';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Shield, Monitor, MapPin, Clock, AlertTriangle, LogOut, RefreshCw, ArrowLeft } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
@@ -81,6 +82,15 @@ const AccountSecurity = () => {
     }
   };
 
+  const getSeverityTooltip = (severity: string) => {
+    switch (severity) {
+      case 'high': return 'High priority security event - requires immediate attention';
+      case 'warning': return 'Moderate security event - review recommended';
+      case 'info': return 'Informational event - normal account activity for transparency';
+      default: return 'Security event logged for your account';
+    }
+  };
+
   const getEventIcon = (eventType: string) => {
     switch (eventType) {
       case 'session_started': return <Monitor className="h-4 w-4" />;
@@ -149,8 +159,9 @@ const AccountSecurity = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="space-y-6">
+    <TooltipProvider>
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button 
@@ -320,9 +331,16 @@ const AccountSecurity = () => {
                             <span className="font-medium">
                               {eventInfo.description}
                             </span>
-                            <Badge variant={getSeverityColor(eventInfo.severity)}>
-                              {eventInfo.severity}
-                            </Badge>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Badge variant={getSeverityColor(eventInfo.severity)} className="cursor-help">
+                                  {eventInfo.severity}
+                                </Badge>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{getSeverityTooltip(eventInfo.severity)}</p>
+                              </TooltipContent>
+                            </Tooltip>
                             {eventInfo.isRoutine && (
                               <Badge variant="outline" className="text-xs">
                                 routine
@@ -409,8 +427,9 @@ const AccountSecurity = () => {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 
