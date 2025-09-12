@@ -149,20 +149,20 @@ export const ForgotPasswordDialog = ({ open, onOpenChange }: ForgotPasswordDialo
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={handleClose}>
-        <DrawerContent className="px-4 pb-4">
-          <DrawerHeader className="text-center">
-            <DrawerTitle className="flex items-center justify-center gap-2">
+        <DrawerContent className="px-4 pb-4 max-h-[85vh] flex flex-col">
+          <DrawerHeader className="text-center pb-2">
+            <DrawerTitle className="flex items-center justify-center gap-2 text-lg">
               <Mail className="h-5 w-5 text-info" />
               Reset Password
             </DrawerTitle>
-            <DrawerDescription>
+            <DrawerDescription className="text-sm">
               {sent 
                 ? "We've sent you a password reset link!"
                 : "Enter your email address and we'll send you a link to reset your password."
               }
             </DrawerDescription>
           </DrawerHeader>
-          <div className="px-2">
+          <div className="px-2 flex-1 min-h-0">
             <FormContent />
           </div>
         </DrawerContent>
