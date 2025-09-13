@@ -206,13 +206,13 @@ export const UnifiedDashboard = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Track Activities - Hero Card */}
             <Card 
-              className="border-0 shadow-xl bg-gradient-to-br from-info/10 to-info/20 rounded-3xl cursor-pointer transform transition-all duration-300 active:scale-95 hover:shadow-2xl"
+              className="border-0 shadow-xl bg-gradient-to-br from-info/10 to-info/20 rounded-3xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-2xl hover:shadow-info/25 hover:scale-105 hover:-translate-y-2 group"
               onClick={onTrackActivity}
             >
               <CardContent className="p-6 lg:p-8">
                 <div className="flex items-center space-x-4">
-                  <div className="bg-gradient-to-br from-info/30 to-info/50 rounded-2xl p-4 shadow-lg">
-                    <Activity className="h-8 w-8 text-info" />
+                  <div className="bg-gradient-to-br from-info/30 to-info/50 rounded-2xl p-4 shadow-lg transition-all duration-500 group-hover:shadow-info/40 group-hover:scale-110">
+                    <Activity className="h-8 w-8 text-info transition-transform duration-500 group-hover:rotate-12" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-foreground mb-1">{t('dashboard.trackActivities')}</h3>
@@ -225,13 +225,13 @@ export const UnifiedDashboard = ({
 
             {/* Sleep Schedule - Hero Card */}
             <Card 
-              className="border-0 shadow-xl bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl cursor-pointer transform transition-all duration-300 active:scale-95 hover:shadow-2xl"
+              className="border-0 shadow-xl bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-2xl hover:shadow-primary/25 hover:scale-105 hover:-translate-y-2 group"
               onClick={onSleepSchedule}
             >
               <CardContent className="p-6 lg:p-8">
                 <div className="flex items-center space-x-4">
-                  <div className="bg-gradient-to-br from-primary/30 to-primary/50 rounded-2xl p-4 shadow-lg">
-                    <Moon className="h-8 w-8 text-primary" />
+                  <div className="bg-gradient-to-br from-primary/30 to-primary/50 rounded-2xl p-4 shadow-lg transition-all duration-500 group-hover:shadow-primary/40 group-hover:scale-110">
+                    <Moon className="h-8 w-8 text-primary transition-transform duration-500 group-hover:rotate-12" />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-foreground mb-1">{t('dashboard.sleepSchedule')}</h3>
@@ -256,12 +256,12 @@ export const UnifiedDashboard = ({
 
             {/* Reports */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95"
+              className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-orange-200/50 hover:scale-105 hover:-translate-y-1 group"
               onClick={onViewReports}
             >
               <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-orange-200 to-orange-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                  <BarChart3 className="h-6 w-6 lg:h-8 lg:w-8 text-orange-600" />
+                <div className="bg-gradient-to-br from-orange-200 to-orange-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-orange-300/50 group-hover:scale-110">
+                  <BarChart3 className="h-6 w-6 lg:h-8 lg:w-8 text-orange-600 transition-transform duration-500 group-hover:rotate-6" />
                 </div>
                 <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.viewReports')}</h3>
                 <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.viewReportsDesc')}</p>
@@ -270,12 +270,12 @@ export const UnifiedDashboard = ({
 
             {/* Smart Notifications */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative"
+              className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-indigo-200/50 hover:scale-105 hover:-translate-y-1 group relative"
               onClick={onNotifications}
             >
               <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                  <Bell className="h-6 w-6 lg:h-8 lg:w-8 text-indigo-600" />
+                <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-indigo-300/50 group-hover:scale-110">
+                  <Bell className="h-6 w-6 lg:h-8 lg:w-8 text-indigo-600 transition-transform duration-500 group-hover:animate-bounce" />
                 </div>
                 <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">Smart Notifications</h3>
                 <p className="text-xs lg:text-sm text-muted-foreground">Intelligent reminders</p>
@@ -289,12 +289,12 @@ export const UnifiedDashboard = ({
 
             {/* Memories */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative"
+              className="border-0 shadow-lg bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-pink-200/50 hover:scale-105 hover:-translate-y-1 group relative"
               onClick={onMemories}
             >
               <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                  <Camera className="h-6 w-6 lg:h-8 lg:w-8 text-pink-600" />
+                <div className="bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-pink-300/50 group-hover:scale-110">
+                  <Camera className="h-6 w-6 lg:h-8 lg:w-8 text-pink-600 transition-transform duration-500 group-hover:rotate-12" />
                 </div>
                 <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">Photo & Memories</h3>
                 <p className="text-xs lg:text-sm text-muted-foreground">Capture moments</p>
@@ -308,12 +308,12 @@ export const UnifiedDashboard = ({
 
             {/* Family Sharing */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative"
+              className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-green-200/50 hover:scale-105 hover:-translate-y-1 group relative"
               onClick={onFamilySharing}
             >
               <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                  <Users className="h-6 w-6 lg:h-8 lg:w-8 text-green-600" />
+                <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-green-300/50 group-hover:scale-110">
+                  <Users className="h-6 w-6 lg:h-8 lg:w-8 text-green-600 transition-transform duration-500 group-hover:scale-110" />
                 </div>
                 <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.familySharing')}</h3>
                 <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.familySharingDesc')}</p>
@@ -327,13 +327,13 @@ export const UnifiedDashboard = ({
 
             {/* Pediatrician Reports */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative col-span-2 lg:col-span-1"
+              className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-teal-200/50 hover:scale-105 hover:-translate-y-1 group relative col-span-2 lg:col-span-1"
               onClick={onPediatricianReports}
             >
               <CardContent className="p-4 lg:p-6">
                 <div className="flex lg:flex-col lg:text-center items-center space-x-3 lg:space-x-0">
-                  <div className="bg-gradient-to-br from-teal-200 to-teal-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center flex-shrink-0 lg:mx-auto lg:mb-3">
-                    <FileText className="h-6 w-6 lg:h-8 lg:w-8 text-teal-600" />
+                  <div className="bg-gradient-to-br from-teal-200 to-teal-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center flex-shrink-0 lg:mx-auto lg:mb-3 transition-all duration-500 group-hover:shadow-teal-300/50 group-hover:scale-110">
+                    <FileText className="h-6 w-6 lg:h-8 lg:w-8 text-teal-600 transition-transform duration-500 group-hover:rotate-6" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.pediatricianReports')}</h3>
@@ -356,7 +356,7 @@ export const UnifiedDashboard = ({
             <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-4 text-center lg:text-left">Weekly Insights</h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Weekly Average Sleep */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-indigo-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
@@ -379,7 +379,7 @@ export const UnifiedDashboard = ({
               </Card>
               
               {/* Weekly Feedings */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-green-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
@@ -389,8 +389,8 @@ export const UnifiedDashboard = ({
                     </>
                   ) : (
                     <>
-                      <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                        <Milk className="h-6 w-6 lg:h-8 lg:w-8 text-green-600" />
+                      <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-green-300/50 group-hover:scale-110">
+                        <Milk className="h-6 w-6 lg:h-8 lg:w-8 text-green-600 transition-transform duration-500 group-hover:rotate-12" />
                       </div>
                       <div className="text-lg lg:text-xl font-bold text-green-600 mb-1">
                         {dashboardStats.weeklyFeedings}
@@ -402,7 +402,7 @@ export const UnifiedDashboard = ({
               </Card>
 
               {/* Weekly Diaper Changes */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-amber-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
@@ -412,8 +412,8 @@ export const UnifiedDashboard = ({
                     </>
                   ) : (
                     <>
-                      <div className="bg-gradient-to-br from-amber-200 to-amber-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                        <Baby className="h-6 w-6 lg:h-8 lg:w-8 text-amber-600" />
+                      <div className="bg-gradient-to-br from-amber-200 to-amber-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-amber-300/50 group-hover:scale-110">
+                        <Baby className="h-6 w-6 lg:h-8 lg:w-8 text-amber-600 transition-transform duration-500 group-hover:bounce" />
                       </div>
                       <div className="text-lg lg:text-xl font-bold text-amber-600 mb-1">
                         {dashboardStats.weeklyDiaperChanges}
@@ -425,7 +425,7 @@ export const UnifiedDashboard = ({
               </Card>
 
               {/* Growth Trend */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-purple-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
@@ -435,8 +435,8 @@ export const UnifiedDashboard = ({
                     </>
                   ) : (
                     <>
-                      <div className="bg-gradient-to-br from-purple-200 to-purple-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                        <TrendingUp className="h-6 w-6 lg:h-8 lg:w-8 text-purple-600" />
+                      <div className="bg-gradient-to-br from-purple-200 to-purple-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-purple-300/50 group-hover:scale-110">
+                        <TrendingUp className="h-6 w-6 lg:h-8 lg:w-8 text-purple-600 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12" />
                       </div>
                       <div className="text-lg lg:text-xl font-bold text-purple-600 mb-1">
                         Steady
@@ -454,7 +454,7 @@ export const UnifiedDashboard = ({
         <div className="fixed bottom-6 right-6 z-40 lg:hidden">
           <Button
             onClick={onTrackActivity}
-            className="bg-primary hover:bg-primary/90 text-white rounded-full w-14 h-14 p-0 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+            className="bg-primary hover:bg-primary/90 text-white rounded-full w-14 h-14 p-0 shadow-xl hover:shadow-2xl hover:shadow-primary/50 transition-all duration-500 transform hover:scale-110 hover:-translate-y-1 active:scale-95"
             size="icon"
           >
             <Plus className="h-6 w-6" />
