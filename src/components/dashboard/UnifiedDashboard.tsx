@@ -14,7 +14,6 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
-import { TabletProfileHub } from '@/components/profiles/TabletProfileHub';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
 
 interface UnifiedDashboardProps {
@@ -57,7 +56,6 @@ export const UnifiedDashboard = ({
   onFamilySharing,
   onMemories,
   onAddProfile,
-  onManageProfiles,
   onProfileCreated,
   onManageSubscription,
   onPediatricianReports,
@@ -128,28 +126,18 @@ export const UnifiedDashboard = ({
             </p>
           </div>
 
-          {/* Profile Section - Responsive Design */}
+          {/* Profile Section */}
           {!isNewUser ? (
             <div className="mb-8">
-              {/* Mobile Profile Selector */}
-              <div className="md:hidden text-center mb-4">
-                <h2 className="text-lg font-semibold text-foreground mb-3">Active Profile</h2>
+              <div className="text-center mb-4">
+                <h2 className="text-lg lg:text-xl font-semibold text-foreground mb-3">Active Profile</h2>
                 <div className="flex justify-center">
                   <MobileProfileSelector />
                 </div>
               </div>
               
-              {/* Tablet & Desktop Profile Hub - Re-enabled with fixes */}
-              <div className="hidden md:block max-w-2xl mx-auto">
-                <TabletProfileHub 
-                  onAddProfile={onAddProfile}
-                  onManageProfiles={onManageProfiles}
-                  className="mb-4"
-                />
-              </div>
-              
               {!isPremium && profiles.length >= 1 && (
-                <div className="bg-warning/10 border border-warning/20 rounded-2xl p-3 mt-4 max-w-md mx-auto md:max-w-2xl">
+                <div className="bg-warning/10 border border-warning/20 rounded-2xl p-3 mt-4 max-w-md mx-auto">
                   <p className="text-sm text-warning text-center flex items-center justify-center">
                     <Crown className="h-4 w-4 mr-2" />
                     Upgrade to Premium for unlimited baby profiles
@@ -212,44 +200,44 @@ export const UnifiedDashboard = ({
         )}
 
         {/* Hero Actions - Primary Features */}
-        <div className="space-y-4 mb-8 max-w-6xl mx-auto">
-          <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-6 text-center">Quick Actions</h3>
+        <div className="space-y-4 mb-8 max-w-4xl mx-auto">
+          <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-4 text-center lg:text-left">Quick Actions</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {/* Track Activities - Hero Card */}
             <Card 
-              className="border-0 shadow-xl bg-gradient-to-br from-info/10 to-info/20 rounded-3xl cursor-pointer transform transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-2xl touch-manipulation"
+              className="border-0 shadow-xl bg-gradient-to-br from-info/10 to-info/20 rounded-3xl cursor-pointer transform transition-all duration-300 active:scale-95 hover:shadow-2xl"
               onClick={onTrackActivity}
             >
-              <CardContent className="p-6 md:p-8 lg:p-10">
-                <div className="flex items-center space-x-4 md:space-x-6">
-                  <div className="bg-gradient-to-br from-info/30 to-info/50 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-lg">
-                    <Activity className="h-8 w-8 md:h-10 md:w-10 text-info" />
+              <CardContent className="p-6 lg:p-8">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-gradient-to-br from-info/30 to-info/50 rounded-2xl p-4 shadow-lg">
+                    <Activity className="h-8 w-8 text-info" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">{t('dashboard.trackActivities')}</h3>
-                    <p className="text-muted-foreground text-base md:text-lg leading-relaxed">{t('dashboard.trackActivitiesDesc')}</p>
+                    <h3 className="text-xl font-bold text-foreground mb-1">{t('dashboard.trackActivities')}</h3>
+                    <p className="text-muted-foreground text-base">{t('dashboard.trackActivitiesDesc')}</p>
                   </div>
-                  <ArrowRight className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground" />
+                  <ArrowRight className="h-6 w-6 text-muted-foreground" />
                 </div>
               </CardContent>
             </Card>
 
             {/* Sleep Schedule - Hero Card */}
             <Card 
-              className="border-0 shadow-xl bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl cursor-pointer transform transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-2xl touch-manipulation"
+              className="border-0 shadow-xl bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl cursor-pointer transform transition-all duration-300 active:scale-95 hover:shadow-2xl"
               onClick={onSleepSchedule}
             >
-              <CardContent className="p-6 md:p-8 lg:p-10">
-                <div className="flex items-center space-x-4 md:space-x-6">
-                  <div className="bg-gradient-to-br from-primary/30 to-primary/50 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-lg">
-                    <Moon className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+              <CardContent className="p-6 lg:p-8">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-gradient-to-br from-primary/30 to-primary/50 rounded-2xl p-4 shadow-lg">
+                    <Moon className="h-8 w-8 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">{t('dashboard.sleepSchedule')}</h3>
-                    <p className="text-muted-foreground text-base md:text-lg leading-relaxed">{t('dashboard.sleepScheduleDesc')}</p>
+                    <h3 className="text-xl font-bold text-foreground mb-1">{t('dashboard.sleepSchedule')}</h3>
+                    <p className="text-muted-foreground text-base">{t('dashboard.sleepScheduleDesc')}</p>
                   </div>
-                  <ArrowRight className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground" />
+                  <ArrowRight className="h-6 w-6 text-muted-foreground" />
                 </div>
               </CardContent>
             </Card>
@@ -257,40 +245,40 @@ export const UnifiedDashboard = ({
         </div>
 
         {/* Secondary Features Grid */}
-        <div className="mb-8 max-w-7xl mx-auto">
-          <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-6 text-center">More Features</h3>
+        <div className="mb-8 max-w-6xl mx-auto">
+          <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-4 text-center lg:text-left">More Features</h3>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {/* Quick Log Card */}
-            <div className="col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5">
+            <div className="col-span-2 lg:col-span-3 xl:col-span-4">
               <QuickLogCard />
             </div>
 
             {/* Reports */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation"
+              className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95"
               onClick={onViewReports}
             >
-              <CardContent className="p-4 md:p-6 lg:p-8 text-center">
-                <div className="bg-gradient-to-br from-orange-200 to-orange-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                  <BarChart3 className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-orange-600" />
+              <CardContent className="p-4 lg:p-6 text-center">
+                <div className="bg-gradient-to-br from-orange-200 to-orange-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                  <BarChart3 className="h-6 w-6 lg:h-8 lg:w-8 text-orange-600" />
                 </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm md:text-base lg:text-lg">{t('dashboard.viewReports')}</h3>
-                <p className="text-xs md:text-sm lg:text-base text-muted-foreground leading-relaxed">{t('dashboard.viewReportsDesc')}</p>
+                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.viewReports')}</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.viewReportsDesc')}</p>
               </CardContent>
             </Card>
 
             {/* Smart Notifications */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 active:scale-95 relative touch-manipulation"
+              className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative"
               onClick={onNotifications}
             >
-              <CardContent className="p-4 md:p-6 lg:p-8 text-center">
-                <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                  <Bell className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-indigo-600" />
+              <CardContent className="p-4 lg:p-6 text-center">
+                <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                  <Bell className="h-6 w-6 lg:h-8 lg:w-8 text-indigo-600" />
                 </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm md:text-base lg:text-lg">Smart Notifications</h3>
-                <p className="text-xs md:text-sm lg:text-base text-muted-foreground leading-relaxed">Intelligent reminders</p>
+                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">Smart Notifications</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground">Intelligent reminders</p>
                 {!isPremium && (
                   <div className="absolute -top-1 -right-1 bg-warning rounded-full p-1">
                     <Crown className="h-3 w-3 text-white" />
@@ -301,15 +289,15 @@ export const UnifiedDashboard = ({
 
             {/* Memories */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 active:scale-95 relative touch-manipulation"
+              className="border-0 shadow-lg bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative"
               onClick={onMemories}
             >
-              <CardContent className="p-4 md:p-6 lg:p-8 text-center">
-                <div className="bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                  <Camera className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-pink-600" />
+              <CardContent className="p-4 lg:p-6 text-center">
+                <div className="bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                  <Camera className="h-6 w-6 lg:h-8 lg:w-8 text-pink-600" />
                 </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm md:text-base lg:text-lg">Photo & Memories</h3>
-                <p className="text-xs md:text-sm lg:text-base text-muted-foreground leading-relaxed">Capture moments</p>
+                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">Photo & Memories</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground">Capture moments</p>
                 {!isPremium && (
                   <div className="absolute -top-1 -right-1 bg-warning rounded-full p-1">
                     <Crown className="h-3 w-3 text-white" />
@@ -320,15 +308,15 @@ export const UnifiedDashboard = ({
 
             {/* Family Sharing */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 active:scale-95 relative touch-manipulation"
+              className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative"
               onClick={onFamilySharing}
             >
-              <CardContent className="p-4 md:p-6 lg:p-8 text-center">
-                <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                  <Users className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-green-600" />
+              <CardContent className="p-4 lg:p-6 text-center">
+                <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                  <Users className="h-6 w-6 lg:h-8 lg:w-8 text-green-600" />
                 </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm md:text-base lg:text-lg">{t('dashboard.familySharing')}</h3>
-                <p className="text-xs md:text-sm lg:text-base text-muted-foreground leading-relaxed">{t('dashboard.familySharingDesc')}</p>
+                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.familySharing')}</h3>
+                <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.familySharingDesc')}</p>
                 {!isPremium && (
                   <div className="absolute -top-1 -right-1 bg-warning rounded-full p-1">
                     <Crown className="h-3 w-3 text-white" />
@@ -339,20 +327,20 @@ export const UnifiedDashboard = ({
 
             {/* Pediatrician Reports */}
             <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 active:scale-95 relative col-span-2 md:col-span-1 touch-manipulation"
+              className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl cursor-pointer transform transition-all duration-300 active:scale-95 relative col-span-2 lg:col-span-1"
               onClick={onPediatricianReports}
             >
-              <CardContent className="p-4 md:p-6 lg:p-8">
-                <div className="flex md:flex-col md:text-center items-center space-x-3 md:space-x-0">
-                  <div className="bg-gradient-to-br from-teal-200 to-teal-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center flex-shrink-0 md:mx-auto md:mb-3">
-                    <FileText className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-teal-600" />
+              <CardContent className="p-4 lg:p-6">
+                <div className="flex lg:flex-col lg:text-center items-center space-x-3 lg:space-x-0">
+                  <div className="bg-gradient-to-br from-teal-200 to-teal-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center flex-shrink-0 lg:mx-auto lg:mb-3">
+                    <FileText className="h-6 w-6 lg:h-8 lg:w-8 text-teal-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-foreground mb-1 text-sm md:text-base lg:text-lg">{t('dashboard.pediatricianReports')}</h3>
-                    <p className="text-xs md:text-sm lg:text-base text-muted-foreground leading-relaxed">{t('dashboard.pediatricianReportsDesc')}</p>
+                    <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.pediatricianReports')}</h3>
+                    <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.pediatricianReportsDesc')}</p>
                   </div>
                   {!isPremium && (
-                    <div className="bg-warning rounded-full p-1 flex-shrink-0 md:absolute md:-top-1 md:-right-1">
+                    <div className="bg-warning rounded-full p-1 flex-shrink-0 lg:absolute lg:-top-1 lg:-right-1">
                       <Crown className="h-3 w-3 text-white" />
                     </div>
                   )}
@@ -364,96 +352,96 @@ export const UnifiedDashboard = ({
 
         {/* Enhanced Baby Insights */}
         {!isNewUser && (
-          <div className="mb-8 max-w-6xl mx-auto">
-            <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-6 text-center">Weekly Insights</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="mb-8 max-w-4xl mx-auto">
+            <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-4 text-center lg:text-left">Weekly Insights</h3>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Weekly Average Sleep */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl hover:shadow-xl transition-all duration-300">
-                <CardContent className="p-4 md:p-6 lg:p-8 text-center">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl">
+                <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
-                      <Skeleton className="w-8 h-8 md:w-12 md:h-12 lg:w-16 lg:h-16 rounded-full mx-auto mb-3" />
+                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
                       <Skeleton className="h-4 w-12 mx-auto" />
                     </>
                   ) : (
                     <>
-                      <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                        <Moon className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-indigo-600" />
+                      <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                        <Moon className="h-6 w-6 lg:h-8 lg:w-8 text-indigo-600" />
                       </div>
-                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-indigo-600 mb-1">
+                      <div className="text-lg lg:text-xl font-bold text-indigo-600 mb-1">
                         {dashboardStats.weeklyAverageSleep}
                       </div>
-                      <div className="text-xs md:text-sm lg:text-base text-muted-foreground">Avg Sleep</div>
+                      <div className="text-xs lg:text-sm text-muted-foreground">Avg Sleep</div>
                     </>
                   )}
                 </CardContent>
               </Card>
               
               {/* Weekly Feedings */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl hover:shadow-xl transition-all duration-300">
-                <CardContent className="p-4 md:p-6 lg:p-8 text-center">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl">
+                <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
-                      <Skeleton className="w-8 h-8 md:w-12 md:h-12 lg:w-16 lg:h-16 rounded-full mx-auto mb-3" />
+                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
                       <Skeleton className="h-4 w-12 mx-auto" />
                     </>
                   ) : (
                     <>
-                      <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                        <Milk className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-green-600" />
+                      <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                        <Milk className="h-6 w-6 lg:h-8 lg:w-8 text-green-600" />
                       </div>
-                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-green-600 mb-1">
+                      <div className="text-lg lg:text-xl font-bold text-green-600 mb-1">
                         {dashboardStats.weeklyFeedings}
                       </div>
-                      <div className="text-xs md:text-sm lg:text-base text-muted-foreground">Feedings</div>
+                      <div className="text-xs lg:text-sm text-muted-foreground">Feedings</div>
                     </>
                   )}
                 </CardContent>
               </Card>
 
               {/* Weekly Diaper Changes */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl hover:shadow-xl transition-all duration-300">
-                <CardContent className="p-4 md:p-6 lg:p-8 text-center">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl">
+                <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
-                      <Skeleton className="w-8 h-8 md:w-12 md:h-12 lg:w-16 lg:h-16 rounded-full mx-auto mb-3" />
+                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
                       <Skeleton className="h-4 w-12 mx-auto" />
                     </>
                   ) : (
                     <>
-                      <div className="bg-gradient-to-br from-amber-200 to-amber-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                        <Baby className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-amber-600" />
+                      <div className="bg-gradient-to-br from-amber-200 to-amber-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                        <Baby className="h-6 w-6 lg:h-8 lg:w-8 text-amber-600" />
                       </div>
-                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-amber-600 mb-1">
+                      <div className="text-lg lg:text-xl font-bold text-amber-600 mb-1">
                         {dashboardStats.weeklyDiaperChanges}
                       </div>
-                      <div className="text-xs md:text-sm lg:text-base text-muted-foreground">Diapers</div>
+                      <div className="text-xs lg:text-sm text-muted-foreground">Diapers</div>
                     </>
                   )}
                 </CardContent>
               </Card>
 
               {/* Growth Trend */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl hover:shadow-xl transition-all duration-300">
-                <CardContent className="p-4 md:p-6 lg:p-8 text-center">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl">
+                <CardContent className="p-4 lg:p-6 text-center">
                   {statsLoading ? (
                     <>
-                      <Skeleton className="w-8 h-8 md:w-12 md:h-12 lg:w-16 lg:h-16 rounded-full mx-auto mb-3" />
+                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
                       <Skeleton className="h-4 w-12 mx-auto" />
                     </>
                   ) : (
                     <>
-                      <div className="bg-gradient-to-br from-purple-200 to-purple-300 rounded-xl w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center justify-center mx-auto mb-3">
-                        <TrendingUp className="h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-purple-600" />
+                      <div className="bg-gradient-to-br from-purple-200 to-purple-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
+                        <TrendingUp className="h-6 w-6 lg:h-8 lg:w-8 text-purple-600" />
                       </div>
-                      <div className="text-lg md:text-xl lg:text-2xl font-bold text-purple-600 mb-1">
+                      <div className="text-lg lg:text-xl font-bold text-purple-600 mb-1">
                         Steady
                       </div>
-                      <div className="text-xs md:text-sm lg:text-base text-muted-foreground">Growth</div>
+                      <div className="text-xs lg:text-sm text-muted-foreground">Growth</div>
                     </>
                   )}
                 </CardContent>
