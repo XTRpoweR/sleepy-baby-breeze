@@ -19,7 +19,7 @@ export const DesktopHeader = () => {
   };
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden lg:block">
+    <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 hidden md:block">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left side - Logo and global actions */}

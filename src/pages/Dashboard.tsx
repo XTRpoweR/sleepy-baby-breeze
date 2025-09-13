@@ -287,12 +287,12 @@ const Dashboard = () => {
               <h2 className="text-base lg:text-lg font-medium text-foreground mb-1 lg:mb-2">{t('dashboard.childProfiles')}</h2>
               
               {/* Desktop Profile Selector */}
-              <div className="hidden lg:block">
+              <div className="hidden md:block">
                 <ProfileSelector />
               </div>
               
               {/* Mobile Profile Selector */}
-              <div className="lg:hidden">
+              <div className="md:hidden">
                 <MobileProfileSelector />
               </div>
               
@@ -352,7 +352,7 @@ const Dashboard = () => {
           </Card>}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 mb-3 lg:mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-3 mb-3 lg:mb-4">
           <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 card-glow" onClick={handleTrackActivity}>
             <CardContent className="p-2 lg:p-3 text-center">
               <div className="bg-info/20 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2 transition-transform duration-300 hover:scale-110">
@@ -399,7 +399,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <div className="sm:col-span-2 lg:col-span-1">
+          <div className="lg:col-span-1">
             <QuickLogCard />
           </div>
 
