@@ -66,8 +66,8 @@ export const UnifiedHeader = () => {
   };
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100">
-      <div className="flex justify-between items-center h-16 px-4 lg:px-8 max-w-7xl mx-auto">
+    <header className="bg-background/80 backdrop-blur-sm border-b border-border/50">
+      <div className="flex justify-between tablet:justify-start items-center h-14 tablet:h-16 px-4 tablet:px-6 lg:px-8 max-w-7xl mx-auto tablet:gap-6">
         {/* Hamburger Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
@@ -239,22 +239,32 @@ export const UnifiedHeader = () => {
         </Sheet>
         
         {/* Logo */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 tablet:flex-1">
           <img 
             src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
             alt="SleepyBabyy Logo" 
-            className="h-10 w-auto lg:h-12"
+            className="h-8 w-auto tablet:h-10"
           />
-          <span className="text-lg lg:text-xl font-bold text-gray-900">SleepyBabyy</span>
+          <span className="text-base tablet:text-lg font-bold text-foreground">SleepyBabyy</span>
+        </div>
+
+        {/* Tablet Profile Hub - Hidden on mobile */}
+        <div className="hidden tablet:block tablet:flex-1 max-w-sm">
+          {user && (
+            <div className="w-full">
+              {/* Placeholder for TabletProfileHub - will be added in dashboard */}
+            </div>
+          )}
         </div>
         
         {/* Tutorial Button */}
         <Button
           onClick={handleTutorial}
-          className="bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
-          size="icon"
+          variant="secondary"
+          size="sm"
+          className="rounded-full w-8 h-8 tablet:w-10 tablet:h-10 p-0 shadow-sm hover:shadow-md transition-all duration-300"
         >
-          <GraduationCap className="h-5 w-5" />
+          <GraduationCap className="h-4 w-4 tablet:h-5 tablet:w-5" />
         </Button>
       </div>
     </header>
