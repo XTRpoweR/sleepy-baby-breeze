@@ -352,216 +352,196 @@ const Dashboard = () => {
           </Card>}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-3 mb-3 lg:mb-4">
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 card-glow" onClick={handleTrackActivity}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-info/20 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2 transition-transform duration-300 hover:scale-110">
-                <Activity className="h-4 w-4 lg:h-5 lg:w-5 text-info" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-0.5 text-xs lg:text-sm">{t('dashboard.trackActivities')}</h3>
-              <p className="text-xs text-muted-foreground">{t('dashboard.trackActivitiesDesc')}</p>
-            </CardContent>
-          </Card>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1" onClick={handleTrackActivity}>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-blue-100 rounded-2xl p-4">
+                    <Activity className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-1">{t('dashboard.trackActivities')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('dashboard.trackActivitiesDesc')}</p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 card-glow" onClick={handleSleepSchedule}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-primary/20 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2 transition-transform duration-300 hover:scale-110">
-                <Moon className="h-4 w-4 lg:h-5 lg:w-5 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-0.5 text-xs lg:text-sm">{t('dashboard.sleepSchedule')}</h3>
-              <p className="text-xs text-muted-foreground">{t('dashboard.sleepScheduleDesc')}</p>
-            </CardContent>
-          </Card>
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-1" onClick={handleSleepSchedule}>
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="bg-purple-100 rounded-2xl p-4">
+                    <Moon className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-foreground mb-1">{t('dashboard.sleepSchedule')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('dashboard.sleepScheduleDesc')}</p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleNotifications}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-indigo-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Bell className="h-4 w-4 lg:h-5 lg:w-5 text-indigo-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Smart Notifications</h3>
-              <p className="text-xs text-gray-600">Intelligent care reminders</p>
-              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleMemories}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-pink-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Camera className="h-4 w-4 lg:h-5 lg:w-5 text-pink-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">Photo & Memories</h3>
-              <p className="text-xs text-gray-600">Capture precious moments</p>
-              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
-
-          <div className="lg:col-span-1">
+        {/* More Features */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">More Features</h2>
+          
+          {/* Quick Log - Featured */}
+          <div className="mb-4">
             <QuickLogCard />
           </div>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleFamilySharing}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-green-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <Users className="h-4 w-4 lg:h-5 lg:w-5 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.familySharing')}</h3>
-              <p className="text-xs text-gray-600">{t('dashboard.familySharingDesc')}</p>
-              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
+          {/* Feature Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleViewReports}>
+              <CardContent className="p-4 text-center">
+                <div className="bg-orange-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <BarChart3 className="h-6 w-6 text-orange-600" />
+                </div>
+                <h3 className="font-medium text-gray-900 mb-1">View reports</h3>
+                <p className="text-xs text-gray-600">Analyze sleep and activity patterns</p>
+              </CardContent>
+            </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handlePediatricianReports}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-teal-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <FileText className="h-4 w-4 lg:h-5 lg:w-5 text-teal-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.pediatricianReports')}</h3>
-              <p className="text-xs text-gray-600">{t('dashboard.pediatricianReportsDesc')}</p>
-              {!subscriptionLoading && !isPremium && <div className="absolute top-1 right-1">
-                  <Crown className="h-3 w-3 text-orange-500" />
-                </div>}
-            </CardContent>
-          </Card>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleNotifications}>
+              <CardContent className="p-4 text-center">
+                <div className="bg-blue-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <Bell className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="font-medium text-gray-900 mb-1">Smart Notifications</h3>
+                <p className="text-xs text-gray-600">Intelligent reminders</p>
+                {!subscriptionLoading && !isPremium && <div className="absolute top-2 right-2">
+                    <Crown className="h-4 w-4 text-orange-500" />
+                  </div>}
+              </CardContent>
+            </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer sm:col-span-2 lg:col-span-1" onClick={handleViewReports}>
-            <CardContent className="p-2 lg:p-3 text-center">
-              <div className="bg-orange-100 rounded-full w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center mx-auto mb-1 lg:mb-2">
-                <BarChart3 className="h-4 w-4 lg:h-5 lg:w-5 text-orange-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-0.5 text-xs lg:text-sm">{t('dashboard.viewReports')}</h3>
-              <p className="text-xs text-gray-600 mb-1">{t('dashboard.viewReportsDesc')}</p>
-              <div className="space-y-0.5 text-xs text-gray-500">
-                <div className="flex justify-between">
-                  <span>{t('dashboard.dailySleep')}</span>
-                  <span>{t('dashboard.trackPatterns')}</span>
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleMemories}>
+              <CardContent className="p-4 text-center">
+                <div className="bg-pink-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <Camera className="h-6 w-6 text-pink-600" />
                 </div>
-                <div className="flex justify-between">
-                  <span>{t('dashboard.feedingData')}</span>
-                  <span>{t('dashboard.monitorFrequency')}</span>
+                <h3 className="font-medium text-gray-900 mb-1">Photo & Memories</h3>
+                <p className="text-xs text-gray-600">Capture moments</p>
+                {!subscriptionLoading && !isPremium && <div className="absolute top-2 right-2">
+                    <Crown className="h-4 w-4 text-orange-500" />
+                  </div>}
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer relative" onClick={handleFamilySharing}>
+              <CardContent className="p-4 text-center">
+                <div className="bg-green-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <Users className="h-6 w-6 text-green-600" />
                 </div>
-                <div className="flex justify-between">
-                  <span>{t('dashboard.weeklyTrends')}</span>
-                  <span>{t('dashboard.visualCharts')}</span>
+                <h3 className="font-medium text-gray-900 mb-1">Family sharing</h3>
+                <p className="text-xs text-gray-600">Invite family members and caregivers</p>
+                {!subscriptionLoading && !isPremium && <div className="absolute top-2 right-2">
+                    <Crown className="h-4 w-4 text-orange-500" />
+                  </div>}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Pediatrician Reports - Full width */}
+          <div className="mt-4">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer w-full max-w-md relative" onClick={handlePediatricianReports}>
+              <CardContent className="p-4 text-center">
+                <div className="bg-teal-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <FileText className="h-6 w-6 text-teal-600" />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <h3 className="font-medium text-gray-900 mb-1">Pediatrician Reports</h3>
+                <p className="text-xs text-gray-600">Generate professional reports for healthcare providers</p>
+                {!subscriptionLoading && !isPremium && <div className="absolute top-2 right-2">
+                    <Crown className="h-4 w-4 text-orange-500" />
+                  </div>}
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Recent Activity & Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-3">
-          {/* Today's Summary */}
-          <Card className="lg:col-span-2">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
-                <Baby className="h-4 w-4 text-blue-600" />
-                <span>{t('dashboard.todaysActivity')}</span>
-                {activeProfile && <span className="text-xs font-normal text-gray-600">
-                    for {activeProfile.name}
-                  </span>}
-                {isDataLoading && (
-                  <div className="ml-2 flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                  </div>
+        {/* Weekly Insights */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Weekly Insights</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="bg-purple-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <Moon className="h-6 w-6 text-purple-600" />
+                </div>
+                {isDataLoading ? (
+                  <>
+                    <div className="h-6 bg-gray-200 rounded w-12 mx-auto mb-1 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-xl font-bold text-gray-900 mb-1">{hasActiveProfile ? stats.weeklyAverageSleep : '0h 0m'}</div>
+                    <div className="text-sm text-gray-600">Avg Sleep</div>
+                  </>
                 )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {activeProfile ? <div className="text-center py-3 lg:py-4">
-                  <Moon className="h-10 w-10 lg:h-12 lg:w-12 text-gray-300 mx-auto mb-1 lg:mb-2" />
-                  <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">{t('dashboard.startTracking')}</h3>
-                  <p className="text-gray-600 mb-2 text-xs lg:text-sm">
-                    {t('dashboard.noDataMessage', {
-                  name: activeProfile.name
-                })}
-                  </p>
-                  <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto" onClick={handleTrackActivity} size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    {t('dashboard.startTracking')}
-                  </Button>
-                </div> : <div className="text-center py-3 lg:py-4">
-                  <Baby className="h-10 w-10 lg:h-12 lg:w-12 text-gray-300 mx-auto mb-1 lg:mb-2" />
-                  <h3 className="text-sm lg:text-base font-medium text-gray-900 mb-0.5">No Profile Selected</h3>
-                  <p className="text-gray-600 mb-2 text-xs lg:text-sm">
-                    Select a child profile to view today's activity
-                  </p>
-                </div>}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Quick Stats */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center space-x-2 text-sm lg:text-base">
-                <TrendingUp className="h-4 w-4 text-green-600" />
-                <span>{t('dashboard.weekOverview')}</span>
-                {isDataLoading && (
-                  <div className="ml-2 flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="bg-green-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                    <div className="w-3 h-4 bg-white rounded-sm"></div>
                   </div>
+                </div>
+                {isDataLoading ? (
+                  <>
+                    <div className="h-6 bg-gray-200 rounded w-6 mx-auto mb-1 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-12 mx-auto animate-pulse"></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-xl font-bold text-gray-900 mb-1">{hasActiveProfile ? stats.weeklyFeedings : '0'}</div>
+                    <div className="text-sm text-gray-600">Feedings</div>
+                  </>
                 )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {isDataLoading ? <div className="space-y-2">
-                  <div className="text-center">
-                    <div className="h-5 bg-gray-200 rounded w-12 mx-auto mb-1 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="bg-yellow-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-6 h-6 bg-yellow-600 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
-                  <div className="text-center">
-                    <div className="h-5 bg-gray-200 rounded w-6 mx-auto mb-1 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-12 mx-auto animate-pulse"></div>
-                  </div>
-                  <div className="text-center">
-                    <div className="h-5 bg-gray-200 rounded w-6 mx-auto mb-1 animate-pulse"></div>
-                    <div className="h-3 bg-gray-200 rounded w-16 mx-auto animate-pulse"></div>
-                  </div>
-                </div> : hasActiveProfile ? <>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">{stats.weeklyAverageSleep}</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.averageSleep')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">{stats.weeklyFeedings}</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.feedings')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">{stats.weeklyDiaperChanges}</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.diaperChanges')}</div>
-                  </div>
-                  <div className="pt-2 border-t">
-                    <p className="text-xs text-gray-500 text-center">
-                      Data from this week (Monday-Sunday)
-                    </p>
-                  </div>
-                </> : <>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">0h 0m</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.averageSleep')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">0</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.feedings')}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg lg:text-xl font-bold text-gray-900">0</div>
-                    <div className="text-xs text-gray-600">{t('dashboard.diaperChanges')}</div>
-                  </div>
-                  <div className="pt-2 border-t">
-                    <p className="text-xs text-gray-500 text-center">
-                      {t('dashboard.noProfileMessage')}
-                    </p>
-                  </div>
-                </>}
-            </CardContent>
-          </Card>
+                </div>
+                {isDataLoading ? (
+                  <>
+                    <div className="h-6 bg-gray-200 rounded w-6 mx-auto mb-1 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded w-12 mx-auto animate-pulse"></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-xl font-bold text-gray-900 mb-1">{hasActiveProfile ? stats.weeklyDiaperChanges : '0'}</div>
+                    <div className="text-sm text-gray-600">Diapers</div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="bg-purple-100 rounded-2xl w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                  <TrendingUp className="h-6 w-6 text-purple-600" />
+                </div>
+                <div className="text-xl font-bold text-purple-600 mb-1">Steady</div>
+                <div className="text-sm text-gray-600">Growth</div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
+
       </main>
 
       {/* Profile Management Dialog */}
