@@ -32,13 +32,15 @@ export const TabletProfileHub = ({
             </div>
             <h3 className="font-bold text-lg text-foreground mb-2">Create Your First Profile</h3>
             <p className="text-muted-foreground text-sm mb-4">Start tracking your baby's activities</p>
-            <Button 
-              onClick={onAddProfile}
-              className="bg-primary hover:bg-primary/90 text-white rounded-full px-6"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Profile
-            </Button>
+            {onAddProfile && (
+              <Button 
+                onClick={onAddProfile}
+                className="bg-primary hover:bg-primary/90 text-white rounded-full px-6"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Profile
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -77,7 +79,13 @@ export const TabletProfileHub = ({
                 variant="outline"
                 size="icon"
                 className="h-12 w-12 rounded-full border-primary/20 hover:bg-primary/5"
-                onClick={onManageProfiles}
+                onClick={() => {
+                  try {
+                    onManageProfiles();
+                  } catch (error) {
+                    console.error('Error calling onManageProfiles:', error);
+                  }
+                }}
               >
                 <Settings className="h-5 w-5" />
               </Button>
@@ -93,7 +101,7 @@ export const TabletProfileHub = ({
               {statsLoading ? (
                 <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
               ) : (
-                <div className="font-bold text-indigo-600 text-sm">{stats.weeklyAverageSleep}</div>
+                <div className="font-bold text-indigo-600 text-sm">{stats?.weeklyAverageSleep || 'N/A'}</div>
               )}
               <div className="text-xs text-muted-foreground">Sleep</div>
             </div>
@@ -105,7 +113,7 @@ export const TabletProfileHub = ({
               {statsLoading ? (
                 <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
               ) : (
-                <div className="font-bold text-green-600 text-sm">{stats.weeklyFeedings}</div>
+                <div className="font-bold text-green-600 text-sm">{stats?.weeklyFeedings || 'N/A'}</div>
               )}
               <div className="text-xs text-muted-foreground">Feeds</div>
             </div>
@@ -117,7 +125,7 @@ export const TabletProfileHub = ({
               {statsLoading ? (
                 <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
               ) : (
-                <div className="font-bold text-amber-600 text-sm">{stats.weeklyDiaperChanges}</div>
+                <div className="font-bold text-amber-600 text-sm">{stats?.weeklyDiaperChanges || 'N/A'}</div>
               )}
               <div className="text-xs text-muted-foreground">Changes</div>
             </div>

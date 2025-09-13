@@ -139,7 +139,7 @@ export const UnifiedDashboard = ({
                 </div>
               </div>
               
-              {/* Tablet & Desktop Profile Hub */}
+              {/* Tablet & Desktop Profile Hub - Re-enabled with fixes */}
               <div className="hidden md:block max-w-2xl mx-auto">
                 <TabletProfileHub 
                   onAddProfile={onAddProfile}
