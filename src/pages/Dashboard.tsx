@@ -24,6 +24,7 @@ const Dashboard = () => {
     profiles,
     createProfile,
     switching,
+    switchProfile,
     loading: profilesLoading
   } = useBabyProfile();
   const {
@@ -214,6 +215,9 @@ const Dashboard = () => {
         isNewUser={isNewUser}
         isPremium={isPremium}
         profiles={profiles}
+        activeProfile={activeProfile}
+        switchProfile={switchProfile}
+        switching={switching}
         stats={stats}
         isDataLoading={isDataLoading}
         showProfileCreation={showProfileCreation}
