@@ -170,7 +170,7 @@ const Dashboard = () => {
     setShowUpgradePrompt(true);
   };
 
-  if (loading || profilesLoading) {
+  if (loading || profilesLoading || subscriptionLoading) {
     return <div className="min-h-screen bg-soft gradient-dynamic-slow flex items-center justify-center">
         <div className="text-center">
           <Moon className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
