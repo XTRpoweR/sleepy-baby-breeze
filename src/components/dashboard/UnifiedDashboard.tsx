@@ -39,6 +39,9 @@ interface UnifiedDashboardProps {
   onContact: () => void;
   onSetShowProfileCreation: (show: boolean) => void;
   onUpgrade: (feature: string) => void;
+  activeProfile: any;
+  switching: any;
+  switchProfile: (profileId: string) => Promise<boolean>;
 }
 
 export const UnifiedDashboard = ({
@@ -62,7 +65,10 @@ export const UnifiedDashboard = ({
   onNotifications,
   onContact,
   onSetShowProfileCreation,
-  onUpgrade
+  onUpgrade,
+  activeProfile,
+  switching,
+  switchProfile
 }: UnifiedDashboardProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -132,7 +138,13 @@ export const UnifiedDashboard = ({
               <div className="text-center mb-4">
                 <h2 className="text-lg lg:text-xl font-semibold text-foreground mb-3">Active Profile</h2>
                 <div className="flex justify-center">
-                  <MobileProfileSelector />
+                  <MobileProfileSelector 
+                    key={activeProfile?.id || 'no-profile'} 
+                    activeProfile={activeProfile} 
+                    switching={switching} 
+                    profiles={profiles} 
+                    switchProfile={switchProfile} 
+                  />
                 </div>
               </div>
               
