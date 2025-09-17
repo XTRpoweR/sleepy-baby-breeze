@@ -131,11 +131,12 @@ const TrackActivity = () => {
             {/* Profile Selector and Language Selector */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
               {!isMobile && <LanguageSelector />}
-              {isMobile ? (
+              {/* Commenting out the profile selector for now */}
+              {/* {isMobile ? (
                 <MobileProfileSelector />
               ) : (
                 <ProfileSelector />
-              )}
+              )} */}
             </div>
           </div>
 
