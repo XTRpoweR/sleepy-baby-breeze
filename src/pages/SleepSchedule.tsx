@@ -197,7 +197,7 @@ const SleepSchedule = () => {
               </p>
             </div>
             
-            <div className="flex items-center space-x-4">
+            {/* <div className="flex items-center space-x-4">
               <div className="hidden lg:block">
                 <ProfileSelector />
               </div>
@@ -205,7 +205,7 @@ const SleepSchedule = () => {
               <div className="lg:hidden w-full">
                 <MobileProfileSelector />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
