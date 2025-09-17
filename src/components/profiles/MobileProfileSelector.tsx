@@ -6,12 +6,35 @@ import { ChevronDown, Baby } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { MobileProfileModal } from './MobileProfileModal';
 
-export const MobileProfileSelector = () => {
-  const { profiles, activeProfile, switching } = useBabyProfile();
+interface BabyProfile {
+  id: string;
+  name: string;
+  birth_date?: string | null;
+  photo_url?: string | null;
+  is_shared?: boolean;
+  user_role?: string;
+}
+
+interface MobileProfileSelectorProps {
+  activeProfile?: BabyProfile | null;
+  switching?: boolean;
+  profiles?: BabyProfile[];
+}
+
+export const MobileProfileSelector = ({
+  activeProfile: propActiveProfile, 
+  switching: propSwitching, 
+  profiles: propProfiles, 
+  switchProfile: propSwitchProfile 
+}) => {
+  const { profiles: hookProfiles, activeProfile: hookActiveProfile, switching: hookSwitching, switchProfile: hookSwitchProfile } = useBabyProfile();
   const [showModal, setShowModal] = useState(false);
 
-  // Debug logging
-  console.log('MobileProfileSelector render:', { profiles, activeProfile, switching });
+  // Use props if provided, otherwise use hook values
+  const activeProfile = propActiveProfile || hookActiveProfile;
+  const switching = propSwitching !== undefined ? propSwitching : hookSwitching;
+  const profiles = propProfiles || hookProfiles;
+  const switchProfile = propSwitchProfile || hookSwitchProfile;
 
   if (!activeProfile) {
     console.log('No active profile, not rendering MobileProfileSelector');
@@ -44,6 +67,10 @@ export const MobileProfileSelector = () => {
       <MobileProfileModal 
         isOpen={showModal}
         onClose={() => setShowModal(false)}
+        switchProfile={switchProfile}
+        activeProfile={activeProfile}
+        switching={switching}
+        profiles={profiles}
       />
     </>
   );
