@@ -102,14 +102,15 @@ const Sounds = () => {
             </div>
             
             {/* Profile Selector */}
-            <div className="flex items-center space-x-4">
-              <div className="hidden lg:block">
+            <div className="flex justify-end items-center space-x-4">
+              {/* Commenting out the profile selector for now */}
+              {/* <div className="hidden lg:block">
                 <ProfileSelector />
-              </div>
+              </div> */}
               
-              <div className="lg:hidden w-full">
+              {/* <div className="lg:hidden w-full">
                 <MobileProfileSelector />
-              </div>
+              </div> */}
               
               <div className="sm:hidden">
                 <LanguageSelector />
