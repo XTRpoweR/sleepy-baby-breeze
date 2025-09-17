@@ -21,26 +21,28 @@ export const useActivityLogs = (babyId: string) => {
   const [loading, setLoading] = useState(true);
   const currentBabyIdRef = useRef(babyId);
 
-  const fetchLogs = useCallback(async () => {
-    if (!babyId) {
+  const fetchLogs = useCallback(async (specificBabyId?: string) => {
+    const targetBabyId = specificBabyId || babyId;
+    
+    if (!targetBabyId) {
       console.log('No babyId provided to fetchLogs');
       setLogs([]);
       setLoading(false);
       return;
     }
 
-    console.log('Fetching activity logs for baby:', babyId);
+    console.log('Fetching activity logs for baby:', targetBabyId);
     setLoading(true);
 
     try {
       const { data, error } = await supabase
         .from('baby_activities')
         .select('*')
-        .eq('baby_id', babyId)
+        .eq('baby_id', targetBabyId)
         .order('start_time', { ascending: false });
 
       // Check if babyId changed during the request
-      if (currentBabyIdRef.current !== babyId) {
+      if (currentBabyIdRef.current !== targetBabyId) {
         console.log('BabyId changed during fetch, ignoring results');
         return;
       }
@@ -78,19 +80,25 @@ export const useActivityLogs = (babyId: string) => {
   // Listen for profile changes to immediately clear data and refetch
   useEffect(() => {
     const unsubscribe = profileEventManager.subscribe((newProfileId) => {
-      console.log('useActivityLogs: Profile changed, clearing data for new profile:', newProfileId);
+      console.log('useActivityLogs: Profile changed event received for:', newProfileId);
+      console.log('useActivityLogs: Current babyId prop:', babyId);
+      console.log('useActivityLogs: Current ref value:', currentBabyIdRef.current);
+      
       // Clear data immediately when profile changes
       setLogs([]);
       setLoading(true);
       
-      // If we have a new profile ID, trigger an immediate fetch
-      if (newProfileId && newProfileId !== currentBabyIdRef.current) {
+      // Always trigger fetch for the new profile ID, regardless of current state
+      if (newProfileId) {
         console.log('Triggering immediate fetch for new profile:', newProfileId);
         currentBabyIdRef.current = newProfileId;
         // Small delay to ensure the profile switch is complete
         setTimeout(() => {
-          fetchLogs();
-        }, 10);
+          // Call fetchLogs but make sure we're using the new profile ID
+          if (currentBabyIdRef.current === newProfileId) {
+            fetchLogs(newProfileId);
+          }
+        }, 50);
       }
     });
 
