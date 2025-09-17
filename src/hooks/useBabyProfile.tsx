@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -25,17 +25,10 @@ export const useBabyProfile = () => {
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchProfiles();
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
-
-  const fetchProfiles = async () => {
+  const fetchProfiles = useCallback(async () => {
     if (!user) return;
     try {
+      setLoading(true);
       const { data: ownedProfiles, error: ownedError } = await supabase
         .from('baby_profiles')
         .select('*')
@@ -108,7 +101,15 @@ export const useBabyProfile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
+
+  useEffect(() => {
+    if (user) {
+      fetchProfiles();
+    } else {
+      setLoading(false);
+    }
+  }, [user, fetchProfiles]);
 
   const createProfile = async (profileData: { name: string; birth_date?: string; photo_url?: string }) => {
     if (!user) return false;
@@ -255,25 +256,25 @@ export const useBabyProfile = () => {
         user_role: targetProfile.user_role
       });
 
-      // Emit profile change event AFTER updating state to ensure proper order
-      setActiveProfile(targetProfile);
-      
-      // Small delay to ensure state is updated before emitting event
-      setTimeout(() => {
-        console.log('Emitting profile change event to refresh data');
-        profileEventManager.emit(targetProfile.id);
-      }, 0);
+      // Update local state first - create a new object to ensure React detects the change
+      console.log('PROFILE SWITCH: Setting active profile to:', targetProfile.name, '(ID:', targetProfile.id, ')');
+      setActiveProfile({ ...targetProfile });
+      console.log('PROFILE SWITCH: State update completed');
 
       // For shared profiles, we only need to update local state
       if (targetProfile.is_shared) {
         console.log('Switching to shared profile - updating local state only');
+        // Small delay to ensure state is updated before emitting event
+        setTimeout(() => {
+          console.log('Emitting profile change event to refresh data');
+          profileEventManager.emit(targetProfile.id);
+        }, 0);
         console.log('Successfully switched to shared profile:', targetProfile.name);
         return true;
       }
 
       // For owned profiles, update both local state and database
       console.log('Switching to owned profile - updating database');
-      // Then update the database
       const { error } = await supabase.rpc('set_active_profile', {
         profile_id: profileId,
         user_id_param: user.id
@@ -288,9 +289,15 @@ export const useBabyProfile = () => {
           description: "Profile switched but couldn't save preference",
           variant: "destructive",
         });
+        // Still emit the event even if database update failed
+        setTimeout(() => {
+          console.log('Emitting profile change event after database error');
+          profileEventManager.emit(targetProfile.id);
+        }, 0);
         return true; // Still return true since local switch worked
       }
 
+      console.log('Profile switching to owned profile - no errors');
       // Update profiles list to reflect new active state for owned profiles only
       const updatedProfiles = profiles.map(p => ({ 
         ...p, 
@@ -298,11 +305,16 @@ export const useBabyProfile = () => {
       }));
       setProfiles(updatedProfiles);
 
-      console.log('Profile switch completed successfully for owned profile');
+      // Emit profile change event after everything is updated
+      setTimeout(() => {
+        console.log('Emitting profile change event for owned profile');
+        profileEventManager.emit(targetProfile.id);
+      }, 0);
+
+      console.log('Profile switch completed successfully');
       return true;
     } catch (error) {
       console.error('Unexpected error switching profile:', error);
-      // Don't revert activeProfile - keep the switch working
       toast({
         title: "Warning", 
         description: "Profile switched but there was an error",
