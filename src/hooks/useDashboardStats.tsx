@@ -22,7 +22,7 @@ export const useDashboardStats = () => {
     });
 
     return unsubscribe;
-  }, []);
+  }, [activeProfile?.id]);
 
   const stats = useMemo(() => {
     console.log('=== useDashboardStats Debug ===');
@@ -148,7 +148,7 @@ export const useDashboardStats = () => {
     console.log('=== End useDashboardStats Debug ===');
 
     return finalStats;
-  }, [logs, loading, activeProfile?.id]);
+  }, [logs, loading, activeProfile]);
 
   // Return loading state that matches the activity logs loading state
   return {
