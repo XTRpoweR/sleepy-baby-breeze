@@ -5,16 +5,27 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Baby, Settings, Check } from 'lucide-react';
-import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { ProfileManagementDialog } from './ProfileManagementDialog';
+
+interface BabyProfile {
+  id: string;
+  name: string;
+  birth_date?: string | null;
+  photo_url?: string | null;
+  is_shared?: boolean;
+  user_role?: string;
+}
 
 interface MobileProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
+  switchProfile: (profileId: string) => Promise<boolean>;
+  activeProfile: BabyProfile | null;
+  switching: boolean;
+  profiles: BabyProfile[];
 }
 
-export const MobileProfileModal = ({ isOpen, onClose }: MobileProfileModalProps) => {
-  const { profiles, activeProfile, switching, switchProfile } = useBabyProfile();
+export const MobileProfileModal = ({ isOpen, onClose, profiles, activeProfile, switching, switchProfile }: MobileProfileModalProps) => {
   const [showManagement, setShowManagement] = useState(false);
 
   const handleProfileSwitch = async (profileId: string) => {
