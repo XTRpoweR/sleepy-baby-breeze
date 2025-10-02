@@ -109,17 +109,20 @@ const TrackActivity = () => {
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate('/dashboard')}
-                size={isMobile ? "sm" : "default"}
-                className="hover:bg-primary/10"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('navigation.back')}
-              </Button>
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
+            <div className="flex-1">
+              <div className="mb-4">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate('/dashboard')}
+                  size={isMobile ? "sm" : "default"}
+                  className="hover:bg-primary/10"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  {t('navigation.back')}
+                </Button>
+              </div>
+              
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gradient">{t('pages.trackActivity.title')}</h1>
                 {activeProfile && (
@@ -128,16 +131,12 @@ const TrackActivity = () => {
               </div>
             </div>
             
-            {/* Profile Selector and Language Selector */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-              {!isMobile && <LanguageSelector />}
-              {/* Commenting out the profile selector for now */}
-              {/* {isMobile ? (
-                <MobileProfileSelector />
-              ) : (
-                <ProfileSelector />
-              )} */}
-            </div>
+            {/* Language Selector */}
+            {!isMobile && (
+              <div className="flex items-center">
+                <LanguageSelector />
+              </div>
+            )}
           </div>
 
           {/* Role-based messaging for viewers */}
