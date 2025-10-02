@@ -68,6 +68,9 @@ export const MobileDashboard = ({
   const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   
+  // Get profile data for MobileProfileSelector
+  const { activeProfile, switchProfile, switching } = useBabyProfile();
+  
   // Get enhanced dashboard stats from the dedicated hook
   const { stats: dashboardStats, loading: statsLoading } = useDashboardStats();
 
@@ -131,7 +134,12 @@ export const MobileDashboard = ({
             <div className="mb-8">
               <div className="text-center mb-4">
                 <h2 className="text-lg font-semibold text-foreground mb-3">Active Profile</h2>
-                <MobileProfileSelector />
+                <MobileProfileSelector 
+                  activeProfile={activeProfile}
+                  profiles={profiles}
+                  switchProfile={switchProfile}
+                  switching={switching}
+                />
               </div>
               
               {!isPremium && profiles.length >= 1 && (

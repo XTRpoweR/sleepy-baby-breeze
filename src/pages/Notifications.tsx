@@ -6,11 +6,13 @@ import { ArrowLeft, Bell } from 'lucide-react';
 import { SmartNotifications } from '@/components/notifications/SmartNotifications';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Notifications = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,10 +40,11 @@ const Notifications = () => {
         <div className="flex items-center space-x-4 mb-8">
           <Button 
             variant="ghost" 
+            size={isMobile ? "sm" : "default"}
             onClick={() => navigate('/dashboard')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('navigation.backToDashboard')}
+            {t('navigation.back')}
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{t('notifications.title')}</h1>
