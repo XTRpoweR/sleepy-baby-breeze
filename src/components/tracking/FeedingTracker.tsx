@@ -63,11 +63,11 @@ export const FeedingTracker = ({ babyId, onActivityAdded }: FeedingTrackerProps)
   };
 
   return (
-    <Card>
+    <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-info/5 via-card to-info/10 border-2 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
       <CardHeader className="pb-3 sm:pb-6">
         <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-          <Bottle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-          <span>{t('tracking.feedingTracker.title')}</span>
+          <Bottle className="h-4 w-4 sm:h-5 sm:w-5 text-info animate-pulse" />
+          <span className="text-gradient">{t('tracking.feedingTracker.title')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">

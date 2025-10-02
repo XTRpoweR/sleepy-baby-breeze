@@ -129,9 +129,9 @@ export const ActivityLogsList = ({
 
   if (loading) {
     return (
-      <Card>
+      <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-secondary/5 via-card to-accent/10">
         <CardHeader>
-          <CardTitle>{t('common.loading')}</CardTitle>
+          <CardTitle className="text-gradient">{t('common.loading')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
@@ -145,9 +145,9 @@ export const ActivityLogsList = ({
 
   if (logs.length === 0) {
     return (
-      <Card>
+      <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-secondary/5 via-card to-accent/10">
         <CardHeader>
-          <CardTitle>{t('dashboard.todaysActivity')}</CardTitle>
+          <CardTitle className="text-gradient">{t('dashboard.todaysActivity')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
@@ -160,11 +160,11 @@ export const ActivityLogsList = ({
   }
 
   return (
-    <Card>
+    <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-secondary/5 via-card to-accent/10 border-2 hover:shadow-2xl transition-all duration-300">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
-          <Clock className="h-5 w-5" />
-          <span>{t('dashboard.todaysActivity')} ({logs.length})</span>
+          <Clock className="h-5 w-5 text-primary animate-pulse" />
+          <span className="text-gradient">{t('dashboard.todaysActivity')} ({logs.length})</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -183,10 +183,10 @@ export const ActivityLogsList = ({
               {logs.map((log) => {
                 const Icon = ACTIVITY_ICONS[log.activity_type];
                 return (
-                  <TableRow key={log.id}>
+                  <TableRow key={log.id} className="hover:bg-accent/50 transition-all duration-200 hover:scale-[1.01]">
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Icon className="h-4 w-4" />
+                        <Icon className="h-4 w-4 animate-fade-in" />
                         <div>
                           <Badge className={ACTIVITY_COLORS[log.activity_type]}>
                             {getActivityLabel(log)}

@@ -117,11 +117,11 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Quick Start/Stop */}
-      <Card>
+      <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-primary/5 via-card to-primary/10 border-2 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-            <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-            <span>{t('tracking.sleepTracker.sleepSession')}</span>
+            <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-primary animate-pulse" />
+            <span className="text-gradient">{t('tracking.sleepTracker.sleepSession')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
@@ -158,11 +158,11 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       </Card>
 
       {/* Manual Entry Form */}
-      <Card>
+      <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-primary/5 via-card to-secondary/10 border-2 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
         <CardHeader className="pb-3 sm:pb-6">
           <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-            <span>{t('tracking.sleepTracker.logManually')}</span>
+            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            <span className="text-gradient">{t('tracking.sleepTracker.logManually')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">

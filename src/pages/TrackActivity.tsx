@@ -106,7 +106,7 @@ const TrackActivity = () => {
 
   return (
     <TranslationWrapper>
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      <div className="min-h-screen bg-soft gradient-dynamic-slow">
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
@@ -154,17 +154,17 @@ const TrackActivity = () => {
               {/* Activity Tracking */}
               <div className="lg:col-span-2">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} mb-6 sm:mb-8 bg-primary/10 border border-primary/20`}>
+                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-2 sm:gap-4 p-2 bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg mb-6 sm:mb-8`}>
                     <TabsTrigger 
                       value="sleep" 
-                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
                     >
                       <Moon className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span className="hidden xs:inline">{t('activities.sleep')}</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="feeding" 
-                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-info data-[state=active]:to-info/80 data-[state=active]:text-info-foreground data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
                     >
                       <Bottle className="h-3 w-3 sm:h-4 sm:w-4" />
                       <span className="hidden xs:inline">{t('activities.feeding')}</span>
@@ -173,14 +173,14 @@ const TrackActivity = () => {
                       <>
                         <TabsTrigger 
                           value="diaper" 
-                          className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                          className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
                         >
                           <Heart className="h-4 w-4" />
                           <span>{t('activities.diaper')}</span>
                         </TabsTrigger>
                         <TabsTrigger 
                           value="custom" 
-                          className="flex items-center space-x-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                          className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
                         >
                           <Plus className="h-4 w-4" />
                           <span>{t('activities.custom')}</span>
@@ -191,17 +191,17 @@ const TrackActivity = () => {
 
                   {/* Mobile: Second row of tabs */}
                   {isMobile && (
-                    <TabsList className="grid w-full grid-cols-2 mb-6 bg-primary/10 border border-primary/20">
+                    <TabsList className="grid w-full grid-cols-2 gap-2 p-2 bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg mb-6">
                       <TabsTrigger 
                         value="diaper" 
-                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
                       >
                         <Heart className="h-3 w-3" />
                         <span>{t('activities.diaper')}</span>
                       </TabsTrigger>
                       <TabsTrigger 
                         value="custom" 
-                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
                       >
                         <Plus className="h-3 w-3" />
                         <span>{t('activities.custom')}</span>

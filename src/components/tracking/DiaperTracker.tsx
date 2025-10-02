@@ -54,11 +54,11 @@ export const DiaperTracker = ({ babyId, onActivityAdded }: DiaperTrackerProps) =
   };
 
   return (
-    <Card>
+    <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-pink-500/5 via-card to-pink-500/10 border-2 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
       <CardHeader className="pb-3 sm:pb-6">
         <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-          <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-pink-600" />
-          <span>{t('tracking.diaperTracker.title')}</span>
+          <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-pink-500 animate-pulse" />
+          <span className="text-gradient">{t('tracking.diaperTracker.title')}</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
