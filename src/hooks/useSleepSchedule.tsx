@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 import { Tables } from '@/integrations/supabase/types';
+import { profileEventManager } from '@/utils/profileEvents';
 
 type SavedSleepSchedule = Tables<'sleep_schedules'>;
 
@@ -14,10 +15,26 @@ export const useSleepSchedule = (babyId: string | null) => {
   const [schedules, setSchedules] = useState<SavedSleepSchedule[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Listen for profile changes to force immediate reset
+  useEffect(() => {
+    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
+      console.log('useSleepSchedule: Profile changed to:', newProfileId);
+      // Immediately reset schedules and trigger refetch
+      setSchedules([]);
+      setLoading(true);
+    });
+
+    return unsubscribe;
+  }, []);
+
   useEffect(() => {
     if (user && babyId) {
+      console.log('useSleepSchedule: Fetching schedules for baby:', babyId);
+      setLoading(true);
       fetchSleepSchedules();
     } else {
+      console.log('useSleepSchedule: No user or babyId, clearing schedules');
+      setSchedules([]);
       setLoading(false);
     }
   }, [user, babyId]);
