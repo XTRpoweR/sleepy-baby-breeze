@@ -5,7 +5,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { SleepScheduleData, ScheduleRecommendation } from '@/types/sleepSchedule';
 import { Tables } from '@/integrations/supabase/types';
-import { profileEventManager } from '@/utils/profileEvents';
 
 type SavedSleepSchedule = Tables<'sleep_schedules'>;
 
@@ -15,40 +14,18 @@ export const useSleepSchedule = (babyId: string | null) => {
   const [schedules, setSchedules] = useState<SavedSleepSchedule[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Listen for profile changes to force immediate reset
-  useEffect(() => {
-    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
-      console.log('useSleepSchedule: Profile changed to:', newProfileId);
-      // Immediately reset schedules and trigger refetch
-      setSchedules([]);
-      setLoading(true);
-    });
-
-    return unsubscribe;
-  }, []);
-
   useEffect(() => {
     if (user && babyId) {
-      console.log('useSleepSchedule: Fetching schedules for baby:', babyId);
-      setLoading(true);
       fetchSleepSchedules();
     } else {
-      console.log('useSleepSchedule: No user or babyId, clearing schedules');
-      setSchedules([]);
       setLoading(false);
     }
   }, [user, babyId]);
 
   const fetchSleepSchedules = async () => {
-    if (!user || !babyId) {
-      console.log('useSleepSchedule: Cannot fetch - missing user or babyId');
-      setLoading(false);
-      setSchedules([]);
-      return;
-    }
+    if (!user || !babyId) return;
 
     console.log('Fetching sleep schedules for baby:', babyId, 'user:', user.id);
-    setLoading(true);
 
     try {
       const { data, error } = await supabase
@@ -64,7 +41,6 @@ export const useSleepSchedule = (babyId: string | null) => {
           description: `Failed to load sleep schedules: ${error.message}`,
           variant: "destructive",
         });
-        setSchedules([]);
       } else {
         console.log('Successfully fetched sleep schedules:', data?.length || 0);
         setSchedules(data || []);
@@ -76,7 +52,6 @@ export const useSleepSchedule = (babyId: string | null) => {
         description: "Unexpected error loading sleep schedules",
         variant: "destructive",
       });
-      setSchedules([]);
     } finally {
       setLoading(false);
     }
