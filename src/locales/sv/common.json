@@ -465,7 +465,22 @@
     "view": "Visa",
     "add": "Lägg till",
     "remove": "Ta bort",
-    "duration": "Varaktighet"
+    "duration": "Varaktighet",
+    "optional": "Valfritt",
+    "creating": "Skapar..."
+  },
+  "profiles": {
+    "manage": "Hantera profiler",
+    "addNew": "Lägg till ny profil",
+    "babyName": "Barnets namn",
+    "birthDate": "Födelsedatum",
+    "enterBabyName": "Ange barnets namn",
+    "createProfile": "Skapa profil",
+    "active": "Aktiv",
+    "born": "Född",
+    "setActive": "Gör aktiv",
+    "existing": "Dina profiler",
+    "noProfiles": "Inga profiler än. Skapa din första profil ovan!"
   },
   "footer": {
     "tagline": "Hjälpa familjer att få den vila de förtjänar, en natt i taget.",

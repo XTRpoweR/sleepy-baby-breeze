@@ -463,7 +463,22 @@
     "view": "View",
     "add": "Add",
     "remove": "Remove",
-    "duration": "Duration"
+    "duration": "Duration",
+    "optional": "Optional",
+    "creating": "Creating..."
+  },
+  "profiles": {
+    "manage": "Manage Profiles",
+    "addNew": "Add New Profile",
+    "babyName": "Baby's Name",
+    "birthDate": "Birth Date",
+    "enterBabyName": "Enter baby's name",
+    "createProfile": "Create Profile",
+    "active": "Active",
+    "born": "Born",
+    "setActive": "Set Active",
+    "existing": "Your Profiles",
+    "noProfiles": "No profiles yet. Create your first profile above!"
   },
   "footer": {
     "tagline": "Helping families get the rest they deserve, one night at a time.",

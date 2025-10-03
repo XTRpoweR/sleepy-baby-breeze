@@ -463,7 +463,22 @@
     "view": "Visualizza",
     "add": "Aggiungi",
     "remove": "Rimuovi",
-    "duration": "Durata"
+    "duration": "Durata",
+    "optional": "Opzionale",
+    "creating": "Creazione..."
+  },
+  "profiles": {
+    "manage": "Gestisci profili",
+    "addNew": "Aggiungi nuovo profilo",
+    "babyName": "Nome del bambino",
+    "birthDate": "Data di nascita",
+    "enterBabyName": "Inserisci il nome del bambino",
+    "createProfile": "Crea profilo",
+    "active": "Attivo",
+    "born": "Nato",
+    "setActive": "Imposta come attivo",
+    "existing": "I tuoi profili",
+    "noProfiles": "Ancora nessun profilo. Crea il tuo primo profilo sopra!"
   },
   "footer": {
     "tagline": "Aiutare le famiglie a ottenere il riposo che meritano, una notte alla volta.",

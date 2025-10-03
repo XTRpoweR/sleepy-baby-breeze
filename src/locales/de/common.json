@@ -463,7 +463,22 @@
     "view": "Anzeigen",
     "add": "Hinzufügen",
     "remove": "Entfernen",
-    "duration": "Dauer"
+    "duration": "Dauer",
+    "optional": "Optional",
+    "creating": "Erstellen..."
+  },
+  "profiles": {
+    "manage": "Profile verwalten",
+    "addNew": "Neues Profil hinzufügen",
+    "babyName": "Name des Babys",
+    "birthDate": "Geburtsdatum",
+    "enterBabyName": "Namen des Babys eingeben",
+    "createProfile": "Profil erstellen",
+    "active": "Aktiv",
+    "born": "Geboren",
+    "setActive": "Als aktiv setzen",
+    "existing": "Ihre Profile",
+    "noProfiles": "Noch keine Profile. Erstellen Sie Ihr erstes Profil oben!"
   },
   "footer": {
     "tagline": "Wir helfen Familien dabei, die Ruhe zu bekommen, die sie verdienen, eine Nacht nach der anderen.",

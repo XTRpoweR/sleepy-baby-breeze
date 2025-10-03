@@ -464,7 +464,22 @@
     "view": "Näytä",
     "add": "Lisää",
     "remove": "Poista",
-    "duration": "Kesto"
+    "duration": "Kesto",
+    "optional": "Valinnainen",
+    "creating": "Luodaan..."
+  },
+  "profiles": {
+    "manage": "Hallitse profiileja",
+    "addNew": "Lisää uusi profiili",
+    "babyName": "Vauvan nimi",
+    "birthDate": "Syntymäpäivä",
+    "enterBabyName": "Syötä vauvan nimi",
+    "createProfile": "Luo profiili",
+    "active": "Aktiivinen",
+    "born": "Syntynyt",
+    "setActive": "Aseta aktiiviseksi",
+    "existing": "Profiilisi",
+    "noProfiles": "Ei vielä profiileja. Luo ensimmäinen profiilisi yllä!"
   },
   "footer": {
     "tagline": "Auttamassa perheitä saamaan ansaitsemansa levon, yksi yö kerrallaan.",

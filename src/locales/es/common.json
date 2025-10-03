@@ -463,7 +463,22 @@
     "view": "Ver",
     "add": "Agregar",
     "remove": "Remover",
-    "duration": "Duración"
+    "duration": "Duración",
+    "optional": "Opcional",
+    "creating": "Creando..."
+  },
+  "profiles": {
+    "manage": "Gestionar perfiles",
+    "addNew": "Agregar nuevo perfil",
+    "babyName": "Nombre del bebé",
+    "birthDate": "Fecha de nacimiento",
+    "enterBabyName": "Ingrese el nombre del bebé",
+    "createProfile": "Crear perfil",
+    "active": "Activo",
+    "born": "Nacido",
+    "setActive": "Establecer como activo",
+    "existing": "Tus perfiles",
+    "noProfiles": "Aún no hay perfiles. ¡Crea tu primer perfil arriba!"
   },
   "footer": {
     "tagline": "Ayudando a las familias a obtener el descanso que merecen, una noche a la vez.",
