@@ -167,7 +167,7 @@ export const ActivityLogsList = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="max-h-[600px] overflow-y-auto overflow-x-auto">
+        <div className="max-h-[500px] md:max-h-[600px] lg:max-h-[700px] overflow-y-auto overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
