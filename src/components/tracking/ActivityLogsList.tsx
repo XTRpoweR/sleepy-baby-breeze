@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -80,47 +80,6 @@ export const ActivityLogsList = ({
   const [editingLog, setEditingLog] = useState<any>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-
-  const confirmDialogRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!confirmOpen) return;
-
-    const recenter = () => {
-      confirmDialogRef.current?.scrollIntoView({ block: 'center', inline: 'center', behavior: 'auto' });
-    };
-
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(recenter);
-    };
-    const onResize = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(recenter);
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      // Prevent page scroll under the dialog on iOS and keep it centered
-      e.preventDefault();
-      onScroll();
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-
-    // Initial center
-    recenter();
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('orientationchange', onResize);
-      window.removeEventListener('touchmove', onTouchMove);
-      cancelAnimationFrame(raf);
-    };
-  }, [confirmOpen]);
 
   const formatDuration = (minutes: number | null) => {
     if (!minutes) return 'N/A';
@@ -208,7 +167,7 @@ export const ActivityLogsList = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="max-h-[500px] md:max-h-[600px] lg:max-h-[700px] overflow-y-auto overflow-x-auto">
+        <div className="max-h-[600px] overflow-y-auto overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -306,11 +265,7 @@ export const ActivityLogsList = ({
       )}
 
       <Dialog open={confirmOpen} onOpenChange={(open) => { if (!open) { setConfirmOpen(false); setPendingDeleteId(null); } }}>
-        <DialogContent
-          ref={confirmDialogRef}
-          onOpenAutoFocus={(e) => e.preventDefault()}
-          className="w-[92vw] max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto"
-        >
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('common.delete')}</DialogTitle>
             <DialogDescription>{t('common.confirm')}</DialogDescription>
