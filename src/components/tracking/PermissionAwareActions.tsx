@@ -24,8 +24,18 @@ export const PermissionAwareActions = ({
   const targetBabyId = (babyId ?? activeProfile?.id) || null;
   const { permissions, role, loading } = useProfilePermissions(targetBabyId);
 
+  console.log('[PermissionAwareActions]', {
+    requiredPermission,
+    targetBabyId,
+    role,
+    loading,
+    hasPermission: permissions[requiredPermission]
+  });
+
   if (loading) {
-    return null;
+    return (
+      <div className="animate-pulse bg-muted/20 rounded-lg h-32" />
+    );
   }
 
   const hasPermission = permissions[requiredPermission];

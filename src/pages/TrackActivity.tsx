@@ -220,25 +220,25 @@ const TrackActivity = () => {
                   )}
 
                   <TabsContent value="sleep">
-                    <PermissionAwareActions requiredPermission="canEdit">
+                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
                       <SleepTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="feeding">
-                    <PermissionAwareActions requiredPermission="canEdit">
+                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
                       <FeedingTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="diaper">
-                    <PermissionAwareActions requiredPermission="canEdit">
+                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
                       <DiaperTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="custom">
-                    <PermissionAwareActions requiredPermission="canEdit">
+                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
                       <CustomActivityTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
