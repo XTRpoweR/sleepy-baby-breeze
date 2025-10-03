@@ -33,7 +33,7 @@ import { Shield } from 'lucide-react';
 const SleepSchedule = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const { activeProfile, profiles, loading: profileLoading } = useBabyProfile();
+  const { activeProfile, profiles, loading: profileLoading, switching } = useBabyProfile();
   const { schedules, loading: schedulesLoading, saveSleepSchedule, deleteSleepSchedule, refetch } = useSleepSchedule(activeProfile?.id || null);
   const { role } = useProfilePermissions(activeProfile?.id || null);
   const [showProfileManagement, setShowProfileManagement] = useState(false);
@@ -46,6 +46,12 @@ const SleepSchedule = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Reset form states when profile changes
+  useEffect(() => {
+    setCurrentRecommendation(null);
+    setSavedSchedule(null);
+  }, [activeProfile?.id]);
 
   const { t } = useTranslation();
 
@@ -152,7 +158,7 @@ const SleepSchedule = () => {
     setSavedSchedule(schedule);
   };
 
-  if (loading || profileLoading) {
+  if (loading || profileLoading || switching) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <div className="text-center">

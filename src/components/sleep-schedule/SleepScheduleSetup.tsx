@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,9 +34,14 @@ export const SleepScheduleSetup = ({ onSubmit, profile }: SleepScheduleSetupProp
     return 6; // default
   };
 
-  useState(() => {
+  // Reset form when profile changes
+  useEffect(() => {
     setChildAge(calculateAge());
-  });
+    setCurrentBedtime('19:30');
+    setCurrentWakeTime('07:00');
+    setNapFrequency('two');
+    setSleepChallenges([]);
+  }, [profile.birth_date, profile.name]);
 
   const handleChallengeChange = (challenge: string, checked: boolean) => {
     if (checked) {
