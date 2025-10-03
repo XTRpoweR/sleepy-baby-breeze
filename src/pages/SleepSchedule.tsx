@@ -188,7 +188,7 @@ const SleepSchedule = () => {
           </Button>
           
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
+            <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                 {t('pages.sleepSchedule.title')}
               </h1>
@@ -197,7 +197,8 @@ const SleepSchedule = () => {
               </p>
             </div>
             
-            {/* <div className="flex items-center space-x-4">
+            {/* Active Profile Selector */}
+            <div className="flex items-center">
               <div className="hidden lg:block">
                 <ProfileSelector />
               </div>
@@ -205,7 +206,7 @@ const SleepSchedule = () => {
               <div className="lg:hidden w-full">
                 <MobileProfileSelector />
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
 

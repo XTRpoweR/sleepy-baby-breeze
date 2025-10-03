@@ -21,6 +21,8 @@ import { DateRangeOption, getDateRange } from '@/utils/dateRangeUtils';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { ProfileSelector } from '@/components/profiles/ProfileSelector';
+import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Reports = () => {
@@ -95,12 +97,20 @@ const Reports = () => {
                   </p>
                 </div>
                 
-                {/* Mobile Language Selector */}
-                {isMobile && (
-                  <div className="flex-shrink-0">
-                    <LanguageSelector />
-                  </div>
-                )}
+                {/* Active Profile Selector and Language Selector */}
+                <div className="flex items-center gap-3">
+                  {!isMobile ? (
+                    <>
+                      <ProfileSelector />
+                      <LanguageSelector />
+                    </>
+                  ) : (
+                    <>
+                      <MobileProfileSelector />
+                      <LanguageSelector />
+                    </>
+                  )}
+                </div>
               </div>
               
               <div className="flex flex-col gap-3 sm:gap-4">

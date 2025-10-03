@@ -19,6 +19,7 @@ interface MobileProfileSelectorProps {
   activeProfile?: BabyProfile | null;
   switching?: boolean;
   profiles?: BabyProfile[];
+  switchProfile?: (profileId: string) => Promise<boolean>;
 }
 
 export const MobileProfileSelector = ({
@@ -26,7 +27,7 @@ export const MobileProfileSelector = ({
   switching: propSwitching, 
   profiles: propProfiles, 
   switchProfile: propSwitchProfile 
-}) => {
+}: MobileProfileSelectorProps = {}) => {
   const { profiles: hookProfiles, activeProfile: hookActiveProfile, switching: hookSwitching, switchProfile: hookSwitchProfile } = useBabyProfile();
   const [showModal, setShowModal] = useState(false);
 

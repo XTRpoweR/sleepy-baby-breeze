@@ -19,6 +19,9 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { ProfileSelector } from '@/components/profiles/ProfileSelector';
+import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { exportNodeAsPDF } from '@/utils/generatePediatricianReport';
 import { ReportsOverview } from '@/components/reports/ReportsOverview';
 import { SleepAnalytics } from '@/components/reports/SleepAnalytics';
@@ -34,6 +37,7 @@ const PediatricianReports = () => {
   const { isPremium } = useSubscription();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -149,6 +153,16 @@ const PediatricianReports = () => {
         <p className="text-gray-600 max-w-2xl mx-auto">
           {t('dashboard.pediatricianReportsDesc')}
         </p>
+        
+        {/* Active Profile Selector */}
+        <div className="flex justify-center mt-6">
+          {!isMobile ? (
+            <ProfileSelector />
+          ) : (
+            <MobileProfileSelector />
+          )}
+        </div>
+        
         {activeProfile && (
           <p className="text-sm text-gray-500 mt-2">
             Reports for {activeProfile.name}

@@ -109,7 +109,7 @@ const TrackActivity = () => {
         <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
-            <div className="flex-1">
+          <div className="flex-1">
               <div className="mb-4">
                 <Button 
                   variant="ghost" 
@@ -122,11 +122,22 @@ const TrackActivity = () => {
                 </Button>
               </div>
               
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gradient">{t('pages.trackActivity.title')}</h1>
-                {activeProfile && (
-                  <p className="text-muted-foreground text-sm sm:text-base">{t('pages.trackActivity.subtitle', { name: activeProfile.name })}</p>
-                )}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="flex-1">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gradient">{t('pages.trackActivity.title')}</h1>
+                  {activeProfile && (
+                    <p className="text-muted-foreground text-sm sm:text-base">{t('pages.trackActivity.subtitle', { name: activeProfile.name })}</p>
+                  )}
+                </div>
+                
+                {/* Active Profile Selector */}
+                <div className="flex items-center gap-3">
+                  {!isMobile ? (
+                    <ProfileSelector />
+                  ) : (
+                    <MobileProfileSelector />
+                  )}
+                </div>
               </div>
             </div>
             
