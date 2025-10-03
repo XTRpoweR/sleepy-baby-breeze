@@ -12,15 +12,8 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { EditActivityDialog } from './EditActivityDialog';
+import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 import { PermissionAwareActions } from './PermissionAwareActions';
 import { 
   Moon, 
@@ -264,31 +257,20 @@ export const ActivityLogsList = ({
         />
       )}
 
-      <Dialog open={confirmOpen} onOpenChange={(open) => { if (!open) { setConfirmOpen(false); setPendingDeleteId(null); } }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('common.delete')}</DialogTitle>
-            <DialogDescription>{t('common.confirm')}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
-              {t('common.cancel')}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={async () => {
-                if (pendingDeleteId) {
-                  await handleDeleteLog(pendingDeleteId);
-                }
-                setConfirmOpen(false);
-                setPendingDeleteId(null);
-              }}
-            >
-              {t('common.delete')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteConfirmationDialog
+        open={confirmOpen}
+        onClose={() => {
+          setConfirmOpen(false);
+          setPendingDeleteId(null);
+        }}
+        onConfirm={async () => {
+          if (pendingDeleteId) {
+            await handleDeleteLog(pendingDeleteId);
+          }
+          setConfirmOpen(false);
+          setPendingDeleteId(null);
+        }}
+      />
     </Card>
   );
 };
