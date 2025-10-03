@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -80,6 +80,14 @@ export const ActivityLogsList = ({
   const [editingLog, setEditingLog] = useState<any>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  const confirmDialogRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (confirmOpen) {
+      confirmDialogRef.current?.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' });
+    }
+  }, [confirmOpen]);
 
   const formatDuration = (minutes: number | null) => {
     if (!minutes) return 'N/A';
@@ -265,7 +273,11 @@ export const ActivityLogsList = ({
       )}
 
       <Dialog open={confirmOpen} onOpenChange={(open) => { if (!open) { setConfirmOpen(false); setPendingDeleteId(null); } }}>
-        <DialogContent>
+        <DialogContent
+          ref={confirmDialogRef}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="w-[92vw] max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto"
+        >
           <DialogHeader>
             <DialogTitle>{t('common.delete')}</DialogTitle>
             <DialogDescription>{t('common.confirm')}</DialogDescription>
