@@ -84,9 +84,42 @@ export const ActivityLogsList = ({
   const confirmDialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (confirmOpen) {
-      confirmDialogRef.current?.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' });
-    }
+    if (!confirmOpen) return;
+
+    const recenter = () => {
+      confirmDialogRef.current?.scrollIntoView({ block: 'center', inline: 'center', behavior: 'auto' });
+    };
+
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(recenter);
+    };
+    const onResize = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(recenter);
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      // Prevent page scroll under the dialog on iOS and keep it centered
+      e.preventDefault();
+      onScroll();
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+
+    // Initial center
+    recenter();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
+      window.removeEventListener('touchmove', onTouchMove);
+      cancelAnimationFrame(raf);
+    };
   }, [confirmOpen]);
 
   const formatDuration = (minutes: number | null) => {
