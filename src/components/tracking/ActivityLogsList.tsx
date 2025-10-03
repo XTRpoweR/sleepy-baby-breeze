@@ -13,16 +13,13 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { EditActivityDialog } from './EditActivityDialog';
 import { PermissionAwareActions } from './PermissionAwareActions';
 import { 
@@ -81,6 +78,8 @@ export const ActivityLogsList = ({
 }: ActivityLogsListProps) => {
   const { t } = useTranslation();
   const [editingLog, setEditingLog] = useState<any>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const formatDuration = (minutes: number | null) => {
     if (!minutes) return 'N/A';
@@ -236,34 +235,14 @@ export const ActivityLogsList = ({
                           fallback={null}
                           showMessage={false}
                         >
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>{t('common.delete')}</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  {t('common.confirm')}
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteLog(log.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  {t('common.delete')}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => { setPendingDeleteId(log.id); setConfirmOpen(true); }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </PermissionAwareActions>
                       </div>
                     </TableCell>
@@ -284,6 +263,32 @@ export const ActivityLogsList = ({
           updateLog={handleUpdateLog}
         />
       )}
+
+      <Dialog open={confirmOpen} onOpenChange={(open) => { if (!open) { setConfirmOpen(false); setPendingDeleteId(null); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('common.delete')}</DialogTitle>
+            <DialogDescription>{t('common.confirm')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (pendingDeleteId) {
+                  await handleDeleteLog(pendingDeleteId);
+                }
+                setConfirmOpen(false);
+                setPendingDeleteId(null);
+              }}
+            >
+              {t('common.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
