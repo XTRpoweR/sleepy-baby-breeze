@@ -40,9 +40,15 @@ export const useSleepSchedule = (babyId: string | null) => {
   }, [user, babyId]);
 
   const fetchSleepSchedules = async () => {
-    if (!user || !babyId) return;
+    if (!user || !babyId) {
+      console.log('useSleepSchedule: Cannot fetch - missing user or babyId');
+      setLoading(false);
+      setSchedules([]);
+      return;
+    }
 
     console.log('Fetching sleep schedules for baby:', babyId, 'user:', user.id);
+    setLoading(true);
 
     try {
       const { data, error } = await supabase
@@ -58,6 +64,7 @@ export const useSleepSchedule = (babyId: string | null) => {
           description: `Failed to load sleep schedules: ${error.message}`,
           variant: "destructive",
         });
+        setSchedules([]);
       } else {
         console.log('Successfully fetched sleep schedules:', data?.length || 0);
         setSchedules(data || []);
@@ -69,6 +76,7 @@ export const useSleepSchedule = (babyId: string | null) => {
         description: "Unexpected error loading sleep schedules",
         variant: "destructive",
       });
+      setSchedules([]);
     } finally {
       setLoading(false);
     }
