@@ -135,6 +135,9 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   const renderProfileCard = (profile: any) => {
     const isProfileDeleting = isDeletingProfile === profile.id;
     
+    // Check if current user is the owner of THIS specific profile
+    const canDeleteThisProfile = !profile.is_shared || profile.user_role === 'owner';
+    
     const profileContent = (
       <div className={`p-4 border rounded-lg transition-all ${
         activeProfile?.id === profile.id 
@@ -182,27 +185,25 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
               </Button>
             )}
             
-            {/* Desktop delete button */}
-            {!isMobile && (
-              <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleDeleteClick(profile.id, profile.name);
-                  }}
-                  disabled={isProfileDeleting || !!isDeletingProfile}
-                >
-                  {isProfileDeleting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Trash2 className="h-4 w-4" />
-                  )}
-                </Button>
-              </PermissionAwareActions>
+            {/* Desktop delete button - only for profiles user owns */}
+            {!isMobile && canDeleteThisProfile && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleDeleteClick(profile.id, profile.name);
+                }}
+                disabled={isProfileDeleting || !!isDeletingProfile}
+              >
+                {isProfileDeleting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+              </Button>
             )}
           </div>
         </div>
@@ -220,19 +221,27 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       </div>
     );
 
-    // On mobile, wrap with swipeable functionality for deletion
-    if (isMobile) {
+    // On mobile, wrap with swipeable functionality for deletion - only for profiles user owns
+    if (isMobile && canDeleteThisProfile) {
       return (
-        <PermissionAwareActions key={profile.id} requiredPermission="canDelete" showMessage={false}>
-          <SwipeableCard
-            onDelete={() => handleSwipeDelete(profile.id, profile.name)}
-            isDeleting={isProfileDeleting}
-            disabled={isProfileDeleting || !!isDeletingProfile}
-            className="touch-manipulation"
-          >
-            {profileContent}
-          </SwipeableCard>
-        </PermissionAwareActions>
+        <SwipeableCard
+          key={profile.id}
+          onDelete={() => handleSwipeDelete(profile.id, profile.name)}
+          isDeleting={isProfileDeleting}
+          disabled={isProfileDeleting || !!isDeletingProfile}
+          className="touch-manipulation"
+        >
+          {profileContent}
+        </SwipeableCard>
+      );
+    }
+    
+    // For shared profiles on mobile, return without swipe functionality
+    if (isMobile && !canDeleteThisProfile) {
+      return (
+        <div key={profile.id}>
+          {profileContent}
+        </div>
       );
     }
 
