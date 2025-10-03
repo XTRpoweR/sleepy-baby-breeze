@@ -9,8 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Moon, 
   Baby, 
-  DropletIcon as Bottle,
-  Heart,
+  Milk as Bottle,
   Plus,
   ArrowLeft,
   Clock,
@@ -154,36 +153,36 @@ const TrackActivity = () => {
               {/* Activity Tracking */}
               <div className="lg:col-span-2">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-2 sm:gap-4 p-2 bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg mb-6 sm:mb-8`}>
+                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-1.5 sm:gap-2 p-1.5 sm:p-2 bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-md border border-primary/10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-6 sm:mb-8`}>
                     <TabsTrigger 
                       value="sleep" 
-                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
+                      className="group flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 transition-all duration-300 rounded-xl hover:scale-[1.02] hover:bg-primary/5"
                     >
-                      <Moon className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="hidden xs:inline">{t('activities.sleep')}</span>
+                      <Moon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-indigo-500 group-data-[state=active]:text-primary-foreground transition-colors" />
+                      <span className="hidden xs:inline font-medium">{t('activities.sleep')}</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="feeding" 
-                      className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-info data-[state=active]:to-info/80 data-[state=active]:text-info-foreground data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
+                      className="group flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 transition-all duration-300 rounded-xl hover:scale-[1.02] hover:bg-primary/5"
                     >
-                      <Bottle className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span className="hidden xs:inline">{t('activities.feeding')}</span>
+                      <Bottle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500 group-data-[state=active]:text-primary-foreground transition-colors" />
+                      <span className="hidden xs:inline font-medium">{t('activities.feeding')}</span>
                     </TabsTrigger>
                     {!isMobile && (
                       <>
                         <TabsTrigger 
                           value="diaper" 
-                          className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
+                          className="group flex items-center justify-center gap-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 transition-all duration-300 rounded-xl hover:scale-[1.02] hover:bg-primary/5"
                         >
-                          <Heart className="h-4 w-4" />
-                          <span>{t('activities.diaper')}</span>
+                          <Baby className="h-4 w-4 text-rose-500 group-data-[state=active]:text-primary-foreground transition-colors" />
+                          <span className="font-medium">{t('activities.diaper')}</span>
                         </TabsTrigger>
                         <TabsTrigger 
                           value="custom" 
-                          className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
+                          className="group flex items-center justify-center gap-2 text-xs sm:text-sm p-2 sm:p-3 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 transition-all duration-300 rounded-xl hover:scale-[1.02] hover:bg-primary/5"
                         >
-                          <Plus className="h-4 w-4" />
-                          <span>{t('activities.custom')}</span>
+                          <Plus className="h-4 w-4 text-amber-500 group-data-[state=active]:text-primary-foreground transition-colors" />
+                          <span className="font-medium">{t('activities.custom')}</span>
                         </TabsTrigger>
                       </>
                     )}
@@ -191,20 +190,20 @@ const TrackActivity = () => {
 
                   {/* Mobile: Second row of tabs */}
                   {isMobile && (
-                    <TabsList className="grid w-full grid-cols-2 gap-2 p-2 bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg mb-6">
+                    <TabsList className="grid w-full grid-cols-2 gap-1.5 p-1.5 bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-md border border-primary/10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-6">
                       <TabsTrigger 
                         value="diaper" 
-                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
+                        className="group flex items-center justify-center gap-1 text-xs p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 transition-all duration-300 rounded-xl hover:scale-[1.02] hover:bg-primary/5"
                       >
-                        <Heart className="h-3 w-3" />
-                        <span>{t('activities.diaper')}</span>
+                        <Baby className="h-3.5 w-3.5 text-rose-500 group-data-[state=active]:text-primary-foreground transition-colors" />
+                        <span className="font-medium">{t('activities.diaper')}</span>
                       </TabsTrigger>
                       <TabsTrigger 
                         value="custom" 
-                        className="flex items-center space-x-1 text-xs p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300 rounded-xl hover:scale-105"
+                        className="group flex items-center justify-center gap-1 text-xs p-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 transition-all duration-300 rounded-xl hover:scale-[1.02] hover:bg-primary/5"
                       >
-                        <Plus className="h-3 w-3" />
-                        <span>{t('activities.custom')}</span>
+                        <Plus className="h-3.5 w-3.5 text-amber-500 group-data-[state=active]:text-primary-foreground transition-colors" />
+                        <span className="font-medium">{t('activities.custom')}</span>
                       </TabsTrigger>
                     </TabsList>
                   )}
