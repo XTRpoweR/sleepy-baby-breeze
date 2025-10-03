@@ -153,7 +153,7 @@ const TrackActivity = () => {
               {/* Activity Tracking */}
               <div className="lg:col-span-2">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-2 sm:gap-3 p-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-[20px] shadow-sm mb-6 sm:mb-8 items-center`}>
+                  <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-2 sm:gap-3 p-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-[20px] shadow-sm mb-6 sm:mb-8`}>
                     <TabsTrigger 
                       value="sleep" 
                       className="group flex items-center justify-center gap-2 text-xs sm:text-sm px-4 py-3 sm:py-3.5 text-muted-foreground/60 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200 rounded-[16px] hover:bg-accent/50 hover:text-foreground"
@@ -190,7 +190,7 @@ const TrackActivity = () => {
 
                   {/* Mobile: Second row of tabs */}
                   {isMobile && (
-                    <TabsList className="grid w-full grid-cols-2 gap-2 p-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-[20px] shadow-sm mb-6 items-center">
+                    <TabsList className="grid w-full grid-cols-2 gap-2 p-2 bg-background/80 backdrop-blur-sm border border-border/50 rounded-[20px] shadow-sm mb-6">
                       <TabsTrigger 
                         value="diaper" 
                         className="group flex items-center justify-center gap-2 text-xs px-4 py-3 text-muted-foreground/60 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200 rounded-[16px] hover:bg-accent/50 hover:text-foreground"
