@@ -10,16 +10,19 @@ interface PermissionAwareActionsProps {
   requiredPermission: 'canEdit' | 'canDelete' | 'canInvite' | 'canView';
   fallback?: ReactNode;
   showMessage?: boolean;
+  babyId?: string; // Optional override to target a specific baby profile
 }
 
 export const PermissionAwareActions = ({ 
   children, 
   requiredPermission, 
   fallback,
-  showMessage = true 
+  showMessage = true,
+  babyId
 }: PermissionAwareActionsProps) => {
   const { activeProfile } = useBabyProfile();
-  const { permissions, role, loading } = useProfilePermissions(activeProfile?.id || null);
+  const targetBabyId = (babyId ?? activeProfile?.id) || null;
+  const { permissions, role, loading } = useProfilePermissions(targetBabyId);
 
   if (loading) {
     return null;

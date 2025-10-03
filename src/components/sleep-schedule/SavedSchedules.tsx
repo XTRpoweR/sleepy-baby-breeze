@@ -134,8 +134,7 @@ export const SavedSchedules = ({
                       <span>{t('common.view')}</span>
                     </Button>
                     
-                    {/* Delete button - Only for users with delete permissions */}
-                    <PermissionAwareActions requiredPermission="canDelete" showMessage={false}>
+                    <PermissionAwareActions requiredPermission="canDelete" showMessage={false} babyId={babyId}>
                       <Button
                         variant="outline"
                         size="sm"

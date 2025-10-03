@@ -212,6 +212,7 @@ export const ActivityLogsList = ({
                           requiredPermission="canEdit" 
                           fallback={null}
                           showMessage={false}
+                          babyId={babyId}
                         >
                           <Button
                             variant="ghost"
@@ -227,6 +228,7 @@ export const ActivityLogsList = ({
                           requiredPermission="canDelete" 
                           fallback={null}
                           showMessage={false}
+                          babyId={babyId}
                         >
                           <Button
                             variant="ghost"
