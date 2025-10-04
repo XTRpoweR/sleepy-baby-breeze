@@ -14,7 +14,25 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
     useCORS: true,
     logging: false,
     windowHeight: nodeRef.scrollHeight,
-    height: nodeRef.scrollHeight
+    height: nodeRef.scrollHeight,
+    onclone: (clonedDoc) => {
+      const clonedNode = clonedDoc.querySelector('body');
+      if (clonedNode) {
+        // Add print-friendly styles to prevent awkward breaks
+        const style = clonedDoc.createElement('style');
+        style.textContent = `
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          table, .card, .border, [class*="rounded"] {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+        `;
+        clonedDoc.head.appendChild(style);
+      }
+    }
   });
   const imgData = canvas.toDataURL("image/png");
 

@@ -32,68 +32,119 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   const sleepDateRange = getDateRange(sleepRange);
   const growthDateRange = getDateRange(growthRange);
 
+  const reportStyles: React.CSSProperties = {
+    fontFamily: 'Arial, sans-serif',
+    minHeight: 'auto',
+    pageBreakInside: 'avoid',
+  };
+
+  const sectionStyles: React.CSSProperties = {
+    pageBreakInside: 'avoid',
+    breakInside: 'avoid',
+    marginBottom: '24px',
+  };
+
   return (
     <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
       {/* Comprehensive Health Report */}
-      <div ref={comprehensiveRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif', minHeight: 'auto' }}>
-        <ReportHeader 
-          reportTitle="Comprehensive Health Report"
-          patientName={activeProfile.name}
-          dateRange={comprehensiveDateRange}
-          reportType="Full Health Overview"
-        />
+      <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles}>
+        <div style={sectionStyles}>
+          <ReportHeader 
+            reportTitle="Comprehensive Health Report"
+            patientName={activeProfile.name}
+            dateRange={comprehensiveDateRange}
+            reportType="Full Health Overview"
+          />
+        </div>
         
-        <ClinicalInsights insights={[
-          { type: 'neutral', text: 'This report provides a comprehensive overview of tracked activities including sleep, feeding, and care routines.' },
-          { type: 'neutral', text: 'Data is parent-reported and may not capture all activities or exact measurements.' }
-        ]} />
+        <div style={sectionStyles}>
+          <ClinicalInsights insights={[
+            { type: 'neutral', text: 'This report provides a comprehensive overview of tracked activities including sleep, feeding, and care routines.' },
+            { type: 'neutral', text: 'Data is parent-reported and may not capture all activities or exact measurements.' }
+          ]} />
+        </div>
         
-        <ReportsOverview babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
-        <DetailedSleepAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
-        <FeedingAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
-        <ActivitySummary babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
+        <div style={sectionStyles}>
+          <ReportsOverview babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
+        </div>
         
-        <ReportFooter />
+        <div style={sectionStyles}>
+          <DetailedSleepAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
+        </div>
+        
+        <div style={sectionStyles}>
+          <FeedingAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
+        </div>
+        
+        <div style={sectionStyles}>
+          <ActivitySummary babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
+        </div>
+        
+        <div style={sectionStyles}>
+          <ReportFooter />
+        </div>
       </div>
 
       {/* Sleep Pattern Analysis */}
-      <div ref={sleepRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif', minHeight: 'auto' }}>
-        <ReportHeader 
-          reportTitle="Sleep Pattern Analysis"
-          patientName={activeProfile.name}
-          dateRange={sleepDateRange}
-          reportType="Sleep Tracking Report"
-        />
+      <div ref={sleepRef} className="bg-white p-8" style={reportStyles}>
+        <div style={sectionStyles}>
+          <ReportHeader 
+            reportTitle="Sleep Pattern Analysis"
+            patientName={activeProfile.name}
+            dateRange={sleepDateRange}
+            reportType="Sleep Tracking Report"
+          />
+        </div>
         
-        <ClinicalInsights insights={[
-          { type: 'neutral', text: 'This report focuses on sleep patterns, duration, and quality metrics.' },
-          { type: 'neutral', text: 'Sleep data includes both parent-tracked sessions and manual log entries.' }
-        ]} />
+        <div style={sectionStyles}>
+          <ClinicalInsights insights={[
+            { type: 'neutral', text: 'This report focuses on sleep patterns, duration, and quality metrics.' },
+            { type: 'neutral', text: 'Sleep data includes both parent-tracked sessions and manual log entries.' }
+          ]} />
+        </div>
         
-        <DetailedSleepAnalytics babyId={activeProfile.id} dateRange={sleepDateRange} />
-        <ReportsOverview babyId={activeProfile.id} dateRange={sleepDateRange} />
+        <div style={sectionStyles}>
+          <DetailedSleepAnalytics babyId={activeProfile.id} dateRange={sleepDateRange} />
+        </div>
         
-        <ReportFooter />
+        <div style={sectionStyles}>
+          <ReportsOverview babyId={activeProfile.id} dateRange={sleepDateRange} />
+        </div>
+        
+        <div style={sectionStyles}>
+          <ReportFooter />
+        </div>
       </div>
 
       {/* Growth & Development Report */}
-      <div ref={growthRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif', minHeight: 'auto' }}>
-        <ReportHeader 
-          reportTitle="Growth & Development Report"
-          patientName={activeProfile.name}
-          dateRange={growthDateRange}
-          reportType="Developmental Tracking"
-        />
+      <div ref={growthRef} className="bg-white p-8" style={reportStyles}>
+        <div style={sectionStyles}>
+          <ReportHeader 
+            reportTitle="Growth & Development Report"
+            patientName={activeProfile.name}
+            dateRange={growthDateRange}
+            reportType="Developmental Tracking"
+          />
+        </div>
         
-        <ClinicalInsights insights={[
-          { type: 'neutral', text: 'This report tracks developmental activities and growth patterns over time.' },
-          { type: 'neutral', text: 'Please combine with clinical measurements for complete assessment.' }
-        ]} />
+        <div style={sectionStyles}>
+          <ClinicalInsights insights={[
+            { type: 'neutral', text: 'This report tracks developmental activities and growth patterns over time.' },
+            { type: 'neutral', text: 'Please combine with clinical measurements for complete assessment.' }
+          ]} />
+        </div>
         
-        <ReportsOverview babyId={activeProfile.id} dateRange={growthDateRange} />
-        <ActivitySummary babyId={activeProfile.id} dateRange={growthDateRange} />
+        <div style={sectionStyles}>
+          <ReportsOverview babyId={activeProfile.id} dateRange={growthDateRange} />
+        </div>
         
-        <ReportFooter />
+        <div style={sectionStyles}>
+          <ActivitySummary babyId={activeProfile.id} dateRange={growthDateRange} />
+        </div>
+        
+        <div style={sectionStyles}>
+          <ReportFooter />
+        </div>
       </div>
     </div>
   );
