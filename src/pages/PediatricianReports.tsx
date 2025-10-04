@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   FileText, 
   Download, 
@@ -11,8 +12,10 @@ import {
   Baby,
   ArrowLeft,
   Clock,
-  TrendingUp
+  TrendingUp,
+  RefreshCw
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -54,11 +57,17 @@ const PediatricianReports = () => {
   const sleepRef = useRef<HTMLDivElement>(null);
   const growthRef = useRef<HTMLDivElement>(null);
   const [pdfLoading, setPdfLoading] = useState<string | null>(null);
+  const [reportKey, setReportKey] = useState(0);
 
   // For timing, use last 30, 14, or full range
   const [comprehensiveRange] = useState<DateRangeOption>('last30');
   const [sleepRange] = useState<DateRangeOption>('last14');
   const [growthRange] = useState<DateRangeOption>('all');
+
+  const handleRefreshReports = () => {
+    setReportKey(prev => prev + 1);
+    toast.success(`Reports refreshed for ${activeProfile?.name || 'selected profile'}`);
+  };
 
   const handleGenerateReport = async (reportType: string) => {
     if (!activeProfile) return;
@@ -164,9 +173,20 @@ const PediatricianReports = () => {
         </div>
         
         {activeProfile && (
-          <p className="text-sm text-gray-500 mt-2">
-            Reports for {activeProfile.name}
-          </p>
+          <div className="mt-4 space-y-3">
+            <p className="text-sm text-gray-500">
+              Reports for {activeProfile.name}
+            </p>
+            <Button
+              onClick={handleRefreshReports}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh Reports
+            </Button>
+          </div>
         )}
       </div>
 
@@ -186,6 +206,13 @@ const PediatricianReports = () => {
         </Card>
       ) : (
         <div className="max-w-4xl mx-auto">
+          {/* Important Notice */}
+          <Alert className="mb-6 bg-blue-50 border-blue-200">
+            <AlertDescription className="text-blue-800">
+              <strong>Important:</strong> If you just switched to a different child profile, please click the "Refresh Reports" button above before downloading any reports to ensure the correct data is included.
+            </AlertDescription>
+          </Alert>
+
           {/* Report Types Grid */}
           <ReportTypesGrid
             reportTypes={reportTypes}
@@ -195,6 +222,7 @@ const PediatricianReports = () => {
 
           {/* Hidden Reports used for PDF export */}
           <HiddenReportsContainer
+            key={reportKey}
             comprehensiveRef={comprehensiveRef}
             sleepRef={sleepRef}
             growthRef={growthRef}
