@@ -1,13 +1,14 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Moon, Sun, Clock, Play, Square } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Moon, Sun, Clock, Play, Square, Sparkles, TrendingUp } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
@@ -27,6 +28,8 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
   const [isActive, setIsActive] = useState(false);
   const [activeStartTime, setActiveStartTime] = useState<Date | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showSummary, setShowSummary] = useState(false);
+  const [sessionDuration, setSessionDuration] = useState({ hours: 0, minutes: 0 });
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
@@ -66,10 +69,11 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       setIsActive(false);
       
       const duration = Math.round((now.getTime() - activeStartTime.getTime()) / (1000 * 60));
-      toast({
-        title: t('tracking.sleepTracker.sessionEnded'),
-        description: `${t('common.duration')}: ${Math.floor(duration / 60)}h ${duration % 60}m`,
-      });
+      const hours = Math.floor(duration / 60);
+      const minutes = duration % 60;
+      
+      setSessionDuration({ hours, minutes });
+      setShowSummary(true);
     }
   };
 
@@ -116,28 +120,112 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
 
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Sleep Session Summary Dialog */}
+      <Dialog open={showSummary} onOpenChange={setShowSummary}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Moon className="h-6 w-6 text-primary" />
+              Sleep Session Complete
+            </DialogTitle>
+            <DialogDescription>
+              Great job tracking your baby's sleep!
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 py-4">
+            {/* Duration Display */}
+            <div className="text-center space-y-2">
+              <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
+              <div className="text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                {sessionDuration.hours}h {sessionDuration.minutes}m
+              </div>
+            </div>
+            
+            {/* Sleep Quality Indicator */}
+            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span>Sleep Insights</span>
+              </div>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-500" />
+                  <span>Session successfully recorded</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-blue-500" />
+                  <span>View detailed analytics in Reports</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <Button 
+                onClick={() => setShowSummary(false)} 
+                variant="outline" 
+                className="flex-1"
+              >
+                Close
+              </Button>
+              <Button 
+                onClick={() => {
+                  setShowSummary(false);
+                  // Scroll to manual form to log details
+                }}
+                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
+              >
+                Add Details
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Quick Start/Stop */}
-      <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-primary/5 via-card to-primary/10 border-2 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+      <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-primary/5 via-card to-primary/10 border-2 hover:shadow-2xl transition-all duration-300">
         <CardHeader className="pb-3 sm:pb-6">
-          <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-            <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-primary animate-pulse" />
-            <span className="text-gradient">{t('tracking.sleepTracker.sleepSession')}</span>
+          <CardTitle className="flex items-center justify-between text-lg sm:text-xl">
+            <div className="flex items-center space-x-2">
+              <Moon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              <span className="text-gradient">{t('tracking.sleepTracker.sleepSession')}</span>
+            </div>
+            {isActive && (
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                <span className="text-xs sm:text-sm text-green-600 font-medium">Active</span>
+              </div>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="text-center space-y-3 sm:space-y-4">
             {isActive ? (
-              <div>
-                <div className={`text-xl sm:text-2xl font-bold text-blue-600 mb-2 ${isActive ? 'animate-pulse' : ''}`}>
-                  {formatDuration()}
+              <div className="space-y-4">
+                {/* Large Prominent Timer */}
+                <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 rounded-2xl p-6 sm:p-8 border-2 border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center justify-center gap-3 mb-3">
+                    <Moon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 animate-pulse" />
+                    <div className="text-4xl sm:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tabular-nums">
+                      {formatDuration()}
+                    </div>
+                  </div>
+                  <p className="text-blue-600 dark:text-blue-400 font-medium text-sm sm:text-base flex items-center justify-center gap-2">
+                    <span className="inline-block animate-pulse">💤</span>
+                    {t('tracking.sleepTracker.sessionInProgress')}
+                  </p>
                 </div>
-                <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">{t('tracking.sleepTracker.sessionInProgress')}</p>
+                
                 <Button 
                   onClick={handleStopSleep} 
-                  className="bg-red-500 hover:bg-red-600 w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3"
+                  className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
                   size={isMobile ? "default" : "lg"}
                 >
-                  <Square className="h-4 w-4 mr-2" />
+                  <Square className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                   {t('tracking.sleepTracker.endSleepSession')}
                 </Button>
               </div>
@@ -145,7 +233,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
               <div>
                 <Button 
                   onClick={handleStartSleep} 
-                  className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-3"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-5 shadow-lg hover:shadow-xl transition-all"
                   size={isMobile ? "default" : "lg"}
                 >
                   <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
