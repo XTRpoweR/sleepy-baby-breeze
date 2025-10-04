@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   FileText, 
   Download, 
@@ -12,11 +11,8 @@ import {
   Baby,
   ArrowLeft,
   Clock,
-  TrendingUp,
-  CheckCircle2,
-  Info
+  TrendingUp
 } from 'lucide-react';
-import { profileEventManager } from '@/utils/profileEvents';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -42,30 +38,12 @@ const PediatricianReports = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  
-  // Report key to force re-render when profile changes
-  const [reportKey, setReportKey] = useState(0);
-  const [showProfileChangeAlert, setShowProfileChangeAlert] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
-
-  // Subscribe to profile change events
-  useEffect(() => {
-    const unsubscribe = profileEventManager.subscribe((profileId) => {
-      console.log('PediatricianReports: Profile changed to:', profileId);
-      // Increment key to force HiddenReportsContainer to remount
-      setReportKey(prev => prev + 1);
-      // Show alert briefly
-      setShowProfileChangeAlert(true);
-      setTimeout(() => setShowProfileChangeAlert(false), 3000);
-    });
-
-    return unsubscribe;
-  }, []);
 
   const handleBackToDashboard = () => {
     navigate('/dashboard');
@@ -186,12 +164,9 @@ const PediatricianReports = () => {
         </div>
         
         {activeProfile && (
-          <div className="flex items-center justify-center gap-2 mt-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <p className="text-sm text-gray-700 font-medium">
-              Reports ready for {activeProfile.name}
-            </p>
-          </div>
+          <p className="text-sm text-gray-500 mt-2">
+            Reports for {activeProfile.name}
+          </p>
         )}
       </div>
 
@@ -211,25 +186,6 @@ const PediatricianReports = () => {
         </Card>
       ) : (
         <div className="max-w-4xl mx-auto">
-          {/* Profile Change Alert */}
-          {showProfileChangeAlert && (
-            <Alert className="mb-6 bg-green-50 border-green-200">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-800">
-                Reports updated for <strong>{activeProfile.name}</strong>. You can now generate reports with the latest data.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {/* Info Banner */}
-          <Alert className="mb-6 bg-blue-50 border-blue-200">
-            <Info className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-800">
-              <strong>Important:</strong> Make sure you've selected the correct child before generating reports. 
-              The reports will contain data for <strong>{activeProfile.name}</strong>.
-            </AlertDescription>
-          </Alert>
-
           {/* Report Types Grid */}
           <ReportTypesGrid
             reportTypes={reportTypes}
@@ -239,7 +195,6 @@ const PediatricianReports = () => {
 
           {/* Hidden Reports used for PDF export */}
           <HiddenReportsContainer
-            key={reportKey}
             comprehensiveRef={comprehensiveRef}
             sleepRef={sleepRef}
             growthRef={growthRef}
