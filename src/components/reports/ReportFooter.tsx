@@ -19,7 +19,7 @@ export const ReportFooter = () => {
       </div>
       
       <p className="text-xs text-gray-400 text-center mt-4">
-        This document contains confidential patient information. Handle according to HIPAA guidelines.
+        This document contains confidential patient information. Please handle with appropriate care.
       </p>
     </div>
   );
