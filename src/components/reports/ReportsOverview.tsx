@@ -113,31 +113,32 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-      {overviewCards.map((card, index) => {
-        const IconComponent = card.icon;
-        return (
-          <Card 
-            key={index} 
-            className="hover:shadow-lg transition-shadow duration-200 touch-manipulation"
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 leading-tight">
-                {card.title}
-              </CardTitle>
-              <IconComponent className={`h-4 w-4 sm:h-5 sm:w-5 ${card.color} flex-shrink-0`} />
-            </CardHeader>
-            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+    <div>
+      <h2 className="text-xl font-bold text-gray-900 mb-4 mt-6">Summary Statistics</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {overviewCards.map((card, index) => {
+          const IconComponent = card.icon;
+          return (
+            <div 
+              key={index} 
+              className="border border-gray-200 rounded-lg p-4 bg-white"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-gray-700">
+                  {card.title}
+                </span>
+                <IconComponent className={`h-5 w-5 ${card.color}`} />
+              </div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">
                 {card.value}
               </div>
-              <p className="text-xs sm:text-sm text-gray-500 leading-tight">
+              <p className="text-xs text-gray-600">
                 {card.description}
               </p>
-            </CardContent>
-          </Card>
-        );
-      })}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

@@ -107,28 +107,27 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-      {/* Daily Feedings */}
-      <Card className="touch-manipulation">
-        <CardHeader className="px-3 sm:px-6 pt-3 sm:pt-6 pb-2 sm:pb-4">
-          <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
+    <div className="my-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Feeding Analysis</h2>
+      <div className="grid grid-cols-2 gap-6">
+        {/* Daily Feedings */}
+        <div className="border border-gray-200 rounded-lg p-5 bg-white">
+          <h3 className="text-base font-semibold text-gray-900 mb-4">
             Daily Feeding Frequency
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-          <ChartContainer config={chartConfig} className="h-48 sm:h-64">
+          </h3>
+          <ChartContainer config={chartConfig} className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={feedingData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+              <BarChart data={feedingData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <XAxis 
                   dataKey="date" 
-                  tick={{ fontSize: isMobile ? 10 : 12 }}
+                  tick={{ fontSize: 11 }}
                   tickLine={false}
-                  axisLine={false}
+                  axisLine={{ stroke: '#e5e7eb' }}
                 />
                 <YAxis 
-                  tick={{ fontSize: isMobile ? 10 : 12 }}
+                  tick={{ fontSize: 11 }}
                   tickLine={false}
-                  axisLine={false}
+                  axisLine={{ stroke: '#e5e7eb' }}
                 />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar 
@@ -139,28 +138,24 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Feeding Types */}
-      <Card className="touch-manipulation">
-        <CardHeader className="px-3 sm:px-6 pt-3 sm:pt-6 pb-2 sm:pb-4">
-          <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
+        {/* Feeding Types */}
+        <div className="border border-gray-200 rounded-lg p-5 bg-white">
+          <h3 className="text-base font-semibold text-gray-900 mb-4">
             Feeding Types Distribution
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-          <ChartContainer config={{}} className="h-48 sm:h-64">
+          </h3>
+          <ChartContainer config={{}} className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={feedingTypes}
                   cx="50%"
                   cy="50%"
-                  outerRadius={isMobile ? 60 : 80}
+                  outerRadius={90}
                   dataKey="count"
-                  label={({ type, count }) => isMobile ? `${count}` : `${type}: ${count}`}
-                  labelLine={false}
+                  label={({ type, count }) => `${type}: ${count}`}
+                  labelLine={true}
                 >
                   {feedingTypes.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -170,8 +165,8 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
               </PieChart>
             </ResponsiveContainer>
           </ChartContainer>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

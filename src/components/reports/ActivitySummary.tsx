@@ -128,45 +128,38 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
   ];
 
   return (
-    <Card className="touch-manipulation">
-      <CardHeader className="px-3 sm:px-6 pt-3 sm:pt-6 pb-2 sm:pb-4">
-        <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
-          Period Activity Summary
-        </CardTitle>
-        <p className="text-xs sm:text-sm text-gray-600 mt-1">
-          Overview of activities from {format(dateRange.start, 'MMM dd')} to {format(dateRange.end, 'MMM dd')}
-        </p>
-      </CardHeader>
-      <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+    <div className="my-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Period Activity Summary</h2>
+      <div className="border border-gray-200 rounded-lg p-5 bg-white">
+        <div className="grid grid-cols-4 gap-4 mb-6">
           {summaryItems.map((item, index) => {
             const IconComponent = item.icon;
             return (
-              <div key={index} className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 p-3 sm:p-4 bg-gray-50 rounded-lg touch-manipulation">
-                <IconComponent className={`h-6 w-6 sm:h-8 sm:w-8 ${item.color} flex-shrink-0 mx-auto sm:mx-0`} />
-                <div className="text-center sm:text-left">
-                  <p className="text-lg sm:text-2xl font-bold text-gray-900">{item.value}</p>
-                  <p className="text-xs sm:text-sm text-gray-600 leading-tight">{item.label}</p>
+              <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                <IconComponent className={`h-8 w-8 ${item.color}`} />
+                <div>
+                  <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+                  <p className="text-xs text-gray-600">{item.label}</p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-          <div className="p-3 sm:p-4 bg-blue-50 rounded-lg touch-manipulation">
-            <h4 className="font-medium text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Average Sleep Duration</h4>
-            <p className="text-xl sm:text-2xl font-bold text-blue-600">{periodSummary.avgSleepDuration} min</p>
-            <p className="text-xs sm:text-sm text-gray-600">Per sleep session</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Average Sleep Duration</h4>
+            <p className="text-2xl font-bold text-blue-700">{periodSummary.avgSleepDuration} min</p>
+            <p className="text-xs text-gray-600">Per sleep session</p>
           </div>
           
-          <div className="p-3 sm:p-4 bg-green-50 rounded-lg touch-manipulation">
-            <h4 className="font-medium text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">Most Active Day</h4>
-            <p className="text-xl sm:text-2xl font-bold text-green-600">{periodSummary.mostActiveDay}</p>
-            <p className="text-xs sm:text-sm text-gray-600">In selected period</p>
+          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Most Active Day</h4>
+            <p className="text-2xl font-bold text-green-700">{periodSummary.mostActiveDay}</p>
+            <p className="text-xs text-gray-600">In selected period</p>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
