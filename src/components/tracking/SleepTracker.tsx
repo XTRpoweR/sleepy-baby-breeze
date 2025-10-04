@@ -12,6 +12,7 @@ import { Moon, Sun, Clock, Play, Square, Sparkles, TrendingUp } from 'lucide-rea
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
+import { usePersistentSleepSession } from '@/hooks/usePersistentSleepSession';
 
 interface SleepTrackerProps {
   babyId: string;
@@ -21,41 +22,36 @@ interface SleepTrackerProps {
 export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => {
   const { t } = useTranslation();
   const { addActivity, isSubmitting } = useActivityTracker(onActivityAdded);
+  const { activeSession, isActive, timerDisplay, startSession, clearSession, getDuration } = usePersistentSleepSession(babyId);
+  
   const [sleepType, setSleepType] = useState<'nap' | 'night'>('nap');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [notes, setNotes] = useState('');
-  const [isActive, setIsActive] = useState(false);
-  const [activeStartTime, setActiveStartTime] = useState<Date | null>(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [showSummary, setShowSummary] = useState(false);
   const [sessionDuration, setSessionDuration] = useState({ hours: 0, minutes: 0 });
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
-  // Real-time timer updates
+  // Show toast when resuming an existing session
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (isActive && activeStartTime) {
-      interval = setInterval(() => {
-        setCurrentTime(new Date());
-      }, 1000);
+    if (activeSession && isActive) {
+      const duration = getDuration();
+      const hours = Math.floor(duration / 60);
+      const minutes = duration % 60;
+      const durationText = hours > 0 
+        ? `${hours}h ${minutes}m ago`
+        : `${minutes}m ago`;
+      
+      toast({
+        title: 'Sleep session resumed',
+        description: `Continuing sleep session started ${durationText}`,
+      });
     }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isActive, activeStartTime]);
+  }, []); // Only run once on mount
 
   const handleStartSleep = () => {
-    const now = new Date();
-    setActiveStartTime(now);
-    setStartTime(now.toISOString().slice(0, 16));
-    setIsActive(true);
-    
+    startSession(sleepType, notes);
     toast({
       title: t('tracking.sleepTracker.sessionStarted'),
       description: t('tracking.sleepTracker.sessionStartedDesc'),
@@ -63,27 +59,22 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
   };
 
   const handleStopSleep = () => {
-    if (activeStartTime) {
-      const now = new Date();
-      const endTimeStr = now.toISOString().slice(0, 16);
-      setEndTime(endTimeStr);
-      setIsActive(false);
-      
-      const duration = Math.round((now.getTime() - activeStartTime.getTime()) / (1000 * 60));
-      const hours = Math.floor(duration / 60);
-      const minutes = duration % 60;
-      
-      setSessionDuration({ hours, minutes });
-      setShowSummary(true);
-    }
+    if (!activeSession) return;
+
+    const duration = getDuration();
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+    
+    setSessionDuration({ hours, minutes });
+    setShowSummary(true);
   };
 
   const handleSaveSession = async () => {
-    if (!activeStartTime || !endTime) return;
+    if (!activeSession) return;
 
-    const start = new Date(activeStartTime);
-    const end = new Date(endTime);
-    const duration = Math.round((end.getTime() - start.getTime()) / (1000 * 60));
+    const start = new Date(activeSession.startTime);
+    const end = new Date();
+    const duration = getDuration();
 
     const success = await addActivity({
       baby_id: babyId,
@@ -91,22 +82,31 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       start_time: start.toISOString(),
       end_time: end.toISOString(),
       duration_minutes: duration,
-      notes: notes.trim() || null,
-      metadata: { sleep_type: sleepType }
+      notes: activeSession.notes?.trim() || notes.trim() || null,
+      metadata: { sleep_type: activeSession.sleepType }
     });
 
     if (success) {
+      clearSession();
       setShowSummary(false);
       setStartTime('');
       setEndTime('');
       setNotes('');
-      setActiveStartTime(null);
       
       toast({
         title: t('tracking.sleepTracker.saved'),
         description: t('tracking.sleepTracker.sessionSaved'),
       });
     }
+  };
+
+  const handleCancelSession = () => {
+    clearSession();
+    setShowSummary(false);
+    toast({
+      title: t('tracking.sleepTracker.cancelled'),
+      description: t('tracking.sleepTracker.sessionCancelled'),
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -131,22 +131,6 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       setStartTime('');
       setEndTime('');
       setNotes('');
-      setIsActive(false);
-      setActiveStartTime(null);
-    }
-  };
-
-  const formatDuration = () => {
-    if (!activeStartTime) return '';
-    const totalSeconds = Math.floor((currentTime.getTime() - activeStartTime.getTime()) / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    
-    if (hours > 0) {
-      return `${hours}h ${minutes}m ${seconds}s`;
-    } else {
-      return `${minutes}m ${seconds}s`;
     }
   };
 
@@ -195,11 +179,11 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
             {/* Action Buttons */}
             <div className="flex gap-3">
               <Button 
-                onClick={() => setShowSummary(false)} 
+                onClick={handleCancelSession}
                 variant="outline" 
                 className="flex-1"
               >
-                Close
+                Cancel Session
               </Button>
               <Button 
                 onClick={handleSaveSession}
@@ -241,7 +225,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
                   <div className="flex items-center justify-center gap-3 mb-3">
                     <Moon className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 animate-pulse" />
                     <div className="text-4xl sm:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tabular-nums">
-                      {formatDuration()}
+                      {timerDisplay}
                     </div>
                   </div>
                   <p className="text-blue-600 dark:text-blue-400 font-medium text-sm sm:text-base flex items-center justify-center gap-2">
