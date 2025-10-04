@@ -18,7 +18,6 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
     onclone: (clonedDoc) => {
       const clonedNode = clonedDoc.querySelector('body');
       if (clonedNode) {
-        // Add print-friendly styles to prevent awkward breaks
         const style = clonedDoc.createElement('style');
         style.textContent = `
           * {
@@ -34,6 +33,7 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
       }
     }
   });
+  
   const imgData = canvas.toDataURL("image/png");
 
   const pdf = new jsPDF({
@@ -45,27 +45,70 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = pdf.internal.pageSize.getHeight();
   
-  const imgProps = {
-    width: canvas.width,
-    height: canvas.height
-  };
+  const ratio = pdfWidth / canvas.width;
+  const canvasPerPage = pdfHeight / ratio;
   
-  const ratio = pdfWidth / imgProps.width;
-  const imgWidth = pdfWidth;
-  const imgHeight = imgProps.height * ratio;
-
-  // Handle multi-page PDFs if content is longer than one page
-  let heightLeft = imgHeight;
-  let position = 0;
-
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  heightLeft -= pdfHeight;
-
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
+  // Collect candidate cut positions from sections and table rows
+  const candidates = new Set<number>([0, canvas.height]);
+  
+  // Add section boundaries
+  const sections = nodeRef.querySelectorAll('[data-pdf-section]');
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    const nodeRect = nodeRef.getBoundingClientRect();
+    const relativeBottom = rect.bottom - nodeRect.top;
+    const canvasY = (relativeBottom / nodeRef.scrollHeight) * canvas.height;
+    candidates.add(Math.round(canvasY));
+  });
+  
+  // Add table row boundaries as fallback
+  const tableRows = nodeRef.querySelectorAll('table tbody tr');
+  tableRows.forEach(row => {
+    const rect = row.getBoundingClientRect();
+    const nodeRect = nodeRef.getBoundingClientRect();
+    const relativeBottom = rect.bottom - nodeRect.top;
+    const canvasY = (relativeBottom / nodeRef.scrollHeight) * canvas.height;
+    candidates.add(Math.round(canvasY));
+  });
+  
+  // Sort candidates
+  const sortedCandidates = Array.from(candidates).sort((a, b) => a - b);
+  
+  // Build pages with smart cuts
+  let lastCut = 0;
+  let isFirstPage = true;
+  
+  while (lastCut < canvas.height) {
+    const limit = lastCut + canvasPerPage;
+    
+    // Find the best cut position that fits within the page
+    let nextCut = canvas.height;
+    for (let i = sortedCandidates.length - 1; i >= 0; i--) {
+      const candidate = sortedCandidates[i];
+      if (candidate > lastCut && candidate <= limit + 10) { // Small tolerance
+        nextCut = candidate;
+        break;
+      }
+    }
+    
+    // If no good candidate found, use the limit
+    if (nextCut === canvas.height && lastCut + canvasPerPage < canvas.height) {
+      nextCut = Math.min(lastCut + canvasPerPage, canvas.height);
+    }
+    
+    // Add the page
+    if (!isFirstPage) {
+      pdf.addPage();
+    }
+    
+    const yPosition = -(lastCut * ratio);
+    const imgWidth = pdfWidth;
+    const imgHeight = canvas.height * ratio;
+    
+    pdf.addImage(imgData, "PNG", 0, yPosition, imgWidth, imgHeight);
+    
+    lastCut = nextCut;
+    isFirstPage = false;
   }
 
   pdf.save(filename);
