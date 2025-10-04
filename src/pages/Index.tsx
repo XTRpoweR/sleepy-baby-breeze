@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X } from "lucide-react";
+import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState } from "react";
 
@@ -18,26 +18,59 @@ const FeatureCard = memo(({
   index: number;
 }) => {
   const IconComponent = feature.icon;
-  return <Card className="group relative border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 animate-fade-in-up card-glow gpu-accelerated overflow-hidden" style={{
-    animationDelay: `${index * 50}ms`
+  const formattedNumber = (index + 1).toString().padStart(2, '0');
+  
+  return <Card className="group relative border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 animate-fade-in-up card-glow gpu-accelerated overflow-hidden hover:border-2 hover:border-primary/20" style={{
+    animationDelay: `${index * 100}ms`
   }}>
-      <CardContent className="p-6 sm:p-8">
+      <CardContent className="p-6 sm:p-8 relative">
+        {/* Decorative background pattern */}
+        <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
+          <svg viewBox="0 0 100 100" className="w-full h-full">
+            <circle cx="50" cy="50" r="40" fill="currentColor" className="text-primary" />
+            <circle cx="20" cy="20" r="15" fill="currentColor" className="text-primary" />
+            <circle cx="80" cy="80" r="20" fill="currentColor" className="text-primary" />
+          </svg>
+        </div>
+        
+        {/* Number indicator */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
+          <span className={`text-5xl sm:text-6xl font-black opacity-10 feature-gradient-${feature.colorScheme} bg-clip-text text-transparent`}>
+            {formattedNumber}
+          </span>
+        </div>
+        
         {/* Category Label */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
-          <span className="text-[10px] sm:text-xs font-bold tracking-wider text-primary/60 bg-primary/5 px-2 py-1 rounded-full border border-primary/20">
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10">
+          <span className="text-[10px] sm:text-xs font-bold tracking-wider text-primary/60 bg-primary/5 px-2 py-1 rounded-full border border-primary/20 backdrop-blur-sm">
             {feature.category}
           </span>
         </div>
         
-        <div className="flex flex-col items-start gap-5">
+        {/* Premium/Popular Badge for specific features */}
+        {feature.badge && (
+          <div className="absolute top-12 right-3 sm:top-14 sm:right-4 z-10">
+            <span className={`text-[10px] sm:text-xs font-bold px-2 py-1 rounded-full ${
+              feature.badge === 'POPULAR' 
+                ? 'bg-orange-100 text-orange-700 border border-orange-300' 
+                : 'bg-purple-100 text-purple-700 border border-purple-300'
+            }`}>
+              {feature.badge === 'POPULAR' ? '🔥 POPULAR' : '⭐ PREMIUM'}
+            </span>
+          </div>
+        )}
+        
+        <div className="flex flex-col items-start gap-5 relative z-10 mt-12 sm:mt-16">
           {/* Enhanced Icon with unique gradient */}
-          <div className={`relative p-4 sm:p-5 rounded-2xl feature-gradient-${feature.colorScheme} text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-2xl`}>
-            <IconComponent className="h-7 w-7 sm:h-9 sm:w-9 relative z-10" />
+          <div className={`relative p-4 sm:p-5 rounded-2xl feature-gradient-${feature.colorScheme} text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl`}>
+            <IconComponent className="h-7 w-7 sm:h-9 sm:w-9 relative z-10 group-hover:scale-110 transition-transform duration-300" />
             {/* Glow effect on hover */}
-            <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-500`} />
+            <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-60 blur-xl transition-opacity duration-500`} />
+            {/* Pulse ring effect */}
+            <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-30 animate-ping`} />
           </div>
           
-          <div className="space-y-3 text-left">
+          <div className="space-y-3 text-left flex-1">
             {/* Larger, bolder title */}
             <h3 className="text-xl sm:text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
               {feature.title}
@@ -46,11 +79,33 @@ const FeatureCard = memo(({
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
               {feature.description}
             </p>
+            
+            {/* Usage metrics badge for popular features */}
+            {feature.metric && (
+              <div className="flex items-center gap-2 pt-2">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
+                  <CheckCircle className="h-3 w-3 text-green-500" />
+                  <span className="font-medium">{feature.metric}</span>
+                </div>
+              </div>
+            )}
           </div>
+          
+          {/* Learn more link */}
+          <button className="group/link flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-all duration-300 relative">
+            <span>Learn more</span>
+            <span className="group-hover/link:translate-x-1 transition-transform duration-300">→</span>
+            <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover/link:w-full transition-all duration-300" />
+          </button>
         </div>
         
         {/* Subtle background glow that matches feature color */}
-        <div className={`absolute -bottom-8 -right-8 w-32 h-32 feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-5 blur-3xl transition-opacity duration-700 rounded-full`} />
+        <div className={`absolute -bottom-8 -right-8 w-32 h-32 feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 rounded-full`} />
+        
+        {/* Corner accent decoration */}
+        <div className="absolute bottom-0 left-0 w-16 h-16 opacity-5">
+          <div className={`w-full h-full feature-gradient-${feature.colorScheme} transform rotate-45 -translate-x-8 translate-y-8`} />
+        </div>
       </CardContent>
     </Card>;
 });
@@ -116,37 +171,45 @@ const Index = () => {
     title: t('features.trackEverything.title'),
     description: t('features.trackEverything.description'),
     colorScheme: 'blue',
-    category: 'CORE FEATURE'
+    category: 'CORE FEATURE',
+    badge: 'POPULAR',
+    metric: 'Used by 10,000+ families'
   }, {
     icon: Calendar,
     title: t('features.customSchedules.title'),
     description: t('features.customSchedules.description'),
     colorScheme: 'purple',
-    category: 'PLANNING'
+    category: 'PLANNING',
+    metric: '95% report better sleep'
   }, {
     icon: Volume2,
     title: t('features.soothingSounds.title'),
     description: t('features.soothingSounds.description'),
     colorScheme: 'teal',
-    category: 'WELLNESS'
+    category: 'WELLNESS',
+    badge: 'POPULAR',
+    metric: '20+ soothing sounds'
   }, {
     icon: Users,
     title: t('features.multiCaregiver.title'),
     description: t('features.multiCaregiver.description'),
     colorScheme: 'pink',
-    category: 'PREMIUM'
+    category: 'PREMIUM',
+    badge: 'PREMIUM'
   }, {
     icon: BarChart3,
     title: t('features.insights.title'),
     description: t('features.insights.description'),
     colorScheme: 'orange',
-    category: 'ANALYTICS'
+    category: 'ANALYTICS',
+    metric: 'Smart recommendations'
   }, {
     icon: Globe,
     title: t('features.multilingual.title'),
     description: t('features.multilingual.description'),
     colorScheme: 'green',
-    category: 'GLOBAL'
+    category: 'GLOBAL',
+    metric: 'Available in 8 languages'
   }], [t]);
   const testimonials = useMemo(() => [{
     name: "Sarah M.",
