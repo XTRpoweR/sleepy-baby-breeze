@@ -10,7 +10,11 @@ import html2canvas from "html2canvas";
 export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
   const canvas = await html2canvas(nodeRef, {
     scale: 2,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    useCORS: true,
+    logging: false,
+    windowHeight: nodeRef.scrollHeight,
+    height: nodeRef.scrollHeight
   });
   const imgData = canvas.toDataURL("image/png");
 
@@ -22,16 +26,29 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
 
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = pdf.internal.pageSize.getHeight();
-  // Fit the image to the width of the page, preserve ratio
+  
   const imgProps = {
     width: canvas.width,
     height: canvas.height
   };
-  const ratio = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height);
-  const imgWidth = imgProps.width * ratio;
+  
+  const ratio = pdfWidth / imgProps.width;
+  const imgWidth = pdfWidth;
   const imgHeight = imgProps.height * ratio;
 
-  pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+  // Handle multi-page PDFs if content is longer than one page
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pdfHeight;
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+  }
 
   pdf.save(filename);
 }

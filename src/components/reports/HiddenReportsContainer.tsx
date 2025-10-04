@@ -35,7 +35,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   return (
     <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
       {/* Comprehensive Health Report */}
-      <div ref={comprehensiveRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <div ref={comprehensiveRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif', minHeight: 'auto' }}>
         <ReportHeader 
           reportTitle="Comprehensive Health Report"
           patientName={activeProfile.name}
@@ -43,13 +43,12 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
           reportType="Full Health Overview"
         />
         
-        <ReportsOverview babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
-        
         <ClinicalInsights insights={[
           { type: 'neutral', text: 'This report provides a comprehensive overview of tracked activities including sleep, feeding, and care routines.' },
           { type: 'neutral', text: 'Data is parent-reported and may not capture all activities or exact measurements.' }
         ]} />
         
+        <ReportsOverview babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
         <DetailedSleepAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
         <FeedingAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
         <ActivitySummary babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
@@ -58,7 +57,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       </div>
 
       {/* Sleep Pattern Analysis */}
-      <div ref={sleepRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <div ref={sleepRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif', minHeight: 'auto' }}>
         <ReportHeader 
           reportTitle="Sleep Pattern Analysis"
           patientName={activeProfile.name}
@@ -78,7 +77,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       </div>
 
       {/* Growth & Development Report */}
-      <div ref={growthRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <div ref={growthRef} className="bg-white p-8" style={{ fontFamily: 'Arial, sans-serif', minHeight: 'auto' }}>
         <ReportHeader 
           reportTitle="Growth & Development Report"
           patientName={activeProfile.name}
