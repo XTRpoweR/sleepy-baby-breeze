@@ -73,6 +73,12 @@ const Index = () => {
     const element = document.getElementById('pricing');
     element?.scrollIntoView({ behavior: 'smooth' });
   };
+  
+  const handleScrollToFeatures = () => {
+    const element = document.getElementById('features');
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+  
   const handleDownloadComingSoon = () => {
     toast({
       title: "Coming Soon",
@@ -202,7 +208,7 @@ const Index = () => {
                   <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                   {t('hero.startTracking')}
                 </Button>
-                <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 border-dynamic hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary touch-target w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 border-dynamic hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary touch-target w-full sm:w-auto" onClick={handleScrollToFeatures}>
                   {t('hero.exploreFeatures')}
                 </Button>
               </div>
