@@ -14,6 +14,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { ReportsOverview } from '@/components/reports/ReportsOverview';
 import { SleepAnalytics } from '@/components/reports/SleepAnalytics';
+import { DetailedSleepAnalytics } from '@/components/reports/DetailedSleepAnalytics';
 import { FeedingAnalytics } from '@/components/reports/FeedingAnalytics';
 import { ActivitySummary } from '@/components/reports/ActivitySummary';
 import { DateRangeSelector } from '@/components/reports/DateRangeSelector';
@@ -139,9 +140,9 @@ const Reports = () => {
               <ReportsOverview babyId={profile.id} dateRange={currentDateRange} />
             </section>
             
-            {/* Sleep Analytics */}
-            <section aria-label="Sleep Analytics">
-              <SleepAnalytics babyId={profile.id} dateRange={currentDateRange} />
+            {/* Detailed Sleep Analytics */}
+            <section aria-label="Detailed Sleep Analytics">
+              <DetailedSleepAnalytics babyId={profile.id} dateRange={currentDateRange} />
             </section>
             
             {/* Feeding Analytics */}

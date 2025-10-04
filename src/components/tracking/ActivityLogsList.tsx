@@ -23,7 +23,9 @@ import {
   Edit, 
   Trash2,
   Clock,
-  Calendar
+  Calendar,
+  Zap,
+  Sun
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -91,7 +93,9 @@ export const ActivityLogsList = ({
   const getActivityDetails = (log: any) => {
     switch (log.activity_type) {
       case 'sleep':
-        return log.metadata?.sleep_type || t('activities.sleep');
+        const sleepType = log.metadata?.sleep_type === 'nap' ? 'Nap' : 'Night Sleep';
+        const trackingMethod = log.metadata?.tracking_method === 'live_session' ? ' (Live)' : '';
+        return `${sleepType}${trackingMethod}`;
       case 'feeding':
         const type = log.metadata?.feeding_type || t('activities.feeding');
         const side = log.metadata?.side ? ` (${log.metadata.side})` : '';
@@ -179,10 +183,16 @@ export const ActivityLogsList = ({
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Icon className="h-4 w-4 animate-fade-in" />
-                        <div>
+                        <div className="flex flex-col gap-1">
                           <Badge className={ACTIVITY_COLORS[log.activity_type]}>
                             {getActivityLabel(log)}
                           </Badge>
+                          {log.activity_type === 'sleep' && log.metadata?.tracking_method === 'live_session' && (
+                            <Badge variant="outline" className="text-xs border-purple-600 text-purple-600">
+                              <Zap className="h-3 w-3 mr-1" />
+                              Live Session
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </TableCell>

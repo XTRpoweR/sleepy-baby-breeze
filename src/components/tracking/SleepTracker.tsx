@@ -83,7 +83,10 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       end_time: end.toISOString(),
       duration_minutes: duration,
       notes: activeSession.notes?.trim() || notes.trim() || null,
-      metadata: { sleep_type: activeSession.sleepType }
+      metadata: { 
+        sleep_type: activeSession.sleepType,
+        tracking_method: 'live_session'
+      }
     });
 
     if (success) {
@@ -124,7 +127,10 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       end_time: end?.toISOString() || null,
       duration_minutes: duration,
       notes: notes.trim() || null,
-      metadata: { sleep_type: sleepType }
+      metadata: { 
+        sleep_type: sleepType,
+        tracking_method: 'manual_log'
+      }
     });
 
     if (success) {
