@@ -51,6 +51,20 @@
     --gradient-via: 291 64% 42%;
     --gradient-to: 330 81% 60%;
 
+    /* Feature-specific color gradients */
+    --feature-blue-from: 217 91% 60%;
+    --feature-blue-to: 221 83% 53%;
+    --feature-purple-from: 261 83% 58%;
+    --feature-purple-to: 291 64% 42%;
+    --feature-teal-from: 173 80% 40%;
+    --feature-teal-to: 180 76% 35%;
+    --feature-pink-from: 330 81% 60%;
+    --feature-pink-to: 340 75% 55%;
+    --feature-orange-from: 25 95% 53%;
+    --feature-orange-to: 33 100% 50%;
+    --feature-green-from: 142 76% 36%;
+    --feature-green-to: 152 69% 31%;
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -216,6 +230,31 @@
 
   .border-info {
     border-color: hsl(var(--info));
+  }
+
+  /* Feature card gradient utilities */
+  .feature-gradient-blue {
+    background: linear-gradient(135deg, hsl(var(--feature-blue-from)), hsl(var(--feature-blue-to)));
+  }
+  
+  .feature-gradient-purple {
+    background: linear-gradient(135deg, hsl(var(--feature-purple-from)), hsl(var(--feature-purple-to)));
+  }
+  
+  .feature-gradient-teal {
+    background: linear-gradient(135deg, hsl(var(--feature-teal-from)), hsl(var(--feature-teal-to)));
+  }
+  
+  .feature-gradient-pink {
+    background: linear-gradient(135deg, hsl(var(--feature-pink-from)), hsl(var(--feature-pink-to)));
+  }
+  
+  .feature-gradient-orange {
+    background: linear-gradient(135deg, hsl(var(--feature-orange-from)), hsl(var(--feature-orange-to)));
+  }
+  
+  .feature-gradient-green {
+    background: linear-gradient(135deg, hsl(var(--feature-green-from)), hsl(var(--feature-green-to)));
   }
 
   /* Simplified animations */

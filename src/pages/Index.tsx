@@ -18,15 +18,39 @@ const FeatureCard = memo(({
   index: number;
 }) => {
   const IconComponent = feature.icon;
-  return <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group animate-fade-in-up card-glow gpu-accelerated" style={{
+  return <Card className="group relative border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 animate-fade-in-up card-glow gpu-accelerated overflow-hidden" style={{
     animationDelay: `${index * 50}ms`
   }}>
-      <CardContent className="p-4 sm:p-6 md:p-8">
-        <div className="inline-flex p-2 sm:p-3 rounded-2xl gradient-dynamic-slow mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110">
-          <IconComponent className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+      <CardContent className="p-6 sm:p-8">
+        {/* Category Label */}
+        <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+          <span className="text-[10px] sm:text-xs font-bold tracking-wider text-primary/60 bg-primary/5 px-2 py-1 rounded-full border border-primary/20">
+            {feature.category}
+          </span>
         </div>
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight leading-tight">{feature.title}</h3>
-        <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-light">{feature.description}</p>
+        
+        <div className="flex flex-col items-start gap-5">
+          {/* Enhanced Icon with unique gradient */}
+          <div className={`relative p-4 sm:p-5 rounded-2xl feature-gradient-${feature.colorScheme} text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg group-hover:shadow-2xl`}>
+            <IconComponent className="h-7 w-7 sm:h-9 sm:w-9 relative z-10" />
+            {/* Glow effect on hover */}
+            <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-50 blur-xl transition-opacity duration-500`} />
+          </div>
+          
+          <div className="space-y-3 text-left">
+            {/* Larger, bolder title */}
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+              {feature.title}
+            </h3>
+            {/* Enhanced description */}
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              {feature.description}
+            </p>
+          </div>
+        </div>
+        
+        {/* Subtle background glow that matches feature color */}
+        <div className={`absolute -bottom-8 -right-8 w-32 h-32 feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-5 blur-3xl transition-opacity duration-700 rounded-full`} />
       </CardContent>
     </Card>;
 });
@@ -90,27 +114,39 @@ const Index = () => {
   const features = useMemo(() => [{
     icon: Clock,
     title: t('features.trackEverything.title'),
-    description: t('features.trackEverything.description')
+    description: t('features.trackEverything.description'),
+    colorScheme: 'blue',
+    category: 'CORE FEATURE'
   }, {
     icon: Calendar,
     title: t('features.customSchedules.title'),
-    description: t('features.customSchedules.description')
+    description: t('features.customSchedules.description'),
+    colorScheme: 'purple',
+    category: 'PLANNING'
   }, {
     icon: Volume2,
     title: t('features.soothingSounds.title'),
-    description: t('features.soothingSounds.description')
+    description: t('features.soothingSounds.description'),
+    colorScheme: 'teal',
+    category: 'WELLNESS'
   }, {
     icon: Users,
     title: t('features.multiCaregiver.title'),
-    description: t('features.multiCaregiver.description')
+    description: t('features.multiCaregiver.description'),
+    colorScheme: 'pink',
+    category: 'PREMIUM'
   }, {
     icon: BarChart3,
     title: t('features.insights.title'),
-    description: t('features.insights.description')
+    description: t('features.insights.description'),
+    colorScheme: 'orange',
+    category: 'ANALYTICS'
   }, {
     icon: Globe,
     title: t('features.multilingual.title'),
-    description: t('features.multilingual.description')
+    description: t('features.multilingual.description'),
+    colorScheme: 'green',
+    category: 'GLOBAL'
   }], [t]);
   const testimonials = useMemo(() => [{
     name: "Sarah M.",
@@ -250,7 +286,7 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
             {features.map((feature, index) => <FeatureCard key={index} feature={feature} index={index} />)}
           </div>
         </div>
