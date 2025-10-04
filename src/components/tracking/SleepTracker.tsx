@@ -65,7 +65,8 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
   const handleStopSleep = () => {
     if (activeStartTime) {
       const now = new Date();
-      setEndTime(now.toISOString().slice(0, 16));
+      const endTimeStr = now.toISOString().slice(0, 16);
+      setEndTime(endTimeStr);
       setIsActive(false);
       
       const duration = Math.round((now.getTime() - activeStartTime.getTime()) / (1000 * 60));
@@ -74,6 +75,37 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       
       setSessionDuration({ hours, minutes });
       setShowSummary(true);
+    }
+  };
+
+  const handleSaveSession = async () => {
+    if (!activeStartTime || !endTime) return;
+
+    const start = new Date(activeStartTime);
+    const end = new Date(endTime);
+    const duration = Math.round((end.getTime() - start.getTime()) / (1000 * 60));
+
+    const success = await addActivity({
+      baby_id: babyId,
+      activity_type: 'sleep',
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      duration_minutes: duration,
+      notes: notes.trim() || null,
+      metadata: { sleep_type: sleepType }
+    });
+
+    if (success) {
+      setShowSummary(false);
+      setStartTime('');
+      setEndTime('');
+      setNotes('');
+      setActiveStartTime(null);
+      
+      toast({
+        title: t('tracking.sleepTracker.saved'),
+        description: t('tracking.sleepTracker.sessionSaved'),
+      });
     }
   };
 
@@ -170,13 +202,11 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
                 Close
               </Button>
               <Button 
-                onClick={() => {
-                  setShowSummary(false);
-                  // Scroll to manual form to log details
-                }}
+                onClick={handleSaveSession}
+                disabled={isSubmitting}
                 className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
               >
-                Add Details
+                {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
               </Button>
             </div>
           </div>
