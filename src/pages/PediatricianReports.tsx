@@ -30,14 +30,31 @@ import { ActivitySummary } from '@/components/reports/ActivitySummary';
 import { getDateRange, DateRangeOption } from '@/utils/dateRangeUtils';
 import { ReportTypesGrid } from "@/components/reports/ReportTypesGrid";
 import { HiddenReportsContainer } from "@/components/reports/HiddenReportsContainer";
+import { profileEventManager } from '@/utils/profileEvents';
 
 const PediatricianReports = () => {
   const { user, loading } = useAuth();
-  const { activeProfile } = useBabyProfile();
+  const { activeProfile: hookActiveProfile } = useBabyProfile();
+  const [localActiveProfile, setLocalActiveProfile] = useState(hookActiveProfile);
   const { isPremium } = useSubscription();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+
+  // Sync local state with hook active profile
+  useEffect(() => {
+    setLocalActiveProfile(hookActiveProfile);
+  }, [hookActiveProfile]);
+
+  // Subscribe to profile change events
+  useEffect(() => {
+    const unsubscribe = profileEventManager.subscribe((profileId) => {
+      console.log('PediatricianReports: Profile changed, forcing re-render');
+      setLocalActiveProfile(hookActiveProfile);
+    });
+    
+    return unsubscribe;
+  }, [hookActiveProfile]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -61,22 +78,22 @@ const PediatricianReports = () => {
   const [growthRange] = useState<DateRangeOption>('all');
 
   const handleGenerateReport = async (reportType: string) => {
-    if (!activeProfile) return;
+    if (!localActiveProfile) return;
     setPdfLoading(reportType);
     let node: HTMLElement | null = null;
     let filename = '';
     switch (reportType) {
       case 'comprehensive':
         node = comprehensiveRef.current;
-        filename = `Comprehensive_Report_${activeProfile.name}.pdf`;
+        filename = `Comprehensive_Report_${localActiveProfile.name}.pdf`;
         break;
       case 'sleep-analysis':
         node = sleepRef.current;
-        filename = `Sleep_Analysis_${activeProfile.name}.pdf`;
+        filename = `Sleep_Analysis_${localActiveProfile.name}.pdf`;
         break;
       case 'growth-tracking':
         node = growthRef.current;
-        filename = `Growth_Development_${activeProfile.name}.pdf`;
+        filename = `Growth_Development_${localActiveProfile.name}.pdf`;
         break;
       default:
         setPdfLoading(null);
@@ -163,15 +180,15 @@ const PediatricianReports = () => {
           )}
         </div>
         
-        {activeProfile && (
+        {localActiveProfile && (
           <p className="text-sm text-gray-500 mt-2">
-            Reports for {activeProfile.name}
+            Reports for {localActiveProfile.name}
           </p>
         )}
       </div>
 
       {/* Active Profile Check */}
-      {!activeProfile ? (
+      {!localActiveProfile ? (
         <Card className="max-w-md mx-auto">
           <CardContent className="p-6 text-center">
             <Baby className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -198,7 +215,7 @@ const PediatricianReports = () => {
             comprehensiveRef={comprehensiveRef}
             sleepRef={sleepRef}
             growthRef={growthRef}
-            activeProfile={activeProfile}
+            activeProfile={localActiveProfile}
             comprehensiveRange={comprehensiveRange}
             sleepRange={sleepRange}
             growthRange={growthRange}
