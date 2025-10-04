@@ -47,6 +47,19 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
   
   const ratio = pdfWidth / canvas.width;
   const canvasPerPage = pdfHeight / ratio;
+
+  const fitMode = nodeRef.getAttribute('data-pdf-fit');
+  if (fitMode === 'single') {
+    // Fit entire content on one page by scaling
+    const fitRatio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+    const imgWidth = canvas.width * fitRatio;
+    const imgHeight = canvas.height * fitRatio;
+    const x = (pdfWidth - imgWidth) / 2;
+    const y = (pdfHeight - imgHeight) / 2;
+    pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+    pdf.save(filename);
+    return;
+  }
   
   // Collect candidate cut positions from sections and table rows
   const candidates = new Set<number>([0, canvas.height]);
