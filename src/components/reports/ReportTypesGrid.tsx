@@ -13,7 +13,7 @@ interface ReportTypesGridProps {
     timeframe: string;
   }>;
   onGenerateReport: (reportId: string) => void;
-  pdfLoading: boolean;
+  pdfLoading: string | null;
 }
 
 export const ReportTypesGrid: React.FC<ReportTypesGridProps> = ({
@@ -43,10 +43,10 @@ export const ReportTypesGrid: React.FC<ReportTypesGridProps> = ({
             <Button
               onClick={() => onGenerateReport(report.id)}
               className="w-full bg-teal-600 hover:bg-teal-700"
-              disabled={pdfLoading}
+              disabled={pdfLoading === report.id}
             >
               <Download className="h-4 w-4 mr-2" />
-              {pdfLoading ? "Preparing..." : "Generate Report"}
+              {pdfLoading === report.id ? "Generating..." : "Generate Report"}
             </Button>
           </CardContent>
         </Card>

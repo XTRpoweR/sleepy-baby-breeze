@@ -53,7 +53,7 @@ const PediatricianReports = () => {
   const comprehensiveRef = useRef<HTMLDivElement>(null);
   const sleepRef = useRef<HTMLDivElement>(null);
   const growthRef = useRef<HTMLDivElement>(null);
-  const [pdfLoading, setPdfLoading] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState<string | null>(null);
 
   // For timing, use last 30, 14, or full range
   const [comprehensiveRange] = useState<DateRangeOption>('last30');
@@ -62,7 +62,7 @@ const PediatricianReports = () => {
 
   const handleGenerateReport = async (reportType: string) => {
     if (!activeProfile) return;
-    setPdfLoading(true);
+    setPdfLoading(reportType);
     let node: HTMLElement | null = null;
     let filename = '';
     switch (reportType) {
@@ -79,14 +79,14 @@ const PediatricianReports = () => {
         filename = `Growth_Development_${activeProfile.name}.pdf`;
         break;
       default:
-        setPdfLoading(false);
+        setPdfLoading(null);
         return;
     }
 
     if (node) {
       await exportNodeAsPDF(node, filename);
     }
-    setPdfLoading(false);
+    setPdfLoading(null);
   };
 
   if (loading) {
