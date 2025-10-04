@@ -114,13 +114,6 @@ const FeatureCard = memo(({
               </div>
             )}
           </div>
-          
-          {/* Learn more link */}
-          <button className="group/link flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-all duration-300 relative">
-            <span>Learn more</span>
-            <span className="group-hover/link:translate-x-1 transition-transform duration-300">→</span>
-            <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary group-hover/link:w-full transition-all duration-300" />
-          </button>
         </div>
         
         {/* Subtle background glow that matches feature color */}
