@@ -9,6 +9,14 @@ import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, P
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState } from "react";
 
+// Import feature images
+import trackEverythingImg from "@/assets/features/track-everything.png";
+import sleepSchedulesImg from "@/assets/features/sleep-schedules.png";
+import familySharingImg from "@/assets/features/family-sharing.png";
+import memoriesImg from "@/assets/features/memories.png";
+import analyticsReportsImg from "@/assets/features/analytics-reports.png";
+import whiteNoiseImg from "@/assets/features/white-noise.png";
+
 // Memoized components for better performance
 const FeatureCard = memo(({
   feature,
@@ -61,13 +69,29 @@ const FeatureCard = memo(({
         )}
         
         <div className="flex flex-col items-start gap-5 relative z-10 mt-12 sm:mt-16">
-          {/* Enhanced Icon with unique gradient */}
-          <div className={`relative p-4 sm:p-5 rounded-2xl feature-gradient-${feature.colorScheme} text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl`}>
-            <IconComponent className="h-7 w-7 sm:h-9 sm:w-9 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-            {/* Glow effect on hover */}
-            <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-60 blur-xl transition-opacity duration-500`} />
-            {/* Pulse ring effect */}
-            <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-30 animate-ping`} />
+          {/* Image container with icon overlay */}
+          <div className="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden mb-2">
+            {/* Feature illustration */}
+            {feature.image && (
+              <img
+                src={feature.image}
+                alt={feature.title}
+                className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
+                loading="lazy"
+              />
+            )}
+            {/* Gradient overlay on hover */}
+            <div className={`absolute inset-0 bg-gradient-to-br from-black/0 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+            {/* Icon overlay */}
+            <div className={`absolute inset-0 flex items-center justify-center`}>
+              <div className={`relative p-4 sm:p-5 rounded-2xl feature-gradient-${feature.colorScheme} text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl`}>
+                <IconComponent className="h-7 w-7 sm:h-9 sm:w-9 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                {/* Glow effect on hover */}
+                <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-60 blur-xl transition-opacity duration-500`} />
+                {/* Pulse ring effect */}
+                <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-30 animate-ping`} />
+              </div>
+            </div>
           </div>
           
           <div className="space-y-3 text-left flex-1">
@@ -173,14 +197,16 @@ const Index = () => {
     colorScheme: 'blue',
     category: 'CORE FEATURE',
     badge: 'POPULAR',
-    metric: 'Used by 10,000+ families'
+    metric: 'Used by 10,000+ families',
+    image: trackEverythingImg
   }, {
     icon: Calendar,
     title: t('features.customSchedules.title'),
     description: t('features.customSchedules.description'),
     colorScheme: 'purple',
     category: 'PLANNING',
-    metric: '95% report better sleep'
+    metric: '95% report better sleep',
+    image: sleepSchedulesImg
   }, {
     icon: Volume2,
     title: t('features.soothingSounds.title'),
@@ -188,28 +214,32 @@ const Index = () => {
     colorScheme: 'teal',
     category: 'WELLNESS',
     badge: 'POPULAR',
-    metric: '20+ soothing sounds'
+    metric: '20+ soothing sounds',
+    image: whiteNoiseImg
   }, {
     icon: Users,
     title: t('features.multiCaregiver.title'),
     description: t('features.multiCaregiver.description'),
     colorScheme: 'pink',
     category: 'PREMIUM',
-    badge: 'PREMIUM'
+    badge: 'PREMIUM',
+    image: familySharingImg
   }, {
     icon: BarChart3,
     title: t('features.insights.title'),
     description: t('features.insights.description'),
     colorScheme: 'orange',
     category: 'ANALYTICS',
-    metric: 'Smart recommendations'
+    metric: 'Smart recommendations',
+    image: analyticsReportsImg
   }, {
     icon: Globe,
     title: t('features.multilingual.title'),
     description: t('features.multilingual.description'),
     colorScheme: 'green',
     category: 'GLOBAL',
-    metric: 'Available in 8 languages'
+    metric: 'Available in 8 languages',
+    image: memoriesImg
   }], [t]);
   const testimonials = useMemo(() => [{
     name: "Sarah M.",
