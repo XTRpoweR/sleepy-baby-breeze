@@ -47,7 +47,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   return (
     <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
       {/* Comprehensive Health Report */}
-      <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles} data-pdf-fit="single">
+      <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Comprehensive Health Report"
@@ -86,7 +86,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       </div>
 
       {/* Sleep Pattern Analysis */}
-      <div ref={sleepRef} className="bg-white p-8" style={reportStyles} data-pdf-fit="single">
+      <div ref={sleepRef} className="bg-white p-8" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Sleep Pattern Analysis"
