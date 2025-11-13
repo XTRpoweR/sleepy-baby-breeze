@@ -15,6 +15,7 @@ import {
 import { EditActivityDialog } from './EditActivityDialog';
 import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 import { PermissionAwareActions } from './PermissionAwareActions';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   Moon, 
   Milk, 
@@ -72,6 +73,7 @@ export const ActivityLogsList = ({
   onActivityUpdated 
 }: ActivityLogsListProps) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [editingLog, setEditingLog] = useState<any>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
@@ -155,6 +157,139 @@ export const ActivityLogsList = ({
     );
   }
 
+  // Mobile Card View
+  if (isMobile) {
+    return (
+      <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-secondary/5 via-card to-accent/10 border-2 hover:shadow-2xl transition-all duration-300">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Clock className="h-5 w-5 text-primary animate-pulse" />
+            <span className="text-gradient">{t('dashboard.todaysActivity')} ({logs.length})</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3 max-h-[600px] overflow-y-auto">
+            {logs.map((log) => {
+              const Icon = ACTIVITY_ICONS[log.activity_type];
+              return (
+                <Card key={log.id} className="border-2 hover:border-primary/50 transition-all">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-2 flex-1">
+                        <Icon className="h-5 w-5 flex-shrink-0" />
+                        <div className="flex flex-col gap-1">
+                          <Badge className={ACTIVITY_COLORS[log.activity_type]}>
+                            {getActivityLabel(log)}
+                          </Badge>
+                          {log.activity_type === 'sleep' && log.metadata?.tracking_method === 'live_session' && (
+                            <Badge variant="outline" className="text-xs border-purple-600 text-purple-600">
+                              <Zap className="h-3 w-3 mr-1" />
+                              Live Session
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1 flex-shrink-0 ml-2">
+                        <PermissionAwareActions 
+                          requiredPermission="canEdit" 
+                          fallback={null}
+                          showMessage={false}
+                          babyId={babyId}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingLog(log)}
+                            className="h-9 w-9 p-0"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </PermissionAwareActions>
+                        
+                        <PermissionAwareActions 
+                          requiredPermission="canDelete" 
+                          fallback={null}
+                          showMessage={false}
+                          babyId={babyId}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-9 w-9 p-0 text-destructive"
+                            onClick={() => { setPendingDeleteId(log.id); setConfirmOpen(true); }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </PermissionAwareActions>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">{t('tracking.common.startTime')}:</span>
+                        <div className="text-right">
+                          <div className="font-medium">{format(new Date(log.start_time), 'MMM dd, yyyy')}</div>
+                          <div className="text-muted-foreground text-xs">
+                            {format(new Date(log.start_time), 'h:mm a')}
+                            {log.end_time && ` - ${format(new Date(log.end_time), 'h:mm a')}`}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">{t('common.duration')}:</span>
+                        <span className="font-medium">{formatDuration(log.duration_minutes)}</span>
+                      </div>
+                      
+                      {getActivityDetails(log) && (
+                        <div className="flex items-start justify-between">
+                          <span className="text-muted-foreground">{t('tracking.common.notes')}:</span>
+                          <span className="font-medium text-right flex-1 ml-2">{getActivityDetails(log)}</span>
+                        </div>
+                      )}
+                      
+                      {log.notes && (
+                        <div className="pt-2 border-t">
+                          <p className="text-muted-foreground text-xs">{log.notes}</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </CardContent>
+
+        {editingLog && (
+          <EditActivityDialog
+            log={editingLog}
+            open={!!editingLog}
+            onClose={() => setEditingLog(null)}
+            babyId={babyId}
+            updateLog={handleUpdateLog}
+          />
+        )}
+
+        <DeleteConfirmationDialog
+          open={confirmOpen}
+          onClose={() => {
+            setConfirmOpen(false);
+            setPendingDeleteId(null);
+          }}
+          onConfirm={async () => {
+            if (pendingDeleteId) {
+              await handleDeleteLog(pendingDeleteId);
+            }
+            setConfirmOpen(false);
+            setPendingDeleteId(null);
+          }}
+        />
+      </Card>
+    );
+  }
+
+  // Desktop Table View
   return (
     <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-secondary/5 via-card to-accent/10 border-2 hover:shadow-2xl transition-all duration-300">
       <CardHeader>
