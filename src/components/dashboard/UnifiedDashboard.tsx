@@ -75,7 +75,7 @@ export const UnifiedDashboard = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Get enhanced dashboard stats from the dedicated hook
-  const { stats: dashboardStats, loading: statsLoading } = useDashboardStats();
+  const { stats: dashboardStats, loading: statsLoading } = useDashboardStats(activeProfile?.id);
 
   const handlePullToRefresh = async () => {
     setIsRefreshing(true);
