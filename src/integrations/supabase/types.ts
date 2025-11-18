@@ -392,7 +392,7 @@ export type Database = {
           event_description: string
           event_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           metadata: Json | null
           severity: string
           user_agent: string | null
@@ -403,7 +403,7 @@ export type Database = {
           event_description: string
           event_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           severity?: string
           user_agent?: string | null
@@ -414,7 +414,7 @@ export type Database = {
           event_description?: string
           event_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           severity?: string
           user_agent?: string | null
@@ -562,7 +562,7 @@ export type Database = {
           device_info: string | null
           expires_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           is_active: boolean
           last_activity_at: string
           location_info: Json | null
@@ -577,7 +577,7 @@ export type Database = {
           device_info?: string | null
           expires_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           is_active?: boolean
           last_activity_at?: string
           location_info?: Json | null
@@ -592,7 +592,7 @@ export type Database = {
           device_info?: string | null
           expires_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           is_active?: boolean
           last_activity_at?: string
           location_info?: Json | null
@@ -650,10 +650,7 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: string
       }
-      has_premium_access: {
-        Args: { user_uuid: string }
-        Returns: boolean
-      }
+      has_premium_access: { Args: { user_uuid: string }; Returns: boolean }
       invalidate_other_sessions: {
         Args: { current_session_id?: string; user_uuid: string }
         Returns: number
