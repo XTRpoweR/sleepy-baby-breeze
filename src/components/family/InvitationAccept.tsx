@@ -291,20 +291,24 @@ export const InvitationAccept = () => {
           .eq('id', user.id)
           .single();
 
-        const { error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
-          body: {
-            invitationId: invitation.id,
-            status: 'accepted',
-            acceptedByEmail: user.email,
-            acceptedByName: profile?.full_name || user.email
-          }
+        const emailPayload = {
+          invitationId: invitation.id,
+          status: 'accepted',
+          acceptedByEmail: user.email,
+          acceptedByName: profile?.full_name || user.email
+        };
+        
+        console.log('Email payload:', emailPayload);
+
+        const { data: emailResponse, error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
+          body: emailPayload
         });
 
         if (emailError) {
           console.error('Error sending notification email:', emailError);
           // Don't fail the process if email fails
         } else {
-          console.log('Notification email sent successfully');
+          console.log('Notification email sent successfully:', emailResponse);
         }
       } catch (emailError) {
         console.error('Failed to send notification email:', emailError);
@@ -390,19 +394,23 @@ export const InvitationAccept = () => {
           }
         }
 
-        const { error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
-          body: {
-            invitationId: invitation.id,
-            status: 'declined',
-            acceptedByEmail,
-            acceptedByName
-          }
+        const emailPayload = {
+          invitationId: invitation.id,
+          status: 'declined',
+          acceptedByEmail,
+          acceptedByName
+        };
+        
+        console.log('Email payload:', emailPayload);
+
+        const { data: emailResponse, error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
+          body: emailPayload
         });
 
         if (emailError) {
           console.error('Error sending notification email:', emailError);
         } else {
-          console.log('Notification email sent successfully');
+          console.log('Notification email sent successfully:', emailResponse);
         }
       } catch (emailError) {
         console.error('Failed to send notification email:', emailError);
