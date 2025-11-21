@@ -283,12 +283,20 @@ export const InvitationAccept = () => {
       // Send notification email to the inviter
       try {
         console.log('Sending acceptance notification email');
+        
+        // Fetch user profile to get full name
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+
         const { error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
           body: {
             invitationId: invitation.id,
             status: 'accepted',
             acceptedByEmail: user.email,
-            acceptedByName: user.user_metadata?.full_name || user.user_metadata?.name
+            acceptedByName: profile?.full_name || user.email
           }
         });
 
@@ -364,10 +372,30 @@ export const InvitationAccept = () => {
       // Send notification email to the inviter
       try {
         console.log('Sending decline notification email');
+        
+        // Fetch user profile if user exists
+        let acceptedByEmail = invitation.email;
+        let acceptedByName = invitation.email;
+        
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile) {
+            acceptedByEmail = profile.email || user.email || invitation.email;
+            acceptedByName = profile.full_name || profile.email || user.email || invitation.email;
+          }
+        }
+
         const { error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
           body: {
             invitationId: invitation.id,
-            status: 'declined'
+            status: 'declined',
+            acceptedByEmail,
+            acceptedByName
           }
         });
 
