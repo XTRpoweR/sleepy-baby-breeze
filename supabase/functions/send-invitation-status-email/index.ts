@@ -141,10 +141,14 @@ const handler = async (req: Request): Promise<Response> => {
                 </p>
               </div>
               
-              <p style="font-size: 14px; color: #6b7280; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                This is an automated message from SleepyBabyy.<br>
-                Questions? Contact us at <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
-              </p>
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
+                <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px 0;">
+                  This is an automated message from SleepyBabyy.
+                </p>
+                <p style="font-size: 12px; color: #6b7280; margin: 0;">
+                  Questions? <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
+                </p>
+              </div>
             </div>
           </body>
         </html>
@@ -181,10 +185,14 @@ const handler = async (req: Request): Promise<Response> => {
                 </p>
               </div>
               
-              <p style="font-size: 14px; color: #6b7280; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                This is an automated message from SleepyBabyy.<br>
-                Questions? Contact us at <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
-              </p>
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center;">
+                <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px 0;">
+                  This is an automated message from SleepyBabyy.
+                </p>
+                <p style="font-size: 12px; color: #6b7280; margin: 0;">
+                  Questions? <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
+                </p>
+              </div>
             </div>
           </body>
         </html>
