@@ -110,7 +110,7 @@ const handler = async (req: Request): Promise<Response> => {
     let htmlContent: string;
 
     if (status === 'accepted') {
-      subject = `${respondentName} accepted your family sharing invitation!`;
+      subject = `${respondentName} accepted your invitation to join ${babyName}'s family!`;
       htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -127,7 +127,7 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="font-size: 16px; margin-bottom: 20px;">Hi ${inviterName},</p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
-                Great news! <strong>${respondentName}</strong> has accepted your invitation to join <strong>${babyName}'s</strong> family sharing.
+                Great news! <strong>${respondentName}</strong> has accepted your invitation to join <strong>${babyName}'s</strong> family on SleepyBabyy.
               </p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
@@ -142,14 +142,15 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
               
               <p style="font-size: 14px; color: #6b7280; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                This is an automated message from BabySteps. If you have any questions, please contact support.
+                This is an automated message from SleepyBabyy.<br>
+                Questions? Contact us at <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
               </p>
             </div>
           </body>
         </html>
       `;
     } else {
-      subject = `${respondentName} declined your family sharing invitation`;
+      subject = `${respondentName} declined your invitation to join ${babyName}'s family`;
       htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -166,7 +167,7 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="font-size: 16px; margin-bottom: 20px;">Hi ${inviterName},</p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
-                <strong>${respondentName}</strong> has declined your invitation to join <strong>${babyName}'s</strong> family sharing.
+                <strong>${respondentName}</strong> has declined your invitation to join <strong>${babyName}'s</strong> family on SleepyBabyy.
               </p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
@@ -181,7 +182,8 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
               
               <p style="font-size: 14px; color: #6b7280; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                This is an automated message from BabySteps. If you have any questions, please contact support.
+                This is an automated message from SleepyBabyy.<br>
+                Questions? Contact us at <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
               </p>
             </div>
           </body>
@@ -193,7 +195,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email
     const emailResponse = await resend.emails.send({
-      from: "BabySteps <notifications@sleepybabyy.com>",
+      from: "SleepyBabyy <notifications@sleepybabyy.com>",
       to: [inviterProfile.email],
       subject: subject,
       html: htmlContent,

@@ -166,18 +166,18 @@ serve(async (req) => {
 
     // Send email using Resend
     const emailData = {
-      from: 'BabySteps <invitations@sleepybabyy.com>',
+      from: 'SleepyBabyy <invitations@sleepybabyy.com>',
       to: [email],
-      subject: `You're invited to track ${babyName}'s journey on BabySteps!`,
+      subject: `You're invited to join ${babyName}'s family on SleepyBabyy!`,
       html: `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Family Invitation - BabySteps</title>
+          <title>Family Invitation - SleepyBabyy</title>
         </head>
-        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 24px;">You're Invited!</h1>
           </div>
@@ -186,7 +186,7 @@ serve(async (req) => {
             <p style="font-size: 16px; margin-bottom: 20px;">Hi there!</p>
             
             <p style="font-size: 16px; margin-bottom: 20px;">
-              <strong>${inviterName}</strong> has invited you to help track <strong>${babyName}</strong>'s journey on BabySteps!
+              <strong>${inviterName}</strong> has invited you to join <strong>${babyName}'s</strong> family on SleepyBabyy!
             </p>
             
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -216,8 +216,9 @@ serve(async (req) => {
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
             
             <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">
-              This invitation was sent by ${inviterName} through BabySteps.<br>
-              If you didn't expect this invitation, you can safely ignore this email.
+              This invitation was sent by ${inviterName} through SleepyBabyy.<br>
+              If you didn't expect this invitation, you can safely ignore this email.<br><br>
+              Questions? Contact us at <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
             </p>
           </div>
         </body>
