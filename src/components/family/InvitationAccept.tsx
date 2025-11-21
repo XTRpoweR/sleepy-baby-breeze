@@ -280,6 +280,29 @@ export const InvitationAccept = () => {
         // Don't fail the whole process if this update fails
       }
 
+      // Send notification email to the inviter
+      try {
+        console.log('Sending acceptance notification email');
+        const { error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
+          body: {
+            invitationId: invitation.id,
+            status: 'accepted',
+            acceptedByEmail: user.email,
+            acceptedByName: user.user_metadata?.full_name || user.user_metadata?.name
+          }
+        });
+
+        if (emailError) {
+          console.error('Error sending notification email:', emailError);
+          // Don't fail the process if email fails
+        } else {
+          console.log('Notification email sent successfully');
+        }
+      } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
+        // Continue anyway - email is not critical
+      }
+
       // Refresh profiles and set as active
       await refetchProfiles();
       setSharedBabyAsActive(invitation.baby_id);
@@ -336,6 +359,25 @@ export const InvitationAccept = () => {
         });
         setProcessing(false);
         return;
+      }
+
+      // Send notification email to the inviter
+      try {
+        console.log('Sending decline notification email');
+        const { error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
+          body: {
+            invitationId: invitation.id,
+            status: 'declined'
+          }
+        });
+
+        if (emailError) {
+          console.error('Error sending notification email:', emailError);
+        } else {
+          console.log('Notification email sent successfully');
+        }
+      } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
       }
 
       toast({
