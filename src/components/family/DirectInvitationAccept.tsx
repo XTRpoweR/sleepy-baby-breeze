@@ -243,6 +243,38 @@ export const DirectInvitationAccept = () => {
         console.log('Successfully updated invitation status to accepted');
       }
 
+      // Send notification email to the inviter
+      try {
+        console.log('Sending acceptance notification email (direct accept)');
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+
+        const emailPayload = {
+          invitationId: invitation.id,
+          status: 'accepted' as const,
+          acceptedByEmail: user.email,
+          acceptedByName: profile?.full_name || user.email,
+        };
+
+        console.log('Email payload:', emailPayload);
+
+        const { data: emailResponse, error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
+          body: emailPayload,
+        });
+
+        if (emailError) {
+          console.error('Error sending notification email:', emailError);
+        } else {
+          console.log('Notification email sent successfully:', emailResponse);
+        }
+      } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
+      }
+
       // Refresh profiles and set as active
       await refetchProfiles();
       setSharedBabyAsActive(invitation.baby_id);
@@ -275,6 +307,7 @@ export const DirectInvitationAccept = () => {
     if (!invitation || alreadyAccepted) return;
 
     setProcessing(true);
+    console.log('Declining invitation:', invitation.id);
 
     try {
       const { error } = await supabase
@@ -290,6 +323,49 @@ export const DirectInvitationAccept = () => {
           variant: "destructive",
         });
         return;
+      }
+
+      // Send notification email to the inviter
+      try {
+        console.log('Sending decline notification email (direct accept)');
+
+        // Fetch user profile if user exists
+        let acceptedByEmail = invitation.email;
+        let acceptedByName = invitation.email;
+
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name, email')
+            .eq('id', user.id)
+            .single();
+
+          if (profile) {
+            acceptedByEmail = profile.email || user.email || invitation.email;
+            acceptedByName = profile.full_name || profile.email || user.email || invitation.email;
+          }
+        }
+
+        const emailPayload = {
+          invitationId: invitation.id,
+          status: 'declined' as const,
+          acceptedByEmail,
+          acceptedByName,
+        };
+
+        console.log('Email payload:', emailPayload);
+
+        const { data: emailResponse, error: emailError } = await supabase.functions.invoke('send-invitation-status-email', {
+          body: emailPayload,
+        });
+
+        if (emailError) {
+          console.error('Error sending notification email:', emailError);
+        } else {
+          console.log('Notification email sent successfully:', emailResponse);
+        }
+      } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
       }
 
       toast({
