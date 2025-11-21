@@ -127,11 +127,11 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="font-size: 16px; margin-bottom: 20px;">Hi ${inviterName},</p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
-                Great news! <strong>${respondentName}</strong> has accepted your invitation to join <strong>${babyName}'s</strong> family on SleepyBabyy.
+                Great news! <strong>${respondentName}</strong> has accepted your invitation to join <strong>${babyName}'s</strong> family.
               </p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
-                They now have <strong>${invitation.role}</strong> access and can start viewing and tracking ${babyName}'s activities.
+                They now have <strong>${invitation.role}</strong> access and can start ${invitation.role === 'caregiver' ? 'viewing and tracking' : 'viewing'} ${babyName}'s activities.
               </p>
               
               <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981; margin: 20px 0;">
@@ -167,7 +167,7 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="font-size: 16px; margin-bottom: 20px;">Hi ${inviterName},</p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
-                <strong>${respondentName}</strong> has declined your invitation to join <strong>${babyName}'s</strong> family on SleepyBabyy.
+                <strong>${respondentName}</strong> has declined your invitation to join <strong>${babyName}'s</strong> family.
               </p>
               
               <p style="font-size: 16px; margin-bottom: 20px;">
