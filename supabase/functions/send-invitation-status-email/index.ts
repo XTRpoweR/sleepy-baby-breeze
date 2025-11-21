@@ -25,9 +25,16 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     console.log('[INVITATION-STATUS-EMAIL] Function started');
 
-    const { invitationId, status, acceptedByEmail, acceptedByName }: InvitationStatusEmailRequest = await req.json();
+    const rawBody = await req.json().catch(() => null);
+    console.log('[INVITATION-STATUS-EMAIL] Raw request body:', rawBody);
 
-    console.log('[INVITATION-STATUS-EMAIL] Request data:', { invitationId, status, acceptedByEmail });
+    const payload = rawBody && typeof rawBody === 'object' && 'body' in rawBody
+      ? (rawBody as { body: InvitationStatusEmailRequest }).body
+      : (rawBody as InvitationStatusEmailRequest | null) || {};
+
+    const { invitationId, status, acceptedByEmail, acceptedByName }: InvitationStatusEmailRequest = payload as InvitationStatusEmailRequest;
+
+    console.log('[INVITATION-STATUS-EMAIL] Parsed request data:', { invitationId, status, acceptedByEmail });
 
     if (!invitationId || !status) {
       console.error('[INVITATION-STATUS-EMAIL] Missing required fields');
