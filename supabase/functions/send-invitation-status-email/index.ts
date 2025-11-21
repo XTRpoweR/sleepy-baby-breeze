@@ -193,7 +193,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email
     const emailResponse = await resend.emails.send({
-      from: "BabySteps <onboarding@resend.dev>",
+      from: "BabySteps <notifications@sleepybabyy.com>",
       to: [inviterProfile.email],
       subject: subject,
       html: htmlContent,

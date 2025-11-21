@@ -166,7 +166,7 @@ serve(async (req) => {
 
     // Send email using Resend
     const emailData = {
-      from: 'BabySteps <invitations@babysteps.app>',
+      from: 'BabySteps <invitations@sleepybabyy.com>',
       to: [email],
       subject: `You're invited to track ${babyName}'s journey on BabySteps!`,
       html: `
