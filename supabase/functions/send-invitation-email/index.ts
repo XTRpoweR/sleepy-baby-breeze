@@ -215,11 +215,17 @@ serve(async (req) => {
             
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
             
-            <p style="font-size: 12px; color: #888; text-align: center; margin: 0;">
-              This invitation was sent by ${inviterName} through SleepyBabyy.<br>
-              If you didn't expect this invitation, you can safely ignore this email.<br><br>
-              Questions? Contact us at <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
-            </p>
+            <div style="text-align: center;">
+              <p style="font-size: 12px; color: #888; margin: 0 0 8px 0;">
+                This invitation was sent by ${inviterName} through SleepyBabyy.
+              </p>
+              <p style="font-size: 12px; color: #888; margin: 0 0 12px 0;">
+                If you didn't expect this invitation, you can safely ignore this email.
+              </p>
+              <p style="font-size: 12px; color: #888; margin: 0;">
+                Questions? <a href="mailto:support@sleepybabyy.com" style="color: #667eea; text-decoration: none;">support@sleepybabyy.com</a>
+              </p>
+            </div>
           </div>
         </body>
         </html>
