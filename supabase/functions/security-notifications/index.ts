@@ -87,7 +87,10 @@ serve(async (req) => {
 
 async function logSecurityEvent(supabaseClient: any, userId: string, eventType: string, description: string, metadata: any, severity: string, req: Request) {
   const userAgent = req.headers.get('user-agent') || ''
-  const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+  const forwardedFor = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+  
+  // Extract first IP from x-forwarded-for (format: "client, proxy1, proxy2")
+  const clientIP = forwardedFor.split(',')[0].trim() || null
 
   const { error } = await supabaseClient.rpc('log_security_event', {
     user_uuid: userId,
@@ -135,7 +138,10 @@ async function getSecurityEvents(supabaseClient: any, userId: string) {
 
 async function handlePasswordChange(supabaseClient: any, userId: string, req: Request) {
   const userAgent = req.headers.get('user-agent') || ''
-  const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+  const forwardedFor = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+  
+  // Extract first IP from x-forwarded-for (format: "client, proxy1, proxy2")
+  const clientIP = forwardedFor.split(',')[0].trim() || null
 
   // Log the password change event
   await supabaseClient.rpc('log_security_event', {
@@ -177,7 +183,10 @@ async function handlePasswordChange(supabaseClient: any, userId: string, req: Re
 
 async function handleSuspiciousActivity(supabaseClient: any, userId: string, metadata: any, req: Request) {
   const userAgent = req.headers.get('user-agent') || ''
-  const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+  const forwardedFor = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || ''
+  
+  // Extract first IP from x-forwarded-for (format: "client, proxy1, proxy2")
+  const clientIP = forwardedFor.split(',')[0].trim() || null
 
   // Log the suspicious activity
   await supabaseClient.rpc('log_security_event', {
@@ -206,7 +215,7 @@ async function handleSuspiciousActivity(supabaseClient: any, userId: string, met
   )
 }
 
-async function sendPasswordChangeNotification(userId: string, supabaseClient: any, ipAddress: string) {
+async function sendPasswordChangeNotification(userId: string, supabaseClient: any, ipAddress: string | null) {
   // Get user profile for email
   const { data: profile } = await supabaseClient
     .from('profiles')
@@ -231,7 +240,7 @@ async function sendPasswordChangeNotification(userId: string, supabaseClient: an
         <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
           <strong>Security Details:</strong><br>
           Time: ${new Date().toLocaleString()}<br>
-          IP Address: ${ipAddress}<br>
+          IP Address: ${ipAddress || 'Unknown'}<br>
         </div>
         
         <p><strong>Important:</strong> All other active sessions have been automatically logged out for your security.</p>
