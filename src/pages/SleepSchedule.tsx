@@ -222,7 +222,7 @@ const SleepSchedule = () => {
               <Alert className="border-blue-200 bg-blue-50">
                 <Shield className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-800">
-                  You have view-only access to sleep schedules. You can view existing schedules and recommendations, but cannot create or modify sleep schedules. Contact the baby's owner for caregiver access to manage sleep schedules.
+                  <strong>View-Only Access:</strong> You can view existing sleep schedules below. To create or modify schedules, you'll need caregiver access from the baby's owner.
                 </AlertDescription>
               </Alert>
             )}
@@ -248,6 +248,7 @@ const SleepSchedule = () => {
               </div>
             )}
 
+            {/* Show saved schedules for everyone, including viewers */}
             <div>
               <SavedSchedules 
                 babyId={activeProfile.id}
@@ -257,6 +258,14 @@ const SleepSchedule = () => {
                 onViewSchedule={handleViewSchedule}
                 onScheduleDeleted={handleScheduleDeleted}
               />
+              
+              {/* Helpful message for viewers when no schedules exist */}
+              {role === 'viewer' && schedules.length === 0 && !schedulesLoading && (
+                <div className="text-center py-8 text-gray-500">
+                  <p className="text-sm">No sleep schedules have been created yet.</p>
+                  <p className="text-sm mt-2">Contact the baby's owner to add sleep schedules.</p>
+                </div>
+              )}
             </div>
 
             <PermissionAwareActions requiredPermission="canEdit" showMessage={false}>
