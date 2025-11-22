@@ -18,14 +18,39 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const authHeader = req.headers.get('Authorization')!
+    // Check if Authorization header exists
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      console.log('Missing Authorization header')
+      return new Response(
+        JSON.stringify({ error: 'Missing Authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const token = authHeader.replace('Bearer ', '')
+    if (!token) {
+      console.log('Invalid Authorization token format')
+      return new Response(
+        JSON.stringify({ error: 'Invalid token format' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
     
     // Get user from token
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
-    if (userError || !user) {
+    if (userError) {
+      console.log('Auth error:', userError.message)
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
+        JSON.stringify({ error: 'Invalid or expired token', details: userError.message }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    if (!user) {
+      console.log('User not found from token')
+      return new Response(
+        JSON.stringify({ error: 'User not found' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
