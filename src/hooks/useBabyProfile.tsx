@@ -125,6 +125,31 @@ export const useBabyProfile = () => {
     }
   }, [user, fetchProfiles]);
 
+  // Keep activeProfile in sync across all hook instances using profile events
+  useEffect(() => {
+    const unsubscribe = profileEventManager.subscribe((profileId) => {
+      console.log('useBabyProfile: Received profile change event:', profileId);
+      if (!profileId) return;
+
+      setActiveProfile((current) => {
+        if (current?.id === profileId) {
+          return current;
+        }
+
+        const matchingProfile = profiles.find((p) => p.id === profileId) || null;
+        if (!matchingProfile) {
+          console.log('useBabyProfile: No matching profile found for event id:', profileId);
+          return current;
+        }
+
+        console.log('useBabyProfile: Updating active profile from event to:', matchingProfile.name);
+        return { ...matchingProfile };
+      });
+    });
+
+    return unsubscribe;
+  }, [profiles]);
+
   const createProfile = async (profileData: { name: string; birth_date?: string; photo_url?: string }) => {
     if (!user) return false;
 
