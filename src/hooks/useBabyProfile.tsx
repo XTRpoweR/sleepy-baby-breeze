@@ -17,6 +17,8 @@ interface BabyProfile {
   user_role?: string;
 }
 
+const ACTIVE_PROFILE_KEY = 'babytrack_active_profile_id';
+
 export const useBabyProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -82,20 +84,32 @@ export const useBabyProfile = () => {
 
       setProfiles(allProfiles);
 
-      // Find the active profile (prioritize owned profiles)
-      const ownedActive = ownedProfiles?.find(profile => profile.is_active);
-      if (ownedActive) {
-        setActiveProfile({
-          ...ownedActive,
-          is_shared: false,
-          user_role: 'owner'
-        });
-      } else if (allProfiles.length > 0) {
-        // If no owned active profile, use the first profile
-        setActiveProfile(allProfiles[0]);
-      } else {
-        setActiveProfile(null);
+      // Check localStorage for last selected profile
+      const savedProfileId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+      let profileToActivate: BabyProfile | null = null;
+
+      if (savedProfileId) {
+        // Check if saved profile still exists and user has access
+        profileToActivate = allProfiles.find(p => p.id === savedProfileId) || null;
+        console.log('Found saved profile in localStorage:', profileToActivate?.name || 'Not found');
       }
+
+      // Fall back to owned active profile if no valid saved profile
+      if (!profileToActivate) {
+        const ownedActive = ownedProfiles?.find(profile => profile.is_active);
+        if (ownedActive) {
+          profileToActivate = {
+            ...ownedActive,
+            is_shared: false,
+            user_role: 'owner'
+          };
+        } else if (allProfiles.length > 0) {
+          // If no owned active profile, use the first profile
+          profileToActivate = allProfiles[0];
+        }
+      }
+
+      setActiveProfile(profileToActivate);
     } catch (error) {
       console.error('Error fetching baby profiles:', error);
     } finally {
@@ -255,6 +269,10 @@ export const useBabyProfile = () => {
         is_shared: targetProfile.is_shared,
         user_role: targetProfile.user_role
       });
+
+      // Save to localStorage for persistence
+      localStorage.setItem(ACTIVE_PROFILE_KEY, profileId);
+      console.log('Saved profile to localStorage:', profileId);
 
       // Update local state first - create a new object to ensure React detects the change
       console.log('PROFILE SWITCH: Setting active profile to:', targetProfile.name, '(ID:', targetProfile.id, ')');
