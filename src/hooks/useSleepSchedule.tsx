@@ -22,6 +22,48 @@ export const useSleepSchedule = (babyId: string | null) => {
     }
   }, [user, babyId]);
 
+  // Real-time subscription for sleep schedules
+  useEffect(() => {
+    if (!user || !babyId) return;
+
+    console.log('Setting up realtime subscription for sleep schedules, baby:', babyId);
+
+    const channel = supabase
+      .channel('sleep-schedules-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'sleep_schedules',
+          filter: `baby_id=eq.${babyId}`
+        },
+        (payload) => {
+          console.log('Sleep schedule realtime event:', payload.eventType, payload);
+          
+          if (payload.eventType === 'INSERT') {
+            setSchedules((current) => [payload.new as SavedSleepSchedule, ...current]);
+          } else if (payload.eventType === 'UPDATE') {
+            setSchedules((current) =>
+              current.map((schedule) =>
+                schedule.id === payload.new.id ? (payload.new as SavedSleepSchedule) : schedule
+              )
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setSchedules((current) =>
+              current.filter((schedule) => schedule.id !== payload.old.id)
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      console.log('Cleaning up realtime subscription for sleep schedules');
+      supabase.removeChannel(channel);
+    };
+  }, [user, babyId]);
+
   const fetchSleepSchedules = async () => {
     if (!user || !babyId) return;
 
