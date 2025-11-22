@@ -124,6 +124,92 @@ export const useActivityLogs = (babyId: string) => {
     }
   }, [babyId, fetchLogs]);
 
+  // Real-time subscription for activity changes
+  useEffect(() => {
+    if (!babyId) return;
+
+    console.log('Setting up real-time subscription for baby:', babyId);
+
+    const channel = supabase
+      .channel(`baby_activities:${babyId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'baby_activities',
+          filter: `baby_id=eq.${babyId}`
+        },
+        (payload) => {
+          console.log('Real-time INSERT:', payload);
+          const newLog = {
+            ...payload.new,
+            activity_type: payload.new.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom'
+          } as ActivityLog;
+          setLogs((currentLogs) => [newLog, ...currentLogs]);
+          
+          toast({
+            title: "Activity Added",
+            description: "New activity logged by a family member",
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'baby_activities',
+          filter: `baby_id=eq.${babyId}`
+        },
+        (payload) => {
+          console.log('Real-time UPDATE:', payload);
+          const updatedLog = {
+            ...payload.new,
+            activity_type: payload.new.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom'
+          } as ActivityLog;
+          setLogs((currentLogs) =>
+            currentLogs.map((log) =>
+              log.id === payload.new.id ? updatedLog : log
+            )
+          );
+          
+          toast({
+            title: "Activity Updated",
+            description: "An activity was updated by a family member",
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'baby_activities',
+          filter: `baby_id=eq.${babyId}`
+        },
+        (payload) => {
+          console.log('Real-time DELETE:', payload);
+          setLogs((currentLogs) =>
+            currentLogs.filter((log) => log.id !== payload.old.id)
+          );
+          
+          toast({
+            title: "Activity Deleted",
+            description: "An activity was deleted by a family member",
+          });
+        }
+      )
+      .subscribe((status) => {
+        console.log('Real-time subscription status:', status);
+      });
+
+    return () => {
+      console.log('Cleaning up real-time subscription');
+      supabase.removeChannel(channel);
+    };
+  }, [babyId, toast]);
+
   const deleteLog = async (logId: string): Promise<boolean> => {
     console.log('Attempting to delete log:', logId);
     
@@ -149,8 +235,7 @@ export const useActivityLogs = (babyId: string) => {
         description: "Activity log deleted successfully",
       });
       
-      // Refresh logs
-      await fetchLogs();
+      // Real-time will handle the update automatically
       return true;
     } catch (error) {
       console.error('Unexpected error deleting activity log:', error);
@@ -183,8 +268,7 @@ export const useActivityLogs = (babyId: string) => {
         description: "Activity log updated successfully",
       });
       
-      // Refresh logs
-      await fetchLogs();
+      // Real-time will handle the update automatically
       return true;
     } catch (error) {
       console.error('Unexpected error updating activity log:', error);
