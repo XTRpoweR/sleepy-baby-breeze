@@ -155,7 +155,7 @@ export const useFamilyActions = (
       console.log('Invitation created:', data);
 
       try {
-        const { error: emailError } = await supabase.functions.invoke('send-family-invitation', {
+        const { error: emailError } = await supabase.functions.invoke('send-invitation-email', {
           body: {
             invitationId: data.id,
             email: normalizedEmail,
