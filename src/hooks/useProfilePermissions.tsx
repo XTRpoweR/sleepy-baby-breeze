@@ -1,20 +1,38 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { profileEventManager } from '@/utils/profileEvents';
 
 export const useProfilePermissions = (babyId: string | null) => {
   const { user } = useAuth();
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [switching, setSwitching] = useState(false);
+
+  // Subscribe to profile change events for instant updates
+  useEffect(() => {
+    const unsubscribe = profileEventManager.subscribe((newProfileId) => {
+      console.log('[useProfilePermissions] Profile change event received:', newProfileId);
+      // Immediately clear role and show switching state
+      setRole(null);
+      setSwitching(true);
+    });
+
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     console.log('[useProfilePermissions] Effect triggered:', { user: user?.id, babyId });
+    
+    // Immediately clear role when babyId changes for instant UI update
+    setRole(null);
+    setSwitching(true);
     
     if (!user || !babyId) {
       console.log('[useProfilePermissions] Missing user or babyId, clearing role');
       setRole(null);
       setLoading(false);
+      setSwitching(false);
       return;
     }
     
@@ -39,6 +57,7 @@ export const useProfilePermissions = (babyId: string | null) => {
         setRole(null);
       } finally {
         setLoading(false);
+        setSwitching(false);
       }
     };
     fetchRole();
@@ -62,6 +81,7 @@ export const useProfilePermissions = (babyId: string | null) => {
   return {
     role,
     loading,
+    switching,
     permissions: {
       canEdit,
       canDelete,

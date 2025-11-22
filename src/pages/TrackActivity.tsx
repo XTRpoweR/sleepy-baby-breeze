@@ -150,7 +150,7 @@ const TrackActivity = () => {
           </div>
 
           {/* Role-based messaging for viewers */}
-          {role === 'viewer' && (
+          {!permissionsLoading && !switching && role === 'viewer' && (
             <Alert className="mb-6 border-primary/20 bg-primary/5">
               <Shield className="h-4 w-4 text-primary" />
               <AlertDescription className="text-foreground">
@@ -220,25 +220,25 @@ const TrackActivity = () => {
                   )}
 
                   <TabsContent value="sleep">
-                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
+                    <PermissionAwareActions key={`sleep-${activeProfile.id}`} requiredPermission="canEdit" babyId={activeProfile.id}>
                       <SleepTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="feeding">
-                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
+                    <PermissionAwareActions key={`feeding-${activeProfile.id}`} requiredPermission="canEdit" babyId={activeProfile.id}>
                       <FeedingTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="diaper">
-                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
+                    <PermissionAwareActions key={`diaper-${activeProfile.id}`} requiredPermission="canEdit" babyId={activeProfile.id}>
                       <DiaperTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
 
                   <TabsContent value="custom">
-                    <PermissionAwareActions requiredPermission="canEdit" babyId={activeProfile.id}>
+                    <PermissionAwareActions key={`custom-${activeProfile.id}`} requiredPermission="canEdit" babyId={activeProfile.id}>
                       <CustomActivityTracker babyId={activeProfile.id} onActivityAdded={handleActivityAdded} />
                     </PermissionAwareActions>
                   </TabsContent>
