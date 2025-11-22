@@ -73,9 +73,6 @@ export const UnifiedDashboard = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
-  // Get enhanced dashboard stats from the dedicated hook
-  const { stats: dashboardStats, loading: statsLoading } = useDashboardStats(activeProfile?.id);
 
   const handlePullToRefresh = async () => {
     setIsRefreshing(true);
@@ -370,7 +367,7 @@ export const UnifiedDashboard = ({
               {/* Weekly Average Sleep */}
               <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-indigo-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
-                  {statsLoading ? (
+                  {isDataLoading ? (
                     <>
                       <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
@@ -382,7 +379,7 @@ export const UnifiedDashboard = ({
                         <Moon className="h-6 w-6 lg:h-8 lg:w-8 text-indigo-600" />
                       </div>
                       <div className="text-lg lg:text-xl font-bold text-indigo-600 mb-1">
-                        {dashboardStats.weeklyAverageSleep}
+                        {stats.weeklyAverageSleep}
                       </div>
                       <div className="text-xs lg:text-sm text-muted-foreground">Avg Sleep</div>
                     </>
@@ -393,7 +390,7 @@ export const UnifiedDashboard = ({
               {/* Weekly Feedings */}
               <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-green-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
-                  {statsLoading ? (
+                  {isDataLoading ? (
                     <>
                       <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
@@ -405,7 +402,7 @@ export const UnifiedDashboard = ({
                         <Milk className="h-6 w-6 lg:h-8 lg:w-8 text-green-600 transition-transform duration-500 group-hover:rotate-12" />
                       </div>
                       <div className="text-lg lg:text-xl font-bold text-green-600 mb-1">
-                        {dashboardStats.weeklyFeedings}
+                        {stats.weeklyFeedings}
                       </div>
                       <div className="text-xs lg:text-sm text-muted-foreground">Feedings</div>
                     </>
@@ -416,7 +413,7 @@ export const UnifiedDashboard = ({
               {/* Weekly Diaper Changes */}
               <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-amber-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
-                  {statsLoading ? (
+                  {isDataLoading ? (
                     <>
                       <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
@@ -428,7 +425,7 @@ export const UnifiedDashboard = ({
                         <Baby className="h-6 w-6 lg:h-8 lg:w-8 text-amber-600 transition-transform duration-500 group-hover:bounce" />
                       </div>
                       <div className="text-lg lg:text-xl font-bold text-amber-600 mb-1">
-                        {dashboardStats.weeklyDiaperChanges}
+                        {stats.weeklyDiaperChanges}
                       </div>
                       <div className="text-xs lg:text-sm text-muted-foreground">Diapers</div>
                     </>
@@ -439,7 +436,7 @@ export const UnifiedDashboard = ({
               {/* Growth Trend */}
               <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-purple-200/50 hover:scale-105 hover:-translate-y-1 group">
                 <CardContent className="p-4 lg:p-6 text-center">
-                  {statsLoading ? (
+                  {isDataLoading ? (
                     <>
                       <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
                       <Skeleton className="h-6 w-16 mx-auto mb-1" />
