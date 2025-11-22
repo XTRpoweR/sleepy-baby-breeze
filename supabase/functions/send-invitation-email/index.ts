@@ -161,7 +161,7 @@ serve(async (req) => {
     }
 
     // Create invitation link
-    const baseUrl = 'https://babysteps.app'; // Replace with your actual domain
+    const baseUrl = 'https://sleepybabyy.com';
     const invitationLink = `${baseUrl}/invitation?token=${invitationToken}`;
 
     // Send email using Resend
