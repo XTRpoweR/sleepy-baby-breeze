@@ -22,17 +22,19 @@ export const PermissionAwareActions = ({
 }: PermissionAwareActionsProps) => {
   const { activeProfile } = useBabyProfile();
   const targetBabyId = (babyId ?? activeProfile?.id) || null;
-  const { permissions, role, loading } = useProfilePermissions(targetBabyId);
+  const { permissions, role, loading, switching } = useProfilePermissions(targetBabyId);
 
   console.log('[PermissionAwareActions]', {
     requiredPermission,
     targetBabyId,
     role,
     loading,
+    switching,
     hasPermission: permissions[requiredPermission]
   });
 
-  if (loading) {
+  // Show loading during initial load or profile switching
+  if (loading || switching) {
     return (
       <div className="animate-pulse bg-muted/20 rounded-lg h-32" />
     );
