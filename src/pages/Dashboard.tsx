@@ -38,7 +38,7 @@ const Dashboard = () => {
     stats,
     loading: statsLoading,
     hasActiveProfile
-  } = useDashboardStats();
+  } = useDashboardStats(activeProfile?.id);
   const navigate = useNavigate();
   const {
     t
