@@ -6,6 +6,7 @@ import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkl
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useGeoCurrency } from '@/hooks/useGeoCurrency';
 
 export const SubscriptionPlans = () => {
   const {
@@ -20,6 +21,7 @@ export const SubscriptionPlans = () => {
   } = useSubscription();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { currency, loading: currencyLoading, convertPrice, isUSD } = useGeoCurrency();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('annual');
   
   const handleUpgrade = (pricingPlan: 'monthly' | 'annual' = 'monthly') => {
@@ -99,6 +101,9 @@ export const SubscriptionPlans = () => {
             </div>
             <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Free</div>
             <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">Perfect for getting started</p>
+            {!isUSD && !currencyLoading && (
+              <p className="text-xs text-muted-foreground mt-1">Billing in USD</p>
+            )}
           </CardHeader>
           <CardContent className="space-y-4 lg:space-y-6">
             <div className="space-y-3 lg:space-y-4">
@@ -157,12 +162,27 @@ export const SubscriptionPlans = () => {
               </Badge>
             </div>
             
-            <div className="flex items-center justify-center space-x-2 mb-1">
-              <span className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 line-through font-medium">$49.99</span>
-              <span className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">$29.99</span>
-              <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/month</span>
-            </div>
-            <p className="text-red-600 dark:text-red-400 text-xs sm:text-sm font-medium">Save $20.00 per month!</p>
+            {currencyLoading ? (
+              <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Loading...</div>
+            ) : (
+              <>
+                <div className="flex items-center justify-center space-x-2 mb-1">
+                  <span className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 line-through font-medium">
+                    {convertPrice(49.99)}
+                  </span>
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+                    {convertPrice(29.99)}
+                  </span>
+                  <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/month</span>
+                </div>
+                <p className="text-red-600 dark:text-red-400 text-xs sm:text-sm font-medium">
+                  Save {convertPrice(20.00, false)} per month!
+                </p>
+                {!isUSD && (
+                  <p className="text-xs text-muted-foreground">Billing in USD</p>
+                )}
+              </>
+            )}
             <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">Complete baby tracking solution</p>
           </CardHeader>
           <CardContent className="space-y-4 lg:space-y-6">
@@ -231,12 +251,27 @@ export const SubscriptionPlans = () => {
               </Badge>
             </div>
             
-            <div className="flex items-center justify-center space-x-2 mb-1">
-              <span className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 line-through font-medium">$359.88</span>
-              <span className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">$299</span>
-              <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/year</span>
-            </div>
-            <p className="text-green-600 dark:text-green-400 text-xs sm:text-sm font-medium">Equivalent to $24.92/month</p>
+            {currencyLoading ? (
+              <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Loading...</div>
+            ) : (
+              <>
+                <div className="flex items-center justify-center space-x-2 mb-1">
+                  <span className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 line-through font-medium">
+                    {convertPrice(359.88)}
+                  </span>
+                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+                    {convertPrice(299)}
+                  </span>
+                  <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/year</span>
+                </div>
+                <p className="text-green-600 dark:text-green-400 text-xs sm:text-sm font-medium">
+                  Equivalent to {convertPrice(299 / 12)}/month
+                </p>
+                {!isUSD && (
+                  <p className="text-xs text-muted-foreground">Billing in USD</p>
+                )}
+              </>
+            )}
             <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">All premium features included</p>
           </CardHeader>
           <CardContent className="space-y-4 lg:space-y-6">

@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useGeoCurrency } from "@/hooks/useGeoCurrency";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
 const Pricing = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Pricing = () => {
   const {
     t
   } = useTranslation();
+  const { currency, loading: currencyLoading, convertPrice, isUSD } = useGeoCurrency();
   const [isAnnual, setIsAnnual] = useState(true);
 
   // Scroll to top when component mounts
@@ -132,9 +134,9 @@ const Pricing = () => {
             <span className={`text-sm md:text-base font-medium ${isAnnual ? 'text-gray-900' : 'text-gray-600'}`}>
               Annual
             </span>
-            {isAnnual && (
+            {isAnnual && !currencyLoading && (
               <Badge className="bg-green-500 text-white text-xs font-bold ml-2">
-                Save ${annualSavings}
+                Save {convertPrice((monthlyPrice * 12) - annualPrice, false)}
               </Badge>
             )}
           </div>
@@ -142,13 +144,19 @@ const Pricing = () => {
           {/* Special Offer Banner */}
           <div className="mb-6 md:mb-8 inline-flex items-center space-x-2 bg-red-100 px-4 md:px-6 py-2 md:py-3 rounded-full border-2 border-red-200">
             <Badge className="bg-red-500 text-white text-xs md:text-sm font-bold">LIMITED TIME</Badge>
-            <span className="text-base md:text-lg text-gray-600 line-through">
-              ${originalPrice.toFixed(2)}{isAnnual ? '/year' : '/month'}
-            </span>
-            <span className="text-xl md:text-2xl font-bold text-red-600">
-              ${isAnnual ? annualPrice.toFixed(2) : monthlyPrice.toFixed(2)}{isAnnual ? '/year' : '/month'}
-            </span>
-            <span className="text-red-600 font-semibold text-sm md:text-base">(40% OFF)</span>
+            {currencyLoading ? (
+              <span className="text-xl md:text-2xl font-bold text-red-600">Loading...</span>
+            ) : (
+              <>
+                <span className="text-base md:text-lg text-gray-600 line-through">
+                  {convertPrice(originalPrice)}{isAnnual ? '/year' : '/month'}
+                </span>
+                <span className="text-xl md:text-2xl font-bold text-red-600">
+                  {convertPrice(isAnnual ? annualPrice : monthlyPrice)}{isAnnual ? '/year' : '/month'}
+                </span>
+                <span className="text-red-600 font-semibold text-sm md:text-base">(40% OFF)</span>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -169,6 +177,9 @@ const Pricing = () => {
                   <CardDescription className="text-base md:text-lg">
                     Perfect for getting started with baby tracking
                   </CardDescription>
+                  {!isUSD && !currencyLoading && (
+                    <p className="text-xs text-muted-foreground">Billing in USD</p>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 md:space-y-6">
@@ -209,26 +220,35 @@ const Pricing = () => {
                 
                 <div className="space-y-2">
                   {/* Pricing with old price crossed out */}
-                  <div className="flex items-center justify-center space-x-2 md:space-x-3">
-                    <span className="text-lg md:text-xl text-gray-500 line-through font-medium">
-                      ${isAnnual ? (originalPrice * 12).toFixed(2) : originalPrice.toFixed(2)}
-                    </span>
-                    <div className="flex items-center space-x-1">
-                      <span className="text-3xl md:text-4xl font-bold text-gray-900">
-                        ${isAnnual ? annualPrice.toFixed(2) : monthlyPrice.toFixed(2)}
-                      </span>
-                      <span className="text-gray-600 text-sm md:text-base">
-                        {isAnnual ? '/year' : '/month'}
-                      </span>
-                    </div>
-                  </div>
-                  {isAnnual ? (
-                    <div className="space-y-1">
-                      <p className="text-green-600 text-xs md:text-sm font-medium">Save ${annualSavings} per year!</p>
-                      <p className="text-gray-600 text-xs">That's only ${(annualPrice / 12).toFixed(2)}/month</p>
-                    </div>
+                  {currencyLoading ? (
+                    <div className="text-3xl md:text-4xl font-bold text-gray-900">Loading...</div>
                   ) : (
-                    <p className="text-red-600 text-xs md:text-sm font-medium">Save ${(originalPrice - monthlyPrice).toFixed(2)} per month!</p>
+                    <>
+                      <div className="flex items-center justify-center space-x-2 md:space-x-3">
+                        <span className="text-lg md:text-xl text-gray-500 line-through font-medium">
+                          {convertPrice(isAnnual ? (originalPrice * 12) : originalPrice)}
+                        </span>
+                        <div className="flex items-center space-x-1">
+                          <span className="text-3xl md:text-4xl font-bold text-gray-900">
+                            {convertPrice(isAnnual ? annualPrice : monthlyPrice)}
+                          </span>
+                          <span className="text-gray-600 text-sm md:text-base">
+                            {isAnnual ? '/year' : '/month'}
+                          </span>
+                        </div>
+                      </div>
+                      {isAnnual ? (
+                        <div className="space-y-1">
+                          <p className="text-green-600 text-xs md:text-sm font-medium">Save {convertPrice((monthlyPrice * 12) - annualPrice, false)} per year!</p>
+                          <p className="text-gray-600 text-xs">That's only {convertPrice(annualPrice / 12)}/month</p>
+                        </div>
+                      ) : (
+                        <p className="text-red-600 text-xs md:text-sm font-medium">Save {convertPrice(originalPrice - monthlyPrice, false)} per month!</p>
+                      )}
+                      {!isUSD && (
+                        <p className="text-xs text-muted-foreground">Billing in USD</p>
+                      )}
+                    </>
                   )}
                   <CardDescription className="text-base md:text-lg">
                     Complete baby tracking solution for modern families
@@ -270,12 +290,14 @@ const Pricing = () => {
                   <th className="text-center py-3 md:py-4 px-2 md:px-4 font-semibold text-gray-900 text-sm md:text-base">Basic</th>
                   <th className="text-center py-3 md:py-4 px-2 md:px-4 font-semibold text-gray-900 text-sm md:text-base">
                     Premium
-                    <div className="text-xs font-normal text-red-600 mt-1">
-                      <span className="line-through">
-                        ${isAnnual ? (originalPrice * 12).toFixed(2) : originalPrice.toFixed(2)}{isAnnual ? '/yr' : '/mo'}
-                      </span>{' '}
-                      ${isAnnual ? annualPrice.toFixed(2) : monthlyPrice.toFixed(2)}{isAnnual ? '/yr' : '/mo'}
-                    </div>
+                    {!currencyLoading && (
+                      <div className="text-xs font-normal text-red-600 mt-1">
+                        <span className="line-through">
+                          {convertPrice(isAnnual ? (originalPrice * 12) : originalPrice)}{isAnnual ? '/yr' : '/mo'}
+                        </span>{' '}
+                        {convertPrice(isAnnual ? annualPrice : monthlyPrice)}{isAnnual ? '/yr' : '/mo'}
+                      </div>
+                    )}
                   </th>
                 </tr>
               </thead>
