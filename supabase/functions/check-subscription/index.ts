@@ -87,11 +87,16 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found Stripe customer", { customerId });
 
+    // Get all subscriptions, then filter for active or trialing
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: "active",
-      limit: 1,
+      limit: 10,
     });
+
+    // Filter for active or trialing subscriptions
+    const activeSubscriptions = subscriptions.data.filter(sub => 
+      ['active', 'trialing'].includes(sub.status)
+    );
 
     let subscriptionTier = 'basic';
     let subscriptionStatus = 'active';
@@ -103,8 +108,8 @@ serve(async (req) => {
     let trialEnd = null;
     let billingCycle = 'monthly';
 
-    if (subscriptions.data.length > 0) {
-      const subscription = subscriptions.data[0];
+    if (activeSubscriptions.length > 0) {
+      const subscription = activeSubscriptions[0];
       
       // Determine subscription tier based on pricing interval
       const priceId = subscription.items.data[0].price.id;
