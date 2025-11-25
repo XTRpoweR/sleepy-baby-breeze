@@ -19,14 +19,18 @@ export const useGeoCurrency = () => {
         const cachedTimestamp = localStorage.getItem('user-country-timestamp');
         const now = Date.now();
         
-        // Cache for 24 hours
-        if (cachedCountry && cachedTimestamp && (now - parseInt(cachedTimestamp)) < 86400000) {
+        // Cache for 5 minutes (for testing - change to 86400000 for 24 hours in production)
+        const cacheTime = 300000; // 5 minutes
+        if (cachedCountry && cachedTimestamp && (now - parseInt(cachedTimestamp)) < cacheTime) {
+          console.log('[Currency] Using cached country:', cachedCountry);
           const currencyCode = countryToCurrency[cachedCountry] || 'USD';
           setCurrency(currencies[currencyCode]);
           setCountryCode(cachedCountry);
           setLoading(false);
           return;
         }
+        
+        console.log('[Currency] Fetching geolocation from ipapi.co...');
 
         // Fetch geolocation data
         const response = await fetch('https://ipapi.co/json/', {
@@ -42,15 +46,18 @@ export const useGeoCurrency = () => {
         const data: GeolocationResponse = await response.json();
         const detectedCountry = data.country_code || 'US';
         
+        console.log('[Currency] Detected country:', detectedCountry, 'Raw data:', data);
+        
         // Cache the result
         localStorage.setItem('user-country', detectedCountry);
         localStorage.setItem('user-country-timestamp', now.toString());
 
         const currencyCode = countryToCurrency[detectedCountry] || 'USD';
+        console.log('[Currency] Currency code:', currencyCode, 'Currency:', currencies[currencyCode]);
         setCurrency(currencies[currencyCode]);
         setCountryCode(detectedCountry);
       } catch (error) {
-        console.error('Failed to detect currency:', error);
+        console.error('[Currency] Failed to detect currency:', error);
         // Fallback to USD
         setCurrency(currencies.USD);
         setCountryCode('US');
