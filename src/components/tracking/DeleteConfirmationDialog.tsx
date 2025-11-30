@@ -25,12 +25,8 @@ export const DeleteConfirmationDialog = ({
   const { t } = useTranslation();
 
   return (
-    <Drawer 
-      open={open} 
-      onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}
-      modal={false}
-    >
-      <DrawerContent className="pointer-events-auto">
+    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <DrawerContent>
         <DrawerHeader className="text-center">
           <DrawerTitle className="text-destructive">
             {t('common.delete')}
