@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 
 interface DeleteConfirmationDialogProps {
@@ -25,25 +25,30 @@ export const DeleteConfirmationDialog = ({
   const { t } = useTranslation();
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('common.delete')}</DialogTitle>
-          <DialogDescription>{t('common.confirm')}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isDeleting}>
+    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <DrawerContent>
+        <DrawerHeader className="text-center">
+          <DrawerTitle className="text-destructive">
+            {t('common.delete')}
+          </DrawerTitle>
+          <DrawerDescription>
+            {t('common.confirm')}
+          </DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter className="flex-row justify-center gap-3 pb-6">
+          <Button variant="outline" onClick={onClose} disabled={isDeleting} className="flex-1">
             {t('common.cancel')}
           </Button>
           <Button
             variant="destructive"
             onClick={onConfirm}
             disabled={isDeleting}
+            className="flex-1"
           >
             {isDeleting ? t('common.loading') : t('common.delete')}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };
