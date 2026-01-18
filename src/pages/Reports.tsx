@@ -52,7 +52,7 @@ const Reports = () => {
   const currentDateRange = getDateRange(selectedDateRange);
 
   return (
-    <div className="min-h-screen bg-soft gradient-dynamic-slow">
+    <div className="min-h-screen bg-soft gradient-dynamic-slow overflow-x-hidden">
       <UnifiedHeader />
 
       {/* Main Content */}
