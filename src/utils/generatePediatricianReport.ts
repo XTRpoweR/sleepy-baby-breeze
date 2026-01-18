@@ -9,13 +9,28 @@ import html2canvas from "html2canvas";
  */
 export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
   const canvas = await html2canvas(nodeRef, {
-    scale: 2,
+    scale: 1.5, // Reduced scale to fit content better on single page
     backgroundColor: "#fff",
     useCORS: true,
     logging: false,
+    windowWidth: 850,
+    width: 850,
     windowHeight: nodeRef.scrollHeight,
     height: nodeRef.scrollHeight,
-    onclone: (clonedDoc) => {
+    onclone: (clonedDoc, clonedElement) => {
+      // Fix all truncated text in the cloned document
+      const allElements = clonedElement.querySelectorAll('*');
+      allElements.forEach((el) => {
+        const element = el as HTMLElement;
+        if (element.style) {
+          element.style.overflow = 'visible';
+          element.style.textOverflow = 'clip';
+          element.style.whiteSpace = 'normal';
+        }
+        // Remove truncate class
+        element.classList.remove('truncate');
+      });
+
       const clonedNode = clonedDoc.querySelector('body');
       if (clonedNode) {
         const style = clonedDoc.createElement('style');
@@ -23,6 +38,13 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
           * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+          }
+          .truncate {
+            overflow: visible !important;
+            text-overflow: clip !important;
+            white-space: normal !important;
           }
           table, .card, .border, [class*="rounded"] {
             page-break-inside: avoid !important;

@@ -36,18 +36,35 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
     fontFamily: 'Arial, sans-serif',
     minHeight: 'auto',
     pageBreakInside: 'avoid',
+    width: '800px',
+    maxWidth: '800px',
   };
 
   const sectionStyles: React.CSSProperties = {
     pageBreakInside: 'avoid',
     breakInside: 'avoid',
-    marginBottom: '24px',
+    marginBottom: '16px',
   };
 
+  // CSS to prevent text truncation in PDF export
+  const pdfTextStyles = `
+    .pdf-report * {
+      overflow: visible !important;
+      text-overflow: clip !important;
+      white-space: normal !important;
+    }
+    .pdf-report .truncate {
+      overflow: visible !important;
+      text-overflow: clip !important;
+      white-space: normal !important;
+    }
+  `;
+
   return (
-    <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
+    <div style={{ position: "fixed", left: -9999, top: -9999, width: "850px", pointerEvents: "none", opacity: 0 }}>
+      <style>{pdfTextStyles}</style>
       {/* Comprehensive Health Report */}
-      <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles} data-pdf-fit="single">
+      <div ref={comprehensiveRef} className="bg-white p-6 pdf-report" style={reportStyles} data-pdf-fit="single">
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Comprehensive Health Report"
@@ -86,7 +103,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       </div>
 
       {/* Sleep Pattern Analysis */}
-      <div ref={sleepRef} className="bg-white p-8" style={reportStyles} data-pdf-fit="single">
+      <div ref={sleepRef} className="bg-white p-6 pdf-report" style={reportStyles} data-pdf-fit="single">
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Sleep Pattern Analysis"
@@ -117,7 +134,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       </div>
 
       {/* Growth & Development Report */}
-      <div ref={growthRef} className="bg-white p-8" style={reportStyles} data-pdf-fit="single">
+      <div ref={growthRef} className="bg-white p-6 pdf-report" style={reportStyles} data-pdf-fit="single">
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Growth & Development Report"
