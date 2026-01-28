@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from '@/components/ui/drawer';
 import { Moon, Sun, Clock, Play, Square, Sparkles, TrendingUp } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -142,66 +143,128 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Sleep Session Summary Dialog */}
-      <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Moon className="h-6 w-6 text-primary" />
-              Sleep Session Complete
-            </DialogTitle>
-            <DialogDescription>
-              Great job tracking your baby's sleep!
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-2">
-            {/* Duration Display */}
-            <div className="text-center space-y-1">
-              <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
-              <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                {sessionDuration.hours}h {sessionDuration.minutes}m
+      {/* Sleep Session Summary - Drawer on mobile, Dialog on desktop */}
+      {isMobile ? (
+        <Drawer open={showSummary} onOpenChange={setShowSummary}>
+          <DrawerContent>
+            <DrawerHeader className="text-center">
+              <DrawerTitle className="flex items-center justify-center gap-2 text-2xl">
+                <Moon className="h-6 w-6 text-primary" />
+                Sleep Session Complete
+              </DrawerTitle>
+              <DrawerDescription>
+                Great job tracking your baby's sleep!
+              </DrawerDescription>
+            </DrawerHeader>
+            
+            <div className="space-y-4 px-4 py-2">
+              {/* Duration Display */}
+              <div className="text-center space-y-1">
+                <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                  {sessionDuration.hours}h {sessionDuration.minutes}m
+                </div>
+              </div>
+              
+              {/* Sleep Quality Indicator */}
+              <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-3 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <span>Sleep Insights</span>
+                </div>
+                <div className="space-y-1.5 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    <span>Session successfully recorded</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-blue-500" />
+                    <span>View detailed analytics in Reports</span>
+                  </div>
+                </div>
               </div>
             </div>
             
-            {/* Sleep Quality Indicator */}
-            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-3 space-y-2">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <span>Sleep Insights</span>
-              </div>
-              <div className="space-y-1.5 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-green-500" />
-                  <span>Session successfully recorded</span>
+            {/* Action Buttons - Fixed at bottom with safe area */}
+            <DrawerFooter className="flex-row gap-3 pb-6">
+              <Button 
+                onClick={handleCancelSession}
+                variant="outline" 
+                className="flex-1"
+              >
+                Cancel Session
+              </Button>
+              <Button 
+                onClick={handleSaveSession}
+                disabled={isSubmitting}
+                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
+              >
+                {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
+              </Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Dialog open={showSummary} onOpenChange={setShowSummary}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-2xl">
+                <Moon className="h-6 w-6 text-primary" />
+                Sleep Session Complete
+              </DialogTitle>
+              <DialogDescription>
+                Great job tracking your baby's sleep!
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-2">
+              {/* Duration Display */}
+              <div className="text-center space-y-1">
+                <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
+                <div className="text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                  {sessionDuration.hours}h {sessionDuration.minutes}m
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-blue-500" />
-                  <span>View detailed analytics in Reports</span>
+              </div>
+              
+              {/* Sleep Quality Indicator */}
+              <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-3 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <span>Sleep Insights</span>
+                </div>
+                <div className="space-y-1.5 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    <span>Session successfully recorded</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-blue-500" />
+                    <span>View detailed analytics in Reports</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          {/* Action Buttons - Fixed at bottom */}
-          <DialogFooter className="flex-row gap-3 sm:gap-3">
-            <Button 
-              onClick={handleCancelSession}
-              variant="outline" 
-              className="flex-1"
-            >
-              Cancel Session
-            </Button>
-            <Button 
-              onClick={handleSaveSession}
-              disabled={isSubmitting}
-              className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
-            >
-              {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            
+            {/* Action Buttons */}
+            <DialogFooter className="flex-row gap-3 sm:gap-3">
+              <Button 
+                onClick={handleCancelSession}
+                variant="outline" 
+                className="flex-1"
+              >
+                Cancel Session
+              </Button>
+              <Button 
+                onClick={handleSaveSession}
+                disabled={isSubmitting}
+                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
+              >
+                {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Quick Start/Stop */}
       <Card className="rounded-3xl shadow-xl bg-gradient-to-br from-primary/5 via-card to-primary/10 border-2 hover:shadow-2xl transition-all duration-300">
