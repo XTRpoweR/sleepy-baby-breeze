@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Moon, Sun, Clock, Play, Square, Sparkles, TrendingUp } from 'lucide-react';
 import { useActivityTracker } from '@/hooks/useActivityTracker';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -155,22 +155,22 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-6 py-4">
+          <div className="space-y-4 py-2">
             {/* Duration Display */}
-            <div className="text-center space-y-2">
+            <div className="text-center space-y-1">
               <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
-              <div className="text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                 {sessionDuration.hours}h {sessionDuration.minutes}m
               </div>
             </div>
             
             {/* Sleep Quality Indicator */}
-            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-4 space-y-3">
+            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-3 space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span>Sleep Insights</span>
               </div>
-              <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="space-y-1.5 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-green-500" />
                   <span>Session successfully recorded</span>
@@ -181,25 +181,25 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
                 </div>
               </div>
             </div>
-            
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <Button 
-                onClick={handleCancelSession}
-                variant="outline" 
-                className="flex-1"
-              >
-                Cancel Session
-              </Button>
-              <Button 
-                onClick={handleSaveSession}
-                disabled={isSubmitting}
-                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
-              >
-                {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
-              </Button>
-            </div>
           </div>
+          
+          {/* Action Buttons - Fixed at bottom */}
+          <DialogFooter className="flex-row gap-3 sm:gap-3">
+            <Button 
+              onClick={handleCancelSession}
+              variant="outline" 
+              className="flex-1"
+            >
+              Cancel Session
+            </Button>
+            <Button 
+              onClick={handleSaveSession}
+              disabled={isSubmitting}
+              className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
+            >
+              {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
