@@ -146,7 +146,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
       {/* Sleep Session Summary - Drawer on mobile, Dialog on desktop */}
       {/* Mobile: Use Drawer (bottom sheet) for reliable iOS positioning */}
       <Drawer open={showSummary && isMobile} onOpenChange={setShowSummary}>
-        <DrawerContent>
+        <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="text-center">
             <DrawerTitle className="flex items-center justify-center gap-2 text-2xl">
               <Moon className="h-6 w-6 text-primary" />
@@ -156,8 +156,8 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
               Great job tracking your baby's sleep!
             </DrawerDescription>
           </DrawerHeader>
-          
-          <div className="space-y-4 px-4 py-2">
+
+          <div className="flex-1 overflow-y-auto px-4 py-2">
             {/* Duration Display */}
             <div className="text-center space-y-1">
               <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
@@ -167,7 +167,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
             </div>
             
             {/* Sleep Quality Indicator */}
-            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-3 space-y-2">
+            <div className="mt-4 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-3 space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span>Sleep Insights</span>
@@ -186,7 +186,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
           </div>
           
           {/* Action Buttons - Fixed at bottom with safe area */}
-          <DrawerFooter className="flex-row gap-3 pb-6">
+          <DrawerFooter className="flex-row gap-3 border-t bg-background pb-safe">
             <Button 
               onClick={handleCancelSession}
               variant="outline" 
