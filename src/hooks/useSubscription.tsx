@@ -25,32 +25,10 @@ interface SubscriptionContextType {
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
-// Default fallback values for when context is not available (e.g., during HMR)
-const defaultSubscriptionContext: SubscriptionContextType = {
-  subscriptionTier: 'basic',
-  status: 'active',
-  currentPeriodEnd: null,
-  loading: true,
-  upgrading: false,
-  upgradingMonthly: false,
-  upgradingAnnual: false,
-  checkSubscription: async () => {},
-  createCheckout: async () => {},
-  openCustomerPortal: async () => {},
-  isPremium: false,
-  isPremiumAnnual: false,
-  isBasic: true,
-  isTrial: false,
-  trialEnd: null,
-  trialDaysLeft: null,
-};
-
 export const useSubscription = () => {
   const context = useContext(SubscriptionContext);
-  // Return default values instead of throwing during HMR or when provider is temporarily unavailable
   if (context === undefined) {
-    console.warn('useSubscription called outside of SubscriptionProvider, using defaults');
-    return defaultSubscriptionContext;
+    throw new Error('useSubscription must be used within a SubscriptionProvider');
   }
   return context;
 };

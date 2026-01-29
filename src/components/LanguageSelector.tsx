@@ -15,7 +15,7 @@ const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸', comingSoon: false },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪', comingSoon: false },
   { code: 'sv', name: 'Svenska', flag: '🇸🇪', comingSoon: false },
-  { code: 'es', name: 'Español', flag: '🇪🇸', comingSoon: false },
+  { code: 'es', name: 'Español', flag: '🇪🇸', comingSoon: true },
   { code: 'fr', name: 'Français', flag: '🇫🇷', comingSoon: true },
   { code: 'it', name: 'Italiano', flag: '🇮🇹', comingSoon: true },
   { code: 'el', name: 'Ελληνικά', flag: '🇬🇷', comingSoon: true },

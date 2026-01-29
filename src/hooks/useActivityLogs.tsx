@@ -49,14 +49,11 @@ export const useActivityLogs = (babyId: string) => {
 
       if (error) {
         console.error('Error fetching activity logs:', error);
-        // Only show error toast if it's not a network/abort error (which happens during PDF generation)
-        if (!error.message?.includes('Load failed') && !error.message?.includes('AbortError')) {
-          toast({
-            title: "Error",
-            description: `Failed to load activity logs: ${error.message}`,
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Error",
+          description: `Failed to load activity logs: ${error.message}`,
+          variant: "destructive",
+        });
         setLogs([]);
       } else {
         console.log('Successfully fetched activity logs:', data?.length || 0, 'records');
@@ -67,16 +64,13 @@ export const useActivityLogs = (babyId: string) => {
         }));
         setLogs(typedData);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Unexpected error fetching activity logs:', error);
-      // Only show error toast if it's not a network/abort error
-      if (!error?.message?.includes('Load failed') && !error?.message?.includes('AbortError') && !error?.message?.includes('TypeError')) {
-        toast({
-          title: "Error",
-          description: "Unexpected error loading activity logs",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Unexpected error loading activity logs",
+        variant: "destructive",
+      });
       setLogs([]);
     } finally {
       setLoading(false);

@@ -87,12 +87,12 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
     return (
       <Card className="animate-pulse">
         <CardHeader>
-          <div className="h-6 bg-muted rounded w-32"></div>
+          <div className="h-6 bg-gray-200 rounded w-32"></div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 bg-muted rounded"></div>
+              <div key={i} className="h-16 bg-gray-200 rounded"></div>
             ))}
           </div>
         </CardContent>
@@ -129,39 +129,37 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
 
   return (
     <div className="my-6">
-      <h2 className="text-xl font-bold text-foreground mb-4">Period Activity Summary</h2>
-      <Card>
-        <CardContent className="p-3 sm:p-5">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-            {summaryItems.map((item, index) => {
-              const IconComponent = item.icon;
-              return (
-                <div key={index} className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg min-w-0">
-                  <IconComponent className={`h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0 ${item.color}`} />
-                  <div className="text-center sm:text-left min-w-0">
-                    <p className="text-lg sm:text-2xl font-bold text-foreground">{item.value}</p>
-                    <p className="text-xs text-muted-foreground truncate">{item.label}</p>
-                  </div>
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Period Activity Summary</h2>
+      <div className="border border-gray-200 rounded-lg p-5 bg-white">
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          {summaryItems.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                <IconComponent className={`h-8 w-8 ${item.color}`} />
+                <div>
+                  <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+                  <p className="text-xs text-gray-600">{item.label}</p>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="p-3 sm:p-4 bg-primary/10 rounded-lg border border-primary/20">
-              <h4 className="font-semibold text-foreground mb-2 text-sm">Average Sleep Duration</h4>
-              <p className="text-xl sm:text-2xl font-bold text-primary">{periodSummary.avgSleepDuration} min</p>
-              <p className="text-xs text-muted-foreground">Per sleep session</p>
-            </div>
-            
-            <div className="p-3 sm:p-4 bg-accent/30 rounded-lg border border-accent/50">
-              <h4 className="font-semibold text-foreground mb-2 text-sm">Most Active Day</h4>
-              <p className="text-xl sm:text-2xl font-bold text-accent-foreground">{periodSummary.mostActiveDay}</p>
-              <p className="text-xs text-muted-foreground">In selected period</p>
-            </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Average Sleep Duration</h4>
+            <p className="text-2xl font-bold text-blue-700">{periodSummary.avgSleepDuration} min</p>
+            <p className="text-xs text-gray-600">Per sleep session</p>
           </div>
-        </CardContent>
-      </Card>
+          
+          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Most Active Day</h4>
+            <p className="text-2xl font-bold text-green-700">{periodSummary.mostActiveDay}</p>
+            <p className="text-xs text-gray-600">In selected period</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

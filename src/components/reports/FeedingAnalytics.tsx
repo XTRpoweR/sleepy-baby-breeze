@@ -97,10 +97,10 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
     return (
       <Card className="animate-pulse">
         <CardHeader>
-          <div className="h-6 bg-muted rounded w-32"></div>
+          <div className="h-6 bg-gray-200 rounded w-32"></div>
         </CardHeader>
         <CardContent>
-          <div className="h-48 sm:h-64 bg-muted rounded"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
         </CardContent>
       </Card>
     );
@@ -108,70 +108,64 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
 
   return (
     <div className="my-6">
-      <h2 className="text-xl font-bold text-foreground mb-4">Feeding Analysis</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Feeding Analysis</h2>
+      <div className="grid grid-cols-2 gap-6">
         {/* Daily Feedings */}
-        <Card>
-          <CardContent className="p-3 sm:p-5">
-            <h3 className="text-sm sm:text-base font-semibold text-foreground mb-3 sm:mb-4">
-              Daily Feeding Frequency
-            </h3>
-            <ChartContainer config={chartConfig} className="h-48 sm:h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={feedingData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: isMobile ? 9 : 11 }}
-                    tickLine={false}
-                    axisLine={{ stroke: 'hsl(var(--border))' }}
-                    interval={isMobile ? 1 : 0}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: isMobile ? 9 : 11 }}
-                    tickLine={false}
-                    axisLine={{ stroke: 'hsl(var(--border))' }}
-                    width={isMobile ? 25 : 40}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar 
-                    dataKey="feedings" 
-                    fill={chartConfig.feedings.color}
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+        <div className="border border-gray-200 rounded-lg p-5 bg-white">
+          <h3 className="text-base font-semibold text-gray-900 mb-4">
+            Daily Feeding Frequency
+          </h3>
+          <ChartContainer config={chartConfig} className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={feedingData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#e5e7eb' }}
+                />
+                <YAxis 
+                  tick={{ fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#e5e7eb' }}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar 
+                  dataKey="feedings" 
+                  fill={chartConfig.feedings.color}
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
 
         {/* Feeding Types */}
-        <Card>
-          <CardContent className="p-3 sm:p-5">
-            <h3 className="text-sm sm:text-base font-semibold text-foreground mb-3 sm:mb-4">
-              Feeding Types Distribution
-            </h3>
-            <ChartContainer config={{}} className="h-48 sm:h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={feedingTypes}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={isMobile ? 60 : 90}
-                    dataKey="count"
-                    label={isMobile ? false : ({ type, count }) => `${type}: ${count}`}
-                    labelLine={!isMobile}
-                  >
-                    {feedingTypes.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+        <div className="border border-gray-200 rounded-lg p-5 bg-white">
+          <h3 className="text-base font-semibold text-gray-900 mb-4">
+            Feeding Types Distribution
+          </h3>
+          <ChartContainer config={{}} className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={feedingTypes}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={90}
+                  dataKey="count"
+                  label={({ type, count }) => `${type}: ${count}`}
+                  labelLine={true}
+                >
+                  {feedingTypes.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
       </div>
     </div>
   );
