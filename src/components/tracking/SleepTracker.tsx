@@ -143,8 +143,13 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Sleep Session Summary Drawer - True overlay with iOS safe area */}
-      <Drawer open={showSummary} onOpenChange={setShowSummary}>
-        <DrawerContent className="z-[100] pb-[env(safe-area-inset-bottom)]">
+      <Drawer 
+        open={showSummary} 
+        onOpenChange={setShowSummary}
+        modal={true}
+        dismissible={false}
+      >
+        <DrawerContent>
           <div className="mx-auto w-full max-w-md">
             <DrawerHeader className="text-center">
               <DrawerTitle className="flex items-center justify-center gap-2 text-2xl">
