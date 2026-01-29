@@ -144,63 +144,61 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
     <div className="space-y-4 sm:space-y-6">
       {/* Sleep Session Summary Dialog - Full screen on mobile */}
       <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent className={`${isMobile ? 'fixed inset-0 w-full h-full max-w-none max-h-none rounded-none translate-x-0 translate-y-0 top-0 left-0 data-[state=open]:slide-in-from-bottom-0' : 'sm:max-w-md'}`}>
-          <div className={`${isMobile ? 'flex flex-col h-full' : ''}`}>
-            <DialogHeader className={isMobile ? 'pt-4' : ''}>
-              <DialogTitle className="flex items-center gap-2 text-2xl">
-                <Moon className="h-6 w-6 text-primary" />
-                Sleep Session Complete
-              </DialogTitle>
-              <DialogDescription>
-                Great job tracking your baby's sleep!
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className={`space-y-6 py-4 ${isMobile ? 'flex-1 overflow-auto' : ''}`}>
-              {/* Duration Display */}
-              <div className="text-center space-y-2">
-                <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
-                <div className="text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                  {sessionDuration.hours}h {sessionDuration.minutes}m
-                </div>
-              </div>
-              
-              {/* Sleep Quality Indicator */}
-              <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-4 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <span>Sleep Insights</span>
-                </div>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-green-500" />
-                    <span>Session successfully recorded</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-blue-500" />
-                    <span>View detailed analytics in Reports</span>
-                  </div>
-                </div>
+        <DialogContent fullScreenMobile>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Moon className="h-6 w-6 text-primary" />
+              Sleep Session Complete
+            </DialogTitle>
+            <DialogDescription>
+              Great job tracking your baby's sleep!
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex-1 space-y-6 py-4 overflow-auto">
+            {/* Duration Display */}
+            <div className="text-center space-y-2">
+              <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
+              <div className="text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                {sessionDuration.hours}h {sessionDuration.minutes}m
               </div>
             </div>
             
-            {/* Action Buttons - Fixed at bottom on mobile */}
-            <div className={`flex gap-3 ${isMobile ? 'pb-safe pt-4 border-t mt-auto' : ''}`}>
-              <Button 
-                onClick={handleCancelSession}
-                variant="outline" 
-                className="flex-1"
-              >
-                Cancel Session
-              </Button>
-              <Button 
-                onClick={handleSaveSession}
-                disabled={isSubmitting}
-                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
-              >
-                {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
-              </Button>
+            {/* Sleep Quality Indicator */}
+            <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span>Sleep Insights</span>
+              </div>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-500" />
+                  <span>Session successfully recorded</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-blue-500" />
+                  <span>View detailed analytics in Reports</span>
+                </div>
+              </div>
             </div>
+          </div>
+          
+          {/* Action Buttons - Always visible at bottom */}
+          <div className="flex gap-3 pt-4 mt-auto border-t sm:border-t-0">
+            <Button 
+              onClick={handleCancelSession}
+              variant="outline" 
+              className="flex-1"
+            >
+              Cancel Session
+            </Button>
+            <Button 
+              onClick={handleSaveSession}
+              disabled={isSubmitting}
+              className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
+            >
+              {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
