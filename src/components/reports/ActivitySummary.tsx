@@ -131,7 +131,7 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
     <div className="my-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Period Activity Summary</h2>
       <div className="border border-gray-200 rounded-lg p-5 bg-white">
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           {summaryItems.map((item, index) => {
             const IconComponent = item.icon;
             return (
