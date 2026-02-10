@@ -147,7 +147,7 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
   
   const sortedCandidates = Array.from(candidates).sort((a, b) => a - b);
   
-  // Build pages with smart cuts
+  // Build pages by slicing the canvas into per-page chunks
   let lastCut = 0;
   let isFirstPage = true;
   
@@ -173,13 +173,21 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
       pdf.addPage();
     }
     
-    const yPosition = margin - (lastCut * ratio);
-    const imgWidth = usableWidth;
-    const imgHeight = canvas.height * ratio;
+    // Slice the canvas for this page
+    const sliceHeight = nextCut - lastCut;
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = sliceHeight;
+    const ctx = pageCanvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(canvas, 0, lastCut, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+    }
+    const pageImgData = pageCanvas.toDataURL('image/png');
     
-    // Clip to usable area with margins
-    pdf.rect(margin, margin, usableWidth, usableHeight);
-    pdf.addImage(imgData, "PNG", margin, yPosition, imgWidth, imgHeight);
+    const imgWidth = usableWidth;
+    const imgHeight = sliceHeight * ratio;
+    
+    pdf.addImage(pageImgData, 'PNG', margin, margin, imgWidth, imgHeight);
     
     lastCut = nextCut;
     isFirstPage = false;
