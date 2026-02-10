@@ -109,7 +109,7 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
   return (
     <div className="my-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Feeding Analysis</h2>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Daily Feedings */}
         <div className="border border-gray-200 rounded-lg p-5 bg-white">
           <h3 className="text-base font-semibold text-gray-900 mb-4">

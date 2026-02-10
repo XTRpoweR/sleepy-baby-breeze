@@ -35,17 +35,21 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   const reportStyles: React.CSSProperties = {
     fontFamily: 'Arial, sans-serif',
     minHeight: 'auto',
-    pageBreakInside: 'avoid',
+    width: '850px',
+    maxWidth: '850px',
+    overflow: 'hidden',
   };
 
   const sectionStyles: React.CSSProperties = {
     pageBreakInside: 'avoid',
     breakInside: 'avoid',
     marginBottom: '24px',
+    maxWidth: '100%',
+    overflow: 'hidden',
   };
 
   return (
-    <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
+    <div style={{ position: "fixed", left: -9999, top: -9999, width: "850px", maxWidth: "850px", pointerEvents: "none", opacity: 0 }}>
       {/* Comprehensive Health Report */}
       <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
