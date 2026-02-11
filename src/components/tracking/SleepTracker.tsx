@@ -142,9 +142,9 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Sleep Session Summary Dialog - Full screen on mobile */}
+      {/* Sleep Session Summary Dialog */}
       <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent fullScreenMobile>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
               <Moon className="h-6 w-6 text-primary" />
@@ -155,7 +155,7 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex-1 space-y-6 py-4 overflow-auto">
+          <div className="space-y-6 py-4">
             {/* Duration Display */}
             <div className="text-center space-y-2">
               <div className="text-sm text-muted-foreground font-medium">Total Sleep Duration</div>
@@ -181,24 +181,24 @@ export const SleepTracker = ({ babyId, onActivityAdded }: SleepTrackerProps) => 
                 </div>
               </div>
             </div>
-          </div>
-          
-          {/* Action Buttons - Always visible at bottom */}
-          <div className="flex gap-3 pt-4 mt-auto border-t sm:border-t-0">
-            <Button 
-              onClick={handleCancelSession}
-              variant="outline" 
-              className="flex-1"
-            >
-              Cancel Session
-            </Button>
-            <Button 
-              onClick={handleSaveSession}
-              disabled={isSubmitting}
-              className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
-            >
-              {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
-            </Button>
+            
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <Button 
+                onClick={handleCancelSession}
+                variant="outline" 
+                className="flex-1"
+              >
+                Cancel Session
+              </Button>
+              <Button 
+                onClick={handleSaveSession}
+                disabled={isSubmitting}
+                className="flex-1 bg-gradient-to-r from-primary to-purple-600 hover:opacity-90"
+              >
+                {isSubmitting ? t('tracking.sleepTracker.saving') : 'Save Session'}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
