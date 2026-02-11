@@ -109,7 +109,7 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
   return (
     <div className="my-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Feeding Analysis</h2>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Daily Feedings */}
         <div className="border border-gray-200 rounded-lg p-5 bg-white">
           <h3 className="text-base font-semibold text-gray-900 mb-4">
@@ -145,17 +145,17 @@ export const FeedingAnalytics = ({ babyId, dateRange }: FeedingAnalyticsProps) =
           <h3 className="text-base font-semibold text-gray-900 mb-4">
             Feeding Types Distribution
           </h3>
-          <ChartContainer config={{}} className="h-64">
+          <ChartContainer config={{}} className="h-48 sm:h-64 overflow-hidden">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={feedingTypes}
                   cx="50%"
                   cy="50%"
-                  outerRadius={90}
+                  outerRadius={isMobile ? 60 : 90}
                   dataKey="count"
-                  label={({ type, count }) => `${type}: ${count}`}
-                  labelLine={true}
+                  label={isMobile ? false : ({ type, count }) => `${type}: ${count}`}
+                  labelLine={!isMobile}
                 >
                   {feedingTypes.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />

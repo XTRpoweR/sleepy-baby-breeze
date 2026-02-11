@@ -131,22 +131,22 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
     <div className="my-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">Period Activity Summary</h2>
       <div className="border border-gray-200 rounded-lg p-5 bg-white">
-        <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
           {summaryItems.map((item, index) => {
             const IconComponent = item.icon;
             return (
-              <div key={index} className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                <IconComponent className={`h-8 w-8 ${item.color}`} />
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">{item.value}</p>
-                  <p className="text-xs text-gray-600">{item.label}</p>
+              <div key={index} className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-gray-50 rounded-lg min-w-0">
+                <IconComponent className={`h-6 w-6 sm:h-8 sm:w-8 shrink-0 ${item.color}`} />
+                <div className="min-w-0">
+                  <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{item.value}</p>
+                  <p className="text-[10px] sm:text-xs text-gray-600 truncate">{item.label}</p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
             <h4 className="font-semibold text-gray-900 mb-2 text-sm">Average Sleep Duration</h4>
             <p className="text-2xl font-bold text-blue-700">{periodSummary.avgSleepDuration} min</p>
