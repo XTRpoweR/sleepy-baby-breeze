@@ -92,6 +92,20 @@ export const DetailedSleepAnalytics = ({ babyId, dateRange }: DetailedSleepAnaly
   useEffect(() => {
     if (logs.length > 0) {
       processAnalytics();
+    } else {
+      setStats({
+        totalSessions: 0,
+        liveSessions: 0,
+        manualLogs: 0,
+        totalSleepHours: 0,
+        napSessions: 0,
+        nightSessions: 0,
+        avgSessionLength: 0,
+        longestSession: null,
+        shortestSession: null,
+      });
+      setDailyData([]);
+      setPieData([]);
     }
   }, [logs, dateRange]);
 
