@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useFilteredActivityLogs } from '@/hooks/useFilteredActivityLogs';
 import { 
   Moon, 
@@ -64,16 +64,13 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[...Array(4)].map((_, i) => (
           <Card key={i} className="animate-pulse">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="h-3 sm:h-4 bg-gray-200 rounded w-16 sm:w-20"></div>
-              <div className="h-3 w-3 sm:h-4 sm:w-4 bg-gray-200 rounded"></div>
-            </CardHeader>
-            <CardContent>
-              <div className="h-6 sm:h-8 bg-gray-200 rounded w-12 sm:w-16 mb-1"></div>
-              <div className="h-2 sm:h-3 bg-gray-200 rounded w-20 sm:w-24"></div>
+            <CardContent className="p-3 sm:p-4">
+              <div className="h-10 w-10 bg-muted rounded-xl mx-auto mb-3"></div>
+              <div className="h-6 bg-muted rounded w-16 mx-auto mb-1"></div>
+              <div className="h-3 bg-muted rounded w-20 mx-auto"></div>
             </CardContent>
           </Card>
         ))}
@@ -87,55 +84,69 @@ export const ReportsOverview = ({ babyId, dateRange }: ReportsOverviewProps) => 
       value: `${stats.totalSleep}h`,
       description: t('components.reports.hoursOfSleep'),
       icon: Moon,
-      color: "text-blue-600"
+      color: "text-indigo-600",
+      bgFrom: "from-indigo-50",
+      bgTo: "to-indigo-100",
+      iconBg: "from-indigo-200 to-indigo-300"
     },
     {
       title: t('components.reports.avgSleepDuration'),
       value: `${stats.avgSleepDuration}m`,
       description: t('components.reports.perSleepSession'),
       icon: Clock,
-      color: "text-green-600"
+      color: "text-green-600",
+      bgFrom: "from-green-50",
+      bgTo: "to-green-100",
+      iconBg: "from-green-200 to-green-300"
     },
     {
       title: t('components.reports.totalFeedings'),
       value: stats.totalFeedings.toString(),
       description: t('components.reports.feedingSessions'),
       icon: Baby,
-      color: "text-purple-600"
+      color: "text-amber-600",
+      bgFrom: "from-amber-50",
+      bgTo: "to-amber-100",
+      iconBg: "from-amber-200 to-amber-300"
     },
     {
       title: t('components.reports.totalActivities'),
       value: stats.totalActivities.toString(),
       description: t('components.reports.allActivities'),
       icon: TrendingUp,
-      color: "text-orange-600"
+      color: "text-rose-600",
+      bgFrom: "from-rose-50",
+      bgTo: "to-rose-100",
+      iconBg: "from-rose-200 to-rose-300"
     }
   ];
 
   return (
-    <div>
-      <h2 className="text-xl font-bold text-gray-900 mb-4 mt-6">Summary Statistics</h2>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-4">
+      <h2 className="text-lg sm:text-xl font-bold text-foreground">Summary Statistics</h2>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {overviewCards.map((card, index) => {
           const IconComponent = card.icon;
           return (
-            <div 
+            <Card 
               key={index} 
-              className="border border-gray-200 rounded-lg p-4 bg-white"
+              className={`border-0 shadow-md bg-gradient-to-br ${card.bgFrom} ${card.bgTo}`}
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-semibold text-gray-700">
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className={`bg-gradient-to-br ${card.iconBg} rounded-xl w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto mb-2 sm:mb-3`}>
+                  <IconComponent className={`h-5 w-5 sm:h-6 sm:w-6 ${card.color}`} />
+                </div>
+                <div className="text-xl sm:text-2xl font-bold text-foreground mb-0.5">
+                  {card.value}
+                </div>
+                <p className="text-[10px] sm:text-xs font-medium text-muted-foreground">
                   {card.title}
-                </span>
-                <IconComponent className={`h-5 w-5 ${card.color}`} />
-              </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">
-                {card.value}
-              </div>
-              <p className="text-xs text-gray-600">
-                {card.description}
-              </p>
-            </div>
+                </p>
+                <p className="text-[9px] sm:text-[10px] text-muted-foreground/70 mt-0.5">
+                  {card.description}
+                </p>
+              </CardContent>
+            </Card>
           );
         })}
       </div>

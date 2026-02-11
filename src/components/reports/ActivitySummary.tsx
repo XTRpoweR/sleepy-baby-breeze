@@ -6,7 +6,9 @@ import {
   Moon, 
   Baby, 
   Heart, 
-  Clock 
+  Clock,
+  TrendingUp,
+  Calendar
 } from 'lucide-react';
 import { DateRange } from '@/utils/dateRangeUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -53,7 +55,6 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
   }, [logs, dateRange]);
 
   const calculatePeriodSummary = () => {
-    // Calculate totals for the selected period
     const sleepLogs = logs.filter(log => log.activity_type === 'sleep');
     const feedingLogs = logs.filter(log => log.activity_type === 'feeding');
     const diaperLogs = logs.filter(log => log.activity_type === 'diaper');
@@ -61,7 +62,6 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
     const totalSleepMinutes = sleepLogs.reduce((total, log) => total + (log.duration_minutes || 0), 0);
     const avgSleepDuration = sleepLogs.length > 0 ? totalSleepMinutes / sleepLogs.length : 0;
 
-    // Find most active day
     const dailyActivity: Record<string, number> = {};
     logs.forEach(log => {
       const day = format(new Date(log.start_time), 'EEEE');
@@ -87,12 +87,12 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
     return (
       <Card className="animate-pulse">
         <CardHeader>
-          <div className="h-6 bg-gray-200 rounded w-32"></div>
+          <div className="h-6 bg-muted rounded w-32"></div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 rounded"></div>
+              <div key={i} className="h-16 bg-muted rounded"></div>
             ))}
           </div>
         </CardContent>
@@ -105,60 +105,83 @@ export const ActivitySummary = ({ babyId, dateRange }: ActivitySummaryProps) => 
       label: 'Total Activities',
       value: periodSummary.totalActivities.toString(),
       icon: Clock,
-      color: 'text-blue-600'
+      color: 'text-blue-600',
+      bgFrom: 'from-blue-50',
+      bgTo: 'to-blue-100',
+      iconBg: 'from-blue-200 to-blue-300'
     },
     {
       label: 'Total Sleep Hours',
       value: `${periodSummary.sleepHours}h`,
       icon: Moon,
-      color: 'text-purple-600'
+      color: 'text-purple-600',
+      bgFrom: 'from-purple-50',
+      bgTo: 'to-purple-100',
+      iconBg: 'from-purple-200 to-purple-300'
     },
     {
       label: 'Feeding Sessions',
       value: periodSummary.feedingSessions.toString(),
       icon: Baby,
-      color: 'text-green-600'
+      color: 'text-green-600',
+      bgFrom: 'from-green-50',
+      bgTo: 'to-green-100',
+      iconBg: 'from-green-200 to-green-300'
     },
     {
       label: 'Diaper Changes',
       value: periodSummary.diaperChanges.toString(),
       icon: Heart,
-      color: 'text-orange-600'
+      color: 'text-orange-600',
+      bgFrom: 'from-orange-50',
+      bgTo: 'to-orange-100',
+      iconBg: 'from-orange-200 to-orange-300'
     }
   ];
 
   return (
-    <div className="my-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Period Activity Summary</h2>
-      <div className="border border-gray-200 rounded-lg p-5 bg-white">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
-          {summaryItems.map((item, index) => {
-            const IconComponent = item.icon;
-            return (
-              <div key={index} className="flex items-center space-x-2 sm:space-x-3 p-3 sm:p-4 bg-gray-50 rounded-lg min-w-0">
-                <IconComponent className={`h-6 w-6 sm:h-8 sm:w-8 shrink-0 ${item.color}`} />
-                <div className="min-w-0">
-                  <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{item.value}</p>
-                  <p className="text-[10px] sm:text-xs text-gray-600 truncate">{item.label}</p>
+    <div className="space-y-4">
+      <h2 className="text-lg sm:text-xl font-bold text-foreground">Period Activity Summary</h2>
+      
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {summaryItems.map((item, index) => {
+          const IconComponent = item.icon;
+          return (
+            <Card key={index} className={`border-0 shadow-md bg-gradient-to-br ${item.bgFrom} ${item.bgTo}`}>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className={`bg-gradient-to-br ${item.iconBg} rounded-xl w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto mb-2 sm:mb-3`}>
+                  <IconComponent className={`h-5 w-5 sm:h-6 sm:w-6 ${item.color}`} />
                 </div>
-              </div>
-            );
-          })}
-        </div>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">{item.value}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{item.label}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Average Sleep Duration</h4>
-            <p className="text-2xl font-bold text-blue-700">{periodSummary.avgSleepDuration} min</p>
-            <p className="text-xs text-gray-600">Per sleep session</p>
-          </div>
-          
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Most Active Day</h4>
-            <p className="text-2xl font-bold text-green-700">{periodSummary.mostActiveDay}</p>
-            <p className="text-xs text-gray-600">In selected period</p>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-0 shadow-md">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <TrendingUp className="h-4 w-4 text-blue-600" />
+              <h4 className="font-semibold text-foreground text-sm">Average Sleep Duration</h4>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-blue-700">{periodSummary.avgSleepDuration} min</p>
+            <p className="text-xs text-muted-foreground mt-1">Per sleep session</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-0 shadow-md">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <Calendar className="h-4 w-4 text-green-600" />
+              <h4 className="font-semibold text-foreground text-sm">Most Active Day</h4>
+            </div>
+            <p className="text-xl sm:text-2xl font-bold text-green-700">{periodSummary.mostActiveDay}</p>
+            <p className="text-xs text-muted-foreground mt-1">In selected period</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
