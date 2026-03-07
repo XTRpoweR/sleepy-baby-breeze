@@ -83,10 +83,15 @@ const PediatricianReports = () => {
         return;
     }
 
-    if (node) {
-      await exportNodeAsPDF(node, filename);
+    try {
+      if (node) {
+        await exportNodeAsPDF(node, filename);
+      }
+    } catch (error) {
+      console.error('PDF generation failed:', error);
+    } finally {
+      setPdfLoading(null);
     }
-    setPdfLoading(null);
   };
 
   if (loading) {
