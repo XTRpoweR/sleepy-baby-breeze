@@ -92,9 +92,15 @@ const PediatricianReports = () => {
         toast.error('Report container not found. Please try again.');
       }
     } catch (error) {
-      console.error('PDF generation failed:', error);
-      const message = error instanceof Error ? error.message : 'Unknown error';
-      toast.error(`Failed to generate report: ${message}`);
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === 'object' && error !== null && 'message' in error
+            ? String((error as { message?: unknown }).message)
+            : String(error);
+
+      console.error('PDF generation failed:', { error, message, type: typeof error });
+      toast.error(`Failed to generate report: ${message || 'Unknown error'}`);
     } finally {
       setPdfLoading(null);
     }
