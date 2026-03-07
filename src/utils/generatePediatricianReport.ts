@@ -28,6 +28,18 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
           }
+          /* Remove overflow/max-height constraints that clip PDF content */
+          [class*="max-h-"], [class*="overflow-auto"], [class*="overflow-hidden"], [class*="overflow-scroll"] {
+            max-height: none !important;
+            overflow: visible !important;
+          }
+          /* Ensure truncated text is fully visible */
+          .truncate, [class*="truncate"], [class*="line-clamp"] {
+            overflow: visible !important;
+            text-overflow: unset !important;
+            white-space: normal !important;
+            -webkit-line-clamp: unset !important;
+          }
         `;
         clonedDoc.head.appendChild(style);
       }

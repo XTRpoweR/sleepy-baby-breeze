@@ -45,7 +45,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   };
 
   return (
-    <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
+    <div style={{ position: "fixed", left: -9999, top: -9999, width: "850px", pointerEvents: "none", opacity: 0, overflow: "visible" }}>
       {/* Comprehensive Health Report */}
       <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
