@@ -87,9 +87,13 @@ const PediatricianReports = () => {
     try {
       if (node) {
         await exportNodeAsPDF(node, filename);
+        toast.success('Report downloaded successfully!');
+      } else {
+        toast.error('Report container not found. Please try again.');
       }
     } catch (error) {
       console.error('PDF generation failed:', error);
+      toast.error('Failed to generate report. Please try again.');
     } finally {
       setPdfLoading(null);
     }
