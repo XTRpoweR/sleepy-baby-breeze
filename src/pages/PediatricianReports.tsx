@@ -93,7 +93,8 @@ const PediatricianReports = () => {
       }
     } catch (error) {
       console.error('PDF generation failed:', error);
-      toast.error('Failed to generate report. Please try again.');
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Failed to generate report: ${message}`);
     } finally {
       setPdfLoading(null);
     }
