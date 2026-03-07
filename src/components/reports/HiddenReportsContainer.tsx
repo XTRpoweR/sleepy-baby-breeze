@@ -33,9 +33,11 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   const growthDateRange = getDateRange(growthRange);
 
   const reportStyles: React.CSSProperties = {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Arial, Helvetica, sans-serif',
     minHeight: 'auto',
     pageBreakInside: 'avoid',
+    color: '#111827',
+    backgroundColor: '#ffffff',
   };
 
   const sectionStyles: React.CSSProperties = {
@@ -45,9 +47,54 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   };
 
   return (
-    <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
+    <div style={{ 
+      position: "fixed", 
+      left: -9999, 
+      top: 0, 
+      width: "850px", 
+      pointerEvents: "none", 
+      opacity: 0,
+      overflow: "visible",
+    }}>
+      {/* Global PDF styles to override Tailwind CSS variables */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .pdf-report-container * {
+          color: #111827 !important;
+          border-color: #e5e7eb !important;
+        }
+        .pdf-report-container .text-muted-foreground,
+        .pdf-report-container [class*="text-muted"] {
+          color: #6b7280 !important;
+        }
+        .pdf-report-container .text-foreground {
+          color: #111827 !important;
+        }
+        .pdf-report-container .bg-card {
+          background-color: #ffffff !important;
+        }
+        .pdf-report-container .pdf-table-container {
+          max-height: none !important;
+          overflow: visible !important;
+        }
+        .pdf-report-container table {
+          width: 100% !important;
+        }
+        .pdf-report-container .truncate {
+          overflow: visible !important;
+          text-overflow: unset !important;
+          white-space: normal !important;
+        }
+        .pdf-report-container .overflow-auto,
+        .pdf-report-container .overflow-hidden {
+          overflow: visible !important;
+        }
+        .pdf-report-container [class*="max-h-"] {
+          max-height: none !important;
+        }
+      `}} />
+
       {/* Comprehensive Health Report */}
-      <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles}>
+      <div ref={comprehensiveRef} className="bg-white p-8 pdf-report-container" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Comprehensive Health Report"
@@ -86,7 +133,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       </div>
 
       {/* Sleep Pattern Analysis */}
-      <div ref={sleepRef} className="bg-white p-8" style={reportStyles}>
+      <div ref={sleepRef} className="bg-white p-8 pdf-report-container" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Sleep Pattern Analysis"
@@ -117,7 +164,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       </div>
 
       {/* Growth & Development Report */}
-      <div ref={growthRef} className="bg-white p-8" style={reportStyles}>
+      <div ref={growthRef} className="bg-white p-8 pdf-report-container" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
           <ReportHeader 
             reportTitle="Growth & Development Report"
@@ -149,4 +196,3 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
     </div>
   );
 };
-
