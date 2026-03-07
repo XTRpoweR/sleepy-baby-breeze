@@ -8,6 +8,15 @@ const SECTION_GAP_PT = 8;
 
 const isIOSDevice = () => /iPad|iPhone|iPod/.test(window.navigator.userAgent);
 
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  if (error instanceof DOMException) return `${error.name}: ${error.message}`;
+  if (typeof error === "object" && error !== null && "message" in error) {
+    return String((error as { message?: unknown }).message);
+  }
+  return String(error);
+};
+
 const triggerPdfDownload = (pdf: jsPDF, filename: string) => {
   const blob = pdf.output("blob");
   const url = URL.createObjectURL(blob);
@@ -18,7 +27,6 @@ const triggerPdfDownload = (pdf: jsPDF, filename: string) => {
   link.rel = "noopener noreferrer";
   link.style.display = "none";
 
-  // iOS Safari often ignores direct file downloads, so open as fallback.
   if (isIOSDevice()) {
     link.target = "_blank";
   }
@@ -30,7 +38,7 @@ const triggerPdfDownload = (pdf: jsPDF, filename: string) => {
   if (isIOSDevice()) {
     setTimeout(() => {
       window.open(url, "_blank", "noopener,noreferrer");
-    }, 80);
+    }, 100);
   }
 
   setTimeout(() => URL.revokeObjectURL(url), 5000);
@@ -41,34 +49,31 @@ const addCanvasSliceToPdf = (
   canvas: HTMLCanvasElement,
   currentY: number,
   usableWidth: number,
-  usableHeight: number,
-  pageHeight: number
+  usableHeight: number
 ) => {
   const ratio = usableWidth / canvas.width;
   const renderedHeight = canvas.height * ratio;
 
-  // Fits in remaining space.
+  // Fits in remaining space
   if (renderedHeight <= usableHeight - (currentY - A4_MARGIN_Y_PT)) {
     pdf.addImage(canvas.toDataURL("image/png"), "PNG", A4_MARGIN_X_PT, currentY, usableWidth, renderedHeight);
     return { currentY: currentY + renderedHeight + SECTION_GAP_PT };
   }
 
-  // Fits in one full page but not in remaining area.
+  // Fits in one full page but not in remaining area
   if (renderedHeight <= usableHeight) {
     pdf.addPage();
     pdf.addImage(canvas.toDataURL("image/png"), "PNG", A4_MARGIN_X_PT, A4_MARGIN_Y_PT, usableWidth, renderedHeight);
     return { currentY: A4_MARGIN_Y_PT + renderedHeight + SECTION_GAP_PT };
   }
 
-  // Too tall: split into multiple page slices.
+  // Too tall: split into slices
   const pxPerFullPage = usableHeight / ratio;
   let offsetPx = 0;
   let firstSlice = true;
 
   while (offsetPx < canvas.height - 1) {
-    if (!firstSlice) {
-      pdf.addPage();
-    } else if (currentY !== A4_MARGIN_Y_PT) {
+    if (!firstSlice || currentY !== A4_MARGIN_Y_PT) {
       pdf.addPage();
     }
 
@@ -115,7 +120,7 @@ const addCanvasSliceToPdf = (
 
 /**
  * Render a hidden report node and download it as PDF.
- * Uses section-based capture to avoid memory issues on mobile devices.
+ * Uses section-based capture to reduce memory pressure on mobile.
  */
 export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
   await new Promise((resolve) => setTimeout(resolve, 500));
@@ -124,7 +129,7 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
   const originalNodeStyle = nodeRef.style.cssText;
   const originalParentStyle = parent?.style.cssText ?? "";
 
-  // Temporarily make hidden report renderable for html2canvas.
+  // Temporarily make hidden report renderable for html2canvas
   nodeRef.style.position = "absolute";
   nodeRef.style.left = "0";
   nodeRef.style.top = "0";
@@ -156,38 +161,50 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
     const captureTargets = sections.length > 0 ? sections : [nodeRef];
 
     let currentY = A4_MARGIN_Y_PT;
-    let isFirstCapture = true;
 
     for (const section of captureTargets) {
-      const canvas = await html2canvas(section, {
-        scale: 1.5,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        width: section.scrollWidth || 850,
-        height: section.scrollHeight,
-        windowWidth: Math.max(section.scrollWidth || 850, 850),
-        windowHeight: Math.max(section.scrollHeight, 1),
-        onclone: (_doc, clonedElement) => {
-          const root = clonedElement as HTMLElement;
-          root.style.overflow = "visible";
-          root.style.maxHeight = "none";
-        },
-      });
+      section.setAttribute("data-pdf-capture-root", "true");
 
-      if (!canvas || canvas.width === 0 || canvas.height === 0) {
-        throw new Error("Failed to render report section for PDF");
+      try {
+        const targetWidth = Math.max(section.scrollWidth || 0, section.clientWidth || 0, 850);
+        const targetHeight = Math.max(section.scrollHeight || 0, Math.ceil(section.getBoundingClientRect().height), 1);
+
+        const canvas = await html2canvas(section, {
+          scale: 1.5,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          logging: false,
+          width: targetWidth,
+          height: targetHeight,
+          windowWidth: targetWidth,
+          windowHeight: targetHeight,
+          removeContainer: true,
+          onclone: (clonedDoc) => {
+            const clonedTarget = clonedDoc.querySelector('[data-pdf-capture-root="true"]') as HTMLElement | null;
+            if (clonedTarget) {
+              clonedTarget.style.overflow = "visible";
+              clonedTarget.style.maxHeight = "none";
+            }
+          },
+        });
+
+        if (!canvas || canvas.width === 0 || canvas.height === 0) {
+          throw new Error("Rendered empty canvas");
+        }
+
+        const result = addCanvasSliceToPdf(pdf, canvas, currentY, usableWidth, usableHeight);
+        currentY = result.currentY;
+      } catch (error) {
+        const sectionName = section.getAttribute("data-pdf-section") || "unknown-section";
+        throw new Error(`Section '${sectionName}' failed: ${getErrorMessage(error)}`);
+      } finally {
+        section.removeAttribute("data-pdf-capture-root");
       }
-
-      if (isFirstCapture) {
-        isFirstCapture = false;
-      }
-
-      const result = addCanvasSliceToPdf(pdf, canvas, currentY, usableWidth, usableHeight, pageHeight);
-      currentY = result.currentY;
     }
 
     triggerPdfDownload(pdf, filename);
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
   } finally {
     nodeRef.style.cssText = originalNodeStyle;
     if (parent) {
