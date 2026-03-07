@@ -415,7 +415,7 @@ export const DetailedSleepAnalytics = ({ babyId, dateRange }: DetailedSleepAnaly
           <CardTitle className="text-base sm:text-lg">Detailed Sleep Log</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="pdf-table-container">
+          <div className="max-h-[400px] overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -479,7 +479,7 @@ export const DetailedSleepAnalytics = ({ babyId, dateRange }: DetailedSleepAnaly
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-muted-foreground block">
+                        <span className="text-sm text-muted-foreground truncate max-w-xs block">
                           {log.notes || '-'}
                         </span>
                       </TableCell>

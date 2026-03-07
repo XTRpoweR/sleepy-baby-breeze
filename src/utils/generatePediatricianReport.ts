@@ -2,213 +2,127 @@
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-const A4_MARGIN_X_PT = 16;
-const A4_MARGIN_Y_PT = 20;
-const SECTION_GAP_PT = 8;
-
-const isIOSDevice = () => /iPad|iPhone|iPod/.test(window.navigator.userAgent);
-
-const getErrorMessage = (error: unknown): string => {
-  if (error instanceof Error) return error.message;
-  if (error instanceof DOMException) return `${error.name}: ${error.message}`;
-  if (typeof error === "object" && error !== null && "message" in error) {
-    return String((error as { message?: unknown }).message);
-  }
-  return String(error);
-};
-
-const triggerPdfDownload = (pdf: jsPDF, filename: string) => {
-  const blob = pdf.output("blob");
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.rel = "noopener noreferrer";
-  link.style.display = "none";
-
-  if (isIOSDevice()) {
-    link.target = "_blank";
-  }
-
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  if (isIOSDevice()) {
-    setTimeout(() => {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }, 100);
-  }
-
-  setTimeout(() => URL.revokeObjectURL(url), 5000);
-};
-
-const addCanvasSliceToPdf = (
-  pdf: jsPDF,
-  canvas: HTMLCanvasElement,
-  currentY: number,
-  usableWidth: number,
-  usableHeight: number
-) => {
-  const ratio = usableWidth / canvas.width;
-  const renderedHeight = canvas.height * ratio;
-
-  // Fits in remaining space
-  if (renderedHeight <= usableHeight - (currentY - A4_MARGIN_Y_PT)) {
-    pdf.addImage(canvas.toDataURL("image/png"), "PNG", A4_MARGIN_X_PT, currentY, usableWidth, renderedHeight);
-    return { currentY: currentY + renderedHeight + SECTION_GAP_PT };
-  }
-
-  // Fits in one full page but not in remaining area
-  if (renderedHeight <= usableHeight) {
-    pdf.addPage();
-    pdf.addImage(canvas.toDataURL("image/png"), "PNG", A4_MARGIN_X_PT, A4_MARGIN_Y_PT, usableWidth, renderedHeight);
-    return { currentY: A4_MARGIN_Y_PT + renderedHeight + SECTION_GAP_PT };
-  }
-
-  // Too tall: split into slices
-  const pxPerFullPage = usableHeight / ratio;
-  let offsetPx = 0;
-  let firstSlice = true;
-
-  while (offsetPx < canvas.height - 1) {
-    if (!firstSlice || currentY !== A4_MARGIN_Y_PT) {
-      pdf.addPage();
-    }
-
-    const sliceHeightPx = Math.min(pxPerFullPage, canvas.height - offsetPx);
-    const sliceCanvas = document.createElement("canvas");
-    sliceCanvas.width = canvas.width;
-    sliceCanvas.height = Math.ceil(sliceHeightPx);
-
-    const ctx = sliceCanvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Failed to create canvas context during PDF slicing");
-    }
-
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-    ctx.drawImage(
-      canvas,
-      0,
-      Math.floor(offsetPx),
-      canvas.width,
-      Math.ceil(sliceHeightPx),
-      0,
-      0,
-      canvas.width,
-      Math.ceil(sliceHeightPx)
-    );
-
-    const sliceRenderHeight = sliceCanvas.height * ratio;
-    pdf.addImage(
-      sliceCanvas.toDataURL("image/png"),
-      "PNG",
-      A4_MARGIN_X_PT,
-      A4_MARGIN_Y_PT,
-      usableWidth,
-      sliceRenderHeight
-    );
-
-    offsetPx += sliceHeightPx;
-    firstSlice = false;
-  }
-
-  return { currentY: A4_MARGIN_Y_PT + SECTION_GAP_PT };
-};
-
 /**
- * Render a hidden report node and download it as PDF.
- * Uses section-based capture to reduce memory pressure on mobile.
+ * Renders a DOM node as a PDF and triggers download.
+ * @param nodeRef - ref to the DOM node to render as PDF
+ * @param filename - name of the resulting PDF
  */
 export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  const parent = nodeRef.parentElement;
-  const originalNodeStyle = nodeRef.style.cssText;
-  const originalParentStyle = parent?.style.cssText ?? "";
-
-  // Temporarily make hidden report renderable for html2canvas
-  nodeRef.style.position = "absolute";
-  nodeRef.style.left = "0";
-  nodeRef.style.top = "0";
-  nodeRef.style.opacity = "1";
-  nodeRef.style.pointerEvents = "none";
-  nodeRef.style.zIndex = "-1";
-  nodeRef.style.width = "850px";
-  nodeRef.style.visibility = "visible";
-
-  if (parent) {
-    parent.style.position = "absolute";
-    parent.style.left = "0";
-    parent.style.top = "0";
-    parent.style.opacity = "1";
-    parent.style.pointerEvents = "none";
-    parent.style.zIndex = "-1";
-    parent.style.visibility = "visible";
-    parent.style.overflow = "visible";
-  }
-
-  try {
-    const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "a4" });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const usableWidth = pageWidth - A4_MARGIN_X_PT * 2;
-    const usableHeight = pageHeight - A4_MARGIN_Y_PT * 2;
-
-    const sections = Array.from(nodeRef.querySelectorAll("[data-pdf-section]")) as HTMLElement[];
-    const captureTargets = sections.length > 0 ? sections : [nodeRef];
-
-    let currentY = A4_MARGIN_Y_PT;
-
-    for (const section of captureTargets) {
-      section.setAttribute("data-pdf-capture-root", "true");
-
-      try {
-        const targetWidth = Math.max(section.scrollWidth || 0, section.clientWidth || 0, 850);
-        const targetHeight = Math.max(section.scrollHeight || 0, Math.ceil(section.getBoundingClientRect().height), 1);
-
-        const canvas = await html2canvas(section, {
-          scale: 1.5,
-          useCORS: true,
-          backgroundColor: "#ffffff",
-          logging: false,
-          width: targetWidth,
-          height: targetHeight,
-          windowWidth: targetWidth,
-          windowHeight: targetHeight,
-          removeContainer: true,
-          onclone: (clonedDoc) => {
-            const clonedTarget = clonedDoc.querySelector('[data-pdf-capture-root="true"]') as HTMLElement | null;
-            if (clonedTarget) {
-              clonedTarget.style.overflow = "visible";
-              clonedTarget.style.maxHeight = "none";
-            }
-          },
-        });
-
-        if (!canvas || canvas.width === 0 || canvas.height === 0) {
-          throw new Error("Rendered empty canvas");
-        }
-
-        const result = addCanvasSliceToPdf(pdf, canvas, currentY, usableWidth, usableHeight);
-        currentY = result.currentY;
-      } catch (error) {
-        const sectionName = section.getAttribute("data-pdf-section") || "unknown-section";
-        throw new Error(`Section '${sectionName}' failed: ${getErrorMessage(error)}`);
-      } finally {
-        section.removeAttribute("data-pdf-capture-root");
+  const canvas = await html2canvas(nodeRef, {
+    scale: 2,
+    backgroundColor: "#fff",
+    useCORS: true,
+    logging: false,
+    windowHeight: nodeRef.scrollHeight,
+    height: nodeRef.scrollHeight,
+    onclone: (clonedDoc) => {
+      const clonedNode = clonedDoc.querySelector('body');
+      if (clonedNode) {
+        const style = clonedDoc.createElement('style');
+        style.textContent = `
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          table, .card, .border, [class*="rounded"] {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+        `;
+        clonedDoc.head.appendChild(style);
       }
     }
+  });
+  
+  const imgData = canvas.toDataURL("image/png");
 
-    triggerPdfDownload(pdf, filename);
-  } catch (error) {
-    throw new Error(getErrorMessage(error));
-  } finally {
-    nodeRef.style.cssText = originalNodeStyle;
-    if (parent) {
-      parent.style.cssText = originalParentStyle;
-    }
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "pt",
+    format: "a4",
+  });
+
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+  
+  const ratio = pdfWidth / canvas.width;
+  const canvasPerPage = pdfHeight / ratio;
+
+  const fitMode = nodeRef.getAttribute('data-pdf-fit');
+  if (fitMode === 'single') {
+    // Fit entire content on one page by scaling
+    const fitRatio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+    const imgWidth = canvas.width * fitRatio;
+    const imgHeight = canvas.height * fitRatio;
+    const x = (pdfWidth - imgWidth) / 2;
+    const y = (pdfHeight - imgHeight) / 2;
+    pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+    pdf.save(filename);
+    return;
   }
+  
+  // Collect candidate cut positions from sections and table rows
+  const candidates = new Set<number>([0, canvas.height]);
+  
+  // Add section boundaries
+  const sections = nodeRef.querySelectorAll('[data-pdf-section]');
+  sections.forEach(section => {
+    const rect = section.getBoundingClientRect();
+    const nodeRect = nodeRef.getBoundingClientRect();
+    const relativeBottom = rect.bottom - nodeRect.top;
+    const canvasY = (relativeBottom / nodeRef.scrollHeight) * canvas.height;
+    candidates.add(Math.round(canvasY));
+  });
+  
+  // Add table row boundaries as fallback
+  const tableRows = nodeRef.querySelectorAll('table tbody tr');
+  tableRows.forEach(row => {
+    const rect = row.getBoundingClientRect();
+    const nodeRect = nodeRef.getBoundingClientRect();
+    const relativeBottom = rect.bottom - nodeRect.top;
+    const canvasY = (relativeBottom / nodeRef.scrollHeight) * canvas.height;
+    candidates.add(Math.round(canvasY));
+  });
+  
+  // Sort candidates
+  const sortedCandidates = Array.from(candidates).sort((a, b) => a - b);
+  
+  // Build pages with smart cuts
+  let lastCut = 0;
+  let isFirstPage = true;
+  
+  while (lastCut < canvas.height) {
+    const limit = lastCut + canvasPerPage;
+    
+    // Find the best cut position that fits within the page
+    let nextCut = canvas.height;
+    for (let i = sortedCandidates.length - 1; i >= 0; i--) {
+      const candidate = sortedCandidates[i];
+      if (candidate > lastCut && candidate <= limit + 10) { // Small tolerance
+        nextCut = candidate;
+        break;
+      }
+    }
+    
+    // If no good candidate found, use the limit
+    if (nextCut === canvas.height && lastCut + canvasPerPage < canvas.height) {
+      nextCut = Math.min(lastCut + canvasPerPage, canvas.height);
+    }
+    
+    // Add the page
+    if (!isFirstPage) {
+      pdf.addPage();
+    }
+    
+    const yPosition = -(lastCut * ratio);
+    const imgWidth = pdfWidth;
+    const imgHeight = canvas.height * ratio;
+    
+    pdf.addImage(imgData, "PNG", 0, yPosition, imgWidth, imgHeight);
+    
+    lastCut = nextCut;
+    isFirstPage = false;
+  }
+
+  pdf.save(filename);
 }

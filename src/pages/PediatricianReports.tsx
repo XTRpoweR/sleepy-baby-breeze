@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,26 +83,10 @@ const PediatricianReports = () => {
         return;
     }
 
-    try {
-      if (node) {
-        await exportNodeAsPDF(node, filename);
-        toast.success('Report downloaded successfully!');
-      } else {
-        toast.error('Report container not found. Please try again.');
-      }
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : typeof error === 'object' && error !== null && 'message' in error
-            ? String((error as { message?: unknown }).message)
-            : String(error);
-
-      console.error('PDF generation failed:', { error, message, type: typeof error });
-      toast.error(`Failed to generate report: ${message || 'Unknown error'}`);
-    } finally {
-      setPdfLoading(null);
+    if (node) {
+      await exportNodeAsPDF(node, filename);
     }
+    setPdfLoading(null);
   };
 
   if (loading) {
