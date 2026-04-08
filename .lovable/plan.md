@@ -1,29 +1,70 @@
 
 
-## Fix Reports Page Mobile Layout
+## تحسين قسم الإشعارات - تصميم احترافي عصري
 
-### Problem
-Charts, grids, and statistics on the Reports page are not responsive on mobile. The pie chart overflows its container, grids force too many columns on small screens, and text/numbers get cut off.
+### المشكلة الحالية
+صفحة الإشعارات حالياً عبارة عن قائمة بطاقات (Cards) بسيطة مع أزرار تبديل (Switches) فقط - تبدو كصفحة إعدادات تقنية وليست تجربة مستخدم جذابة.
 
-### Changes
+### التصميم الجديد المقترح
 
-**1. Fix FeedingAnalytics.tsx**
-- Change `grid grid-cols-2` to `grid grid-cols-1 lg:grid-cols-2` so charts stack vertically on mobile
-- Reduce PieChart `outerRadius` from 90 to 60 on mobile using the existing `isMobile` hook
-- Disable pie chart labels on mobile (they cause overflow) and show a legend below instead
+```text
+┌─────────────────────────────┐
+│  ← الرجوع                  │
+│                             │
+│  🔔 الإشعارات              │
+│  ابقَ على اطلاع بكل جديد   │
+│                             │
+│ ┌─────────────────────────┐ │
+│ │ حالة الإشعارات          │ │
+│ │ ✅ مفعّلة               │ │
+│ │ [شريط تقدم: 4/4 مفعّل] │ │
+│ └─────────────────────────┘ │
+│                             │
+│  أنواع الإشعارات           │
+│ ┌───────────┬─────────────┐ │
+│ │ 🍼        │ 😴          │ │
+│ │ التغذية   │ النوم       │ │
+│ │ كل 3 ساعات│ تذكيرات     │ │
+│ │  [ON]     │  [ON]       │ │
+│ ├───────────┼─────────────┤ │
+│ │ 🎯        │ 📊          │ │
+│ │ المعالم   │ الأنماط     │ │
+│ │ تنبيهات   │ تحليلات     │ │
+│ │  [ON]     │  [ON]       │ │
+│ └───────────┴─────────────┘ │
+│                             │
+│  ⏰ ساعات الهدوء           │
+│ ┌─────────────────────────┐ │
+│ │ [OFF]  10:00 PM - 7 AM  │ │
+│ └─────────────────────────┘ │
+│                             │
+│  💡 كيف تعمل الإشعارات؟   │
+│ ┌─────────────────────────┐ │
+│ │ خطوة 1 → خطوة 2 → ...  │ │
+│ └─────────────────────────┘ │
+└─────────────────────────────┘
+```
 
-**2. Fix ActivitySummary.tsx**
-- Change `grid grid-cols-4` to `grid grid-cols-2 lg:grid-cols-4` for the summary stats
-- Change `grid grid-cols-2` to `grid grid-cols-1 sm:grid-cols-2` for the bottom insight cards
-- Reduce font sizes and icon sizes on mobile
-- Use the existing `isMobile` hook (already imported but unused)
+### التغييرات المطلوبة
 
-**3. General improvements**
-- Ensure all chart containers have proper `overflow-hidden` to prevent any remaining overflow
-- Add `min-w-0` to grid children to prevent content from forcing grid wider than viewport
+**1. إعادة تصميم SmartNotifications.tsx بالكامل**
+- تحويل شريط الحالة العلوي إلى بطاقة gradient جذابة مع أيقونة متحركة وشريط تقدم يوضح عدد الإشعارات المفعّلة
+- تحويل أنواع الإشعارات من قائمة عمودية مملة إلى شبكة بطاقات (grid 2x2) - كل نوع إشعار في بطاقة مستقلة بأيقونة ملونة ووصف مختصر وزر تبديل
+- كل بطاقة بـ gradient لون مختلف (أزرق للتغذية، بنفسجي للنوم، أخضر للمعالم، برتقالي للأنماط)
+- عند النقر على بطاقة التغذية وهي مفعّلة، يظهر اختيار الفاصل الزمني داخل البطاقة نفسها (inline)
 
-### Technical Details
+**2. تحسين قسم ساعات الهدوء**
+- تصميم بطاقة مدمجة بسطر واحد: زر التبديل + وقت البداية والنهاية في نفس السطر
+- أيقونة قمر متحركة عند التفعيل
 
-Files to modify:
-- `src/components/reports/FeedingAnalytics.tsx` -- responsive grid, smaller pie chart on mobile, disable labels on mobile
-- `src/components/reports/ActivitySummary.tsx` -- responsive grid (2 cols on mobile, 4 on desktop), responsive font sizes
+**3. تحسين قسم "كيف تعمل"**
+- تحويله إلى خطوات مرقّمة أفقية (stepper) بدلاً من شبكة نصية
+- كل خطوة بأيقونة ورقم ووصف مختصر
+
+**4. تحسين صفحة Notifications.tsx**
+- توحيد الهيدر مع باقي صفحات التطبيق (نفس نمط التقارير والداشبورد)
+
+### الملفات المتأثرة
+- `src/components/notifications/SmartNotifications.tsx` - إعادة تصميم كاملة
+- `src/pages/Notifications.tsx` - تحسين الهيدر
+
