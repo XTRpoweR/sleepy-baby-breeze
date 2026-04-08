@@ -22,10 +22,10 @@ const Notifications = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <Bell className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600">{t('notifications.loading')}</p>
+          <Bell className="h-12 w-12 text-primary mx-auto mb-4 animate-spin" />
+          <p className="text-muted-foreground">{t('notifications.loading')}</p>
         </div>
       </div>
     );
@@ -34,23 +34,22 @@ const Notifications = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-lg mx-auto px-4 py-6">
         {/* Header */}
-        <div className="mb-4">
+        <div className="flex items-center gap-3 mb-6">
           <Button 
             variant="ghost" 
-            size={isMobile ? "sm" : "default"}
+            size="icon"
+            className="h-9 w-9 rounded-full"
             onClick={() => navigate('/dashboard')}
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('navigation.back')}
+            <ArrowLeft className="h-4 w-4" />
           </Button>
-        </div>
-
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">{t('notifications.title')}</h1>
-          <p className="text-gray-600">{t('notifications.subtitle')}</p>
+          <div>
+            <h1 className="text-xl font-bold text-foreground">{t('notifications.title')}</h1>
+            <p className="text-sm text-muted-foreground">{t('notifications.subtitle')}</p>
+          </div>
         </div>
 
         {/* Smart Notifications Component */}
