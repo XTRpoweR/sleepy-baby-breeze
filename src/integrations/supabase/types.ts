@@ -335,6 +335,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_settings: {
+        Row: {
+          created_at: string
+          feeding_interval: number
+          feeding_reminders: boolean
+          id: string
+          milestone_reminders: boolean
+          pattern_alerts: boolean
+          quiet_hours_enabled: boolean
+          quiet_hours_end: string
+          quiet_hours_start: string
+          sleep_reminders: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feeding_interval?: number
+          feeding_reminders?: boolean
+          id?: string
+          milestone_reminders?: boolean
+          pattern_alerts?: boolean
+          quiet_hours_enabled?: boolean
+          quiet_hours_end?: string
+          quiet_hours_start?: string
+          sleep_reminders?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feeding_interval?: number
+          feeding_reminders?: boolean
+          id?: string
+          milestone_reminders?: boolean
+          pattern_alerts?: boolean
+          quiet_hours_enabled?: boolean
+          quiet_hours_end?: string
+          quiet_hours_start?: string
+          sleep_reminders?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       password_reset_codes: {
         Row: {
           created_at: string
@@ -383,6 +428,72 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scheduled_notifications: {
+        Row: {
+          baby_id: string
+          body: string
+          created_at: string
+          id: string
+          notification_type: string
+          scheduled_for: string
+          sent_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          baby_id: string
+          body: string
+          created_at?: string
+          id?: string
+          notification_type: string
+          scheduled_for?: string
+          sent_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          baby_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          notification_type?: string
+          scheduled_for?: string
+          sent_at?: string | null
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }
