@@ -1,6 +1,20 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+
+const VAPID_PUBLIC_KEY = 'BDlAzZ0VxOft1f_Su1WSwNnOJFVGrnbLp1SHa67fivIaZcPtsNSNSA1qSvFDkF_OXi7zR8PSFtxa-Ue7YRGgP1Y';
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
 
 export interface NotificationSettings {
   feedingReminders: boolean;
@@ -161,6 +175,9 @@ export const useNotifications = () => {
       setPermission(result);
       
       if (result === 'granted') {
+        // Register Service Worker and subscribe to push
+        await registerServiceWorkerAndSubscribe();
+        
         toast({
           title: "Notifications Enabled!",
           description: "You'll now receive smart reminders for your baby's care",
@@ -201,6 +218,64 @@ export const useNotifications = () => {
     }
   }, [toast, isSupported, showNotification]);
 
+  const registerServiceWorkerAndSubscribe = useCallback(async () => {
+    // Don't register SW in iframes or preview hosts
+    const isInIframe = (() => {
+      try { return window.self !== window.top; } catch { return true; }
+    })();
+    const isPreviewHost = window.location.hostname.includes('id-preview--') || window.location.hostname.includes('lovableproject.com');
+    
+    if (isInIframe || isPreviewHost) {
+      console.log('[Push] Skipping SW registration in preview/iframe');
+      return;
+    }
+
+    if (!('serviceWorker' in navigator)) {
+      console.log('[Push] Service workers not supported');
+      return;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      console.log('[Push] Service Worker registered:', registration.scope);
+
+      // Wait for SW to be ready
+      const sw = await navigator.serviceWorker.ready;
+
+      // Subscribe to push notifications
+      let subscription = await sw.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await sw.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
+        });
+        console.log('[Push] New push subscription created');
+      }
+
+      // Save subscription to Supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && subscription) {
+        const subJson = subscription.toJSON();
+        const endpoint = subJson.endpoint!;
+        const p256dh = subJson.keys?.p256dh || '';
+        const auth = subJson.keys?.auth || '';
+
+        const { error } = await supabase.from('push_subscriptions').upsert(
+          { user_id: user.id, endpoint, p256dh, auth },
+          { onConflict: 'user_id,endpoint' }
+        );
+
+        if (error) {
+          console.error('[Push] Error saving subscription:', error);
+        } else {
+          console.log('[Push] Subscription saved to Supabase');
+        }
+      }
+    } catch (error) {
+      console.error('[Push] Registration error:', error);
+    }
+  }, []);
+
   const updateSettings = useCallback((newSettings: Partial<NotificationSettings>) => {
     const updatedSettings = { ...settings, ...newSettings };
     setSettings(updatedSettings);
@@ -232,6 +307,7 @@ export const useNotifications = () => {
     showNotification,
     updateSettings,
     saveSettings,
-    isSupported: isSupported()
+    isSupported: isSupported(),
+    registerServiceWorkerAndSubscribe
   };
 };
