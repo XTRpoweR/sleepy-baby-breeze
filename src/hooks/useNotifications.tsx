@@ -247,7 +247,7 @@ export const useNotifications = () => {
       if (!subscription) {
         subscription = await sw.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
         });
         console.log('[Push] New push subscription created');
       }
