@@ -16,6 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 
 export const SmartNotifications = () => {
   const { t } = useTranslation();
+  const { toast } = useToast();
+  const [isSendingTest, setIsSendingTest] = useState(false);
   const { 
     permission, 
     settings, 
@@ -26,6 +28,36 @@ export const SmartNotifications = () => {
   } = useNotifications();
   
   useSmartNotifications();
+
+  const handleSendTestNotification = async () => {
+    setIsSendingTest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-test-notification');
+      if (error) throw error;
+      
+      if (data?.error === 'no_subscription') {
+        toast({
+          title: "لا يوجد اشتراك",
+          description: "يرجى تفعيل الإشعارات أولاً ثم المحاولة مرة أخرى",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "تم الإرسال! 🎉",
+          description: `تم إرسال ${data?.sent || 0} إشعار تجريبي بنجاح`,
+        });
+      }
+    } catch (error: any) {
+      console.error('Test notification error:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل إرسال الإشعار التجريبي",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingTest(false);
+    }
+  };
 
   const handlePermissionRequest = async () => {
     await requestPermission();
