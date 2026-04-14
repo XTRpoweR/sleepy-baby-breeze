@@ -426,7 +426,21 @@
     "reminderFrequency": "Påminnelsefrekvens",
     "from": "Från",
     "to": "Till",
-    "notificationSettings": "Aviseringsinställningar"
+    "notificationSettings": "Aviseringsinställningar",
+    "supportHint": "Använd Chrome, Firefox eller Safari med HTTPS för fullt stöd.",
+    "blockedHint": "Klicka på låset i adressfältet → Tillåt aviseringar → Uppdatera sidan.",
+    "statusActive": "Aktiv",
+    "testNotification": "Testavisering",
+    "testNotificationDesc": "Skicka en avisering för att kontrollera att systemet fungerar",
+    "testNotificationEnableFirst": "Aktivera först aviseringar och skicka sedan ett test",
+    "testSendButton": "Skicka",
+    "testSending": "Skickar...",
+    "testNoSubscriptionTitle": "Ingen prenumeration",
+    "testNoSubscriptionDescription": "Aktivera först aviseringar och försök igen",
+    "testSentTitle": "Skickat! 🎉",
+    "testSentDescription": "{{count}} testavisering skickades",
+    "testErrorTitle": "Fel",
+    "testErrorDescription": "Det gick inte att skicka testaviseringen"
   },
   "forms": {
     "required": "Obligatorisk",

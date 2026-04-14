@@ -425,7 +425,21 @@
     "reminderFrequency": "Muistutustiheys",
     "from": "Alkaen",
     "to": "Päättyen",
-    "notificationSettings": "Ilmoitusasetukset"
+    "notificationSettings": "Ilmoitusasetukset",
+    "supportHint": "Käytä Chromea, Firefoxia tai Safaria HTTPS-yhteydellä täydellistä tukea varten.",
+    "blockedHint": "Napsauta osoiterivin lukkokuvaketta → Salli ilmoitukset → Päivitä sivu.",
+    "statusActive": "Aktiivinen",
+    "testNotification": "Testi-ilmoitus",
+    "testNotificationDesc": "Lähetä ilmoitus varmistaaksesi, että järjestelmä toimii",
+    "testNotificationEnableFirst": "Ota ilmoitukset ensin käyttöön ja lähetä sitten testi",
+    "testSendButton": "Lähetä",
+    "testSending": "Lähetetään...",
+    "testNoSubscriptionTitle": "Ei tilausta",
+    "testNoSubscriptionDescription": "Ota ilmoitukset ensin käyttöön ja yritä uudelleen",
+    "testSentTitle": "Lähetetty! 🎉",
+    "testSentDescription": "{{count}} testi-ilmoitus lähetettiin onnistuneesti",
+    "testErrorTitle": "Virhe",
+    "testErrorDescription": "Testi-ilmoituksen lähettäminen epäonnistui"
   },
   "forms": {
     "required": "Pakollinen",

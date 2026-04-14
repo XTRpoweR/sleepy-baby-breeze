@@ -18,15 +18,15 @@ export const SmartNotifications = () => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [isSendingTest, setIsSendingTest] = useState(false);
-  const { 
-    permission, 
-    settings, 
-    isLoading, 
-    requestPermission, 
+  const {
+    permission,
+    settings,
+    isLoading,
+    requestPermission,
     updateSettings,
-    isSupported 
+    isSupported
   } = useNotifications();
-  
+
   useSmartNotifications();
 
   const handleSendTestNotification = async () => {
@@ -34,25 +34,25 @@ export const SmartNotifications = () => {
     try {
       const { data, error } = await supabase.functions.invoke('send-test-notification');
       if (error) throw error;
-      
+
       if (data?.error === 'no_subscription') {
         toast({
-          title: "لا يوجد اشتراك",
-          description: "يرجى تفعيل الإشعارات أولاً ثم المحاولة مرة أخرى",
-          variant: "destructive",
+          title: t('notifications.testNoSubscriptionTitle'),
+          description: t('notifications.testNoSubscriptionDescription'),
+          variant: 'destructive',
         });
       } else {
         toast({
-          title: "تم الإرسال! 🎉",
-          description: `تم إرسال ${data?.sent || 0} إشعار تجريبي بنجاح`,
+          title: t('notifications.testSentTitle'),
+          description: t('notifications.testSentDescription', { count: data?.sent || 0 }),
         });
       }
     } catch (error: any) {
       console.error('Test notification error:', error);
       toast({
-        title: "خطأ",
-        description: "فشل إرسال الإشعار التجريبي",
-        variant: "destructive",
+        title: t('notifications.testErrorTitle'),
+        description: t('notifications.testErrorDescription'),
+        variant: 'destructive',
       });
     } finally {
       setIsSendingTest(false);
@@ -61,6 +61,33 @@ export const SmartNotifications = () => {
 
   const handlePermissionRequest = async () => {
     await requestPermission();
+  };
+
+  const handleTestButtonClick = async () => {
+    if (permission === 'granted') {
+      await handleSendTestNotification();
+      return;
+    }
+
+    if (!isSupported) {
+      toast({
+        title: t('notifications.notSupported'),
+        description: t('notifications.supportHint'),
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (permission === 'denied') {
+      toast({
+        title: t('notifications.blocked'),
+        description: t('notifications.blockedHint'),
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    await handlePermissionRequest();
   };
 
   const handleSettingChange = (key: string, value: any) => {
@@ -150,7 +177,7 @@ export const SmartNotifications = () => {
                 </div>
                 <div className="space-y-1 text-sm">
                   <p className="font-medium text-amber-900">{t('notifications.notSupported')}</p>
-                  <p className="text-amber-700">Use Chrome, Firefox, or Safari on HTTPS for full support.</p>
+                  <p className="text-amber-700">{t('notifications.supportHint')}</p>
                 </div>
               </div>
             </CardContent>
@@ -166,7 +193,7 @@ export const SmartNotifications = () => {
                 </div>
                 <div className="space-y-1 text-sm">
                   <p className="font-medium text-destructive">{t('notifications.blocked')}</p>
-                  <p className="text-muted-foreground">Click the lock icon in your address bar → Set Notifications to "Allow" → Refresh.</p>
+                  <p className="text-muted-foreground">{t('notifications.blockedHint')}</p>
                 </div>
               </div>
             </CardContent>
@@ -190,7 +217,7 @@ export const SmartNotifications = () => {
                     {permission === 'granted' ? t('notifications.enabled') : t('notifications.enableTitle')}
                   </h3>
                   <p className="text-white/80 text-sm">
-                    {permission === 'granted' 
+                    {permission === 'granted'
                       ? `${activeCount}/4 ${t('notifications.reminderTypes')}`
                       : t('notifications.enablePrompt')
                     }
@@ -200,7 +227,7 @@ export const SmartNotifications = () => {
               {permission === 'granted' && (
                 <div className="flex items-center gap-1.5 bg-white/20 rounded-full px-3 py-1">
                   <CheckCircle className="h-3.5 w-3.5" />
-                  <span className="text-xs font-medium">Active</span>
+                  <span className="text-xs font-medium">{t('notifications.statusActive')}</span>
                 </div>
               )}
             </div>
@@ -214,7 +241,7 @@ export const SmartNotifications = () => {
                 <Progress value={(activeCount / 4) * 100} className="h-2 bg-white/20 [&>div]:bg-white" />
               </div>
             ) : isSupported && permission === 'default' ? (
-              <Button 
+              <Button
                 onClick={handlePermissionRequest}
                 disabled={isLoading}
                 className="w-full bg-white text-blue-600 hover:bg-white/90 font-medium"
@@ -230,28 +257,29 @@ export const SmartNotifications = () => {
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="p-4">
             <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <Send className="h-4 w-4 text-primary" />
                 </div>
-                <div>
-                  <p className="font-medium text-sm text-foreground">إشعار تجريبي</p>
+                <div className="min-w-0">
+                  <p className="font-medium text-sm text-foreground">{t('notifications.testNotification')}</p>
                   <p className="text-xs text-muted-foreground">
                     {permission === 'granted'
-                      ? 'أرسل إشعاراً للتأكد من عمل النظام'
-                      : 'فعّل الإشعارات أولاً ثم أرسل تجربة'}
+                      ? t('notifications.testNotificationDesc')
+                      : t('notifications.testNotificationEnableFirst')}
                   </p>
                 </div>
               </div>
               <Button
+                type="button"
                 size="sm"
-                onClick={permission === 'granted' ? handleSendTestNotification : handlePermissionRequest}
-                disabled={permission === 'granted' ? isSendingTest : !isSupported || isLoading}
+                onClick={handleTestButtonClick}
+                disabled={permission === 'granted' ? isSendingTest : isLoading}
                 className="shrink-0"
               >
                 {permission === 'granted'
-                  ? (isSendingTest ? '...' : 'إرسال')
-                  : (isLoading ? '...' : 'تفعيل')}
+                  ? (isSendingTest ? t('notifications.testSending') : t('notifications.testSendButton'))
+                  : (isLoading ? t('notifications.requesting') : t('notifications.enableButton'))}
               </Button>
             </div>
           </CardContent>

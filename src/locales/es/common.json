@@ -424,7 +424,21 @@
     "reminderFrequency": "Frecuencia de recordatorio",
     "from": "Desde",
     "to": "Hasta",
-    "notificationSettings": "Configuraciones de notificación"
+    "notificationSettings": "Configuraciones de notificación",
+    "supportHint": "Usa Chrome, Firefox o Safari con HTTPS para una compatibilidad completa.",
+    "blockedHint": "Haz clic en el candado de la barra de direcciones → Permite las notificaciones → Actualiza.",
+    "statusActive": "Activo",
+    "testNotification": "Notificación de prueba",
+    "testNotificationDesc": "Envía una notificación para asegurarte de que el sistema funciona",
+    "testNotificationEnableFirst": "Primero activa las notificaciones y luego envía una prueba",
+    "testSendButton": "Enviar",
+    "testSending": "Enviando...",
+    "testNoSubscriptionTitle": "Sin suscripción",
+    "testNoSubscriptionDescription": "Activa primero las notificaciones y vuelve a intentarlo",
+    "testSentTitle": "¡Enviado! 🎉",
+    "testSentDescription": "Se envió correctamente {{count}} notificación de prueba",
+    "testErrorTitle": "Error",
+    "testErrorDescription": "No se pudo enviar la notificación de prueba"
   },
   "forms": {
     "required": "Requerido",

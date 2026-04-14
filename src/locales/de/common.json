@@ -424,7 +424,21 @@
     "reminderFrequency": "Erinnerungshäufigkeit",
     "from": "Von",
     "to": "Bis",
-    "notificationSettings": "Benachrichtigungseinstellungen"
+    "notificationSettings": "Benachrichtigungseinstellungen",
+    "supportHint": "Verwende Chrome, Firefox oder Safari mit HTTPS für volle Unterstützung.",
+    "blockedHint": "Klicke auf das Schloss in der Adressleiste → Benachrichtigungen auf „Zulassen“ → Seite neu laden.",
+    "statusActive": "Aktiv",
+    "testNotification": "Testbenachrichtigung",
+    "testNotificationDesc": "Sende eine Benachrichtigung, um zu prüfen, ob das System funktioniert",
+    "testNotificationEnableFirst": "Aktiviere zuerst Benachrichtigungen und sende dann einen Test",
+    "testSendButton": "Senden",
+    "testSending": "Wird gesendet...",
+    "testNoSubscriptionTitle": "Kein Abonnement",
+    "testNoSubscriptionDescription": "Bitte aktiviere zuerst Benachrichtigungen und versuche es erneut",
+    "testSentTitle": "Gesendet! 🎉",
+    "testSentDescription": "{{count}} Testbenachrichtigung erfolgreich gesendet",
+    "testErrorTitle": "Fehler",
+    "testErrorDescription": "Testbenachrichtigung konnte nicht gesendet werden"
   },
   "forms": {
     "required": "Erforderlich",
