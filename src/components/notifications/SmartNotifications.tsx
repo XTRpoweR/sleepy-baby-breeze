@@ -7,10 +7,12 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Bell, BellOff, Moon, Baby, TrendingUp, Target, UtensilsCrossed, Clock, Info, AlertCircle, Globe, CheckCircle, Zap, Sparkles } from 'lucide-react';
+import { Bell, BellOff, Moon, Baby, TrendingUp, Target, UtensilsCrossed, Clock, Info, AlertCircle, Globe, CheckCircle, Zap, Sparkles, Send } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSmartNotifications } from '@/hooks/useSmartNotifications';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export const SmartNotifications = () => {
   const { t } = useTranslation();

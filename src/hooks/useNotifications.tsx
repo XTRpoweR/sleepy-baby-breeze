@@ -219,14 +219,13 @@ export const useNotifications = () => {
   }, [toast, isSupported, showNotification]);
 
   const registerServiceWorkerAndSubscribe = useCallback(async () => {
-    // Don't register SW in iframes or preview hosts
+    // Don't register SW in iframes
     const isInIframe = (() => {
       try { return window.self !== window.top; } catch { return true; }
     })();
-    const isPreviewHost = window.location.hostname.includes('id-preview--') || window.location.hostname.includes('lovableproject.com');
     
-    if (isInIframe || isPreviewHost) {
-      console.log('[Push] Skipping SW registration in preview/iframe');
+    if (isInIframe) {
+      console.log('[Push] Skipping SW registration in iframe');
       return;
     }
 
