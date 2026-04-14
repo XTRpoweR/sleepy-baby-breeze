@@ -64,17 +64,16 @@ export const SmartNotifications = () => {
   };
 
   const handleTestButtonClick = async () => {
+    // If notifications are granted, send test push
     if (permission === 'granted') {
       await handleSendTestNotification();
       return;
     }
 
+    // If not supported (e.g. iframe/preview), still try to send server-side test
     if (!isSupported) {
-      toast({
-        title: t('notifications.notSupported'),
-        description: t('notifications.supportHint'),
-        variant: 'destructive',
-      });
+      // Try sending test notification via edge function anyway
+      await handleSendTestNotification();
       return;
     }
 
@@ -87,6 +86,7 @@ export const SmartNotifications = () => {
       return;
     }
 
+    // Default permission - request it first
     await handlePermissionRequest();
   };
 
