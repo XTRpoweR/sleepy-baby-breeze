@@ -7,13 +7,17 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { Bell, BellOff, Moon, Baby, TrendingUp, Target, UtensilsCrossed, Clock, Info, AlertCircle, Globe, CheckCircle, Zap, Sparkles } from 'lucide-react';
+import { Bell, BellOff, Moon, Baby, TrendingUp, Target, UtensilsCrossed, Clock, Info, AlertCircle, Globe, CheckCircle, Zap, Sparkles, Send } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useSmartNotifications } from '@/hooks/useSmartNotifications';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export const SmartNotifications = () => {
   const { t } = useTranslation();
+  const { toast } = useToast();
+  const [isSendingTest, setIsSendingTest] = useState(false);
   const { 
     permission, 
     settings, 
@@ -24,6 +28,36 @@ export const SmartNotifications = () => {
   } = useNotifications();
   
   useSmartNotifications();
+
+  const handleSendTestNotification = async () => {
+    setIsSendingTest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-test-notification');
+      if (error) throw error;
+      
+      if (data?.error === 'no_subscription') {
+        toast({
+          title: "لا يوجد اشتراك",
+          description: "يرجى تفعيل الإشعارات أولاً ثم المحاولة مرة أخرى",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "تم الإرسال! 🎉",
+          description: `تم إرسال ${data?.sent || 0} إشعار تجريبي بنجاح`,
+        });
+      }
+    } catch (error: any) {
+      console.error('Test notification error:', error);
+      toast({
+        title: "خطأ",
+        description: "فشل إرسال الإشعار التجريبي",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSendingTest(false);
+    }
+  };
 
   const handlePermissionRequest = async () => {
     await requestPermission();
@@ -192,7 +226,33 @@ export const SmartNotifications = () => {
           </div>
         </Card>
 
-        {/* Notification Categories Grid */}
+        {/* Test Notification Button */}
+        {permission === 'granted' && (
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Send className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm text-foreground">إشعار تجريبي</p>
+                    <p className="text-xs text-muted-foreground">أرسل إشعاراً للتأكد من عمل النظام</p>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={handleSendTestNotification}
+                  disabled={isSendingTest}
+                  className="shrink-0"
+                >
+                  {isSendingTest ? '...' : 'إرسال'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
             {t('notifications.reminderTypes')}
