@@ -57,9 +57,11 @@ Deno.serve(async (req) => {
     if (!subscriptions || subscriptions.length === 0) {
       return new Response(JSON.stringify({ 
         error: 'no_subscription',
-        message: 'No push subscription found. Please enable notifications first.' 
+        message: 'No push subscription found. Please enable notifications first.',
+        sent: 0,
+        failed: 0
       }), {
-        status: 404,
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
