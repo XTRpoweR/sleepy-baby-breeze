@@ -274,12 +274,10 @@ export const SmartNotifications = () => {
                 type="button"
                 size="sm"
                 onClick={handleTestButtonClick}
-                disabled={permission === 'granted' ? isSendingTest : isLoading}
+                disabled={isSendingTest || isLoading}
                 className="shrink-0"
               >
-                {permission === 'granted'
-                  ? (isSendingTest ? t('notifications.testSending') : t('notifications.testSendButton'))
-                  : (isLoading ? t('notifications.requesting') : t('notifications.enableButton'))}
+                {isSendingTest ? t('notifications.testSending') : t('notifications.testSendButton')}
               </Button>
             </div>
           </CardContent>
