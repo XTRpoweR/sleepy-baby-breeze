@@ -64,17 +64,16 @@ export const SmartNotifications = () => {
   };
 
   const handleTestButtonClick = async () => {
+    // If notifications are granted, send test push
     if (permission === 'granted') {
       await handleSendTestNotification();
       return;
     }
 
+    // If not supported (e.g. iframe/preview), still try to send server-side test
     if (!isSupported) {
-      toast({
-        title: t('notifications.notSupported'),
-        description: t('notifications.supportHint'),
-        variant: 'destructive',
-      });
+      // Try sending test notification via edge function anyway
+      await handleSendTestNotification();
       return;
     }
 
@@ -87,6 +86,7 @@ export const SmartNotifications = () => {
       return;
     }
 
+    // Default permission - request it first
     await handlePermissionRequest();
   };
 
@@ -274,12 +274,10 @@ export const SmartNotifications = () => {
                 type="button"
                 size="sm"
                 onClick={handleTestButtonClick}
-                disabled={permission === 'granted' ? isSendingTest : isLoading}
+                disabled={isSendingTest || isLoading}
                 className="shrink-0"
               >
-                {permission === 'granted'
-                  ? (isSendingTest ? t('notifications.testSending') : t('notifications.testSendButton'))
-                  : (isLoading ? t('notifications.requesting') : t('notifications.enableButton'))}
+                {isSendingTest ? t('notifications.testSending') : t('notifications.testSendButton')}
               </Button>
             </div>
           </CardContent>
