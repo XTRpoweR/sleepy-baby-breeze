@@ -1,0 +1,22 @@
+{
+  "name": "SleepyBabyy",
+  "short_name": "SleepyBabyy",
+  "description": "Track your baby's sleep, feeding, and development",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
