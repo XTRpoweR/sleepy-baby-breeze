@@ -424,7 +424,21 @@
     "reminderFrequency": "Fréquence de rappel",
     "from": "De",
     "to": "À",
-    "notificationSettings": "Paramètres de notification"
+    "notificationSettings": "Paramètres de notification",
+    "supportHint": "Utilisez Chrome, Firefox ou Safari en HTTPS pour une prise en charge complète.",
+    "blockedHint": "Cliquez sur le cadenas dans la barre d’adresse → Autorisez les notifications → Actualisez.",
+    "statusActive": "Actif",
+    "testNotification": "Notification de test",
+    "testNotificationDesc": "Envoyez une notification pour vérifier que le système fonctionne",
+    "testNotificationEnableFirst": "Activez d'abord les notifications, puis envoyez un test",
+    "testSendButton": "Envoyer",
+    "testSending": "Envoi...",
+    "testNoSubscriptionTitle": "Aucun abonnement",
+    "testNoSubscriptionDescription": "Veuillez d'abord activer les notifications puis réessayer",
+    "testSentTitle": "Envoyé ! 🎉",
+    "testSentDescription": "{{count}} notification de test envoyée avec succès",
+    "testErrorTitle": "Erreur",
+    "testErrorDescription": "Échec de l'envoi de la notification de test"
   },
   "forms": {
     "required": "Requis",

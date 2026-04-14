@@ -424,7 +424,21 @@
     "reminderFrequency": "Reminder frequency",
     "from": "From",
     "to": "To",
-    "notificationSettings": "Notification Settings"
+    "notificationSettings": "Notification Settings",
+    "supportHint": "Use Chrome, Firefox, or Safari on HTTPS for full support.",
+    "blockedHint": "Click the lock icon in your address bar → Set Notifications to \"Allow\" → Refresh.",
+    "statusActive": "Active",
+    "testNotification": "Test Notification",
+    "testNotificationDesc": "Send a notification to make sure the system is working",
+    "testNotificationEnableFirst": "Enable notifications first, then send a test",
+    "testSendButton": "Send",
+    "testSending": "Sending...",
+    "testNoSubscriptionTitle": "No subscription",
+    "testNoSubscriptionDescription": "Please enable notifications first and try again",
+    "testSentTitle": "Sent! 🎉",
+    "testSentDescription": "Successfully sent {{count}} test notification",
+    "testErrorTitle": "Error",
+    "testErrorDescription": "Failed to send test notification"
   },
   "forms": {
     "required": "Required",

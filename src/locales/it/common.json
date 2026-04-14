@@ -424,7 +424,21 @@
     "reminderFrequency": "Frequenza promemoria",
     "from": "Da",
     "to": "A",
-    "notificationSettings": "Impostazioni notifiche"
+    "notificationSettings": "Impostazioni notifiche",
+    "supportHint": "Usa Chrome, Firefox o Safari su HTTPS per il supporto completo.",
+    "blockedHint": "Fai clic sul lucchetto nella barra degli indirizzi → Consenti notifiche → Aggiorna.",
+    "statusActive": "Attive",
+    "testNotification": "Notifica di test",
+    "testNotificationDesc": "Invia una notifica per verificare che il sistema funzioni",
+    "testNotificationEnableFirst": "Attiva prima le notifiche, poi invia un test",
+    "testSendButton": "Invia",
+    "testSending": "Invio...",
+    "testNoSubscriptionTitle": "Nessuna iscrizione",
+    "testNoSubscriptionDescription": "Attiva prima le notifiche e riprova",
+    "testSentTitle": "Inviato! 🎉",
+    "testSentDescription": "{{count}} notifica di test inviata con successo",
+    "testErrorTitle": "Errore",
+    "testErrorDescription": "Impossibile inviare la notifica di test"
   },
   "forms": {
     "required": "Richiesto",

@@ -424,7 +424,21 @@
     "reminderFrequency": "Συχνότητα υπενθύμισης",
     "from": "Από",
     "to": "Έως",
-    "notificationSettings": "Ρυθμίσεις ειδοποιήσεων"
+    "notificationSettings": "Ρυθμίσεις ειδοποιήσεων",
+    "supportHint": "Χρησιμοποιήστε Chrome, Firefox ή Safari σε HTTPS για πλήρη υποστήριξη.",
+    "blockedHint": "Πατήστε το λουκέτο στη γραμμή διευθύνσεων → Επιτρέψτε τις ειδοποιήσεις → Ανανέωση.",
+    "statusActive": "Ενεργό",
+    "testNotification": "Δοκιμαστική ειδοποίηση",
+    "testNotificationDesc": "Στείλτε μια ειδοποίηση για να βεβαιωθείτε ότι το σύστημα λειτουργεί",
+    "testNotificationEnableFirst": "Ενεργοποιήστε πρώτα τις ειδοποιήσεις και μετά στείλτε μια δοκιμή",
+    "testSendButton": "Αποστολή",
+    "testSending": "Αποστολή...",
+    "testNoSubscriptionTitle": "Δεν υπάρχει συνδρομή",
+    "testNoSubscriptionDescription": "Ενεργοποιήστε πρώτα τις ειδοποιήσεις και δοκιμάστε ξανά",
+    "testSentTitle": "Στάλθηκε! 🎉",
+    "testSentDescription": "Η δοκιμαστική ειδοποίηση {{count}} στάλθηκε με επιτυχία",
+    "testErrorTitle": "Σφάλμα",
+    "testErrorDescription": "Αποτυχία αποστολής δοκιμαστικής ειδοποίησης"
   },
   "forms": {
     "required": "Απαιτείται",
