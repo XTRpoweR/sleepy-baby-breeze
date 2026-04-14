@@ -226,7 +226,33 @@ export const SmartNotifications = () => {
           </div>
         </Card>
 
-        {/* Notification Categories Grid */}
+        {/* Test Notification Button */}
+        {permission === 'granted' && (
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <Send className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm text-foreground">إشعار تجريبي</p>
+                    <p className="text-xs text-muted-foreground">أرسل إشعاراً للتأكد من عمل النظام</p>
+                  </div>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={handleSendTestNotification}
+                  disabled={isSendingTest}
+                  className="shrink-0"
+                >
+                  {isSendingTest ? '...' : 'إرسال'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
             {t('notifications.reminderTypes')}
