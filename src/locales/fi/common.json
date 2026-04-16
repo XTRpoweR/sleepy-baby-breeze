@@ -439,7 +439,10 @@
     "testSentTitle": "Lähetetty! 🎉",
     "testSentDescription": "{{count}} testi-ilmoitus lähetettiin onnistuneesti",
     "testErrorTitle": "Virhe",
-    "testErrorDescription": "Testi-ilmoituksen lähettäminen epäonnistui"
+    "testErrorDescription": "Testi-ilmoituksen lähettäminen epäonnistui",
+    "disabled": "Ilmoitukset pois päältä",
+    "globalToggleOnDesc": "Saat älykkäitä muistutuksia",
+    "globalToggleOffDesc": "Et saa ilmoituksia"
   },
   "forms": {
     "required": "Pakollinen",

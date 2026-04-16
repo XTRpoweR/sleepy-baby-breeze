@@ -438,7 +438,10 @@
     "testSentTitle": "Gesendet! 🎉",
     "testSentDescription": "{{count}} Testbenachrichtigung erfolgreich gesendet",
     "testErrorTitle": "Fehler",
-    "testErrorDescription": "Testbenachrichtigung konnte nicht gesendet werden"
+    "testErrorDescription": "Testbenachrichtigung konnte nicht gesendet werden",
+    "disabled": "Benachrichtigungen sind deaktiviert",
+    "globalToggleOnDesc": "Du erhältst smarte Erinnerungen",
+    "globalToggleOffDesc": "Du erhältst keine Benachrichtigungen"
   },
   "forms": {
     "required": "Erforderlich",

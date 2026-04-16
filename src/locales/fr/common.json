@@ -438,7 +438,10 @@
     "testSentTitle": "Envoyé ! 🎉",
     "testSentDescription": "{{count}} notification de test envoyée avec succès",
     "testErrorTitle": "Erreur",
-    "testErrorDescription": "Échec de l'envoi de la notification de test"
+    "testErrorDescription": "Échec de l'envoi de la notification de test",
+    "disabled": "Notifications désactivées",
+    "globalToggleOnDesc": "Vous recevrez des rappels intelligents",
+    "globalToggleOffDesc": "Vous ne recevrez aucune notification"
   },
   "forms": {
     "required": "Requis",

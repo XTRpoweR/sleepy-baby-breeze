@@ -438,7 +438,10 @@
     "testSentTitle": "Sent! 🎉",
     "testSentDescription": "Successfully sent {{count}} test notification",
     "testErrorTitle": "Error",
-    "testErrorDescription": "Failed to send test notification"
+    "testErrorDescription": "Failed to send test notification",
+    "disabled": "Notifications are off",
+    "globalToggleOnDesc": "You will receive smart reminders",
+    "globalToggleOffDesc": "You won't receive any notifications"
   },
   "forms": {
     "required": "Required",

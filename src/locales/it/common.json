@@ -438,7 +438,10 @@
     "testSentTitle": "Inviato! 🎉",
     "testSentDescription": "{{count}} notifica di test inviata con successo",
     "testErrorTitle": "Errore",
-    "testErrorDescription": "Impossibile inviare la notifica di test"
+    "testErrorDescription": "Impossibile inviare la notifica di test",
+    "disabled": "Notifiche disattivate",
+    "globalToggleOnDesc": "Riceverai promemoria intelligenti",
+    "globalToggleOffDesc": "Non riceverai alcuna notifica"
   },
   "forms": {
     "required": "Richiesto",
