@@ -214,12 +214,12 @@ export const SmartNotifications = () => {
                 </div>
                 <div>
                   <p className="font-semibold text-foreground">
-                    {settings.notificationsEnabled ? t('notifications.enabled') : t('notifications.disabled', 'الإشعارات متوقفة')}
+                    {settings.notificationsEnabled ? t('notifications.enabled') : t('notifications.disabled')}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {settings.notificationsEnabled 
-                      ? t('notifications.globalToggleOnDesc', 'ستتلقى تذكيرات ذكية')
-                      : t('notifications.globalToggleOffDesc', 'لن تتلقى أي إشعارات')}
+                      ? t('notifications.globalToggleOnDesc')
+                      : t('notifications.globalToggleOffDesc')}
                   </p>
                 </div>
               </div>
