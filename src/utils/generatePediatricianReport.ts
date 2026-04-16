@@ -1,4 +1,3 @@
-
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -33,8 +32,6 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
       }
     }
   });
-  
-  const imgData = canvas.toDataURL("image/png");
 
   const pdf = new jsPDF({
     orientation: "portrait",
@@ -44,14 +41,21 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
 
   const pdfWidth = pdf.internal.pageSize.getWidth();
   const pdfHeight = pdf.internal.pageSize.getHeight();
-  
-  const ratio = pdfWidth / canvas.width;
-  const canvasPerPage = pdfHeight / ratio;
+
+  // Use a small margin so content is not flush against page edges
+  const margin = 20;
+  const contentWidth = pdfWidth - margin * 2;
+  const contentHeight = pdfHeight - margin * 2;
+
+  const ratio = contentWidth / canvas.width;
+  const canvasPerPage = contentHeight / ratio;
 
   const fitMode = nodeRef.getAttribute('data-pdf-fit');
+
+  // === Single-page mode: fit whole content on one page ===
   if (fitMode === 'single') {
-    // Fit entire content on one page by scaling
-    const fitRatio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+    const imgData = canvas.toDataURL("image/png");
+    const fitRatio = Math.min(contentWidth / canvas.width, contentHeight / canvas.height);
     const imgWidth = canvas.width * fitRatio;
     const imgHeight = canvas.height * fitRatio;
     const x = (pdfWidth - imgWidth) / 2;
@@ -60,66 +64,86 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
     pdf.save(filename);
     return;
   }
-  
-  // Collect candidate cut positions from sections and table rows
+
+  // === Smart cut candidates (section boundaries + table rows + text blocks) ===
   const candidates = new Set<number>([0, canvas.height]);
-  
-  // Add section boundaries
-  const sections = nodeRef.querySelectorAll('[data-pdf-section]');
-  sections.forEach(section => {
-    const rect = section.getBoundingClientRect();
-    const nodeRect = nodeRef.getBoundingClientRect();
-    const relativeBottom = rect.bottom - nodeRect.top;
-    const canvasY = (relativeBottom / nodeRef.scrollHeight) * canvas.height;
-    candidates.add(Math.round(canvasY));
-  });
-  
-  // Add table row boundaries as fallback
-  const tableRows = nodeRef.querySelectorAll('table tbody tr');
-  tableRows.forEach(row => {
-    const rect = row.getBoundingClientRect();
-    const nodeRect = nodeRef.getBoundingClientRect();
-    const relativeBottom = rect.bottom - nodeRect.top;
-    const canvasY = (relativeBottom / nodeRef.scrollHeight) * canvas.height;
-    candidates.add(Math.round(canvasY));
-  });
-  
-  // Sort candidates
+
+  const addCandidatesFromNodes = (nodes: NodeListOf<Element>) => {
+    nodes.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const nodeRect = nodeRef.getBoundingClientRect();
+      const relativeBottom = rect.bottom - nodeRect.top;
+      const canvasY = (relativeBottom / nodeRef.scrollHeight) * canvas.height;
+      if (canvasY > 0 && canvasY < canvas.height) {
+        candidates.add(Math.round(canvasY));
+      }
+    });
+  };
+
+  addCandidatesFromNodes(nodeRef.querySelectorAll('[data-pdf-section]'));
+  addCandidatesFromNodes(nodeRef.querySelectorAll('table tbody tr'));
+  // Also consider paragraphs, headings, and list items as safe break points
+  addCandidatesFromNodes(nodeRef.querySelectorAll('p, li, h1, h2, h3, h4, div'));
+
   const sortedCandidates = Array.from(candidates).sort((a, b) => a - b);
-  
-  // Build pages with smart cuts
+
+  // === Build pages by slicing the canvas into chunks (true clipping) ===
   let lastCut = 0;
   let isFirstPage = true;
-  
+
   while (lastCut < canvas.height) {
-    const limit = lastCut + canvasPerPage;
-    
-    // Find the best cut position that fits within the page
+    const maxLimit = lastCut + canvasPerPage;
+
+    // Find the best cut position (largest candidate <= maxLimit)
     let nextCut = canvas.height;
     for (let i = sortedCandidates.length - 1; i >= 0; i--) {
-      const candidate = sortedCandidates[i];
-      if (candidate > lastCut && candidate <= limit + 10) { // Small tolerance
-        nextCut = candidate;
+      const c = sortedCandidates[i];
+      if (c > lastCut && c <= maxLimit) {
+        nextCut = c;
         break;
       }
     }
-    
-    // If no good candidate found, use the limit
-    if (nextCut === canvas.height && lastCut + canvasPerPage < canvas.height) {
-      nextCut = Math.min(lastCut + canvasPerPage, canvas.height);
+
+    // If no candidate found in range, force-cut at maxLimit
+    if (nextCut === canvas.height && maxLimit < canvas.height) {
+      nextCut = Math.floor(maxLimit);
     }
-    
-    // Add the page
+
+    // Safety: ensure we always advance (prevents infinite loops)
+    if (nextCut <= lastCut) {
+      nextCut = Math.min(lastCut + Math.floor(canvasPerPage), canvas.height);
+    }
+
+    const sliceHeight = nextCut - lastCut;
+
+    // Create a temporary canvas for just this page's slice
+    const pageCanvas = document.createElement('canvas');
+    pageCanvas.width = canvas.width;
+    pageCanvas.height = sliceHeight;
+    const pageCtx = pageCanvas.getContext('2d');
+
+    if (pageCtx) {
+      // White background (prevents transparency issues)
+      pageCtx.fillStyle = '#ffffff';
+      pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+      // Draw ONLY the slice of the original canvas (true clipping, no overflow)
+      pageCtx.drawImage(
+        canvas,
+        0, lastCut, canvas.width, sliceHeight,  // source rect
+        0, 0, canvas.width, sliceHeight          // destination rect
+      );
+    }
+
+    const sliceImgData = pageCanvas.toDataURL("image/png");
+
     if (!isFirstPage) {
       pdf.addPage();
     }
-    
-    const yPosition = -(lastCut * ratio);
-    const imgWidth = pdfWidth;
-    const imgHeight = canvas.height * ratio;
-    
-    pdf.addImage(imgData, "PNG", 0, yPosition, imgWidth, imgHeight);
-    
+
+    // Place the slice at top margin (no negative offset, no overflow)
+    const sliceImgHeight = sliceHeight * ratio;
+    pdf.addImage(sliceImgData, "PNG", margin, margin, contentWidth, sliceImgHeight);
+
     lastCut = nextCut;
     isFirstPage = false;
   }
