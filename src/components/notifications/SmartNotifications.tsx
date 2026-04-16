@@ -200,6 +200,37 @@ export const SmartNotifications = () => {
           </Card>
         )}
 
+        {/* Global On/Off Toggle */}
+        <Card className="overflow-hidden border-0 shadow-md">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`p-2.5 rounded-xl transition-colors ${settings.notificationsEnabled ? 'bg-emerald-100' : 'bg-muted'}`}>
+                  {settings.notificationsEnabled ? (
+                    <Bell className="h-5 w-5 text-emerald-600" />
+                  ) : (
+                    <BellOff className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">
+                    {settings.notificationsEnabled ? t('notifications.enabled') : t('notifications.disabled', 'الإشعارات متوقفة')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {settings.notificationsEnabled 
+                      ? t('notifications.globalToggleOnDesc', 'ستتلقى تذكيرات ذكية')
+                      : t('notifications.globalToggleOffDesc', 'لن تتلقى أي إشعارات')}
+                  </p>
+                </div>
+              </div>
+              <Switch
+                checked={settings.notificationsEnabled}
+                onCheckedChange={(checked) => handleSettingChange('notificationsEnabled', checked)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Status Card */}
         <Card className="overflow-hidden border-0 shadow-md">
           <div className={`p-5 ${permission === 'granted' ? 'bg-gradient-to-br from-emerald-500 to-teal-600' : 'bg-gradient-to-br from-blue-500 to-indigo-600'} text-white`}>
