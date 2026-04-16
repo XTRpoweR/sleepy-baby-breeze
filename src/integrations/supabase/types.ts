@@ -342,6 +342,7 @@ export type Database = {
           feeding_reminders: boolean
           id: string
           milestone_reminders: boolean
+          notifications_enabled: boolean
           pattern_alerts: boolean
           quiet_hours_enabled: boolean
           quiet_hours_end: string
@@ -356,6 +357,7 @@ export type Database = {
           feeding_reminders?: boolean
           id?: string
           milestone_reminders?: boolean
+          notifications_enabled?: boolean
           pattern_alerts?: boolean
           quiet_hours_enabled?: boolean
           quiet_hours_end?: string
@@ -370,6 +372,7 @@ export type Database = {
           feeding_reminders?: boolean
           id?: string
           milestone_reminders?: boolean
+          notifications_enabled?: boolean
           pattern_alerts?: boolean
           quiet_hours_enabled?: boolean
           quiet_hours_end?: string
