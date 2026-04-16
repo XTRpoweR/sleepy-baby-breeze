@@ -5,6 +5,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+const MAX_HOURS_SINCE_ACTIVITY = 24;
+const COOLDOWN_MULTIPLIER = 1; // cooldown = feeding_interval * this
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -15,7 +18,7 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Get all users with push subscriptions and notification settings
+    // Get all users with push subscriptions
     const { data: subscriptions } = await supabase
       .from('push_subscriptions')
       .select('user_id');
@@ -39,6 +42,7 @@ Deno.serve(async (req) => {
 
       // Use defaults if no settings
       const userSettings = settings || {
+        notifications_enabled: true,
         feeding_reminders: true,
         sleep_reminders: true,
         milestone_reminders: true,
@@ -47,6 +51,11 @@ Deno.serve(async (req) => {
         quiet_hours_start: '22:00',
         quiet_hours_end: '07:00',
       };
+
+      // Skip users who disabled notifications globally
+      if (userSettings.notifications_enabled === false) {
+        continue;
+      }
 
       // Check quiet hours
       if (userSettings.quiet_hours_enabled) {
@@ -64,7 +73,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Get user's baby profiles
+      // Get user's baby profiles (only existing ones)
       const { data: babies } = await supabase
         .from('baby_profiles')
         .select('*')
@@ -83,22 +92,35 @@ Deno.serve(async (req) => {
       }
       allBabyIds = [...new Set(allBabyIds)];
 
+      // Verify all baby IDs still exist in baby_profiles
+      if (allBabyIds.length > 0) {
+        const { data: existingBabies } = await supabase
+          .from('baby_profiles')
+          .select('id')
+          .in('id', allBabyIds);
+        const existingIds = new Set((existingBabies || []).map(b => b.id));
+        allBabyIds = allBabyIds.filter(id => existingIds.has(id));
+      }
+
+      const cooldownMinutes = userSettings.feeding_interval * COOLDOWN_MULTIPLIER;
+
       for (const babyId of allBabyIds) {
         const baby = babies?.find(b => b.id === babyId);
         const babyName = baby?.name || 'Baby';
 
-        // Check for existing unsent notifications to avoid duplicates
-        const { data: existing } = await supabase
+        // Check for recently sent notifications (cooldown) - check both unsent AND recently sent
+        const cooldownTime = new Date(Date.now() - cooldownMinutes * 60 * 1000).toISOString();
+        const { data: recentNotifications } = await supabase
           .from('scheduled_notifications')
-          .select('notification_type')
+          .select('notification_type, sent_at, created_at')
           .eq('user_id', userId)
           .eq('baby_id', babyId)
-          .is('sent_at', null);
+          .or(`sent_at.is.null,sent_at.gte.${cooldownTime},created_at.gte.${cooldownTime}`);
 
-        const existingTypes = new Set((existing || []).map(e => e.notification_type));
+        const recentTypes = new Set((recentNotifications || []).map(e => e.notification_type));
 
         // FEEDING REMINDERS
-        if (userSettings.feeding_reminders && !existingTypes.has('feeding')) {
+        if (userSettings.feeding_reminders && !recentTypes.has('feeding')) {
           const { data: lastFeeding } = await supabase
             .from('baby_activities')
             .select('start_time')
@@ -112,7 +134,8 @@ Deno.serve(async (req) => {
             const now = new Date();
             const minutesSince = (now.getTime() - lastTime.getTime()) / (1000 * 60);
 
-            if (minutesSince >= userSettings.feeding_interval) {
+            // Cap at 24 hours - don't send if too old
+            if (minutesSince >= userSettings.feeding_interval && minutesSince <= MAX_HOURS_SINCE_ACTIVITY * 60) {
               const hours = Math.floor(minutesSince / 60);
               const mins = Math.floor(minutesSince % 60);
               const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
@@ -130,11 +153,10 @@ Deno.serve(async (req) => {
         }
 
         // SLEEP REMINDERS
-        if (userSettings.sleep_reminders && !existingTypes.has('sleep')) {
+        if (userSettings.sleep_reminders && !recentTypes.has('sleep')) {
           const now = new Date();
           const currentHour = now.getUTCHours();
 
-          // Check age-appropriate sleep windows
           let shouldRemind = false;
           let reminderType = '';
 
@@ -173,7 +195,7 @@ Deno.serve(async (req) => {
         }
 
         // MILESTONE REMINDERS
-        if (userSettings.milestone_reminders && !existingTypes.has('milestone') && baby?.birth_date) {
+        if (userSettings.milestone_reminders && !recentTypes.has('milestone') && baby?.birth_date) {
           const birthDate = new Date(baby.birth_date);
           const ageWeeks = Math.floor((new Date().getTime() - birthDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
 

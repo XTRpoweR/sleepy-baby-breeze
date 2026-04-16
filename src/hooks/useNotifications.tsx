@@ -21,8 +21,9 @@ export interface NotificationSettings {
   sleepReminders: boolean;
   milestoneReminders: boolean;
   patternAlerts: boolean;
-  feedingInterval: number; // minutes
+  feedingInterval: number;
   sleepWindowAlert: boolean;
+  notificationsEnabled: boolean;
   quietHours: {
     enabled: boolean;
     start: string;
@@ -35,8 +36,9 @@ const defaultSettings: NotificationSettings = {
   sleepReminders: true,
   milestoneReminders: true,
   patternAlerts: true,
-  feedingInterval: 180, // 3 hours
+  feedingInterval: 180,
   sleepWindowAlert: true,
+  notificationsEnabled: true,
   quietHours: {
     enabled: false,
     start: '22:00',
@@ -50,56 +52,84 @@ export const useNotifications = () => {
   const [settings, setSettings] = useState<NotificationSettings>(defaultSettings);
   const [isLoading, setIsLoading] = useState(false);
 
-  // More robust browser support detection
   const isSupported = useCallback(() => {
-    if (!('Notification' in window)) {
-      console.log('Notification API not available');
-      return false;
-    }
-
-    if (!window.isSecureContext && location.hostname !== 'localhost') {
-      console.log('Notifications require HTTPS');
-      return false;
-    }
-
+    if (!('Notification' in window)) return false;
+    if (!window.isSecureContext && location.hostname !== 'localhost') return false;
     try {
-      if (typeof Notification.requestPermission !== 'function') {
-        console.log('Notification.requestPermission not available');
-        return false;
-      }
+      if (typeof Notification.requestPermission !== 'function') return false;
       return true;
-    } catch (error) {
-      console.log('Error checking notification support:', error);
+    } catch {
       return false;
     }
   }, []);
 
-  // Load settings from localStorage on mount
+  // Load settings from DB on mount
   useEffect(() => {
     if (isSupported()) {
       setPermission(Notification.permission);
     }
 
-    // Load settings from localStorage
-    const savedSettings = localStorage.getItem('notificationSettings');
-    if (savedSettings) {
-      try {
-        const parsed = JSON.parse(savedSettings);
-        setSettings({ ...defaultSettings, ...parsed });
-        console.log('Loaded notification settings from localStorage:', parsed);
-      } catch (error) {
-        console.error('Error loading notification settings:', error);
+    const loadSettings = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        // Fallback to localStorage for unauthenticated
+        const saved = localStorage.getItem('notificationSettings');
+        if (saved) {
+          try { setSettings({ ...defaultSettings, ...JSON.parse(saved) }); } catch {}
+        }
+        return;
       }
-    }
+
+      const { data } = await supabase
+        .from('notification_settings')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (data) {
+        setSettings({
+          feedingReminders: data.feeding_reminders,
+          sleepReminders: data.sleep_reminders,
+          milestoneReminders: data.milestone_reminders,
+          patternAlerts: data.pattern_alerts,
+          feedingInterval: data.feeding_interval,
+          sleepWindowAlert: true,
+          notificationsEnabled: (data as any).notifications_enabled ?? true,
+          quietHours: {
+            enabled: data.quiet_hours_enabled,
+            start: String(data.quiet_hours_start).substring(0, 5),
+            end: String(data.quiet_hours_end).substring(0, 5),
+          },
+        });
+      }
+    };
+
+    loadSettings();
   }, [isSupported]);
 
-  const showNotification = useCallback((title: string, options?: NotificationOptions) => {
-    if (permission !== 'granted' || !isSupported()) {
-      console.log('Cannot show notification - permission not granted or not supported');
-      return;
-    }
+  // Sync settings to DB
+  const syncSettingsToDB = useCallback(async (updatedSettings: NotificationSettings) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-    // Check quiet hours
+    await supabase.from('notification_settings').upsert({
+      user_id: user.id,
+      feeding_reminders: updatedSettings.feedingReminders,
+      sleep_reminders: updatedSettings.sleepReminders,
+      milestone_reminders: updatedSettings.milestoneReminders,
+      pattern_alerts: updatedSettings.patternAlerts,
+      feeding_interval: updatedSettings.feedingInterval,
+      quiet_hours_enabled: updatedSettings.quietHours.enabled,
+      quiet_hours_start: updatedSettings.quietHours.start,
+      quiet_hours_end: updatedSettings.quietHours.end,
+      notifications_enabled: updatedSettings.notificationsEnabled,
+    } as any, { onConflict: 'user_id' });
+  }, []);
+
+  const showNotification = useCallback((title: string, options?: NotificationOptions) => {
+    if (permission !== 'granted' || !isSupported()) return;
+    if (!settings.notificationsEnabled) return;
+
     if (settings.quietHours.enabled) {
       const now = new Date();
       const currentTime = now.getHours() * 60 + now.getMinutes();
@@ -107,17 +137,9 @@ export const useNotifications = () => {
       const endTime = parseInt(settings.quietHours.end.split(':')[0]) * 60 + parseInt(settings.quietHours.end.split(':')[1]);
       
       if (startTime > endTime) {
-        // Quiet hours span midnight
-        if (currentTime >= startTime || currentTime <= endTime) {
-          console.log('Notification suppressed due to quiet hours');
-          return;
-        }
+        if (currentTime >= startTime || currentTime <= endTime) return;
       } else {
-        // Quiet hours within the same day
-        if (currentTime >= startTime && currentTime <= endTime) {
-          console.log('Notification suppressed due to quiet hours');
-          return;
-        }
+        if (currentTime >= startTime && currentTime <= endTime) return;
       }
     }
 
@@ -126,46 +148,28 @@ export const useNotifications = () => {
         icon: '/favicon.ico',
         badge: '/favicon.ico',
         tag: 'sleepybaby-notification',
-        requireInteraction: true, // Keep notification visible until user interacts
+        requireInteraction: true,
         ...options
       });
-
-      // Auto-close after 10 seconds if user doesn't interact
-      setTimeout(() => {
-        notification.close();
-      }, 10000);
-
-      console.log('Notification sent:', title);
+      setTimeout(() => notification.close(), 10000);
     } catch (error) {
       console.error('Error showing notification:', error);
     }
-  }, [permission, settings.quietHours, isSupported]);
+  }, [permission, settings.quietHours, settings.notificationsEnabled, isSupported]);
 
   const requestPermission = useCallback(async () => {
     if (!isSupported()) {
-      toast({
-        title: "Not Supported",
-        description: "Your browser doesn't support notifications. Try using Chrome, Firefox, or Safari on HTTPS.",
-        variant: "destructive",
-      });
+      toast({ title: "Not Supported", description: "Your browser doesn't support notifications.", variant: "destructive" });
       return false;
     }
 
     if (Notification.permission === 'granted') {
       setPermission('granted');
-      toast({
-        title: "Notifications Already Enabled",
-        description: "You're all set to receive smart reminders!",
-      });
       return true;
     }
 
     if (Notification.permission === 'denied') {
-      toast({
-        title: "Notifications Blocked",
-        description: "Please enable notifications in your browser settings and refresh the page",
-        variant: "destructive",
-      });
+      toast({ title: "Notifications Blocked", description: "Please enable notifications in your browser settings", variant: "destructive" });
       return false;
     }
 
@@ -175,43 +179,17 @@ export const useNotifications = () => {
       setPermission(result);
       
       if (result === 'granted') {
-        // Register Service Worker and subscribe to push
         await registerServiceWorkerAndSubscribe();
-        
-        toast({
-          title: "Notifications Enabled!",
-          description: "You'll now receive smart reminders for your baby's care",
-        });
-        
-        // Send a test notification to confirm it works
-        showNotification('Welcome!', {
-          body: 'Notifications are now enabled. You\'ll receive reminders based on your settings.',
-          tag: 'welcome-notification'
-        });
-        
+        toast({ title: "Notifications Enabled!", description: "You'll now receive smart reminders for your baby's care" });
+        showNotification('Welcome!', { body: 'Notifications are now enabled.', tag: 'welcome-notification' });
         return true;
-      } else if (result === 'denied') {
-        toast({
-          title: "Notifications Blocked",
-          description: "You can enable them later in your browser settings",
-          variant: "destructive",
-        });
-        return false;
       } else {
-        toast({
-          title: "Permission Needed",
-          description: "Please allow notifications to receive reminders",
-          variant: "destructive",
-        });
+        toast({ title: "Notifications Blocked", description: "You can enable them later in your browser settings", variant: "destructive" });
         return false;
       }
     } catch (error) {
       console.error('Error requesting notification permission:', error);
-      toast({
-        title: "Error",
-        description: "Failed to request notification permission",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to request notification permission", variant: "destructive" });
       return false;
     } finally {
       setIsLoading(false);
@@ -219,56 +197,28 @@ export const useNotifications = () => {
   }, [toast, isSupported, showNotification]);
 
   const registerServiceWorkerAndSubscribe = useCallback(async () => {
-    // Don't register SW in iframes
-    const isInIframe = (() => {
-      try { return window.self !== window.top; } catch { return true; }
-    })();
-    
-    if (isInIframe) {
-      console.log('[Push] Skipping SW registration in iframe');
-      return;
-    }
-
-    if (!('serviceWorker' in navigator)) {
-      console.log('[Push] Service workers not supported');
-      return;
-    }
+    const isInIframe = (() => { try { return window.self !== window.top; } catch { return true; } })();
+    if (isInIframe || !('serviceWorker' in navigator)) return;
 
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
-      console.log('[Push] Service Worker registered:', registration.scope);
-
-      // Wait for SW to be ready
       const sw = await navigator.serviceWorker.ready;
 
-      // Subscribe to push notifications
       let subscription = await sw.pushManager.getSubscription();
       if (!subscription) {
         subscription = await sw.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY) as BufferSource,
         });
-        console.log('[Push] New push subscription created');
       }
 
-      // Save subscription to Supabase
       const { data: { user } } = await supabase.auth.getUser();
       if (user && subscription) {
         const subJson = subscription.toJSON();
-        const endpoint = subJson.endpoint!;
-        const p256dh = subJson.keys?.p256dh || '';
-        const auth = subJson.keys?.auth || '';
-
-        const { error } = await supabase.from('push_subscriptions').upsert(
-          { user_id: user.id, endpoint, p256dh, auth },
+        await supabase.from('push_subscriptions').upsert(
+          { user_id: user.id, endpoint: subJson.endpoint!, p256dh: subJson.keys?.p256dh || '', auth: subJson.keys?.auth || '' },
           { onConflict: 'user_id,endpoint' }
         );
-
-        if (error) {
-          console.error('[Push] Error saving subscription:', error);
-        } else {
-          console.log('[Push] Subscription saved to Supabase');
-        }
       }
     } catch (error) {
       console.error('[Push] Registration error:', error);
@@ -278,25 +228,15 @@ export const useNotifications = () => {
   const updateSettings = useCallback((newSettings: Partial<NotificationSettings>) => {
     const updatedSettings = { ...settings, ...newSettings };
     setSettings(updatedSettings);
-    
-    // Save to localStorage immediately
     localStorage.setItem('notificationSettings', JSON.stringify(updatedSettings));
-    console.log('Notification settings saved:', updatedSettings);
-    
-    toast({
-      title: "Settings Saved",
-      description: "Your notification preferences have been saved successfully",
-    });
-  }, [settings, toast]);
+    syncSettingsToDB(updatedSettings);
+  }, [settings, syncSettingsToDB]);
 
   const saveSettings = useCallback(() => {
     localStorage.setItem('notificationSettings', JSON.stringify(settings));
-    toast({
-      title: "Settings Saved",
-      description: "Your notification preferences have been saved successfully",
-    });
-    console.log('Notification settings manually saved:', settings);
-  }, [settings, toast]);
+    syncSettingsToDB(settings);
+    toast({ title: "Settings Saved", description: "Your notification preferences have been saved successfully" });
+  }, [settings, toast, syncSettingsToDB]);
 
   return {
     permission,
