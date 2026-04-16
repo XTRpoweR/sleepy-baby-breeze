@@ -1,41 +1,47 @@
 
 
-## تشخيص المشكلة وإصلاح نظام الإشعارات
+## المشكلة
 
-### المشاكل المكتشفة
+هناك 4 مشاكل رئيسية في نظام الإشعارات:
 
-1. **لا يوجد مشتركين في جدول `push_subscriptions`** - لأن تسجيل Service Worker يتم تخطيه في بيئة المعاينة (preview)
-2. **إرسال الإشعارات لا يعمل** - الدالة `send-push-notification` ترسل البيانات كنص عادي بدون تشفير Web Push (RFC 8291). متصفحات Chrome/Firefox ترفض أي payload غير مشفر
-3. **لا يوجد جدولة تلقائية** - pg_cron لم يتم إعداده بعد
-4. **لا يوجد زر تجربة** - لا توجد طريقة لاختبار الإشعارات
+1. **إشعارات متكررة كل 5 دقائق**: الدالة `schedule-notifications` تعمل كل 5 دقائق عبر pg_cron. بمجرد إرسال الإشعار (تحديث `sent_at`)، تقوم بإنشاء إشعار جديد في الدورة التالية لأن شرط "مضى وقت أطول من الفاصل الزمني" لا يزال صحيحاً.
 
-### الحل
+2. **أوقات غير منطقية** ("4608h 37m"): لأن آخر رضاعة مسجلة كانت قبل أيام، والنظام يحسب الفرق بدون حد أقصى.
 
-#### الخطوة 1: إصلاح Edge Function لتشفير الإشعارات
-- إعادة كتابة `send-push-notification` باستخدام مكتبة `web-push` عبر `npm:web-push` في Deno
-- هذه المكتبة تتعامل مع تشفير RFC 8291 وتوقيع VAPID تلقائياً
+3. **إشعارات لملفات أطفال محذوفة**: الأنشطة القديمة `baby_activities` لا تزال موجودة في قاعدة البيانات حتى بعد حذف ملف الطفل.
 
-#### الخطوة 2: إنشاء Edge Function للتجربة
-- إنشاء `send-test-notification/index.ts` - يقبل `user_id` ويرسل إشعار تجريبي فوري
-- يأخذ اشتراك المستخدم من الجدول ويرسل إشعار مباشر
+4. **لا يوجد زر تشغيل/إيقاف عام**: الإعدادات تُحفظ في localStorage فقط ولا تُرسل لقاعدة البيانات، فالسيرفر يستخدم القيم الافتراضية (كل شيء مفعّل).
 
-#### الخطوة 3: إضافة زر "إشعار تجريبي" في الواجهة
-- إضافة زر في `SmartNotifications` أو صفحة الإشعارات
-- عند الضغط: يستدعي `send-test-notification` ويرسل إشعار خلال ثوانٍ
+## خطة الإصلاح
 
-#### الخطوة 4: إصلاح تسجيل Service Worker
-- إزالة حظر التسجيل في بيئة المعاينة حتى يتم حفظ الاشتراك
-- التأكد من حفظ `push_subscriptions` بشكل صحيح
+### 1. إصلاح دالة `schedule-notifications` (السيرفر)
+- **إضافة cooldown**: عدم إنشاء إشعار جديد إذا تم إرسال إشعار من نفس النوع لنفس الطفل خلال آخر `feeding_interval` دقيقة (بدل التحقق فقط من الإشعارات غير المرسلة)
+- **حد أقصى للوقت**: إذا مضى أكثر من 24 ساعة على آخر رضاعة، لا يتم إرسال إشعار (الموضوع لم يعد تذكيراً مفيداً)
+- **التحقق من وجود ملف الطفل**: التأكد أن `baby_id` موجود فعلاً في جدول `baby_profiles` قبل إرسال أي إشعار
+- **إضافة حقل `notifications_enabled`** للتحقق من الإعدادات المحفوظة في قاعدة البيانات
 
-#### الخطوة 5: إعداد pg_cron
-- إنشاء cron job يستدعي `schedule-notifications` ثم `send-push-notification` كل 5 دقائق
+### 2. إضافة عمود `notifications_enabled` لجدول `notification_settings`
+- Migration لإضافة عمود `notifications_enabled BOOLEAN DEFAULT true`
 
-### الملفات المتأثرة
-- `supabase/functions/send-push-notification/index.ts` - إعادة كتابة بالكامل
-- `supabase/functions/send-test-notification/index.ts` - جديد
-- `src/hooks/useNotifications.tsx` - إصلاح تسجيل SW
-- `src/components/notifications/SmartNotifications.tsx` - إضافة زر تجربة
+### 3. مزامنة الإعدادات مع قاعدة البيانات
+- تعديل `useNotifications` hook لحفظ وقراءة الإعدادات من جدول `notification_settings` بدل localStorage فقط
+- إضافة دالة `upsert` للإعدادات عند كل تغيير
 
-### ملاحظة تقنية
-تشفير Web Push معقد جداً. مكتبة `web-push` تتعامل مع كل التفاصيل تلقائياً (ECDH key exchange, HKDF, AES-128-GCM). بدونها لن تعمل الإشعارات على أي متصفح.
+### 4. إضافة زر تشغيل/إيقاف عام للإشعارات
+- إضافة Switch رئيسي في أعلى صفحة الإشعارات لتشغيل/إيقاف كل الإشعارات
+- عند الإيقاف، يتم تحديث `notifications_enabled = false` في قاعدة البيانات
+- دالة `schedule-notifications` تتحقق من هذا الحقل وتتجاهل المستخدمين الذين أوقفوا الإشعارات
+
+### 5. تنظيف البيانات القديمة
+- حذف الإشعارات المجدولة غير المرسلة للأطفال المحذوفين
+- إضافة `ON DELETE CASCADE` أو تحقق في الدالة
+
+## الملفات المتأثرة
+
+| الملف | التغيير |
+|---|---|
+| `supabase/functions/schedule-notifications/index.ts` | cooldown, حد أقصى 24h, تحقق من وجود الطفل, تحقق من `notifications_enabled` |
+| `src/hooks/useNotifications.tsx` | مزامنة الإعدادات مع Supabase, إضافة `notificationsEnabled` |
+| `src/components/notifications/SmartNotifications.tsx` | إضافة زر تشغيل/إيقاف عام |
+| Migration جديد | إضافة عمود `notifications_enabled` |
 
