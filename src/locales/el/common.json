@@ -438,7 +438,10 @@
     "testSentTitle": "Στάλθηκε! 🎉",
     "testSentDescription": "Η δοκιμαστική ειδοποίηση {{count}} στάλθηκε με επιτυχία",
     "testErrorTitle": "Σφάλμα",
-    "testErrorDescription": "Αποτυχία αποστολής δοκιμαστικής ειδοποίησης"
+    "testErrorDescription": "Αποτυχία αποστολής δοκιμαστικής ειδοποίησης",
+    "disabled": "Οι ειδοποιήσεις είναι απενεργοποιημένες",
+    "globalToggleOnDesc": "Θα λαμβάνετε έξυπνες υπενθυμίσεις",
+    "globalToggleOffDesc": "Δεν θα λαμβάνετε ειδοποιήσεις"
   },
   "forms": {
     "required": "Απαιτείται",
