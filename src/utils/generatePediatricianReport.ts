@@ -2,12 +2,12 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 /**
- * Wait for charts (SVG/recharts) and images to finish rendering inside a node.
+ * Wait for images + charts to finish rendering inside a node.
  */
-async function waitForContentReady(node: HTMLElement, maxWaitMs = 4000) {
+async function waitForContentReady(node: HTMLElement, timeoutMs = 3500) {
   const start = Date.now();
 
-  // 1. Wait for all images to load
+  // Wait for <img> tags
   const images = Array.from(node.querySelectorAll('img'));
   await Promise.all(
     images.map(img => {
@@ -15,110 +15,85 @@ async function waitForContentReady(node: HTMLElement, maxWaitMs = 4000) {
       return new Promise<void>(resolve => {
         img.onload = () => resolve();
         img.onerror = () => resolve();
-        setTimeout(() => resolve(), 2000);
+        setTimeout(() => resolve(), 1500);
       });
     })
   );
 
-  // 2. Wait for recharts / SVG charts to render (they render after a tick)
-  // Loop until either charts are present with children, or timeout
-  while (Date.now() - start < maxWaitMs) {
-    const svgs = node.querySelectorAll('svg');
-    const rechartsContainers = node.querySelectorAll('.recharts-wrapper, .recharts-surface');
-
-    // If we have charts and they all have rendered content, we're good
-    if (rechartsContainers.length === 0) {
-      // No charts at all, just wait one frame to be safe
-      await new Promise(r => requestAnimationFrame(() => r(null)));
-      break;
-    }
+  // Wait for recharts to render their SVGs
+  while (Date.now() - start < timeoutMs) {
+    const wrappers = node.querySelectorAll('.recharts-wrapper');
+    if (wrappers.length === 0) break;
 
     let allReady = true;
-    rechartsContainers.forEach(el => {
-      if (el.children.length === 0) allReady = false;
+    wrappers.forEach(w => {
+      const svg = w.querySelector('svg');
+      if (!svg || svg.children.length < 2) allReady = false;
     });
 
-    if (allReady && svgs.length > 0) {
-      // Double-buffer: one more animation frame for safety
-      await new Promise(r => requestAnimationFrame(() => r(null)));
-      await new Promise(r => requestAnimationFrame(() => r(null)));
-      break;
-    }
-
-    await new Promise(r => setTimeout(r, 100));
+    if (allReady) break;
+    await new Promise(r => setTimeout(r, 150));
   }
 
-  // 3. Final safety delay to allow any pending state updates / data fetches to settle
-  await new Promise(r => setTimeout(r, 800));
+  // Final safety tick
+  await new Promise(r => setTimeout(r, 500));
 }
 
 /**
- * Renders a DOM node as a PDF and triggers download.
- * Temporarily makes the hidden export container visible off-screen so html2canvas
- * can capture fully-rendered charts and loaded data.
- * @param nodeRef - ref to the DOM node to render as PDF
- * @param filename - name of the resulting PDF
+ * Renders a DOM node as a multi-page PDF and triggers download.
  */
 export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
-  // === Step 1: Make the node visible for capture (without showing it to the user) ===
-  // Save original styles to restore later
-  const originalStyles = {
-    opacity: nodeRef.style.opacity,
-    pointerEvents: nodeRef.style.pointerEvents,
-    visibility: nodeRef.style.visibility,
-  };
+  // Walk up to find the export wrapper (has data-export-wrapper attr, or use parent)
+  let wrapper: HTMLElement | null = nodeRef.closest('[data-export-wrapper]') as HTMLElement;
+  if (!wrapper) wrapper = nodeRef.parentElement;
 
-  // Also walk up to the hidden wrapper (which has position:fixed; left:-9999px)
-  // and temporarily bring it on-screen but off the viewport to keep it invisible
-  const hiddenWrapper = nodeRef.parentElement;
-  const originalWrapperStyles = hiddenWrapper ? {
-    opacity: hiddenWrapper.style.opacity,
-    pointerEvents: hiddenWrapper.style.pointerEvents,
-    visibility: hiddenWrapper.style.visibility,
+  // Save original styles on wrapper so we can restore them
+  const originalWrapperStyle = wrapper ? {
+    visibility: wrapper.style.visibility,
+    left: wrapper.style.left,
+    top: wrapper.style.top,
+    opacity: wrapper.style.opacity,
+    zIndex: wrapper.style.zIndex,
   } : null;
 
-  // Force the node (and its wrapper) to render fully
-  nodeRef.style.opacity = '1';
-  nodeRef.style.visibility = 'visible';
-  nodeRef.style.pointerEvents = 'none';
-  if (hiddenWrapper) {
-    hiddenWrapper.style.opacity = '1';
-    hiddenWrapper.style.visibility = 'visible';
-    hiddenWrapper.style.pointerEvents = 'none';
+  // Move the wrapper temporarily to a reachable location (far below the page)
+  // and make it truly visible so charts render and html2canvas can capture.
+  // It's still off-screen for the user because we scroll-lock below.
+  if (wrapper) {
+    wrapper.style.visibility = 'visible';
+    wrapper.style.opacity = '1';
+    wrapper.style.left = '0px';
+    wrapper.style.top = '0px';
+    wrapper.style.zIndex = '-1';
   }
 
   try {
-    // === Step 2: Wait for data + charts to be fully ready ===
+    // Wait for content (charts, images, data) to be ready
     await waitForContentReady(nodeRef);
 
-    // === Step 3: Capture the node as a canvas ===
+    // Capture node as canvas
     const canvas = await html2canvas(nodeRef, {
       scale: 2,
-      backgroundColor: "#ffffff",
+      backgroundColor: '#ffffff',
       useCORS: true,
       logging: false,
-      windowWidth: nodeRef.scrollWidth,
-      windowHeight: nodeRef.scrollHeight,
+      allowTaint: false,
       width: nodeRef.scrollWidth,
       height: nodeRef.scrollHeight,
-      foreignObjectRendering: false,
-      onclone: (clonedDoc, clonedNode) => {
-        // Force the cloned node visible & positioned normally so it renders
-        const el = clonedNode as HTMLElement;
-        el.style.opacity = '1';
-        el.style.visibility = 'visible';
-        el.style.position = 'static';
-        el.style.left = 'auto';
-        el.style.top = 'auto';
-        el.style.transform = 'none';
-        // Also bring cloned wrapper out of fixed off-screen position
-        if (el.parentElement) {
-          el.parentElement.style.position = 'static';
-          el.parentElement.style.left = 'auto';
-          el.parentElement.style.top = 'auto';
-          el.parentElement.style.opacity = '1';
-          el.parentElement.style.visibility = 'visible';
-        }
+      windowWidth: nodeRef.scrollWidth,
+      windowHeight: nodeRef.scrollHeight,
+      onclone: (clonedDoc) => {
+        // Ensure cloned wrapper is fully visible for rendering
+        const clonedWrappers = clonedDoc.querySelectorAll('[data-export-wrapper]');
+        clonedWrappers.forEach(w => {
+          const el = w as HTMLElement;
+          el.style.visibility = 'visible';
+          el.style.opacity = '1';
+          el.style.position = 'static';
+          el.style.left = 'auto';
+          el.style.top = 'auto';
+          el.style.zIndex = 'auto';
+        });
 
         const style = clonedDoc.createElement('style');
         style.textContent = `
@@ -126,26 +101,17 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          table, .card, .border, [class*="rounded"] {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-          }
-          [data-pdf-section] {
+          [data-pdf-section], table, .card, [class*="rounded"] {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
           }
         `;
         clonedDoc.head.appendChild(style);
-      }
+      },
     });
 
-    // === Step 4: Build the PDF, slicing the canvas into real page-sized chunks ===
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "pt",
-      format: "a4",
-    });
-
+    // === Build PDF, slicing canvas into page-sized chunks ===
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
 
@@ -156,62 +122,38 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
     const ratio = contentWidth / canvas.width;
     const canvasPerPage = Math.floor(contentHeight / ratio);
 
-    const fitMode = nodeRef.getAttribute('data-pdf-fit');
-
-    if (fitMode === 'single') {
-      const imgData = canvas.toDataURL("image/png");
-      const fitRatio = Math.min(contentWidth / canvas.width, contentHeight / canvas.height);
-      const imgWidth = canvas.width * fitRatio;
-      const imgHeight = canvas.height * fitRatio;
-      const x = (pdfWidth - imgWidth) / 2;
-      const y = (pdfHeight - imgHeight) / 2;
-      pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
-      pdf.save(filename);
-      return;
-    }
-
-    // Collect smart cut candidates (in canvas pixel coords)
+    // Collect smart cut candidates
     const candidates = new Set<number>([0, canvas.height]);
-    const scaleFactor = canvas.height / nodeRef.scrollHeight;
+    const scaleY = canvas.height / nodeRef.scrollHeight;
 
-    const addCandidates = (selector: string) => {
-      const els = nodeRef.querySelectorAll(selector);
-      els.forEach(el => {
+    const addCandidates = (sel: string) => {
+      const nodeTop = nodeRef.getBoundingClientRect().top;
+      nodeRef.querySelectorAll(sel).forEach(el => {
         const rect = el.getBoundingClientRect();
-        const nodeRect = nodeRef.getBoundingClientRect();
-        const relBottom = rect.bottom - nodeRect.top;
-        const y = Math.round(relBottom * scaleFactor);
+        const relBottom = rect.bottom - nodeTop;
+        const y = Math.round(relBottom * scaleY);
         if (y > 0 && y < canvas.height) candidates.add(y);
       });
     };
-
     addCandidates('[data-pdf-section]');
-    addCandidates('table tbody tr');
     addCandidates('.card, [class*="card"]');
+    addCandidates('table tbody tr');
     addCandidates('h1, h2, h3, h4');
 
-    const sortedCandidates = Array.from(candidates).sort((a, b) => a - b);
+    const sorted = Array.from(candidates).sort((a, b) => a - b);
 
-    // Slice canvas into real page-sized chunks and paste each as its own image
     let lastCut = 0;
-    let isFirstPage = true;
+    let firstPage = true;
 
     while (lastCut < canvas.height) {
       const maxLimit = lastCut + canvasPerPage;
 
-      // Find the best candidate within the page
+      // Find best candidate within [lastCut + 40% page, maxLimit]
       let nextCut = Math.min(maxLimit, canvas.height);
-      for (let i = sortedCandidates.length - 1; i >= 0; i--) {
-        const c = sortedCandidates[i];
-        if (c > lastCut + canvasPerPage * 0.4 && c <= maxLimit) {
-          nextCut = c;
-          break;
-        }
-      }
-
-      // Never advance less than 40% of a page (avoid tiny pages)
-      if (nextCut - lastCut < canvasPerPage * 0.4 && maxLimit < canvas.height) {
-        nextCut = maxLimit;
+      const minAdvance = lastCut + canvasPerPage * 0.4;
+      for (let i = sorted.length - 1; i >= 0; i--) {
+        const c = sorted[i];
+        if (c >= minAdvance && c <= maxLimit) { nextCut = c; break; }
       }
 
       if (nextCut <= lastCut) {
@@ -220,43 +162,36 @@ export async function exportNodeAsPDF(nodeRef: HTMLElement, filename: string) {
 
       const sliceHeight = nextCut - lastCut;
 
-      // Create a fresh canvas for this page's slice
+      // Render slice to its own canvas
       const pageCanvas = document.createElement('canvas');
       pageCanvas.width = canvas.width;
       pageCanvas.height = sliceHeight;
-      const pageCtx = pageCanvas.getContext('2d');
-
-      if (pageCtx) {
-        pageCtx.fillStyle = '#ffffff';
-        pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-        pageCtx.drawImage(
-          canvas,
-          0, lastCut, canvas.width, sliceHeight,
-          0, 0, canvas.width, sliceHeight
-        );
+      const ctx = pageCanvas.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+        ctx.drawImage(canvas, 0, lastCut, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
       }
 
-      const sliceImgData = pageCanvas.toDataURL("image/png");
-
-      if (!isFirstPage) pdf.addPage();
-
-      const sliceImgHeight = sliceHeight * ratio;
-      pdf.addImage(sliceImgData, "PNG", margin, margin, contentWidth, sliceImgHeight);
+      if (!firstPage) pdf.addPage();
+      pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', margin, margin, contentWidth, sliceHeight * ratio);
 
       lastCut = nextCut;
-      isFirstPage = false;
+      firstPage = false;
     }
 
     pdf.save(filename);
+  } catch (err) {
+    console.error('[exportNodeAsPDF] Error:', err);
+    throw err;
   } finally {
-    // === Step 5: Restore original styles so the hidden container goes back to hidden ===
-    nodeRef.style.opacity = originalStyles.opacity;
-    nodeRef.style.pointerEvents = originalStyles.pointerEvents;
-    nodeRef.style.visibility = originalStyles.visibility;
-    if (hiddenWrapper && originalWrapperStyles) {
-      hiddenWrapper.style.opacity = originalWrapperStyles.opacity;
-      hiddenWrapper.style.pointerEvents = originalWrapperStyles.pointerEvents;
-      hiddenWrapper.style.visibility = originalWrapperStyles.visibility;
+    // ALWAYS restore wrapper styles, even on error — so button never gets stuck
+    if (wrapper && originalWrapperStyle) {
+      wrapper.style.visibility = originalWrapperStyle.visibility;
+      wrapper.style.opacity = originalWrapperStyle.opacity;
+      wrapper.style.left = originalWrapperStyle.left;
+      wrapper.style.top = originalWrapperStyle.top;
+      wrapper.style.zIndex = originalWrapperStyle.zIndex;
     }
   }
 }
