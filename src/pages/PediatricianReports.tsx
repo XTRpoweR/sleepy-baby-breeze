@@ -28,7 +28,7 @@ const PediatricianReports = () => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
-  // Fetch all logs for the active profile once — PDF builder will filter by date range
+  // Fetch all logs for the active profile once — PDF builder filters by date range
   const { logs } = useActivityLogs(activeProfile?.id || '');
 
   const [pdfLoading, setPdfLoading] = useState<string | null>(null);
@@ -73,9 +73,13 @@ const PediatricianReports = () => {
         'growth-tracking': `Growth_Development_${activeProfile.name}.pdf`,
       };
 
+      // For growth/all-time, pass ALL logs not just filtered
+      const logsForReport = reportType === 'growth-tracking' ? logs : filteredLogs;
+
       await exportReportAsPDF({
-        logs: filteredLogs as any,
+        logs: logsForReport as any,
         profileName: activeProfile.name,
+        birthDate: (activeProfile as any).birth_date || null,
         reportType: typeMap[reportType],
         dateRange,
         filename: filenameMap[reportType],
