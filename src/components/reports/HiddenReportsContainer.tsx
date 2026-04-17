@@ -1,4 +1,3 @@
-
 import React, { ForwardedRef } from "react";
 import { ReportsOverview } from "@/components/reports/ReportsOverview";
 import { DetailedSleepAnalytics } from "@/components/reports/DetailedSleepAnalytics";
@@ -35,7 +34,7 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
   const reportStyles: React.CSSProperties = {
     fontFamily: 'Arial, sans-serif',
     minHeight: 'auto',
-    pageBreakInside: 'avoid',
+    width: '900px',
   };
 
   const sectionStyles: React.CSSProperties = {
@@ -44,42 +43,54 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
     marginBottom: '24px',
   };
 
+  // Keep off-screen (so user can't see it) but in normal document flow
+  // so html2canvas can properly measure + render charts.
+  // The container is rendered normally in the DOM tree, but positioned absolute
+  // far below the page. html2canvas will read its natural dimensions correctly.
   return (
-    <div style={{ position: "fixed", left: -9999, top: -9999, width: "900px", pointerEvents: "none", opacity: 0 }}>
+    <div
+      data-export-wrapper
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        left: "0",
+        top: "0",
+        width: "900px",
+        pointerEvents: "none",
+        visibility: "hidden",
+        zIndex: -1,
+      }}
+    >
       {/* Comprehensive Health Report */}
       <div ref={comprehensiveRef} className="bg-white p-8" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
-          <ReportHeader 
+          <ReportHeader
             reportTitle="Comprehensive Health Report"
             patientName={activeProfile.name}
             dateRange={comprehensiveDateRange}
             reportType="Full Health Overview"
           />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="insights">
-          <ClinicalInsights insights={[
-            { type: 'neutral', text: 'This report provides a comprehensive overview of tracked activities including sleep, feeding, and care routines.' },
-            { type: 'neutral', text: 'Data is parent-reported and may not capture all activities or exact measurements.' }
-          ]} />
+          <ClinicalInsights
+            insights={[
+              { type: 'neutral', text: 'This report provides a comprehensive overview of tracked activities including sleep, feeding, and care routines.' },
+              { type: 'neutral', text: 'Data is parent-reported and may not capture all activities or exact measurements.' }
+            ]}
+          />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="overview">
           <ReportsOverview babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="sleep">
           <DetailedSleepAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="feeding">
           <FeedingAnalytics babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="activity">
           <ActivitySummary babyId={activeProfile.id} dateRange={comprehensiveDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="footer">
           <ReportFooter />
         </div>
@@ -88,29 +99,27 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       {/* Sleep Pattern Analysis */}
       <div ref={sleepRef} className="bg-white p-8" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
-          <ReportHeader 
+          <ReportHeader
             reportTitle="Sleep Pattern Analysis"
             patientName={activeProfile.name}
             dateRange={sleepDateRange}
             reportType="Sleep Tracking Report"
           />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="insights">
-          <ClinicalInsights insights={[
-            { type: 'neutral', text: 'This report focuses on sleep patterns, duration, and quality metrics.' },
-            { type: 'neutral', text: 'Sleep data includes both parent-tracked sessions and manual log entries.' }
-          ]} />
+          <ClinicalInsights
+            insights={[
+              { type: 'neutral', text: 'This report focuses on sleep patterns, duration, and quality metrics.' },
+              { type: 'neutral', text: 'Sleep data includes both parent-tracked sessions and manual log entries.' }
+            ]}
+          />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="sleep">
           <DetailedSleepAnalytics babyId={activeProfile.id} dateRange={sleepDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="overview">
           <ReportsOverview babyId={activeProfile.id} dateRange={sleepDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="footer">
           <ReportFooter />
         </div>
@@ -119,29 +128,27 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
       {/* Growth & Development Report */}
       <div ref={growthRef} className="bg-white p-8" style={reportStyles}>
         <div style={sectionStyles} data-pdf-section="header">
-          <ReportHeader 
+          <ReportHeader
             reportTitle="Growth & Development Report"
             patientName={activeProfile.name}
             dateRange={growthDateRange}
             reportType="Developmental Tracking"
           />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="insights">
-          <ClinicalInsights insights={[
-            { type: 'neutral', text: 'This report tracks developmental activities and growth patterns over time.' },
-            { type: 'neutral', text: 'Please combine with clinical measurements for complete assessment.' }
-          ]} />
+          <ClinicalInsights
+            insights={[
+              { type: 'neutral', text: 'This report tracks developmental activities and growth patterns over time.' },
+              { type: 'neutral', text: 'Please combine with clinical measurements for complete assessment.' }
+            ]}
+          />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="overview">
           <ReportsOverview babyId={activeProfile.id} dateRange={growthDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="activity">
           <ActivitySummary babyId={activeProfile.id} dateRange={growthDateRange} />
         </div>
-        
         <div style={sectionStyles} data-pdf-section="footer">
           <ReportFooter />
         </div>
@@ -149,4 +156,3 @@ export const HiddenReportsContainer: React.FC<HiddenReportsContainerProps> = ({
     </div>
   );
 };
-
