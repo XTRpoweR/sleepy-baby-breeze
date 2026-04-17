@@ -1,18 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  FileText, 
-  Download, 
-  Calendar, 
-  BarChart3, 
-  Baby,
-  ArrowLeft,
-  Clock,
-  TrendingUp
-} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { FileText, Baby, ArrowLeft, Clock, TrendingUp, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -22,14 +13,11 @@ import { MobileHeader } from '@/components/layout/MobileHeader';
 import { ProfileSelector } from '@/components/profiles/ProfileSelector';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { exportNodeAsPDF } from '@/utils/generatePediatricianReport';
-import { ReportsOverview } from '@/components/reports/ReportsOverview';
-import { SleepAnalytics } from '@/components/reports/SleepAnalytics';
-import { FeedingAnalytics } from '@/components/reports/FeedingAnalytics';
-import { ActivitySummary } from '@/components/reports/ActivitySummary';
+import { useActivityLogs } from '@/hooks/useActivityLogs';
+import { exportReportAsPDF, ReportType } from '@/utils/generatePediatricianReport';
 import { getDateRange, DateRangeOption } from '@/utils/dateRangeUtils';
 import { ReportTypesGrid } from "@/components/reports/ReportTypesGrid";
-import { HiddenReportsContainer } from "@/components/reports/HiddenReportsContainer";
+import { useToast } from '@/hooks/use-toast';
 
 const PediatricianReports = () => {
   const { user, loading } = useAuth();
@@ -38,6 +26,12 @@ const PediatricianReports = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+
+  // Fetch all logs for the active profile once — PDF builder will filter by date range
+  const { logs } = useActivityLogs(activeProfile?.id || '');
+
+  const [pdfLoading, setPdfLoading] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -45,48 +39,62 @@ const PediatricianReports = () => {
     }
   }, [user, loading, navigate]);
 
-  const handleBackToDashboard = () => {
-    navigate('/dashboard');
+  const handleBackToDashboard = () => navigate('/dashboard');
+
+  const rangeMap: Record<string, DateRangeOption> = {
+    'comprehensive': 'last30Days',
+    'sleep-analysis': 'last14Days',
+    'growth-tracking': 'all',
   };
 
-  // NEW: Refs to report containers and date controls
-  const comprehensiveRef = useRef<HTMLDivElement>(null);
-  const sleepRef = useRef<HTMLDivElement>(null);
-  const growthRef = useRef<HTMLDivElement>(null);
-  const [pdfLoading, setPdfLoading] = useState<string | null>(null);
-
-  // For timing, use last 30, 14, or full range
-  const [comprehensiveRange] = useState<DateRangeOption>('last30');
-  const [sleepRange] = useState<DateRangeOption>('last14');
-  const [growthRange] = useState<DateRangeOption>('all');
+  const typeMap: Record<string, ReportType> = {
+    'comprehensive': 'comprehensive',
+    'sleep-analysis': 'sleep',
+    'growth-tracking': 'growth',
+  };
 
   const handleGenerateReport = async (reportType: string) => {
     if (!activeProfile) return;
-    setPdfLoading(reportType);
-    let node: HTMLElement | null = null;
-    let filename = '';
-    switch (reportType) {
-      case 'comprehensive':
-        node = comprehensiveRef.current;
-        filename = `Comprehensive_Report_${activeProfile.name}.pdf`;
-        break;
-      case 'sleep-analysis':
-        node = sleepRef.current;
-        filename = `Sleep_Analysis_${activeProfile.name}.pdf`;
-        break;
-      case 'growth-tracking':
-        node = growthRef.current;
-        filename = `Growth_Development_${activeProfile.name}.pdf`;
-        break;
-      default:
-        setPdfLoading(null);
-        return;
-    }
 
-    if (node) {
-      await exportNodeAsPDF(node, filename);
+    setPdfLoading(reportType);
+    try {
+      const rangeOpt = rangeMap[reportType];
+      const dateRange = getDateRange(rangeOpt);
+
+      // Filter logs to the selected date range
+      const filteredLogs = logs.filter(log => {
+        const d = new Date(log.start_time);
+        return d >= dateRange.start && d <= dateRange.end;
+      });
+
+      const filenameMap: Record<string, string> = {
+        'comprehensive': `Comprehensive_Report_${activeProfile.name}.pdf`,
+        'sleep-analysis': `Sleep_Analysis_${activeProfile.name}.pdf`,
+        'growth-tracking': `Growth_Development_${activeProfile.name}.pdf`,
+      };
+
+      await exportReportAsPDF({
+        logs: filteredLogs as any,
+        profileName: activeProfile.name,
+        reportType: typeMap[reportType],
+        dateRange,
+        filename: filenameMap[reportType],
+      });
+
+      toast({
+        title: 'Report generated',
+        description: 'Your PDF has been downloaded successfully.',
+      });
+    } catch (err) {
+      console.error('Failed to generate report:', err);
+      toast({
+        title: 'Failed to generate report',
+        description: 'An error occurred while creating the PDF. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setPdfLoading(null);
     }
-    setPdfLoading(null);
   };
 
   if (loading) {
@@ -100,9 +108,7 @@ const PediatricianReports = () => {
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const reportTypes = [
     {
@@ -130,11 +136,10 @@ const PediatricianReports = () => {
 
   const ReportContent = () => (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="flex items-center space-x-4 mb-6">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleBackToDashboard}
           className="flex items-center space-x-2"
         >
@@ -153,16 +158,9 @@ const PediatricianReports = () => {
         <p className="text-gray-600 max-w-2xl mx-auto">
           {t('dashboard.pediatricianReportsDesc')}
         </p>
-        
-        {/* Active Profile Selector */}
         <div className="flex justify-center mt-6">
-          {!isMobile ? (
-            <ProfileSelector />
-          ) : (
-            <MobileProfileSelector />
-          )}
+          {!isMobile ? <ProfileSelector /> : <MobileProfileSelector />}
         </div>
-        
         {activeProfile && (
           <p className="text-sm text-gray-500 mt-2">
             Reports for {activeProfile.name}
@@ -170,7 +168,6 @@ const PediatricianReports = () => {
         )}
       </div>
 
-      {/* Active Profile Check */}
       {!activeProfile ? (
         <Card className="max-w-md mx-auto">
           <CardContent className="p-6 text-center">
@@ -186,25 +183,12 @@ const PediatricianReports = () => {
         </Card>
       ) : (
         <div className="max-w-4xl mx-auto">
-          {/* Report Types Grid */}
           <ReportTypesGrid
             reportTypes={reportTypes}
             onGenerateReport={handleGenerateReport}
             pdfLoading={pdfLoading}
           />
 
-          {/* Hidden Reports used for PDF export */}
-          <HiddenReportsContainer
-            comprehensiveRef={comprehensiveRef}
-            sleepRef={sleepRef}
-            growthRef={growthRef}
-            activeProfile={activeProfile}
-            comprehensiveRange={comprehensiveRange}
-            sleepRange={sleepRange}
-            growthRange={growthRange}
-          />
-
-          {/* Additional Information */}
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="p-6">
               <h3 className="font-semibold text-blue-900 mb-2">How it works</h3>
@@ -223,14 +207,11 @@ const PediatricianReports = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Headers */}
       <DesktopHeader />
       <MobileHeader />
-
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
-        <FeatureGate 
-          feature="pediatrician" 
+        <FeatureGate
+          feature="pediatrician"
           fallback={
             <div className="text-center py-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
