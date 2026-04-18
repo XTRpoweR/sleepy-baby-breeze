@@ -86,7 +86,7 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
         or when the content is scrolled.
       */}
       <DialogContent
-        className="max-h-[90vh] flex flex-col gap-0 p-0 sm:max-w-lg"
+        className="max-h-[95vh] h-[95vh] sm:h-auto flex flex-col gap-0 p-0 sm:max-w-lg"
         onInteractOutside={(e) => {
           if (isSubmitting) e.preventDefault();
         }}
@@ -134,7 +134,7 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
             </div>
           </div>
 
-          <div className="flex-shrink-0 flex justify-end gap-2 px-6 py-4 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+          <div className="flex-shrink-0 flex justify-end gap-2 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               {t('tracking.editActivity.cancelButton')}
             </Button>
