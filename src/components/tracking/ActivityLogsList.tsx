@@ -168,7 +168,7 @@ export const ActivityLogsList = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 max-h-[600px] overflow-y-auto">
+          <div className="space-y-3">
             {logs.map((log) => {
               const Icon = ACTIVITY_ICONS[log.activity_type];
               return (
