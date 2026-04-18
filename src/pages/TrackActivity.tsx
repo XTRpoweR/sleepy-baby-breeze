@@ -246,7 +246,7 @@ const TrackActivity = () => {
               </div>
 
               {/* Activity Logs */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-3 lg:mt-8">
                 <ActivityLogsList 
                   babyId={activeProfile.id}
                   logs={logs}
