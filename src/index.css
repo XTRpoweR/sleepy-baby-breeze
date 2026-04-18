@@ -324,3 +324,9 @@
     color: hsl(var(--gradient-via));
   }
 }
+
+
+/* Fix for vaul Drawer leaving transform: translateZ(0px) on <html>, which breaks position:fixed on Dialogs. This forces the transform off so Dialogs are correctly positioned relative to the viewport. */
+html {
+  transform: none !important;
+}
