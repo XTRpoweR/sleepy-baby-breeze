@@ -299,9 +299,9 @@ export const ActivityLogsList = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="max-h-[600px] overflow-y-auto overflow-x-auto">
+        <div className="max-h-[600px] overflow-y-auto overflow-x-auto rounded-lg border">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0 z-10 bg-background shadow-sm">
               <TableRow>
                 <TableHead>{t('activities.sleep')}</TableHead>
                 <TableHead>{t('tracking.common.startTime')}</TableHead>
