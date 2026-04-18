@@ -282,7 +282,7 @@ export const ActivityLogsList = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="max-h-[600px] overflow-y-auto overflow-x-auto rounded-lg border">
+        <div className="overflow-x-auto rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10 bg-background shadow-sm">
               <TableRow>
