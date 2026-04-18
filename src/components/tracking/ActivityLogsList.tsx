@@ -13,7 +13,6 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { EditActivityDialog } from './EditActivityDialog';
-import { DeleteConfirmationDialog } from './DeleteConfirmationDialog';
 import { PermissionAwareActions } from './PermissionAwareActions';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
@@ -75,8 +74,6 @@ export const ActivityLogsList = ({
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [editingLog, setEditingLog] = useState<any>(null);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const formatDuration = (minutes: number | null) => {
     if (!minutes) return 'N/A';
@@ -216,7 +213,7 @@ export const ActivityLogsList = ({
                             variant="ghost"
                             size="sm"
                             className="h-10 w-10 p-0 rounded-full text-destructive hover:bg-destructive/10"
-                            onClick={() => { setPendingDeleteId(log.id); setConfirmOpen(true); }}
+                            onClick={() => { if (window.confirm(t('common.confirm'))) { handleDeleteLog(log.id); } }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -271,21 +268,7 @@ export const ActivityLogsList = ({
           />
         )}
 
-        <DeleteConfirmationDialog
-          open={confirmOpen}
-          onClose={() => {
-            setConfirmOpen(false);
-            setPendingDeleteId(null);
-          }}
-          onConfirm={async () => {
-            if (pendingDeleteId) {
-              await handleDeleteLog(pendingDeleteId);
-            }
-            setConfirmOpen(false);
-            setPendingDeleteId(null);
-          }}
-        />
-      </Card>
+        </Card>
     );
   }
 
@@ -379,7 +362,7 @@ export const ActivityLogsList = ({
                             variant="ghost"
                             size="sm"
                             className="h-8 w-8 p-0"
-                            onClick={() => { setPendingDeleteId(log.id); setConfirmOpen(true); }}
+                            onClick={() => { if (window.confirm(t('common.confirm'))) { handleDeleteLog(log.id); } }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -404,20 +387,6 @@ export const ActivityLogsList = ({
         />
       )}
 
-      <DeleteConfirmationDialog
-        open={confirmOpen}
-        onClose={() => {
-          setConfirmOpen(false);
-          setPendingDeleteId(null);
-        }}
-        onConfirm={async () => {
-          if (pendingDeleteId) {
-            await handleDeleteLog(pendingDeleteId);
-          }
-          setConfirmOpen(false);
-          setPendingDeleteId(null);
-        }}
-      />
-    </Card>
+      </Card>
   );
 };
