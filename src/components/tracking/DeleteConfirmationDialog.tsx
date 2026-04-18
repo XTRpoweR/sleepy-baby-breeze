@@ -1,12 +1,23 @@
 import { useTranslation } from 'react-i18next';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
 interface DeleteConfirmationDialogProps {
@@ -18,42 +29,61 @@ interface DeleteConfirmationDialogProps {
 
 export const DeleteConfirmationDialog = ({ open, onClose, onConfirm, isDeleting = false }: DeleteConfirmationDialogProps) => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
+  // On mobile: use bottom Drawer — works reliably with safe-areas and iPhone home indicator
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+        <DrawerContent className="pb-[max(1rem,env(safe-area-inset-bottom))]">
+          <DrawerHeader>
+            <DrawerTitle>{t('common.delete')}</DrawerTitle>
+            <DrawerDescription>{t('common.confirm')}</DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter className="flex flex-col gap-2 pt-2">
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+              disabled={isDeleting}
+              className="w-full h-12"
+            >
+              {isDeleting ? t('common.loading') : t('common.delete')}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={isDeleting}
+              className="w-full h-12"
+            >
+              {t('common.cancel')}
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  // On desktop: use AlertDialog (standard modal with buttons)
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      {/*
-        Mobile safe-area fix for iPhone:
-        - max-h keeps dialog within viewport
-        - pb-[max(1rem,env(safe-area-inset-bottom))] respects iPhone home indicator
-        - On small screens buttons stack (flex-col-reverse) so primary action is on top
-        - On desktop buttons are side-by-side (sm:flex-row)
-      */}
-      <DialogContent
-        className="max-h-[90vh] overflow-y-auto pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:max-w-md"
-      >
-        <DialogHeader>
-          <DialogTitle>{t('common.delete')}</DialogTitle>
-          <DialogDescription>{t('common.confirm')}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:gap-2">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={isDeleting}
-            className="w-full sm:w-auto"
-          >
+    <AlertDialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <AlertDialogContent className="sm:max-w-md">
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t('common.delete')}</AlertDialogTitle>
+          <AlertDialogDescription>{t('common.confirm')}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isDeleting} onClick={onClose}>
             {t('common.cancel')}
-          </Button>
-          <Button
-            variant="destructive"
+          </AlertDialogCancel>
+          <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
-            className="w-full sm:w-auto"
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {isDeleting ? t('common.loading') : t('common.delete')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
