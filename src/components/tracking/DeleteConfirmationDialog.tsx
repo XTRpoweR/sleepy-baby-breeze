@@ -4,7 +4,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
@@ -19,6 +18,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Trash2, AlertTriangle } from 'lucide-react';
 
 interface DeleteConfirmationDialogProps {
   open: boolean;
@@ -31,47 +31,72 @@ export const DeleteConfirmationDialog = ({ open, onClose, onConfirm, isDeleting 
   const { t } = useTranslation();
   const isMobile = useIsMobile();
 
-  // On mobile: use bottom Drawer — works reliably with safe-areas and iPhone home indicator
+  // Mobile: bottom sheet (Drawer) with guaranteed visible buttons
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-        <DrawerContent className="pb-[max(1rem,env(safe-area-inset-bottom))]">
-          <DrawerHeader>
-            <DrawerTitle>{t('common.delete')}</DrawerTitle>
-            <DrawerDescription>{t('common.confirm')}</DrawerDescription>
-          </DrawerHeader>
-          <DrawerFooter className="flex flex-col gap-2 pt-2">
-            <Button
-              variant="destructive"
-              onClick={onConfirm}
-              disabled={isDeleting}
-              className="w-full h-12"
-            >
-              {isDeleting ? t('common.loading') : t('common.delete')}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isDeleting}
-              className="w-full h-12"
-            >
-              {t('common.cancel')}
-            </Button>
-          </DrawerFooter>
+        <DrawerContent className="focus:outline-none">
+          <div className="mx-auto w-full max-w-md px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))]">
+            <div className="flex justify-center mb-4">
+              <div className="h-14 w-14 rounded-full bg-destructive/10 flex items-center justify-center">
+                <AlertTriangle className="h-7 w-7 text-destructive" />
+              </div>
+            </div>
+
+            <DrawerHeader>
+              <DrawerTitle className="text-center text-xl">
+                {t('common.delete')}?
+              </DrawerTitle>
+              <DrawerDescription className="text-center">
+                {t('common.confirm')}
+              </DrawerDescription>
+            </DrawerHeader>
+
+            <div className="flex flex-col gap-3 mt-4">
+              <Button
+                variant="destructive"
+                onClick={onConfirm}
+                disabled={isDeleting}
+                size="lg"
+                className="w-full h-14 text-base font-semibold"
+              >
+                <Trash2 className="h-5 w-5 mr-2" />
+                {isDeleting ? t('common.loading') : t('common.delete')}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={onClose}
+                disabled={isDeleting}
+                size="lg"
+                className="w-full h-14 text-base"
+              >
+                {t('common.cancel')}
+              </Button>
+            </div>
+          </div>
         </DrawerContent>
       </Drawer>
     );
   }
 
-  // On desktop: use AlertDialog (standard modal with buttons)
+  // Desktop: standard AlertDialog
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <AlertDialogContent className="sm:max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle>{t('common.delete')}</AlertDialogTitle>
-          <AlertDialogDescription>{t('common.confirm')}</AlertDialogDescription>
+          <div className="flex justify-center mb-2">
+            <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+              <AlertTriangle className="h-6 w-6 text-destructive" />
+            </div>
+          </div>
+          <AlertDialogTitle className="text-center">
+            {t('common.delete')}?
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-center">
+            {t('common.confirm')}
+          </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className="sm:justify-center">
           <AlertDialogCancel disabled={isDeleting} onClick={onClose}>
             {t('common.cancel')}
           </AlertDialogCancel>
