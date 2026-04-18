@@ -133,7 +133,7 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
   // Mobile: bottom drawer — guaranteed safe-area handling
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }} shouldScaleBackground={false}>
         <DrawerContent className="max-h-[92vh] flex flex-col">
           <DrawerHeader className="flex-shrink-0">
             <DrawerTitle>{t('tracking.editActivity.title', { activity: getActivityTitle() })}</DrawerTitle>
