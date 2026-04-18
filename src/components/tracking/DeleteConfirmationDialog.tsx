@@ -34,7 +34,7 @@ export const DeleteConfirmationDialog = ({ open, onClose, onConfirm, isDeleting 
   // Mobile: bottom sheet (Drawer) with guaranteed visible buttons
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+      <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }} shouldScaleBackground={false}>
         <DrawerContent className="focus:outline-none">
           <div className="mx-auto w-full max-w-md px-4 pt-2 pb-[calc(2rem+env(safe-area-inset-bottom))]">
             <div className="flex justify-center mb-4">
