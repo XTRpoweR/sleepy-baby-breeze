@@ -168,11 +168,11 @@ export const ActivityLogsList = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-3 pt-2">
             {logs.map((log) => {
               const Icon = ACTIVITY_ICONS[log.activity_type];
               return (
-                <Card key={log.id} className="border-2 hover:border-primary/50 transition-all">
+                <Card key={log.id} className="border-2 hover:border-primary/50 transition-all scroll-mt-4">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2 flex-1">
@@ -189,7 +189,7 @@ export const ActivityLogsList = ({
                           )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-1 flex-shrink-0 ml-2">
+                      <div className="flex items-center gap-1 flex-shrink-0 ml-2 bg-muted/40 rounded-full px-1 py-1">
                         <PermissionAwareActions 
                           requiredPermission="canEdit" 
                           fallback={null}
@@ -200,7 +200,7 @@ export const ActivityLogsList = ({
                             variant="ghost"
                             size="sm"
                             onClick={() => setEditingLog(log)}
-                            className="h-9 w-9 p-0"
+                            className="h-10 w-10 p-0 rounded-full hover:bg-background"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -215,7 +215,7 @@ export const ActivityLogsList = ({
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-9 w-9 p-0 text-destructive"
+                            className="h-10 w-10 p-0 rounded-full text-destructive hover:bg-destructive/10"
                             onClick={() => { setPendingDeleteId(log.id); setConfirmOpen(true); }}
                           >
                             <Trash2 className="h-4 w-4" />
