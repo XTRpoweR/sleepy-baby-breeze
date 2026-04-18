@@ -147,7 +147,7 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
   // Desktop: centered dialog
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] flex flex-col gap-0 p-0 sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] h-auto flex flex-col gap-0 p-0 sm:max-w-lg top-[5vh] translate-y-0 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%]">
         <DialogHeader className="flex-shrink-0 px-6 pt-6 pb-4 border-b">
           <DialogTitle>{t('tracking.editActivity.title', { activity: getActivityTitle() })}</DialogTitle>
         </DialogHeader>
