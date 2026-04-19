@@ -47,6 +47,10 @@ export const SavedSchedules = ({
   };
 
   const handleDeleteSchedule = async (scheduleId: string) => {
+    // Confirm before deleting (native browser prompt — works reliably on all devices)
+    if (!window.confirm(t('common.confirm'))) {
+      return;
+    }
     const success = await deleteSleepSchedule(scheduleId);
     if (success) {
       onScheduleDeleted();
