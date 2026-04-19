@@ -353,7 +353,39 @@ const Index = () => {
 
             <div className="relative animate-scale-in order-1 lg:order-2">
               <div className="gradient-dynamic rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl animate-float card-glow gpu-accelerated">
-                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy - Baby sleeping peacefully on moon" className="w-full h-auto rounded-xl sm:rounded-2xl transition-all duration-300 hover:scale-105" loading="eager" fetchPriority="high" width="600" height="450" decoding="async" />
+                {/* Hero video — autoplay muted + playsInline is required for iOS autoplay. */}
+                {/* Poster shows instantly while video downloads; fallback image for old browsers. */}
+                <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group">
+                  <video
+                    className="w-full h-auto block transition-transform duration-300 group-hover:scale-[1.02]"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                    poster="/hero-demo-poster.jpg"
+                    width="1280"
+                    height="720"
+                    aria-label="SleepyBabyy app demo"
+                  >
+                    <source src="/hero-demo.mp4" type="video/mp4" />
+                    <img
+                      src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
+                      alt="SleepyBabyy - Baby sleeping peacefully on moon"
+                      className="w-full h-auto"
+                      width="600"
+                      height="450"
+                    />
+                  </video>
+                  {/* Live Demo badge with pulsing indicator */}
+                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-xs font-semibold text-primary px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 pointer-events-none">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    <span>Live Demo</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
