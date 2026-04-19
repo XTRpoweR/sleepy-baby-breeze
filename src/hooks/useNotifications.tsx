@@ -225,12 +225,42 @@ export const useNotifications = () => {
     }
   }, []);
 
+  const unsubscribeFromPush = useCallback(async () => {
+    const isInIframe = (() => {
+      try { return window.self !== window.top; } catch { return true; }
+    })();
+    if (isInIframe || !('serviceWorker' in navigator)) return;
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) return;
+      const subscription = await reg.pushManager.getSubscription();
+      if (!subscription) return;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase
+          .from('push_subscriptions')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('endpoint', subscription.endpoint);
+      }
+      await subscription.unsubscribe();
+    } catch (error) {
+      console.error('[Push] Unsubscribe error:', error);
+    }
+  }, []);
+
   const updateSettings = useCallback((newSettings: Partial<NotificationSettings>) => {
     const updatedSettings = { ...settings, ...newSettings };
     setSettings(updatedSettings);
     localStorage.setItem('notificationSettings', JSON.stringify(updatedSettings));
     syncSettingsToDB(updatedSettings);
-  }, [settings, syncSettingsToDB]);
+    if (newSettings.notificationsEnabled === false && settings.notificationsEnabled !== false) {
+      unsubscribeFromPush();
+    }
+    if (newSettings.notificationsEnabled === true && settings.notificationsEnabled !== true && permission === 'granted') {
+      registerServiceWorkerAndSubscribe();
+    }
+  }, [settings, syncSettingsToDB, unsubscribeFromPush, permission, registerServiceWorkerAndSubscribe]);
 
   const saveSettings = useCallback(() => {
     localStorage.setItem('notificationSettings', JSON.stringify(settings));
@@ -247,6 +277,7 @@ export const useNotifications = () => {
     updateSettings,
     saveSettings,
     isSupported: isSupported(),
-    registerServiceWorkerAndSubscribe
+    registerServiceWorkerAndSubscribe,
+    unsubscribeFromPush
   };
 };
