@@ -124,9 +124,7 @@ export const ChatAssistant = () => {
           </div>
         </SheetHeader>
 
-        {!subLoading && !isPremium ? (
-          <PremiumLockScreen onClose={() => setOpen(false)} />
-        ) : showHistory ? (
+        {showHistory ? (
           <ScrollArea className="flex-1">
             <div className="p-2 space-y-1">
               {conversations.length === 0 && (
