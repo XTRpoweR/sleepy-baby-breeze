@@ -545,6 +545,20 @@
       "validationError": "Bitte Betreff und Nachricht (mind. 10 Zeichen) angeben.",
       "transcriptHeader": "Letzter Chatverlauf",
       "noTranscript": "Keine vorherigen Nachrichten."
+    },
+    "premiumGate": {
+      "title": "KI-Assistent — Premium-Funktion",
+      "description": "Dein persönlicher intelligenter Helfer, der Schlaf, Mahlzeiten, Windeln protokolliert und Benachrichtigungen verwaltet — mit einer einzigen Nachricht.",
+      "cta": "Auf Premium upgraden",
+      "trialNote": "7 Tage kostenlos testen • Jederzeit kündbar",
+      "toastTitle": "Premium-Funktion",
+      "toastDescription": "Der KI-Assistent ist im Premium-Plan verfügbar. Upgrade, um ihn freizuschalten.",
+      "features": {
+        "sleep": "Schlafsitzungen freihändig starten & beenden",
+        "feeding": "Mahlzeiten protokollieren (Brust, Flasche, Beikost)",
+        "diapers": "Windeln und eigene Aktivitäten erfassen",
+        "notifications": "Benachrichtigungen & Ruhezeiten ein-/ausschalten"
+      }
     }
   }
 }
