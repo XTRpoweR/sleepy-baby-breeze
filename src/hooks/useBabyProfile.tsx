@@ -221,7 +221,11 @@ export const useBabyProfile = () => {
       
       if (isFirstProfile) {
         setActiveProfile(newProfile);
+        localStorage.setItem(ACTIVE_PROFILE_KEY, newProfile.id);
       }
+
+      // Notify all other useBabyProfile instances to refetch
+      profileEventManager.emit(isFirstProfile ? newProfile.id : (activeProfile?.id ?? newProfile.id));
 
       toast({
         title: "Success!",
