@@ -191,19 +191,6 @@ export const ChatAssistant = () => {
                     </div>
                   </div>
                 ))}
-                {messages.length > 0 && !isStreaming && (
-                  <div className="pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full text-xs"
-                      onClick={() => setSupportOpen(true)}
-                    >
-                      <LifeBuoy className="h-3.5 w-3.5 mr-2" />
-                      {t('chat.support.cta')}
-                    </Button>
-                  </div>
-                )}
               </div>
             </ScrollArea>
 
