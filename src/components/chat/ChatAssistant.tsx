@@ -1,19 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { HumanSupportDialog } from './HumanSupportDialog';
-import { PremiumLockScreen } from './PremiumLockScreen';
 
 const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
