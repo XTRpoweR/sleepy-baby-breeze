@@ -19,6 +19,7 @@ const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
 export const ChatAssistant = () => {
   const { user } = useAuth();
+  const { isPremium, loading: subLoading } = useSubscription();
   const location = useLocation();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
