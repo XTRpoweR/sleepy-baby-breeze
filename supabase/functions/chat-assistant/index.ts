@@ -391,6 +391,28 @@ Deno.serve(async (req) => {
     }
     const userId = userData.user.id;
 
+    // ---------- Premium gate ----------
+    const adminEarly = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data: sub } = await adminEarly
+      .from("subscriptions")
+      .select("subscription_tier, status, current_period_end")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const tierOk = sub && (sub.subscription_tier === "premium" || sub.subscription_tier === "premium_annual");
+    const statusOk = sub && (sub.status === "active" || sub.status === "trialing");
+    const periodOk = !sub?.current_period_end || new Date(sub.current_period_end) > new Date();
+
+    if (!tierOk || !statusOk || !periodOk) {
+      return new Response(
+        JSON.stringify({
+          error: "premium_required",
+          message: "The AI Assistant is a Premium feature. Please upgrade to continue.",
+        }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const { message, conversationId: incomingConvId, confirm } = await req.json();
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
