@@ -30,6 +30,7 @@ export type DataRefreshTopic =
   | 'activities'
   | 'notification_settings'
   | 'sleep_schedule'
+  | 'profiles'
   | 'all';
 
 type DataRefreshListener = (topic: DataRefreshTopic) => void;
