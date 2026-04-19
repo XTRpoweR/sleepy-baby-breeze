@@ -194,7 +194,10 @@ export const SubscriptionPlans = () => {
                     <Check className="h-3 w-3 text-green-600 dark:text-green-400 flex-shrink-0" />
                   </div>
                   <feature.icon className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium">{feature.text}</span>
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1">{feature.text}</span>
+                  {(feature as any).isNew && (
+                    <Badge className="bg-primary text-primary-foreground text-[10px] h-5 px-1.5">NEW</Badge>
+                  )}
                 </div>
               ))}
             </div>
@@ -283,7 +286,10 @@ export const SubscriptionPlans = () => {
                     <Check className="h-3 w-3 text-green-600 dark:text-green-400 flex-shrink-0" />
                   </div>
                   <feature.icon className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium">{feature.text}</span>
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1">{feature.text}</span>
+                  {(feature as any).isNew && (
+                    <Badge className="bg-primary text-primary-foreground text-[10px] h-5 px-1.5">NEW</Badge>
+                  )}
                 </div>
               ))}
             </div>
