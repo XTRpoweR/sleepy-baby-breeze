@@ -526,6 +526,10 @@
     "errorRateLimit": "Troppe richieste. Riprova tra un momento.",
     "errorCredits": "Crediti IA esauriti. Contatta il supporto.",
     "errorGeneric": "Qualcosa è andato storto. Riprova.",
+    "errorUnauthorized": "La tua sessione è scaduta. Accedi di nuovo.",
+    "errorMessageRequired": "Scrivi prima un messaggio.",
+    "errorConversationNotFound": "Questa chat non è più disponibile. Avvia una nuova conversazione.",
+    "errorAiTemporary": "L'assistente è temporaneamente non disponibile. Riprova tra poco.",
     "support": {
       "cta": "Vuoi parlare con una persona?",
       "title": "Contatta il supporto",

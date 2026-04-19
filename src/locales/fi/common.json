@@ -526,6 +526,10 @@
     "errorRateLimit": "Liian monta pyyntöä. Yritä hetken kuluttua.",
     "errorCredits": "Tekoälykrediitit loppu. Ota yhteyttä tukeen.",
     "errorGeneric": "Jokin meni pieleen. Yritä uudelleen.",
+    "errorUnauthorized": "Istuntosi on vanhentunut. Kirjaudu uudelleen sisään.",
+    "errorMessageRequired": "Kirjoita ensin viesti.",
+    "errorConversationNotFound": "Tämä keskustelu ei ole enää saatavilla. Aloita uusi keskustelu.",
+    "errorAiTemporary": "Avustaja on tilapäisesti poissa käytöstä. Yritä pian uudelleen.",
     "support": {
       "cta": "Haluatko jutella ihmisen kanssa?",
       "title": "Ota yhteyttä tukeen",

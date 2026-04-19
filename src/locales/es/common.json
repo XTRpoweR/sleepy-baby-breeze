@@ -526,6 +526,10 @@
     "errorRateLimit": "Demasiadas solicitudes. Intenta de nuevo en un momento.",
     "errorCredits": "Créditos de IA agotados. Contacta con soporte.",
     "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
+    "errorUnauthorized": "Tu sesión ha caducado. Inicia sesión de nuevo.",
+    "errorMessageRequired": "Escribe un mensaje primero.",
+    "errorConversationNotFound": "Este chat ya no está disponible. Inicia una nueva conversación.",
+    "errorAiTemporary": "El asistente no está disponible temporalmente. Inténtalo de nuevo en breve.",
     "support": {
       "cta": "¿Necesitas hablar con una persona?",
       "title": "Contactar soporte humano",

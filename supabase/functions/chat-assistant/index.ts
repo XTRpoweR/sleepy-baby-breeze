@@ -11,7 +11,27 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
-// ---------- Tool definitions exposed to the model ----------
+type ApiSuccess = {
+  ok: true;
+  conversationId?: string;
+  content: string;
+  actions?: any[];
+};
+
+type ApiError = {
+  ok: false;
+  error: string;
+  message: string;
+  conversationId?: string;
+};
+
+function jsonResponse(payload: ApiSuccess | ApiError, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
 const tools = [
   {
     type: "function",
@@ -151,7 +171,6 @@ const tools = [
   },
 ];
 
-// ---------- Tool execution ----------
 async function executeTool(
   name: string,
   args: any,
@@ -178,7 +197,6 @@ async function executeTool(
 
       case "start_sleep_session": {
         if (!babyId) return { ok: false, error: "No baby selected" };
-        // Check no open session exists
         const { data: open } = await admin
           .from("baby_activities")
           .select("id")
@@ -186,9 +204,7 @@ async function executeTool(
           .eq("activity_type", "sleep")
           .is("end_time", null)
           .maybeSingle();
-        if (open) {
-          return { ok: false, error: "Sleep session already in progress" };
-        }
+        if (open) return { ok: false, error: "Sleep session already in progress" };
         const { data, error } = await admin
           .from("baby_activities")
           .insert({
@@ -311,7 +327,6 @@ async function executeTool(
       }
 
       case "update_notification_settings": {
-        // Whitelist allowed fields
         const allowed = [
           "notifications_enabled",
           "feeding_reminders",
@@ -330,7 +345,6 @@ async function executeTool(
         if (Object.keys(update).length === 0) {
           return { ok: false, error: "No settings provided" };
         }
-        // Upsert
         const { data: existing } = await admin
           .from("notification_settings")
           .select("id")
@@ -345,15 +359,14 @@ async function executeTool(
             .single();
           if (error) return { ok: false, error: error.message };
           return { ok: true, result: data };
-        } else {
-          const { data, error } = await admin
-            .from("notification_settings")
-            .insert({ user_id: userId, ...update })
-            .select()
-            .single();
-          if (error) return { ok: false, error: error.message };
-          return { ok: true, result: data };
         }
+        const { data, error } = await admin
+          .from("notification_settings")
+          .insert({ user_id: userId, ...update })
+          .select()
+          .single();
+        if (error) return { ok: false, error: error.message };
+        return { ok: true, result: data };
       }
 
       default:
@@ -370,13 +383,13 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Auth
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse({
+        ok: false,
+        error: "Unauthorized",
+        message: "Please sign in again to use the assistant.",
+      }, 401);
     }
 
     const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -384,16 +397,16 @@ Deno.serve(async (req) => {
     });
     const { data: userData, error: userError } = await userClient.auth.getUser();
     if (userError || !userData.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse({
+        ok: false,
+        error: "Unauthorized",
+        message: "Please sign in again to use the assistant.",
+      }, 401);
     }
     const userId = userData.user.id;
 
-    // ---------- Detect Premium tier (gate features, not access) ----------
-    const adminEarly = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-    const { data: sub } = await adminEarly
+    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data: sub } = await admin
       .from("subscriptions")
       .select("subscription_tier, status, current_period_end")
       .eq("user_id", userId)
@@ -404,25 +417,27 @@ Deno.serve(async (req) => {
     const periodOk = !sub?.current_period_end || new Date(sub.current_period_end) > new Date();
     const isPremium = !!(tierOk && statusOk && periodOk);
 
-    const { message, conversationId: incomingConvId, confirm } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const message = typeof body?.message === "string" ? body.message.trim() : "";
+    const incomingConvId = typeof body?.conversationId === "string" ? body.conversationId : undefined;
 
-    if (!message || typeof message !== "string" || message.trim().length === 0) {
-      return new Response(JSON.stringify({ error: "Message required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    if (!message) {
+      return jsonResponse({
+        ok: false,
+        error: "Message required",
+        message: "Please type a message first.",
+      }, 400);
     }
+
     if (message.length > 4000) {
-      return new Response(JSON.stringify({ error: "Message too long" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse({
+        ok: false,
+        error: "Message too long",
+        message: "Please shorten your message and try again.",
+      }, 400);
     }
 
-    const admin = adminEarly;
-
-    // Get or create conversation
-    let conversationId = incomingConvId as string | undefined;
+    let conversationId = incomingConvId;
     if (conversationId) {
       const { data: conv } = await admin
         .from("chat_conversations")
@@ -430,10 +445,11 @@ Deno.serve(async (req) => {
         .eq("id", conversationId)
         .maybeSingle();
       if (!conv || conv.user_id !== userId) {
-        return new Response(JSON.stringify({ error: "Conversation not found" }), {
-          status: 404,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return jsonResponse({
+          ok: false,
+          error: "Conversation not found",
+          message: "This conversation is no longer available. Please start a new chat.",
+        }, 404);
       }
     } else {
       const title = message.slice(0, 60);
@@ -442,26 +458,29 @@ Deno.serve(async (req) => {
         .insert({ user_id: userId, title })
         .select("id")
         .single();
-      if (convErr || !newConv) throw convErr;
+      if (convErr || !newConv) {
+        throw convErr || new Error("Failed to create conversation");
+      }
       conversationId = newConv.id;
     }
 
-    // Save user message
-    await admin.from("chat_messages").insert({
+    const saveUserMessage = await admin.from("chat_messages").insert({
       conversation_id: conversationId,
       role: "user",
       content: message,
     });
+    if (saveUserMessage.error) {
+      throw saveUserMessage.error;
+    }
 
-    // Load history (last 30)
-    const { data: history } = await admin
+    const { data: history, error: historyError } = await admin
       .from("chat_messages")
       .select("role, content")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true })
       .limit(30);
+    if (historyError) throw historyError;
 
-    // Load baby context (active + all accessible babies)
     const { data: activeBaby } = await admin
       .from("baby_profiles")
       .select("id, name, birth_date")
@@ -483,7 +502,7 @@ Deno.serve(async (req) => {
       ...((sharedRows || []).map((r: any) => r.baby_profiles)),
     ];
 
-    let babyContext = "No active baby profile.";
+    let babyContext = `No active baby. Available babies: ${JSON.stringify(allBabies)}`;
     if (activeBaby) {
       const { data: activities } = await admin
         .from("baby_activities")
@@ -495,8 +514,6 @@ Deno.serve(async (req) => {
       babyContext = `Active baby: ${activeBaby.name} (id: ${activeBaby.id}, born ${activeBaby.birth_date || "unknown"}).
 All accessible babies: ${JSON.stringify(allBabies)}
 Recent activities (newest first): ${JSON.stringify(activities || [])}`;
-    } else {
-      babyContext = `No active baby. Available babies: ${JSON.stringify(allBabies)}`;
     }
 
     const premiumActionsBlock = isPremium
@@ -512,20 +529,18 @@ WORKFLOW FOR ACTIONS — VERY IMPORTANT:
 1. When the user requests an action ("log a feeding", "بدأ النوم", "turn off notifications"):
    a. If there are MULTIPLE babies and none is active, ask which one FIRST.
    b. Otherwise use the active baby's id from BABY CONTEXT — DO NOT call list_babies unnecessarily.
-2. Ask for confirmation with a short summary (one short line). Example: "سأسجل: **رضاعة 120 مل لسارة الآن** — أأكد؟ (نعم/لا)"
-3. As soon as the user confirms (yes/نعم/ok/تأكيد/موافق/أيوه/sí/oui), CALL THE TOOL IMMEDIATELY in the SAME response. Do NOT send a separate "okay, doing it now" message — just call the tool.
-4. After the tool runs, reply with a SHORT success line (e.g. "✅ تم تسجيل النوم — 14:30"). Maximum one sentence.
+2. Ask for confirmation with a short summary (one short line).
+3. As soon as the user confirms, CALL THE TOOL IMMEDIATELY in the SAME response.
+4. After the tool runs, reply with a SHORT success line.
 5. On error, briefly explain and offer next step.`
       : `IMPORTANT — FREE TIER (Q&A MODE ONLY):
 You DO NOT have any tools or actions in this mode. You CANNOT log sleep, feedings, diapers, custom activities, or change notification settings.
-If the user asks you to perform any of these actions ("log a feeding", "start sleep", "turn off notifications", "بدأ النوم", "سجّل رضاعة"…), DO NOT pretend to do it. Instead reply briefly in the user's language with something like:
-"✨ This is a Smart Assistant feature available on the Premium plan. Upgrade to let me log activities and manage notifications for you automatically. Tap the **Upgrade** banner below."
-Then offer to answer their question or guide them manually instead.
+If the user asks you to perform any of these actions, DO NOT pretend to do it. Instead reply briefly in the user's language telling them this is a Smart Assistant feature on the Premium plan and ask them to tap the Upgrade banner below.
 You CAN still freely answer questions: baby sleep tips, app help, schedules, milestones, pricing, etc.`;
 
     const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app.
 
-CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message (Arabic → Arabic, English → English, etc.). Never mix.
+CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message. Never mix.
 
 USER PLAN: ${isPremium ? "Premium (Smart Assistant — full actions enabled)" : "Free / Basic (Q&A only — no actions)"}.
 
@@ -534,73 +549,73 @@ ${premiumActionsBlock}
 PRICING — IMPORTANT (only mention these exact plans, never invent prices or packages):
 SleepyBabyy has exactly TWO plans:
 1. **Basic (Free)** — 1 baby profile, basic activity tracking, limited history.
-2. **Premium** — Unlimited baby profiles, full history, family sharing, advanced analytics, premium sound library, photo memories, smart notifications, pediatrician reports, data export, priority support, AND the **AI Assistant** (this chat — logs sleep/feeding/diapers and manages notifications by voice/text command).
+2. **Premium** — Unlimited baby profiles, full history, family sharing, advanced analytics, premium sound library, photo memories, smart notifications, pediatrician reports, data export, priority support, AND the **AI Assistant**.
    - **Monthly:** $29.99/month (originally $49.99 — 40% OFF promo)
    - **Annual:** $299.99/year (saves ~$59.89 vs monthly, ~$24.99/month equivalent)
    - A free trial may be available on signup.
 
-Prices are billed in USD. The app DISPLAYS converted prices in the user's local currency (EUR, GBP, SEK, NOK) for convenience, but billing is USD.
+Prices are billed in USD. The app displays converted prices in the user's local currency for convenience, but billing is USD.
 There is **NO lifetime package**, **NO $4.99 plan**, **NO $9.99 plan**. Never mention these.
 For exact local price, tell the user to tap **Premium / Upgrade** in the app.
 
 Other guidelines:
-- For app questions (how to use features, support), answer normally with markdown.
+- For app questions, answer normally with markdown.
 - Ground baby-data answers in BABY CONTEXT. Never invent data.
-- Be CONCISE — short replies are better than long ones.
+- Be concise.
 
 BABY CONTEXT:
 ${babyContext}`;
 
-    const messages = [
+    const messages: any[] = [
       { role: "system", content: systemPrompt },
       ...(history || []).map((m) => ({ role: m.role, content: m.content })),
     ];
 
-    // ---------- Multi-turn loop with tool calling ----------
-    // We loop until the model produces a plain text reply (no more tool calls).
-    // Streaming only on the FINAL turn to keep things simple.
     const MAX_TURNS = 4;
-    const toolEvents: any[] = []; // Surface to UI
+    const toolEvents: any[] = [];
 
     for (let turn = 0; turn < MAX_TURNS; turn++) {
       const isFinalAttempt = turn === MAX_TURNS - 1;
 
-      const aiResp = await fetch(
-        "https://ai.gateway.lovable.dev/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "google/gemini-3-flash-preview",
-            messages,
-            ...(isPremium ? { tools, tool_choice: "auto" } : {}),
-            stream: false,
-          }),
+      const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages,
+          ...(isPremium ? { tools, tool_choice: "auto" } : {}),
+          stream: false,
+        }),
+      });
 
       if (!aiResp.ok) {
         if (aiResp.status === 429) {
-          return new Response(
-            JSON.stringify({ error: "rate_limit", conversationId }),
-            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-          );
+          return jsonResponse({
+            ok: false,
+            error: "rate_limit",
+            message: "Too many requests right now. Please try again in a moment.",
+            conversationId,
+          }, 429);
         }
         if (aiResp.status === 402) {
-          return new Response(
-            JSON.stringify({ error: "credits", conversationId }),
-            { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-          );
+          return jsonResponse({
+            ok: false,
+            error: "credits",
+            message: "AI credits are exhausted.",
+            conversationId,
+          }, 402);
         }
-        const t = await aiResp.text();
-        console.error("AI gateway error:", aiResp.status, t);
-        return new Response(JSON.stringify({ error: "ai_error" }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        const errorText = await aiResp.text();
+        console.error("AI gateway error:", aiResp.status, errorText);
+        return jsonResponse({
+          ok: false,
+          error: "ai_error",
+          message: "The assistant is temporarily unavailable. Please try again shortly.",
+          conversationId,
+        }, 500);
       }
 
       const aiJson = await aiResp.json();
@@ -609,36 +624,33 @@ ${babyContext}`;
       const toolCalls = aiMessage?.tool_calls;
 
       if (!toolCalls || toolCalls.length === 0 || isFinalAttempt) {
-        // Final text response
-        const finalText = aiMessage?.content || "";
-        await admin.from("chat_messages").insert({
+        const finalText = typeof aiMessage?.content === "string" ? aiMessage.content : "";
+        const saveAssistantMessage = await admin.from("chat_messages").insert({
           conversation_id: conversationId,
           role: "assistant",
           content: finalText,
         });
-        await admin
+        if (saveAssistantMessage.error) throw saveAssistantMessage.error;
+
+        const updateConversation = await admin
           .from("chat_conversations")
           .update({ updated_at: new Date().toISOString() })
           .eq("id", conversationId);
+        if (updateConversation.error) throw updateConversation.error;
 
-        return new Response(
-          JSON.stringify({
-            conversationId,
-            content: finalText,
-            actions: toolEvents,
-          }),
-          {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          },
-        );
+        return jsonResponse({
+          ok: true,
+          conversationId,
+          content: finalText,
+          actions: toolEvents,
+        });
       }
 
-      // Execute tool calls and feed results back
       messages.push({
         role: "assistant",
         content: aiMessage.content || "",
         tool_calls: toolCalls,
-      } as any);
+      });
 
       for (const tc of toolCalls) {
         let parsedArgs: any = {};
@@ -652,28 +664,27 @@ ${babyContext}`;
           userId,
           defaultBabyId: activeBaby?.id || null,
         });
-        toolEvents.push({
-          tool: tc.function.name,
-          args: parsedArgs,
-          result,
-        });
+        toolEvents.push({ tool: tc.function.name, args: parsedArgs, result });
         messages.push({
           role: "tool",
           tool_call_id: tc.id,
           content: JSON.stringify(result),
-        } as any);
+        });
       }
     }
 
-    return new Response(JSON.stringify({ error: "loop_exhausted" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse({
+      ok: false,
+      error: "loop_exhausted",
+      message: "The assistant could not finish this reply. Please try again.",
+      conversationId,
+    }, 500);
   } catch (e) {
     console.error("chat-assistant error:", e);
-    return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    return jsonResponse({
+      ok: false,
+      error: e instanceof Error ? e.message : "Unknown",
+      message: e instanceof Error ? e.message : "Unknown error",
+    }, 500);
   }
 });
