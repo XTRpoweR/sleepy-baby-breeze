@@ -526,6 +526,10 @@
     "errorRateLimit": "Zu viele Anfragen. Bitte versuche es später erneut.",
     "errorCredits": "KI-Guthaben aufgebraucht. Bitte kontaktiere den Support.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "errorUnauthorized": "Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.",
+    "errorMessageRequired": "Bitte gib zuerst eine Nachricht ein.",
+    "errorConversationNotFound": "Dieser Chat ist nicht mehr verfügbar. Bitte starte eine neue Unterhaltung.",
+    "errorAiTemporary": "Der Assistent ist vorübergehend nicht verfügbar. Bitte versuche es gleich erneut.",
     "support": {
       "cta": "Mit einem Menschen sprechen?",
       "title": "Support kontaktieren",

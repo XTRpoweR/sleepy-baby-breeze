@@ -526,6 +526,10 @@
     "errorRateLimit": "Trop de requêtes. Réessayez dans un instant.",
     "errorCredits": "Crédits IA épuisés. Contactez le support.",
     "errorGeneric": "Une erreur est survenue. Réessayez.",
+    "errorUnauthorized": "Votre session a expiré. Veuillez vous reconnecter.",
+    "errorMessageRequired": "Veuillez d'abord saisir un message.",
+    "errorConversationNotFound": "Cette conversation n'est plus disponible. Veuillez en démarrer une nouvelle.",
+    "errorAiTemporary": "L'assistant est temporairement indisponible. Réessayez dans un instant.",
     "support": {
       "cta": "Besoin de parler à un humain ?",
       "title": "Contacter le support",

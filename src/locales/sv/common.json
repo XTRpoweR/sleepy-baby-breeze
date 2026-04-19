@@ -528,6 +528,10 @@
     "errorRateLimit": "För många förfrågningar. Försök igen om en stund.",
     "errorCredits": "AI-krediter slut. Kontakta support.",
     "errorGeneric": "Något gick fel. Försök igen.",
+    "errorUnauthorized": "Din session har gått ut. Logga in igen.",
+    "errorMessageRequired": "Skriv ett meddelande först.",
+    "errorConversationNotFound": "Den här chatten är inte längre tillgänglig. Starta en ny konversation.",
+    "errorAiTemporary": "Assistenten är tillfälligt otillgänglig. Försök snart igen.",
     "support": {
       "cta": "Vill du prata med en människa?",
       "title": "Kontakta support",

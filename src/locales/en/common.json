@@ -526,6 +526,10 @@
     "errorRateLimit": "Too many requests. Please try again in a moment.",
     "errorCredits": "AI credits exhausted. Please contact support.",
     "errorGeneric": "Something went wrong. Please try again.",
+    "errorUnauthorized": "Your session expired. Please sign in again.",
+    "errorMessageRequired": "Please type a message first.",
+    "errorConversationNotFound": "This chat is no longer available. Please start a new conversation.",
+    "errorAiTemporary": "The assistant is temporarily unavailable. Please try again shortly.",
     "support": {
       "cta": "Need to talk to a human?",
       "title": "Contact human support",
