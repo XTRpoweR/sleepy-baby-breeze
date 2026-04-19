@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SwipeableCard } from '@/components/ui/swipeable-card';
+import { PhotoUpload } from '@/components/ui/photo-upload';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { useProfileDeletion } from '@/hooks/useProfileDeletion';
