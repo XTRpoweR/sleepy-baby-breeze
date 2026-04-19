@@ -9,14 +9,17 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { HumanSupportDialog } from './HumanSupportDialog';
+import { PremiumLockScreen } from './PremiumLockScreen';
 
 const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
 export const ChatAssistant = () => {
   const { user } = useAuth();
+  const { isPremium, loading: subLoading } = useSubscription();
   const location = useLocation();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
@@ -112,7 +115,9 @@ export const ChatAssistant = () => {
           </div>
         </SheetHeader>
 
-        {showHistory ? (
+        {!subLoading && !isPremium ? (
+          <PremiumLockScreen onClose={() => setOpen(false)} />
+        ) : showHistory ? (
           <ScrollArea className="flex-1">
             <div className="p-2 space-y-1">
               {conversations.length === 0 && (

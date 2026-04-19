@@ -391,6 +391,28 @@ Deno.serve(async (req) => {
     }
     const userId = userData.user.id;
 
+    // ---------- Premium gate ----------
+    const adminEarly = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data: sub } = await adminEarly
+      .from("subscriptions")
+      .select("subscription_tier, status, current_period_end")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const tierOk = sub && (sub.subscription_tier === "premium" || sub.subscription_tier === "premium_annual");
+    const statusOk = sub && (sub.status === "active" || sub.status === "trialing");
+    const periodOk = !sub?.current_period_end || new Date(sub.current_period_end) > new Date();
+
+    if (!tierOk || !statusOk || !periodOk) {
+      return new Response(
+        JSON.stringify({
+          error: "premium_required",
+          message: "The AI Assistant is a Premium feature. Please upgrade to continue.",
+        }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const { message, conversationId: incomingConvId, confirm } = await req.json();
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
@@ -406,7 +428,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const admin = adminEarly;
 
     // Get or create conversation
     let conversationId = incomingConvId as string | undefined;
@@ -510,7 +532,7 @@ WORKFLOW FOR ACTIONS — VERY IMPORTANT:
 PRICING — IMPORTANT (only mention these exact plans, never invent prices or packages):
 SleepyBabyy has exactly TWO plans:
 1. **Basic (Free)** — 1 baby profile, basic activity tracking, limited history.
-2. **Premium** — Unlimited baby profiles, full history, family sharing, advanced analytics, premium sound library, photo memories, smart notifications, pediatrician reports, data export, priority support.
+2. **Premium** — Unlimited baby profiles, full history, family sharing, advanced analytics, premium sound library, photo memories, smart notifications, pediatrician reports, data export, priority support, AND the **AI Assistant** (this chat — logs sleep/feeding/diapers and manages notifications by voice/text command).
    - **Monthly:** $29.99/month (originally $49.99 — 40% OFF promo)
    - **Annual:** $299.99/year (saves ~$59.89 vs monthly, ~$24.99/month equivalent)
    - A free trial may be available on signup.
