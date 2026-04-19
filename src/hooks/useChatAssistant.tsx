@@ -16,6 +16,12 @@ export type Conversation = {
   updated_at: string;
 };
 
+type ActionEvent = {
+  tool: string;
+  args: any;
+  result: { ok: boolean; error?: string; result?: any };
+};
+
 export const useChatAssistant = () => {
   const { user, session } = useAuth();
   const { toast } = useToast();
@@ -62,6 +68,28 @@ export const useChatAssistant = () => {
     }
   }, [activeConversationId, newConversation]);
 
+  const notifyAction = (evt: ActionEvent) => {
+    const titles: Record<string, string> = {
+      start_sleep_session: 'Sleep started',
+      end_sleep_session: 'Sleep ended',
+      log_feeding: 'Feeding logged',
+      log_diaper: 'Diaper logged',
+      log_custom_activity: 'Activity logged',
+      update_notification_settings: 'Notifications updated',
+    };
+    const title = titles[evt.tool];
+    if (!title) return;
+    if (evt.result.ok) {
+      toast({ title: `✅ ${title}` });
+    } else {
+      toast({
+        title: title,
+        description: evt.result.error || 'Failed',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const sendMessage = useCallback(async (text: string) => {
     if (!session || !text.trim()) return;
     const userMsg: ChatMessage = { role: 'user', content: text };
@@ -69,23 +97,18 @@ export const useChatAssistant = () => {
     setIsStreaming(true);
 
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`;
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('chat-assistant', {
+        body: {
           message: text,
           conversationId: activeConversationId,
-        }),
+        },
       });
 
-      if (!resp.ok) {
-        if (resp.status === 429) {
+      if (error) {
+        const status = (error as any).context?.status;
+        if (status === 429) {
           toast({ title: t('chat.errorRateLimit'), variant: 'destructive' });
-        } else if (resp.status === 402) {
+        } else if (status === 402) {
           toast({ title: t('chat.errorCredits'), variant: 'destructive' });
         } else {
           toast({ title: t('chat.errorGeneric'), variant: 'destructive' });
@@ -94,47 +117,22 @@ export const useChatAssistant = () => {
         return;
       }
 
-      if (!resp.body) throw new Error('No body');
+      const convId: string | undefined = data?.conversationId;
+      const content: string = data?.content || '';
+      const actions: ActionEvent[] = data?.actions || [];
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      let assistantText = '';
-      let convId = activeConversationId;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        let idx;
-        while ((idx = buffer.indexOf('\n')) !== -1) {
-          let line = buffer.slice(0, idx);
-          buffer = buffer.slice(idx + 1);
-          if (line.endsWith('\r')) line = line.slice(0, -1);
-          if (!line.startsWith('data: ')) continue;
-          const json = line.slice(6).trim();
-          if (json === '[DONE]') continue;
-          try {
-            const parsed = JSON.parse(json);
-            if (parsed.conversationId && !convId) {
-              convId = parsed.conversationId;
-              setActiveConversationId(convId);
-            }
-            const delta = parsed.choices?.[0]?.delta?.content;
-            if (delta) {
-              assistantText += delta;
-              setMessages((prev) => {
-                const next = [...prev];
-                next[next.length - 1] = { role: 'assistant', content: assistantText };
-                return next;
-              });
-            }
-          } catch {
-            // partial
-          }
-        }
+      if (convId && !activeConversationId) {
+        setActiveConversationId(convId);
       }
+
+      setMessages((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = { role: 'assistant', content };
+        return next;
+      });
+
+      // Surface action results as toasts
+      actions.forEach(notifyAction);
 
       // Refresh conversations list
       loadConversations();
