@@ -129,7 +129,18 @@ export const useBabyProfile = () => {
   useEffect(() => {
     const unsubscribe = profileEventManager.subscribe((profileId) => {
       console.log('useBabyProfile: Received profile change event:', profileId);
-      if (!profileId) return;
+
+      // null = active profile may have been deleted; clear locally and refetch
+      if (!profileId) {
+        setActiveProfile((current) => {
+          if (current && !profiles.find((p) => p.id === current.id)) {
+            return null;
+          }
+          return current;
+        });
+        fetchProfiles();
+        return;
+      }
 
       const matchingProfile = profiles.find((p) => p.id === profileId);
 

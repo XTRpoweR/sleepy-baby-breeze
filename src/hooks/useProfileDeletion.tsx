@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { dataRefreshBus, profileEventManager } from '@/utils/profileEvents';
+
+const ACTIVE_PROFILE_KEY = 'babytrack_active_profile_id';
 
 export const useProfileDeletion = () => {
   const { user } = useAuth();
@@ -81,7 +84,17 @@ export const useProfileDeletion = () => {
 
       setDeletionProgress(100);
       console.log('Profile deletion completed successfully');
-      
+
+      // If the deleted profile was the active one stored in localStorage, clear it
+      const savedActiveId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+      if (savedActiveId === profileId) {
+        localStorage.removeItem(ACTIVE_PROFILE_KEY);
+      }
+
+      // Notify all hook instances to refresh their profiles list and active profile immediately
+      dataRefreshBus.emit('profiles');
+      profileEventManager.emit(null);
+
       toast({
         title: "Success!",
         description: `${profileName}'s profile has been permanently deleted`,
