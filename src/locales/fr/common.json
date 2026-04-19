@@ -524,6 +524,26 @@
     "thinking": "Réflexion…",
     "errorRateLimit": "Trop de requêtes. Réessayez dans un instant.",
     "errorCredits": "Crédits IA épuisés. Contactez le support.",
-    "errorGeneric": "Une erreur est survenue. Réessayez."
+    "errorGeneric": "Une erreur est survenue. Réessayez.",
+    "support": {
+      "cta": "Besoin de parler à un humain ?",
+      "title": "Contacter le support",
+      "description": "Envoyez un message à notre équipe. Le chat récent sera joint.",
+      "emailLabel": "Votre e-mail",
+      "subjectLabel": "Sujet",
+      "subjectPlaceholder": "Décrivez votre problème brièvement",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Dites-nous comment vous aider…",
+      "responseTime": "Nous répondons sous 24 heures par e-mail.",
+      "submit": "Envoyer au support",
+      "sending": "Envoi…",
+      "cancel": "Annuler",
+      "successTitle": "Message envoyé !",
+      "successDescription": "Notre équipe vous répondra par e-mail sous 24 heures.",
+      "errorSend": "Échec de l'envoi. Réessayez.",
+      "validationError": "Ajoutez un sujet et un message (10 caractères min).",
+      "transcriptHeader": "Conversation récente",
+      "noTranscript": "Aucun message précédent."
+    }
   }
 }

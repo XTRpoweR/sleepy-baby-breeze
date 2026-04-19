@@ -524,6 +524,26 @@
     "thinking": "Pensando…",
     "errorRateLimit": "Demasiadas solicitudes. Intenta de nuevo en un momento.",
     "errorCredits": "Créditos de IA agotados. Contacta con soporte.",
-    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
+    "support": {
+      "cta": "¿Necesitas hablar con una persona?",
+      "title": "Contactar soporte humano",
+      "description": "Envía un mensaje a nuestro equipo. Incluiremos el chat reciente.",
+      "emailLabel": "Tu correo",
+      "subjectLabel": "Asunto",
+      "subjectPlaceholder": "Describe brevemente tu problema",
+      "messageLabel": "Mensaje",
+      "messagePlaceholder": "Cuéntanos en qué necesitas ayuda…",
+      "responseTime": "Solemos responder en menos de 24 horas por correo.",
+      "submit": "Enviar a soporte",
+      "sending": "Enviando…",
+      "cancel": "Cancelar",
+      "successTitle": "¡Mensaje enviado!",
+      "successDescription": "Nuestro equipo te responderá por correo en menos de 24 horas.",
+      "errorSend": "No se pudo enviar. Inténtalo de nuevo.",
+      "validationError": "Añade un asunto y un mensaje (mínimo 10 caracteres).",
+      "transcriptHeader": "Conversación reciente",
+      "noTranscript": "Sin mensajes previos."
+    }
   }
 }

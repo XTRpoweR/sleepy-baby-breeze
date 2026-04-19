@@ -524,6 +524,26 @@
     "thinking": "Mietin…",
     "errorRateLimit": "Liian monta pyyntöä. Yritä hetken kuluttua.",
     "errorCredits": "Tekoälykrediitit loppu. Ota yhteyttä tukeen.",
-    "errorGeneric": "Jokin meni pieleen. Yritä uudelleen."
+    "errorGeneric": "Jokin meni pieleen. Yritä uudelleen.",
+    "support": {
+      "cta": "Haluatko jutella ihmisen kanssa?",
+      "title": "Ota yhteyttä tukeen",
+      "description": "Lähetä viesti tiimillemme. Liitämme mukaan viimeisimmän keskustelun.",
+      "emailLabel": "Sähköpostisi",
+      "subjectLabel": "Aihe",
+      "subjectPlaceholder": "Kuvaile ongelmaa lyhyesti",
+      "messageLabel": "Viesti",
+      "messagePlaceholder": "Kerro, miten voimme auttaa…",
+      "responseTime": "Vastaamme yleensä 24 tunnin sisällä sähköpostitse.",
+      "submit": "Lähetä tukeen",
+      "sending": "Lähetetään…",
+      "cancel": "Peruuta",
+      "successTitle": "Viesti lähetetty!",
+      "successDescription": "Tiimimme vastaa sähköpostitse 24 tunnin sisällä.",
+      "errorSend": "Lähetys epäonnistui. Yritä uudelleen.",
+      "validationError": "Lisää aihe ja viesti (vähintään 10 merkkiä).",
+      "transcriptHeader": "Viimeisin keskustelu",
+      "noTranscript": "Ei aiempia viestejä."
+    }
   }
 }

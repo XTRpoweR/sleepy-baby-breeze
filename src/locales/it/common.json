@@ -524,6 +524,26 @@
     "thinking": "Sto pensando…",
     "errorRateLimit": "Troppe richieste. Riprova tra un momento.",
     "errorCredits": "Crediti IA esauriti. Contatta il supporto.",
-    "errorGeneric": "Qualcosa è andato storto. Riprova."
+    "errorGeneric": "Qualcosa è andato storto. Riprova.",
+    "support": {
+      "cta": "Vuoi parlare con una persona?",
+      "title": "Contatta il supporto",
+      "description": "Invia un messaggio al nostro team. Allegheremo la chat recente.",
+      "emailLabel": "La tua email",
+      "subjectLabel": "Oggetto",
+      "subjectPlaceholder": "Descrivi brevemente il problema",
+      "messageLabel": "Messaggio",
+      "messagePlaceholder": "Dicci come possiamo aiutarti…",
+      "responseTime": "Rispondiamo entro 24 ore via email.",
+      "submit": "Invia al supporto",
+      "sending": "Invio…",
+      "cancel": "Annulla",
+      "successTitle": "Messaggio inviato!",
+      "successDescription": "Il nostro team ti risponderà via email entro 24 ore.",
+      "errorSend": "Invio non riuscito. Riprova.",
+      "validationError": "Aggiungi un oggetto e un messaggio (almeno 10 caratteri).",
+      "transcriptHeader": "Conversazione recente",
+      "noTranscript": "Nessun messaggio precedente."
+    }
   }
 }

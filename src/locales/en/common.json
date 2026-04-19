@@ -524,6 +524,26 @@
     "thinking": "Thinking…",
     "errorRateLimit": "Too many requests. Please try again in a moment.",
     "errorCredits": "AI credits exhausted. Please contact support.",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "support": {
+      "cta": "Need to talk to a human?",
+      "title": "Contact human support",
+      "description": "Send a message to our support team. We'll include the recent chat to help us understand your question.",
+      "emailLabel": "Your email",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "Briefly describe your issue",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Tell us what you need help with…",
+      "responseTime": "We typically reply within 24 hours via email.",
+      "submit": "Send to support",
+      "sending": "Sending…",
+      "cancel": "Cancel",
+      "successTitle": "Message sent!",
+      "successDescription": "Our team will reply to you by email within 24 hours.",
+      "errorSend": "Could not send your message. Please try again.",
+      "validationError": "Please add a subject and a message (at least 10 characters).",
+      "transcriptHeader": "Recent chat conversation",
+      "noTranscript": "No previous messages."
+    }
   }
 }
