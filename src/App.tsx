@@ -38,6 +38,7 @@ import BlogArticle from "./pages/BlogArticle";
 import ResetPassword from "./pages/ResetPassword";
 import AccountSecurity from "./pages/AccountSecurity";
 import EnhancedPasswordReset from "./components/auth/EnhancedPasswordReset";
+import Unsubscribe from "./pages/Unsubscribe";
 import ChatAssistant from "./components/chat/ChatAssistant";
 
 // Create queryClient outside of component to avoid recreation on each render
@@ -94,6 +95,7 @@ const App: React.FC = () => {
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogArticle />} />
                   <Route path="/careers" element={<Careers />} />
+                  <Route path="/unsubscribe" element={<Unsubscribe />} />
                   <Route path="/404" element={<NotFound />} />
                   <Route path="*" element={<Navigate to="/404" replace />} />
                 </Routes>
