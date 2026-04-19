@@ -61,3 +61,6 @@ verify_jwt = true
 
 [functions.security-notifications]
 verify_jwt = true
+
+[functions.chat-assistant]
+verify_jwt = true
