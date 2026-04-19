@@ -375,14 +375,6 @@ const Index = () => {
                       height="450"
                     />
                   </video>
-                  {/* Live Demo badge with pulsing indicator */}
-                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-xs font-semibold text-primary px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 pointer-events-none z-10">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                    </span>
-                    <span>Live Demo</span>
-                  </div>
                 </div>
               </div>
             </div>
