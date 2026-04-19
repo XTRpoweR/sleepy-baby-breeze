@@ -332,6 +332,14 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                     </CardHeader>
                     <CardContent>
                       <form onSubmit={handleCreateProfile} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label>{t('profiles.babyPhoto', 'Baby Photo')} ({t('common.optional')})</Label>
+                          <PhotoUpload
+                            value={newProfilePhoto || undefined}
+                            onChange={setNewProfilePhoto}
+                            fallbackText={newProfileName.trim().charAt(0).toUpperCase() || 'B'}
+                          />
+                        </div>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="profileName">{t('profiles.babyName')}</Label>
