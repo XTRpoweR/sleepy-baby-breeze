@@ -124,3 +124,32 @@ export const getLocalizedDateRangeLabel = (dateRange: string, locale: string = '
   const localeTranslations = translations[locale as keyof typeof translations] || translations.en;
   return localeTranslations[dateRange as keyof typeof localeTranslations] || dateRange;
 };
+
+export const formatAge = (birthDate: string | Date, locale: string = 'en'): string => {
+  const birth = typeof birthDate === 'string' ? parseISO(birthDate) : birthDate;
+  const now = new Date();
+  let months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+  if (now.getDate() < birth.getDate()) months -= 1;
+  if (months < 0) months = 0;
+
+  const years = Math.floor(months / 12);
+  const remMonths = months % 12;
+
+  const labels: Record<string, { y: string; ys: string; m: string; ms: string; lt1: string }> = {
+    en: { y: 'year', ys: 'years', m: 'month', ms: 'months', lt1: 'Less than 1 month' },
+    de: { y: 'Jahr', ys: 'Jahre', m: 'Monat', ms: 'Monate', lt1: 'Weniger als 1 Monat' },
+    es: { y: 'año', ys: 'años', m: 'mes', ms: 'meses', lt1: 'Menos de 1 mes' },
+    fr: { y: 'an', ys: 'ans', m: 'mois', ms: 'mois', lt1: 'Moins d\'un mois' },
+    it: { y: 'anno', ys: 'anni', m: 'mese', ms: 'mesi', lt1: 'Meno di 1 mese' },
+    el: { y: 'έτος', ys: 'έτη', m: 'μήνας', ms: 'μήνες', lt1: 'Λιγότερο από 1 μήνα' },
+    fi: { y: 'vuosi', ys: 'vuotta', m: 'kuukausi', ms: 'kuukautta', lt1: 'Alle 1 kuukausi' },
+    sv: { y: 'år', ys: 'år', m: 'månad', ms: 'månader', lt1: 'Mindre än 1 månad' },
+    ar: { y: 'سنة', ys: 'سنوات', m: 'شهر', ms: 'أشهر', lt1: 'أقل من شهر' },
+  };
+  const l = labels[locale] || labels.en;
+
+  if (months === 0) return l.lt1;
+  if (years === 0) return `${months} ${months === 1 ? l.m : l.ms}`;
+  if (remMonths === 0) return `${years} ${years === 1 ? l.y : l.ys}`;
+  return `${years} ${years === 1 ? l.y : l.ys}, ${remMonths} ${remMonths === 1 ? l.m : l.ms}`;
+};
