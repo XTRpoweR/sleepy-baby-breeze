@@ -81,6 +81,15 @@ export const ChatAssistant = () => {
             <Button
               variant="ghost"
               size="icon"
+              onClick={() => setSupportOpen(true)}
+              aria-label={t('chat.support.title')}
+              title={t('chat.support.title')}
+            >
+              <LifeBuoy className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setShowHistory((s) => !s)}
               aria-label={t('chat.history')}
             >
