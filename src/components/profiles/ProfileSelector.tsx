@@ -1,14 +1,18 @@
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, Settings, Baby, User } from 'lucide-react';
+import { ChevronDown, Settings, Baby, Check } from 'lucide-react';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { ProfileManagementDialog } from './ProfileManagementDialog';
+import { formatLocalizedDate, formatAge } from '@/utils/dateLocalization';
 
 export const ProfileSelector = () => {
+  const { i18n } = useTranslation();
+  const locale = i18n.language || 'en';
   const { profiles, activeProfile, switching, switchProfile } = useBabyProfile();
   const [showManagement, setShowManagement] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
