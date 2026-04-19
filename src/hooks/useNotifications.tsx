@@ -5,6 +5,41 @@ import { supabase } from '@/integrations/supabase/client';
 
 const VAPID_PUBLIC_KEY = 'BNRRv_wFm_weccCMzsyiqs8nrIllND0pU2dJsFl3ZCPJRfrGSNNaDgeztzxHwGj6yS5y2mu5sdnvdFweb0BjUdk';
 
+/**
+ * Detect the device/browser notification support level.
+ * Returns detailed info so the UI can show helpful messages.
+ */
+export interface NotificationSupportInfo {
+  supported: boolean;
+  canReceivePush: boolean;
+  isIOS: boolean;
+  isStandalone: boolean; // installed as PWA
+  reason: 'ok' | 'ios-needs-pwa' | 'no-notification-api' | 'insecure-context' | 'no-service-worker';
+}
+
+export const detectNotificationSupport = (): NotificationSupportInfo => {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true;
+
+  if (!window.isSecureContext && location.hostname !== 'localhost') {
+    return { supported: false, canReceivePush: false, isIOS, isStandalone, reason: 'insecure-context' };
+  }
+  if (!('Notification' in window)) {
+    return { supported: false, canReceivePush: false, isIOS, isStandalone, reason: 'no-notification-api' };
+  }
+  // On iOS, Web Push only works in PWAs installed to the Home Screen (iOS 16.4+).
+  if (isIOS && !isStandalone) {
+    return { supported: true, canReceivePush: false, isIOS, isStandalone, reason: 'ios-needs-pwa' };
+  }
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    return { supported: true, canReceivePush: false, isIOS, isStandalone, reason: 'no-service-worker' };
+  }
+  return { supported: true, canReceivePush: true, isIOS, isStandalone, reason: 'ok' };
+};
+
+
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -61,6 +96,25 @@ export const useNotifications = () => {
     } catch {
       return false;
     }
+  }, []);
+
+  // Auto-register Service Worker on mount if permission is already granted.
+  // Without this, pushes from the server stop arriving after a page reload
+  // because the SW subscription lapses.
+  useEffect(() => {
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    if (!('serviceWorker' in navigator)) return;
+    (async () => {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (!reg) {
+          await navigator.serviceWorker.register('/sw.js');
+        }
+      } catch (e) {
+        console.warn('[SW] Auto-register failed:', e);
+      }
+    })();
   }, []);
 
   // Load settings from DB on mount
