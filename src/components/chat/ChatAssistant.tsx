@@ -6,11 +6,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, Send, Plus, Trash2, History, Loader2 } from 'lucide-react';
+import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { HumanSupportDialog } from './HumanSupportDialog';
 
 const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
@@ -21,6 +22,7 @@ export const ChatAssistant = () => {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
