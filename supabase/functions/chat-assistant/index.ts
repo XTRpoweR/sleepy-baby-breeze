@@ -11,6 +11,359 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
+// ---------- Tool definitions exposed to the model ----------
+const tools = [
+  {
+    type: "function",
+    function: {
+      name: "start_sleep_session",
+      description:
+        "Start a new sleep session for a baby. Use when user says things like 'start sleep', 'baby is sleeping now', 'بدأ النوم'.",
+      parameters: {
+        type: "object",
+        properties: {
+          baby_id: { type: "string", description: "Baby profile UUID" },
+          start_time: {
+            type: "string",
+            description: "ISO timestamp when sleep started. Default: now.",
+          },
+          notes: { type: "string" },
+        },
+        required: ["baby_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "end_sleep_session",
+      description:
+        "End the most recent open sleep session for a baby (sets end_time and duration).",
+      parameters: {
+        type: "object",
+        properties: {
+          baby_id: { type: "string" },
+          end_time: { type: "string", description: "ISO timestamp. Default: now." },
+          notes: { type: "string" },
+        },
+        required: ["baby_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "log_feeding",
+      description: "Log a feeding activity (breast, bottle, or solid).",
+      parameters: {
+        type: "object",
+        properties: {
+          baby_id: { type: "string" },
+          feeding_type: {
+            type: "string",
+            enum: ["breast", "bottle", "solid"],
+          },
+          amount_ml: { type: "number", description: "For bottle feeds (ml)" },
+          duration_minutes: { type: "number" },
+          side: {
+            type: "string",
+            enum: ["left", "right", "both"],
+            description: "For breastfeeding",
+          },
+          start_time: { type: "string", description: "ISO timestamp. Default: now." },
+          notes: { type: "string" },
+        },
+        required: ["baby_id", "feeding_type"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "log_diaper",
+      description: "Log a diaper change.",
+      parameters: {
+        type: "object",
+        properties: {
+          baby_id: { type: "string" },
+          diaper_type: {
+            type: "string",
+            enum: ["wet", "dirty", "both"],
+          },
+          start_time: { type: "string" },
+          notes: { type: "string" },
+        },
+        required: ["baby_id", "diaper_type"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "log_custom_activity",
+      description: "Log any custom activity (bath, play, medicine, milestone, etc.)",
+      parameters: {
+        type: "object",
+        properties: {
+          baby_id: { type: "string" },
+          activity_name: { type: "string" },
+          duration_minutes: { type: "number" },
+          start_time: { type: "string" },
+          notes: { type: "string" },
+        },
+        required: ["baby_id", "activity_name"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "update_notification_settings",
+      description:
+        "Update the user's notification preferences (enable/disable notifications, types, quiet hours).",
+      parameters: {
+        type: "object",
+        properties: {
+          notifications_enabled: { type: "boolean" },
+          feeding_reminders: { type: "boolean" },
+          sleep_reminders: { type: "boolean" },
+          milestone_reminders: { type: "boolean" },
+          pattern_alerts: { type: "boolean" },
+          feeding_interval: {
+            type: "number",
+            description: "Minutes between feeding reminders",
+          },
+          quiet_hours_enabled: { type: "boolean" },
+          quiet_hours_start: { type: "string", description: "HH:MM" },
+          quiet_hours_end: { type: "string", description: "HH:MM" },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "list_babies",
+      description:
+        "List all baby profiles the user has access to. Use when user has multiple babies and you need them to choose.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+];
+
+// ---------- Tool execution ----------
+async function executeTool(
+  name: string,
+  args: any,
+  ctx: { admin: any; userId: string; defaultBabyId: string | null },
+): Promise<{ ok: boolean; result?: any; error?: string }> {
+  const { admin, userId, defaultBabyId } = ctx;
+  const babyId = args.baby_id || defaultBabyId;
+
+  try {
+    switch (name) {
+      case "list_babies": {
+        const { data: owned } = await admin
+          .from("baby_profiles")
+          .select("id, name, birth_date, is_active")
+          .eq("user_id", userId);
+        const { data: shared } = await admin
+          .from("family_members")
+          .select("baby_profiles!inner(id, name, birth_date, is_active)")
+          .eq("user_id", userId)
+          .eq("status", "active");
+        const sharedBabies = (shared || []).map((s: any) => s.baby_profiles);
+        return { ok: true, result: [...(owned || []), ...sharedBabies] };
+      }
+
+      case "start_sleep_session": {
+        if (!babyId) return { ok: false, error: "No baby selected" };
+        // Check no open session exists
+        const { data: open } = await admin
+          .from("baby_activities")
+          .select("id")
+          .eq("baby_id", babyId)
+          .eq("activity_type", "sleep")
+          .is("end_time", null)
+          .maybeSingle();
+        if (open) {
+          return { ok: false, error: "Sleep session already in progress" };
+        }
+        const { data, error } = await admin
+          .from("baby_activities")
+          .insert({
+            baby_id: babyId,
+            activity_type: "sleep",
+            start_time: args.start_time || new Date().toISOString(),
+            notes: args.notes || null,
+            metadata: { logged_via: "chat_assistant" },
+          })
+          .select()
+          .single();
+        if (error) return { ok: false, error: error.message };
+        return { ok: true, result: data };
+      }
+
+      case "end_sleep_session": {
+        if (!babyId) return { ok: false, error: "No baby selected" };
+        const { data: open } = await admin
+          .from("baby_activities")
+          .select("id, start_time")
+          .eq("baby_id", babyId)
+          .eq("activity_type", "sleep")
+          .is("end_time", null)
+          .order("start_time", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (!open) return { ok: false, error: "No open sleep session" };
+        const endTime = args.end_time || new Date().toISOString();
+        const duration = Math.max(
+          1,
+          Math.round(
+            (new Date(endTime).getTime() - new Date(open.start_time).getTime()) /
+              60000,
+          ),
+        );
+        const { data, error } = await admin
+          .from("baby_activities")
+          .update({
+            end_time: endTime,
+            duration_minutes: duration,
+            notes: args.notes || undefined,
+          })
+          .eq("id", open.id)
+          .select()
+          .single();
+        if (error) return { ok: false, error: error.message };
+        return { ok: true, result: data };
+      }
+
+      case "log_feeding": {
+        if (!babyId) return { ok: false, error: "No baby selected" };
+        const startTime = args.start_time || new Date().toISOString();
+        const metadata: any = {
+          feeding_type: args.feeding_type,
+          logged_via: "chat_assistant",
+        };
+        if (args.amount_ml) metadata.amount_ml = args.amount_ml;
+        if (args.side) metadata.side = args.side;
+        const endTime = args.duration_minutes
+          ? new Date(
+              new Date(startTime).getTime() + args.duration_minutes * 60000,
+            ).toISOString()
+          : undefined;
+        const { data, error } = await admin
+          .from("baby_activities")
+          .insert({
+            baby_id: babyId,
+            activity_type: "feeding",
+            start_time: startTime,
+            end_time: endTime,
+            duration_minutes: args.duration_minutes,
+            notes: args.notes || null,
+            metadata,
+          })
+          .select()
+          .single();
+        if (error) return { ok: false, error: error.message };
+        return { ok: true, result: data };
+      }
+
+      case "log_diaper": {
+        if (!babyId) return { ok: false, error: "No baby selected" };
+        const { data, error } = await admin
+          .from("baby_activities")
+          .insert({
+            baby_id: babyId,
+            activity_type: "diaper",
+            start_time: args.start_time || new Date().toISOString(),
+            notes: args.notes || null,
+            metadata: {
+              diaper_type: args.diaper_type,
+              logged_via: "chat_assistant",
+            },
+          })
+          .select()
+          .single();
+        if (error) return { ok: false, error: error.message };
+        return { ok: true, result: data };
+      }
+
+      case "log_custom_activity": {
+        if (!babyId) return { ok: false, error: "No baby selected" };
+        const { data, error } = await admin
+          .from("baby_activities")
+          .insert({
+            baby_id: babyId,
+            activity_type: "custom",
+            start_time: args.start_time || new Date().toISOString(),
+            duration_minutes: args.duration_minutes,
+            notes: args.notes || args.activity_name,
+            metadata: {
+              activity_name: args.activity_name,
+              logged_via: "chat_assistant",
+            },
+          })
+          .select()
+          .single();
+        if (error) return { ok: false, error: error.message };
+        return { ok: true, result: data };
+      }
+
+      case "update_notification_settings": {
+        // Whitelist allowed fields
+        const allowed = [
+          "notifications_enabled",
+          "feeding_reminders",
+          "sleep_reminders",
+          "milestone_reminders",
+          "pattern_alerts",
+          "feeding_interval",
+          "quiet_hours_enabled",
+          "quiet_hours_start",
+          "quiet_hours_end",
+        ];
+        const update: any = {};
+        for (const k of allowed) {
+          if (args[k] !== undefined) update[k] = args[k];
+        }
+        if (Object.keys(update).length === 0) {
+          return { ok: false, error: "No settings provided" };
+        }
+        // Upsert
+        const { data: existing } = await admin
+          .from("notification_settings")
+          .select("id")
+          .eq("user_id", userId)
+          .maybeSingle();
+        if (existing) {
+          const { data, error } = await admin
+            .from("notification_settings")
+            .update(update)
+            .eq("user_id", userId)
+            .select()
+            .single();
+          if (error) return { ok: false, error: error.message };
+          return { ok: true, result: data };
+        } else {
+          const { data, error } = await admin
+            .from("notification_settings")
+            .insert({ user_id: userId, ...update })
+            .select()
+            .single();
+          if (error) return { ok: false, error: error.message };
+          return { ok: true, result: data };
+        }
+      }
+
+      default:
+        return { ok: false, error: `Unknown tool: ${name}` };
+    }
+  } catch (e: any) {
+    return { ok: false, error: e?.message || "Tool execution failed" };
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -38,7 +391,7 @@ Deno.serve(async (req) => {
     }
     const userId = userData.user.id;
 
-    const { message, conversationId: incomingConvId } = await req.json();
+    const { message, conversationId: incomingConvId, confirm } = await req.json();
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
       return new Response(JSON.stringify({ error: "Message required" }), {
@@ -87,21 +440,35 @@ Deno.serve(async (req) => {
       content: message,
     });
 
-    // Load history (last 20)
+    // Load history (last 30)
     const { data: history } = await admin
       .from("chat_messages")
       .select("role, content")
       .eq("conversation_id", conversationId)
       .order("created_at", { ascending: true })
-      .limit(20);
+      .limit(30);
 
-    // Load baby context
+    // Load baby context (active + all accessible babies)
     const { data: activeBaby } = await admin
       .from("baby_profiles")
       .select("id, name, birth_date")
       .eq("user_id", userId)
       .eq("is_active", true)
       .maybeSingle();
+
+    const { data: ownedBabies } = await admin
+      .from("baby_profiles")
+      .select("id, name")
+      .eq("user_id", userId);
+    const { data: sharedRows } = await admin
+      .from("family_members")
+      .select("baby_profiles!inner(id, name)")
+      .eq("user_id", userId)
+      .eq("status", "active");
+    const allBabies = [
+      ...(ownedBabies || []),
+      ...((sharedRows || []).map((r: any) => r.baby_profiles)),
+    ];
 
     let babyContext = "No active baby profile.";
     if (activeBaby) {
@@ -110,35 +477,41 @@ Deno.serve(async (req) => {
         .select("activity_type, start_time, end_time, duration_minutes, notes, metadata")
         .eq("baby_id", activeBaby.id)
         .order("start_time", { ascending: false })
-        .limit(15);
+        .limit(10);
 
-      const { data: schedule } = await admin
-        .from("sleep_schedules")
-        .select("recommended_bedtime, recommended_wake_time, total_sleep_hours, nap_frequency")
-        .eq("baby_id", activeBaby.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      babyContext = `Active baby: ${activeBaby.name} (born ${activeBaby.birth_date || "unknown"}).
-Recent activities (newest first): ${JSON.stringify(activities || [])}
-Sleep schedule: ${JSON.stringify(schedule || "none")}`;
+      babyContext = `Active baby: ${activeBaby.name} (id: ${activeBaby.id}, born ${activeBaby.birth_date || "unknown"}).
+All accessible babies: ${JSON.stringify(allBabies)}
+Recent activities (newest first): ${JSON.stringify(activities || [])}`;
+    } else {
+      babyContext = `No active baby. Available babies: ${JSON.stringify(allBabies)}`;
     }
 
-    const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app (https://sleepybabyy.com).
+    const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app.
 
-CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message. If they write in Arabic, reply in Arabic. If English, English. If French, French. Never mix languages. Detect from their last message.
+CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message (Arabic → Arabic, English → English, etc.). Never mix.
 
-You can help with:
-- App support: how to track sleep/feeding/diapers, invite family members, set up sleep schedules, manage notifications, subscriptions, memories.
-- Analyzing the user's baby data (provided below) — last feeding, sleep patterns, recent activities, recommendations.
-- General baby-care guidance (sleep training basics, feeding intervals by age) — but always remind serious medical concerns belong with a pediatrician.
+You have ACTIONS available via tools to help the user log activities and manage notifications:
+- start_sleep_session / end_sleep_session
+- log_feeding (breast/bottle/solid, with amount/duration/side)
+- log_diaper (wet/dirty/both)
+- log_custom_activity (bath, play, medicine, milestones…)
+- update_notification_settings (enable/disable notifications, types, quiet hours)
+- list_babies (when user has multiple)
 
-Guidelines:
-- Be warm, concise, and practical. Use markdown (bold, lists) for clarity.
-- When asked about the baby, ground answers in the BABY CONTEXT below.
-- If asked something outside baby-care or app support, politely redirect.
-- Never invent data. If something isn't in the context, say so.
+WORKFLOW FOR ACTIONS — VERY IMPORTANT:
+1. When the user requests an action (e.g. "log a feeding", "بدأ النوم", "turn off notifications"):
+   a. If there are MULTIPLE babies and no active one is obvious, FIRST ask which baby (or call list_babies).
+   b. Otherwise, use the active baby's id from BABY CONTEXT.
+2. **Always ask for confirmation BEFORE calling the tool**. Present a clear summary in the user's language, e.g.:
+   > "I will log: **Bottle feeding 120ml** for **Sara** at **now**. Confirm? (yes / no)"
+3. Only call the tool AFTER the user confirms with yes/نعم/oui/sí/ok/تأكيد/موافق.
+4. After the tool runs, give a brief success confirmation (e.g. "✅ Done — sleep session started at 14:30").
+5. If the tool returns an error, explain it warmly and offer next steps.
+
+Other guidelines:
+- For app questions (how to use features, support), answer normally with markdown.
+- Ground baby-data answers in BABY CONTEXT. Never invent data.
+- Keep responses concise and warm.
 
 BABY CONTEXT:
 ${babyContext}`;
@@ -148,112 +521,119 @@ ${babyContext}`;
       ...(history || []).map((m) => ({ role: m.role, content: m.content })),
     ];
 
-    // Call Lovable AI with streaming
-    const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages,
-        stream: true,
-      }),
-    });
+    // ---------- Multi-turn loop with tool calling ----------
+    // We loop until the model produces a plain text reply (no more tool calls).
+    // Streaming only on the FINAL turn to keep things simple.
+    const MAX_TURNS = 4;
+    const toolEvents: any[] = []; // Surface to UI
 
-    if (!aiResp.ok) {
-      if (aiResp.status === 429) {
+    for (let turn = 0; turn < MAX_TURNS; turn++) {
+      const isFinalAttempt = turn === MAX_TURNS - 1;
+
+      const aiResp = await fetch(
+        "https://ai.gateway.lovable.dev/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-3-flash-preview",
+            messages,
+            tools,
+            tool_choice: "auto",
+            stream: false,
+          }),
+        },
+      );
+
+      if (!aiResp.ok) {
+        if (aiResp.status === 429) {
+          return new Response(
+            JSON.stringify({ error: "rate_limit", conversationId }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+        if (aiResp.status === 402) {
+          return new Response(
+            JSON.stringify({ error: "credits", conversationId }),
+            { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+        const t = await aiResp.text();
+        console.error("AI gateway error:", aiResp.status, t);
+        return new Response(JSON.stringify({ error: "ai_error" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const aiJson = await aiResp.json();
+      const choice = aiJson.choices?.[0];
+      const aiMessage = choice?.message;
+      const toolCalls = aiMessage?.tool_calls;
+
+      if (!toolCalls || toolCalls.length === 0 || isFinalAttempt) {
+        // Final text response
+        const finalText = aiMessage?.content || "";
+        await admin.from("chat_messages").insert({
+          conversation_id: conversationId,
+          role: "assistant",
+          content: finalText,
+        });
+        await admin
+          .from("chat_conversations")
+          .update({ updated_at: new Date().toISOString() })
+          .eq("id", conversationId);
+
         return new Response(
-          JSON.stringify({ error: "rate_limit", conversationId }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          JSON.stringify({
+            conversationId,
+            content: finalText,
+            actions: toolEvents,
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
         );
       }
-      if (aiResp.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "credits", conversationId }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
+
+      // Execute tool calls and feed results back
+      messages.push({
+        role: "assistant",
+        content: aiMessage.content || "",
+        tool_calls: toolCalls,
+      } as any);
+
+      for (const tc of toolCalls) {
+        let parsedArgs: any = {};
+        try {
+          parsedArgs = JSON.parse(tc.function.arguments || "{}");
+        } catch {
+          parsedArgs = {};
+        }
+        const result = await executeTool(tc.function.name, parsedArgs, {
+          admin,
+          userId,
+          defaultBabyId: activeBaby?.id || null,
+        });
+        toolEvents.push({
+          tool: tc.function.name,
+          args: parsedArgs,
+          result,
+        });
+        messages.push({
+          role: "tool",
+          tool_call_id: tc.id,
+          content: JSON.stringify(result),
+        } as any);
       }
-      const t = await aiResp.text();
-      console.error("AI gateway error:", aiResp.status, t);
-      return new Response(JSON.stringify({ error: "ai_error" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
     }
 
-    // Stream + accumulate to save final assistant message
-    let fullResponse = "";
-    const stream = new ReadableStream({
-      async start(controller) {
-        const encoder = new TextEncoder();
-        // Send conversationId first as a custom SSE event
-        controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ conversationId })}\n\n`),
-        );
-
-        const reader = aiResp.body!.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-
-            let idx;
-            while ((idx = buffer.indexOf("\n")) !== -1) {
-              let line = buffer.slice(0, idx);
-              buffer = buffer.slice(idx + 1);
-              if (line.endsWith("\r")) line = line.slice(0, -1);
-              if (!line.startsWith("data: ")) {
-                controller.enqueue(encoder.encode(line + "\n"));
-                continue;
-              }
-              const json = line.slice(6).trim();
-              if (json === "[DONE]") {
-                controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-                continue;
-              }
-              try {
-                const parsed = JSON.parse(json);
-                const delta = parsed.choices?.[0]?.delta?.content;
-                if (delta) fullResponse += delta;
-              } catch {
-                // ignore
-              }
-              controller.enqueue(encoder.encode(line + "\n"));
-            }
-          }
-
-          // Save assistant response
-          if (fullResponse.trim()) {
-            await admin.from("chat_messages").insert({
-              conversation_id: conversationId,
-              role: "assistant",
-              content: fullResponse,
-            });
-            await admin
-              .from("chat_conversations")
-              .update({ updated_at: new Date().toISOString() })
-              .eq("id", conversationId);
-          }
-        } catch (e) {
-          console.error("Stream error:", e);
-        } finally {
-          controller.close();
-        }
-      },
-    });
-
-    return new Response(stream, {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-      },
+    return new Response(JSON.stringify({ error: "loop_exhausted" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     console.error("chat-assistant error:", e);
