@@ -352,22 +352,21 @@ const Index = () => {
             </div>
 
             <div className="relative animate-scale-in order-1 lg:order-2">
-              <div className="gradient-dynamic rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl animate-float card-glow gpu-accelerated">
+              <div className="gradient-dynamic rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5 shadow-2xl animate-float card-glow gpu-accelerated">
                 {/* Hero video — autoplay muted + playsInline is required for iOS autoplay. */}
-                {/* Poster shows instantly while video downloads; fallback image for old browsers. */}
-                <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group">
+                <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg group bg-black aspect-video">
                   <video
-                    className="w-full h-auto block transition-transform duration-300 group-hover:scale-[1.02]"
+                    className="absolute inset-0 w-full h-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                     autoPlay
                     loop
                     muted
                     playsInline
                     preload="metadata"
-                    width="1280"
-                    height="720"
+                    width="1920"
+                    height="1080"
                     aria-label="SleepyBabyy app demo"
                   >
-                    <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
+                    <source src="/SleepyBabyy-Promo.mp4" type="video/mp4" />
                     <img
                       src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
                       alt="SleepyBabyy - Baby sleeping peacefully on moon"
@@ -377,7 +376,7 @@ const Index = () => {
                     />
                   </video>
                   {/* Live Demo badge with pulsing indicator */}
-                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-xs font-semibold text-primary px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 pointer-events-none">
+                  <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-xs font-semibold text-primary px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 pointer-events-none z-10">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
