@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SwipeableCard } from '@/components/ui/swipeable-card';
+import { PhotoUpload } from '@/components/ui/photo-upload';
+import { ProfileAvatarEditor } from './ProfileAvatarEditor';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { useProfileDeletion } from '@/hooks/useProfileDeletion';
@@ -34,13 +36,14 @@ interface ProfileManagementDialogProps {
 export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagementDialogProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const { profiles, activeProfile, createProfile, switchProfile, loading, refetch } = useBabyProfile();
+  const { profiles, activeProfile, createProfile, updateProfile, switchProfile, loading, refetch } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
   const { deleteProfileCompletely, isDeletingProfile, deletionProgress } = useProfileDeletion();
   
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileBirthDate, setNewProfileBirthDate] = useState('');
+  const [newProfilePhoto, setNewProfilePhoto] = useState<string | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     profileId: string;
@@ -60,11 +63,13 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       const success = await createProfile({
         name: newProfileName.trim(),
         birth_date: newProfileBirthDate || null,
+        photo_url: newProfilePhoto || null,
       });
 
       if (success) {
         setNewProfileName('');
         setNewProfileBirthDate('');
+        setNewProfilePhoto(null);
       }
     } finally {
       setIsCreating(false);
@@ -146,9 +151,16 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       } ${isProfileDeleting ? 'opacity-50' : ''}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center space-x-3 min-w-0 flex-1">
-            <div className="bg-primary/10 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
-              <Baby className="h-5 w-5 text-primary" />
-            </div>
+            <ProfileAvatarEditor
+              profileId={profile.id}
+              currentPhoto={profile.photo_url}
+              name={profile.name}
+              canEdit={canDeleteThisProfile}
+              onPhotoChange={async (url) => {
+                await updateProfile(profile.id, { photo_url: url });
+                await refetch();
+              }}
+            />
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2 mb-1">
                 <h3 className="font-medium text-foreground truncate">{profile.name}</h3>
@@ -328,6 +340,14 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                     </CardHeader>
                     <CardContent>
                       <form onSubmit={handleCreateProfile} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label>{t('profiles.babyPhoto', 'Baby Photo')} ({t('common.optional')})</Label>
+                          <PhotoUpload
+                            value={newProfilePhoto || undefined}
+                            onChange={setNewProfilePhoto}
+                            fallbackText={newProfileName.trim().charAt(0).toUpperCase() || 'B'}
+                          />
+                        </div>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="profileName">{t('profiles.babyName')}</Label>

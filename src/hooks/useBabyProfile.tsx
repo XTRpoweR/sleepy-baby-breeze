@@ -150,7 +150,7 @@ export const useBabyProfile = () => {
     return unsubscribe;
   }, [profiles]);
 
-  const createProfile = async (profileData: { name: string; birth_date?: string; photo_url?: string }) => {
+  const createProfile = async (profileData: { name: string; birth_date?: string | null; photo_url?: string | null }) => {
     if (!user) return false;
 
     try {
