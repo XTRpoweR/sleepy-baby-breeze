@@ -9,9 +9,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { HumanSupportDialog } from './HumanSupportDialog';
+import { PremiumLockScreen } from './PremiumLockScreen';
 
 const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
