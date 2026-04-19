@@ -62,11 +62,13 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       const success = await createProfile({
         name: newProfileName.trim(),
         birth_date: newProfileBirthDate || null,
+        photo_url: newProfilePhoto || null,
       });
 
       if (success) {
         setNewProfileName('');
         setNewProfileBirthDate('');
+        setNewProfilePhoto(null);
       }
     } finally {
       setIsCreating(false);
