@@ -19,8 +19,9 @@ const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
 export const ChatAssistant = () => {
   const { user } = useAuth();
-  const { isPremium, loading: subLoading } = useSubscription();
+  const { isPremium } = useSubscription();
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
@@ -79,7 +80,15 @@ export const ChatAssistant = () => {
           <div className="flex items-center gap-2 min-w-0">
             <MessageCircle className="h-5 w-5 shrink-0" />
             <div className="flex flex-col min-w-0">
-              <SheetTitle className="text-base leading-tight truncate">{t('chat.title')}</SheetTitle>
+              <div className="flex items-center gap-2">
+                <SheetTitle className="text-base leading-tight truncate">{t('chat.title')}</SheetTitle>
+                <Badge
+                  variant={isPremium ? 'default' : 'secondary'}
+                  className="text-[10px] px-1.5 py-0 h-4 shrink-0"
+                >
+                  {isPremium ? t('chat.tier.premium') : t('chat.tier.free')}
+                </Badge>
+              </div>
               <span className="text-xs text-muted-foreground truncate">{t('chat.subtitle')}</span>
             </div>
           </div>
