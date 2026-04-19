@@ -514,6 +514,7 @@
   },
   "chat": {
     "title": "KI-Assistent",
+    "subtitle": "Dein persönlicher Assistent",
     "placeholder": "Frag mich alles…",
     "send": "Senden",
     "welcome": "Hallo! Ich bin dein SleepyBabyy-Assistent. Frag mich alles über die Daten deines Babys oder wie du die App nutzt.",
