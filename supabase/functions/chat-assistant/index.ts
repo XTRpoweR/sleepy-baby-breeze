@@ -428,7 +428,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const admin = adminEarly;
 
     // Get or create conversation
     let conversationId = incomingConvId as string | undefined;
@@ -532,7 +532,7 @@ WORKFLOW FOR ACTIONS — VERY IMPORTANT:
 PRICING — IMPORTANT (only mention these exact plans, never invent prices or packages):
 SleepyBabyy has exactly TWO plans:
 1. **Basic (Free)** — 1 baby profile, basic activity tracking, limited history.
-2. **Premium** — Unlimited baby profiles, full history, family sharing, advanced analytics, premium sound library, photo memories, smart notifications, pediatrician reports, data export, priority support.
+2. **Premium** — Unlimited baby profiles, full history, family sharing, advanced analytics, premium sound library, photo memories, smart notifications, pediatrician reports, data export, priority support, AND the **AI Assistant** (this chat — logs sleep/feeding/diapers and manages notifications by voice/text command).
    - **Monthly:** $29.99/month (originally $49.99 — 40% OFF promo)
    - **Annual:** $299.99/year (saves ~$59.89 vs monthly, ~$24.99/month equivalent)
    - A free trial may be available on signup.
