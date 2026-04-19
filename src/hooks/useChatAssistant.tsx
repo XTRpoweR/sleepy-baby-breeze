@@ -116,14 +116,28 @@ export const useChatAssistant = () => {
         },
       });
 
-      if (error) {
-        const status = (error as any).context?.status;
-        if (status === 429) {
+      const errorCode = data?.error || (error as any)?.context?.status || (error as any)?.name;
+      const errorMessage = data?.message || (error as any)?.message || '';
+
+      if (error || data?.ok === false) {
+        if (errorCode === 429 || errorCode === 'rate_limit') {
           toast({ title: t('chat.errorRateLimit'), variant: 'destructive' });
-        } else if (status === 402) {
+        } else if (errorCode === 402 || errorCode === 'credits') {
           toast({ title: t('chat.errorCredits'), variant: 'destructive' });
+        } else if (errorCode === 401 || errorCode === 'Unauthorized') {
+          toast({ title: t('chat.errorUnauthorized'), variant: 'destructive' });
+        } else if (errorCode === 400 || errorCode === 'Message required') {
+          toast({ title: t('chat.errorMessageRequired'), variant: 'destructive' });
+        } else if (errorCode === 404 || errorCode === 'Conversation not found') {
+          toast({ title: t('chat.errorConversationNotFound'), variant: 'destructive' });
+        } else if (errorCode === 'ai_error') {
+          toast({ title: t('chat.errorAiTemporary'), variant: 'destructive' });
         } else {
-          toast({ title: t('chat.errorGeneric'), variant: 'destructive' });
+          toast({
+            title: t('chat.errorGeneric'),
+            description: errorMessage || undefined,
+            variant: 'destructive',
+          });
         }
         setMessages((prev) => prev.slice(0, -2));
         return;
@@ -143,10 +157,7 @@ export const useChatAssistant = () => {
         return next;
       });
 
-      // Surface action results as toasts
       actions.forEach(notifyAction);
-
-      // Refresh conversations list
       loadConversations();
     } catch (e) {
       console.error('sendMessage error:', e);
