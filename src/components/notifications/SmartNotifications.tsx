@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
 import { Bell, BellOff, Moon, Baby, TrendingUp, Target, UtensilsCrossed, Clock, Info, AlertCircle, Globe, CheckCircle, Zap, Sparkles, Send } from 'lucide-react';
-import { useNotifications } from '@/hooks/useNotifications';
+import { useNotifications, detectNotificationSupport, NotificationSupportInfo } from '@/hooks/useNotifications';
 import { useSmartNotifications } from '@/hooks/useSmartNotifications';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,6 +26,10 @@ export const SmartNotifications = () => {
     updateSettings,
     isSupported
   } = useNotifications();
+  // Detect device notification support (iOS without PWA, etc.)
+  // Device support: call once at render time (function is sync and cheap)
+  const supportInfo: NotificationSupportInfo | null =
+    typeof window !== 'undefined' ? detectNotificationSupport() : null;
 
   useSmartNotifications();
 
@@ -166,6 +170,32 @@ export const SmartNotifications = () => {
 
   return (
     <FeatureGate feature="notifications">
+      {/* Device compatibility banner — shows if notifications cannot be delivered */}
+      {supportInfo && supportInfo.reason !== 'ok' && (
+        <div className="mb-4 p-4 rounded-lg border-2 border-amber-300 bg-amber-50 text-amber-900">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 text-sm">
+              {supportInfo.reason === 'ios-needs-pwa' && (
+                <>
+                  <p className="font-semibold mb-1">Install the app for notifications</p>
+                  <p>On iPhone/iPad, notifications only work if you add this site to your Home Screen as an app. Tap the Share button in Safari, then &ldquo;Add to Home Screen&rdquo;. Open the app from your Home Screen and enable notifications there.</p>
+                </>
+              )}
+              {supportInfo.reason === 'no-notification-api' && (
+                <p>Your browser does not support web notifications. Try Chrome, Safari 16.4+, Firefox, or Edge.</p>
+              )}
+              {supportInfo.reason === 'insecure-context' && (
+                <p>Notifications require a secure (HTTPS) connection. Please access the app using the normal URL.</p>
+              )}
+              {supportInfo.reason === 'no-service-worker' && (
+                <p>Your browser supports basic notifications but not background push. You will only receive reminders while the app is open in a tab.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-5">
         {/* Permission Alerts */}
         {!isSupported && (
