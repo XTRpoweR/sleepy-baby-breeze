@@ -1,91 +1,62 @@
 
 
-## الخطة: فصل البوت إلى وضعين (مجاني للأسئلة + Premium للتنفيذ) + إصلاح خطأ شاشة Basic
+## الخطة: تحسين واجهة "Child Profiles" (MobileProfileModal)
 
-### المشكلة الحالية
-1. حساب Basic يرى رسالة "Something went wrong. Please try again." بدلاً من شاشة القفل الجميلة `PremiumLockScreen`.
-2. المستخدمون المجانيون محرومون كلياً من البوت — تجربة سيئة وتفويت فرصة بناء عادة استخدام.
+### المشكلة في الصورة
+1. **التواريخ معطوبة**: تظهر "72025/3/" بدلاً من "3/7/2025" — مشكلة RTL مع `toLocaleDateString()`.
+2. **التصميم باهت**: البطاقات بسيطة، الأيقونات صغيرة، لا hierarchy بصرية واضحة.
+3. **شارة Active** تتداخل مع الاسم على الشاشات الضيقة.
+4. **Header بدون لمسة جذابة** (لا gradient، لا badge للعدد).
+5. **زر Manage Profiles** يبدو كـ outline عادي بدون تميّز.
 
-### السبب الجذري للخطأ
-في `useChatAssistant.tsx`، عند استقبال 403 من الـ edge function، الكود يعرض toast خطأ. لكن `PremiumLockScreen` يُعرض فقط بناءً على `isPremium` من `useSubscription` (client-side check). إذا فشل كشف الاشتراك أو حدث تأخير، الـ Sheet يفتح المحادثة العادية، يُرسل المستخدم رسالة، تُرجع 403، وتظهر رسالة الخطأ الأحمر القبيحة.
+### التحسينات
 
----
+#### 1. إصلاح عرض التاريخ (الأهم)
+**الملفات:** `MobileProfileModal.tsx` + `ProfileSelector.tsx`
+- استبدال `new Date(profile.birth_date).toLocaleDateString()` بـ formatter يستخدم `i18n.language` ويُرغم direction LTR على span التاريخ:
+  ```tsx
+  <span dir="ltr">{format(new Date(profile.birth_date), 'd MMM yyyy', { locale: dateLocale })}</span>
+  ```
+- استخدام `date-fns` مع locale الموجود في `src/utils/dateLocalization.ts`.
+- إضافة عمر الطفل المحسوب (مثل: "8 شهور" / "8 months") بجانب التاريخ — أكثر فائدة للأهل من تاريخ الميلاد المجرد.
 
-### الاقتراح: وضعان للبوت
+#### 2. إعادة تصميم البطاقات (Premium look)
+- **Avatar أكبر** (h-14 w-14) مع ring ملوّن للنشط.
+- **Gradient خلفي** للبطاقة النشطة: `bg-gradient-to-br from-purple-50 to-pink-50` + `border-purple-300`.
+- **Hover state** أوضح مع `hover:shadow-md transition-all`.
+- **معلومات منظمة** عمودياً: اسم (bold) + سطر ميتا (عمر • تاريخ • role).
+- **شارة Active** أصغر وأنعم: نقطة خضراء نابضة `animate-pulse` + كلمة "Active" بخط صغير، تنتقل لأسفل الاسم بدلاً من بجانبه على mobile.
 
-**Free Tier — "Q&A Assistant"** (للجميع)
-- يجيب على الأسئلة فقط (نصائح، شرح المزايا، أوقات النوم المثالية، إلخ).
-- **بدون tools/actions** — لا يستطيع تسجيل نوم/رضاعة/حفاضات/إشعارات.
-- عند طلب تنفيذ إجراء → يرد بلطف: "هذه ميزة Premium، اضغط للترقية" مع زر CTA.
+#### 3. Header محسّن
+- استبدال `Baby` icon بأيقونة دائرية ملوّنة `bg-purple-100 p-2 rounded-full`.
+- إضافة subtitle: "X profiles • Tap to switch" تحت العنوان.
+- خط فاصل أنعم (gradient أو opacity-50).
 
-**Premium Tier — "Smart Assistant"** (مدفوع)
-- كل قدرات Q&A.
-- **+ التنفيذ التلقائي** للإجراءات (سجل نوم، رضاعة، حفاضات، إشعارات).
-- Badge "Smart" داخل header الدردشة.
+#### 4. زر Manage Profiles
+- جعله filled بدلاً من outline مع gradient خفيف `bg-gradient-to-r from-purple-600 to-purple-700 text-white`.
+- أيقونة `Settings` داخل دائرة بيضاء صغيرة.
+- إضافة زر "+ Add Profile" منفصل أعلى manage (إذا profile limits تسمح).
 
----
-
-### التنفيذ
-
-#### 1. Backend: `supabase/functions/chat-assistant/index.ts`
-- **إزالة الـ 403 block** الذي يرفض المستخدمين Basic.
-- بدلاً من ذلك: قراءة `isPremium` من جدول subscriptions وتمريره كـ flag إلى الـ AI.
-- **شرطياً**: 
-  - `tools` تُمرَّر فقط إذا `isPremium === true`.
-  - System prompt يُعدَّل: للمجاني يحتوي تعليمات "أنت مساعد للأسئلة فقط، إذا طلب المستخدم تنفيذ إجراء (تسجيل نوم/رضاعة/حفاضات/إشعارات) ردّ بـ: 'هذه ميزة Smart Assistant المتوفرة في Premium ✨' واقترح الترقية".
-  - للمدفوع: System prompt الكامل الحالي مع الـ tools.
-
-#### 2. Frontend: `src/components/chat/ChatAssistant.tsx`
-- **حذف** الـ conditional rendering لـ `PremiumLockScreen` — الجميع يرون المحادثة.
-- إضافة badge صغيرة بجانب العنوان: "Smart" (إذا Premium) أو "Q&A" (إذا Free) — أو إخفاء badge للمجاني وإضافة زر صغير "Upgrade for Smart Actions".
-- تحت input box للمستخدم Free: شريط رفيع بسيط: "✨ Upgrade to Premium for auto-logging" → ينقل لـ /subscription.
-
-#### 3. `src/hooks/useChatAssistant.tsx`
-- **حذف** معالجة 403 الحالية (لأن البوت لن يرفض أحداً بعد الآن).
-- إبقاء معالجة 429/402.
-
-#### 4. `src/components/chat/PremiumLockScreen.tsx`
-- **حذف الملف** (لم يعد مستخدماً) — أو إبقاءه كمكون reusable للاستخدامات المستقبلية. سأحذفه لتنظيف الكود.
-
-#### 5. صفحة الباقات: `src/components/subscription/SubscriptionPlans.tsx`
-- تحديث وصف الميزة:
-  - **Basic**: "AI Q&A Assistant — اسأل البوت عن أي شيء"
-  - **Premium**: "Smart AI Assistant — البوت يسجل النوم والرضاعة والإشعارات بأمر واحد" + شارة NEW
-
-#### 6. الترجمات: `src/locales/{en,de,es,fr,it,el,fi,sv}/common.json`
-- إضافة:
-  - `chat.tier.free` = "Q&A"
-  - `chat.tier.premium` = "Smart"
-  - `chat.upgradeBar` = "Upgrade to Premium for auto-logging actions"
-  - `subscription.features.aiAssistantBasic` = "AI Q&A Assistant"
-  - `subscription.features.aiAssistantPremium` = "Smart AI Assistant — auto-log activities"
-
----
-
-### المخطط
-```text
-User opens chat
-   │
-   ├─ Free user  ──► Full chat UI + "Q&A" badge
-   │                  ├─ asks question  ──► AI answers normally
-   │                  └─ asks action     ──► AI: "Premium feature ✨ [Upgrade]"
-   │
-   └─ Premium    ──► Full chat UI + "Smart" badge
-                      ├─ asks question  ──► AI answers
-                      └─ asks action     ──► AI executes tool + confirms
-```
+#### 5. تطبيق نفس التحسينات على `ProfileSelector.tsx` (Desktop)
+لضمان اتساق التجربة على كل الشاشات.
 
 ### الملفات المعدّلة
-1. `supabase/functions/chat-assistant/index.ts` — حذف 403، tools شرطية، prompts تكيّفية
-2. `src/components/chat/ChatAssistant.tsx` — إزالة gate + badge + upgrade bar
-3. `src/hooks/useChatAssistant.tsx` — تنظيف معالجة 403
-4. `src/components/chat/PremiumLockScreen.tsx` — حذف
-5. `src/components/subscription/SubscriptionPlans.tsx` — تحديث وصف الميزتين
-6. `src/locales/*/common.json` (8 ملفات) — مفاتيح جديدة
+1. `src/components/profiles/MobileProfileModal.tsx` — Redesign كامل
+2. `src/components/profiles/ProfileSelector.tsx` — نفس التحسينات للـ desktop
+3. `src/utils/dateLocalization.ts` — قراءة فقط للتأكد من helpers الموجودة (إن وُجد helper لحساب العمر، استخدامه؛ وإلا إضافة `formatAge(birthDate, locale)`)
 
-### لماذا هذا أفضل
-- **تجربة أفضل للمجاني**: يستفيد من البوت → يبني عادة → يرى قيمته → يترقى.
-- **نقطة بيع واضحة**: الفرق بين "يجيب" و"ينفذ" ملموس وسهل الفهم.
-- **يحل الخطأ تلقائياً**: لا 403، لا "Something went wrong".
-- **Backend مؤمَّن**: التنفيذ يبقى مقيداً على مستوى الـ tools (لا تُمرَّر للمجاني)، فلا يستطيع المستخدم الالتفاف.
+### مثال على البطاقة الجديدة
+```text
+┌─────────────────────────────────────┐
+│ ╭───╮  SleepyBabyy           [✓]    │
+│ │ 👶│  • 8 months                   │
+│ ╰───╯  3 Jul 2025 · Owner           │
+└─────────────────────────────────────┘
+   ring-2 ring-purple-400 + gradient bg
+```
+
+### اعتبارات
+- **RTL Support**: استخدام `dir="ltr"` فقط على span التاريخ، باقي البطاقة يحترم لغة المستخدم.
+- **عدم كسر السلوك**: نفس callbacks (switch, manage) — التغيير بصري بحت + إصلاح التاريخ.
+- **Translations**: استخدام i18n لـ "Active", "X months old", "Tap to switch" — إضافة مفاتيح إذا غير موجودة.
 
