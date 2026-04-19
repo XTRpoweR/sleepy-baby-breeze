@@ -34,6 +34,7 @@ export const SubscriptionPlans = () => {
   };
 
   const basicFeatures = [
+    { icon: Bot, text: "AI Q&A Assistant — ask anything about your baby & the app", available: true },
     { icon: Baby, text: "1 baby profile", available: true },
     { icon: Clock, text: "Current day activity tracking", available: true },
     { icon: BarChart3, text: "Basic sleep reports", available: true },
@@ -41,7 +42,7 @@ export const SubscriptionPlans = () => {
   ];
 
   const premiumFeatures = [
-    { icon: Bot, text: "AI Assistant — log sleep, feeding, diapers & manage notifications by command", available: true, isNew: true },
+    { icon: Bot, text: "Smart AI Assistant — auto-logs sleep, feeding, diapers & manages notifications by command", available: true, isNew: true },
     { icon: Baby, text: "Unlimited baby profiles", available: true },
     { icon: Clock, text: "Extended activity history", available: true },
     { icon: BarChart3, text: "Advanced analytics & trends", available: true },

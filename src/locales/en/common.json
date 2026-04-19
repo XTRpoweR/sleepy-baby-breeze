@@ -546,19 +546,10 @@
       "transcriptHeader": "Recent chat conversation",
       "noTranscript": "No previous messages."
     },
-    "premiumGate": {
-      "title": "AI Assistant — Premium feature",
-      "description": "Your personal smart helper that logs sleep, feedings, diapers and manages notifications with a single message.",
-      "cta": "Upgrade to Premium",
-      "trialNote": "7-day free trial • Cancel anytime",
-      "toastTitle": "Premium feature",
-      "toastDescription": "The AI Assistant is available on the Premium plan. Upgrade to unlock it.",
-      "features": {
-        "sleep": "Start & end sleep sessions hands-free",
-        "feeding": "Log feedings (breast, bottle, solids)",
-        "diapers": "Log diapers and custom activities",
-        "notifications": "Turn notifications & quiet hours on/off"
-      }
-    }
+    "tier": {
+      "free": "Q&A",
+      "premium": "Smart"
+    },
+    "upgradeBar": "✨ Upgrade to Premium for auto-logging actions"
   }
 }

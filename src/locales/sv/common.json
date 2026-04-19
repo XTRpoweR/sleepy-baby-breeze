@@ -548,19 +548,10 @@
       "transcriptHeader": "Senaste konversationen",
       "noTranscript": "Inga tidigare meddelanden."
     },
-    "premiumGate": {
-      "title": "AI-assistent — Premium-funktion",
-      "description": "Din personliga smarta hjälpare som loggar sömn, matningar, blöjor och hanterar aviseringar med ett enda meddelande.",
-      "cta": "Uppgradera till Premium",
-      "trialNote": "7 dagars gratis provperiod • Avbryt när som helst",
-      "toastTitle": "Premium-funktion",
-      "toastDescription": "AI-assistenten är tillgänglig i Premium-planen. Uppgradera för att låsa upp den.",
-      "features": {
-        "sleep": "Starta och avsluta sömnsessioner handsfree",
-        "feeding": "Logga matningar (bröst, flaska, fast föda)",
-        "diapers": "Logga blöjor och egna aktiviteter",
-        "notifications": "Slå på/av aviseringar och tysta timmar"
-      }
-    }
+    "tier": {
+      "free": "Q&A",
+      "premium": "Smart"
+    },
+    "upgradeBar": "✨ Uppgradera till Premium för automatisk loggning"
   }
 }

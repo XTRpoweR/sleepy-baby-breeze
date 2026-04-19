@@ -1,26 +1,27 @@
 import { useState, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { HumanSupportDialog } from './HumanSupportDialog';
-import { PremiumLockScreen } from './PremiumLockScreen';
 
 const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
 export const ChatAssistant = () => {
   const { user } = useAuth();
-  const { isPremium, loading: subLoading } = useSubscription();
+  const { isPremium } = useSubscription();
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
@@ -79,7 +80,15 @@ export const ChatAssistant = () => {
           <div className="flex items-center gap-2 min-w-0">
             <MessageCircle className="h-5 w-5 shrink-0" />
             <div className="flex flex-col min-w-0">
-              <SheetTitle className="text-base leading-tight truncate">{t('chat.title')}</SheetTitle>
+              <div className="flex items-center gap-2">
+                <SheetTitle className="text-base leading-tight truncate">{t('chat.title')}</SheetTitle>
+                <Badge
+                  variant={isPremium ? 'default' : 'secondary'}
+                  className="text-[10px] px-1.5 py-0 h-4 shrink-0"
+                >
+                  {isPremium ? t('chat.tier.premium') : t('chat.tier.free')}
+                </Badge>
+              </div>
               <span className="text-xs text-muted-foreground truncate">{t('chat.subtitle')}</span>
             </div>
           </div>
@@ -115,9 +124,7 @@ export const ChatAssistant = () => {
           </div>
         </SheetHeader>
 
-        {!subLoading && !isPremium ? (
-          <PremiumLockScreen onClose={() => setOpen(false)} />
-        ) : showHistory ? (
+        {showHistory ? (
           <ScrollArea className="flex-1">
             <div className="p-2 space-y-1">
               {conversations.length === 0 && (
@@ -201,6 +208,20 @@ export const ChatAssistant = () => {
                 ))}
               </div>
             </ScrollArea>
+
+            {!isPremium && (
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/subscription');
+                }}
+                className="border-t bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/15 hover:to-primary/10 transition-colors px-3 py-2 flex items-center justify-center gap-2 text-xs font-medium text-primary"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>{t('chat.upgradeBar')}</span>
+              </button>
+            )}
 
             <div className="border-t p-3 flex gap-2">
               <Input

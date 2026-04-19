@@ -391,7 +391,7 @@ Deno.serve(async (req) => {
     }
     const userId = userData.user.id;
 
-    // ---------- Premium gate ----------
+    // ---------- Detect Premium tier (gate features, not access) ----------
     const adminEarly = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { data: sub } = await adminEarly
       .from("subscriptions")
@@ -402,16 +402,7 @@ Deno.serve(async (req) => {
     const tierOk = sub && (sub.subscription_tier === "premium" || sub.subscription_tier === "premium_annual");
     const statusOk = sub && (sub.status === "active" || sub.status === "trialing");
     const periodOk = !sub?.current_period_end || new Date(sub.current_period_end) > new Date();
-
-    if (!tierOk || !statusOk || !periodOk) {
-      return new Response(
-        JSON.stringify({
-          error: "premium_required",
-          message: "The AI Assistant is a Premium feature. Please upgrade to continue.",
-        }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    const isPremium = !!(tierOk && statusOk && periodOk);
 
     const { message, conversationId: incomingConvId, confirm } = await req.json();
 
@@ -508,11 +499,8 @@ Recent activities (newest first): ${JSON.stringify(activities || [])}`;
       babyContext = `No active baby. Available babies: ${JSON.stringify(allBabies)}`;
     }
 
-    const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app.
-
-CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message (Arabic → Arabic, English → English, etc.). Never mix.
-
-You have ACTIONS available via tools to help the user log activities and manage notifications:
+    const premiumActionsBlock = isPremium
+      ? `You have ACTIONS available via tools to help the user log activities and manage notifications:
 - start_sleep_session / end_sleep_session
 - log_feeding (breast/bottle/solid, with amount/duration/side)
 - log_diaper (wet/dirty/both)
@@ -527,7 +515,21 @@ WORKFLOW FOR ACTIONS — VERY IMPORTANT:
 2. Ask for confirmation with a short summary (one short line). Example: "سأسجل: **رضاعة 120 مل لسارة الآن** — أأكد؟ (نعم/لا)"
 3. As soon as the user confirms (yes/نعم/ok/تأكيد/موافق/أيوه/sí/oui), CALL THE TOOL IMMEDIATELY in the SAME response. Do NOT send a separate "okay, doing it now" message — just call the tool.
 4. After the tool runs, reply with a SHORT success line (e.g. "✅ تم تسجيل النوم — 14:30"). Maximum one sentence.
-5. On error, briefly explain and offer next step.
+5. On error, briefly explain and offer next step.`
+      : `IMPORTANT — FREE TIER (Q&A MODE ONLY):
+You DO NOT have any tools or actions in this mode. You CANNOT log sleep, feedings, diapers, custom activities, or change notification settings.
+If the user asks you to perform any of these actions ("log a feeding", "start sleep", "turn off notifications", "بدأ النوم", "سجّل رضاعة"…), DO NOT pretend to do it. Instead reply briefly in the user's language with something like:
+"✨ This is a Smart Assistant feature available on the Premium plan. Upgrade to let me log activities and manage notifications for you automatically. Tap the **Upgrade** banner below."
+Then offer to answer their question or guide them manually instead.
+You CAN still freely answer questions: baby sleep tips, app help, schedules, milestones, pricing, etc.`;
+
+    const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app.
+
+CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message (Arabic → Arabic, English → English, etc.). Never mix.
+
+USER PLAN: ${isPremium ? "Premium (Smart Assistant — full actions enabled)" : "Free / Basic (Q&A only — no actions)"}.
+
+${premiumActionsBlock}
 
 PRICING — IMPORTANT (only mention these exact plans, never invent prices or packages):
 SleepyBabyy has exactly TWO plans:
@@ -574,8 +576,7 @@ ${babyContext}`;
           body: JSON.stringify({
             model: "google/gemini-3-flash-preview",
             messages,
-            tools,
-            tool_choice: "auto",
+            ...(isPremium ? { tools, tool_choice: "auto" } : {}),
             stream: false,
           }),
         },
