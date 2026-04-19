@@ -524,6 +524,26 @@
     "thinking": "Denke nach…",
     "errorRateLimit": "Zu viele Anfragen. Bitte versuche es später erneut.",
     "errorCredits": "KI-Guthaben aufgebraucht. Bitte kontaktiere den Support.",
-    "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "support": {
+      "cta": "Mit einem Menschen sprechen?",
+      "title": "Support kontaktieren",
+      "description": "Sende eine Nachricht an unser Team. Der letzte Chatverlauf wird mitgesendet.",
+      "emailLabel": "Deine E-Mail",
+      "subjectLabel": "Betreff",
+      "subjectPlaceholder": "Beschreibe dein Anliegen kurz",
+      "messageLabel": "Nachricht",
+      "messagePlaceholder": "Wobei können wir helfen?",
+      "responseTime": "Wir antworten in der Regel innerhalb von 24 Stunden per E-Mail.",
+      "submit": "An Support senden",
+      "sending": "Wird gesendet…",
+      "cancel": "Abbrechen",
+      "successTitle": "Nachricht gesendet!",
+      "successDescription": "Unser Team antwortet dir innerhalb von 24 Stunden per E-Mail.",
+      "errorSend": "Senden fehlgeschlagen. Bitte erneut versuchen.",
+      "validationError": "Bitte Betreff und Nachricht (mind. 10 Zeichen) angeben.",
+      "transcriptHeader": "Letzter Chatverlauf",
+      "noTranscript": "Keine vorherigen Nachrichten."
+    }
   }
 }

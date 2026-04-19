@@ -526,6 +526,26 @@
     "thinking": "Tänker…",
     "errorRateLimit": "För många förfrågningar. Försök igen om en stund.",
     "errorCredits": "AI-krediter slut. Kontakta support.",
-    "errorGeneric": "Något gick fel. Försök igen."
+    "errorGeneric": "Något gick fel. Försök igen.",
+    "support": {
+      "cta": "Vill du prata med en människa?",
+      "title": "Kontakta support",
+      "description": "Skicka ett meddelande till vårt team. Vi bifogar den senaste chatten.",
+      "emailLabel": "Din e-post",
+      "subjectLabel": "Ämne",
+      "subjectPlaceholder": "Beskriv problemet kort",
+      "messageLabel": "Meddelande",
+      "messagePlaceholder": "Berätta vad vi kan hjälpa till med…",
+      "responseTime": "Vi svarar oftast inom 24 timmar via e-post.",
+      "submit": "Skicka till support",
+      "sending": "Skickar…",
+      "cancel": "Avbryt",
+      "successTitle": "Meddelandet skickat!",
+      "successDescription": "Vårt team svarar via e-post inom 24 timmar.",
+      "errorSend": "Kunde inte skicka. Försök igen.",
+      "validationError": "Lägg till ämne och meddelande (minst 10 tecken).",
+      "transcriptHeader": "Senaste konversationen",
+      "noTranscript": "Inga tidigare meddelanden."
+    }
   }
 }

@@ -6,11 +6,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, Send, Plus, Trash2, History, Loader2 } from 'lucide-react';
+import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { HumanSupportDialog } from './HumanSupportDialog';
 
 const HIDDEN_ROUTES = ['/auth', '/reset-password', '/invitation'];
 
@@ -21,6 +22,7 @@ export const ChatAssistant = () => {
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -76,6 +78,15 @@ export const ChatAssistant = () => {
             {t('chat.title')}
           </SheetTitle>
           <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSupportOpen(true)}
+              aria-label={t('chat.support.title')}
+              title={t('chat.support.title')}
+            >
+              <LifeBuoy className="h-4 w-4" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -180,6 +191,19 @@ export const ChatAssistant = () => {
                     </div>
                   </div>
                 ))}
+                {messages.length > 0 && !isStreaming && (
+                  <div className="pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-xs"
+                      onClick={() => setSupportOpen(true)}
+                    >
+                      <LifeBuoy className="h-3.5 w-3.5 mr-2" />
+                      {t('chat.support.cta')}
+                    </Button>
+                  </div>
+                )}
               </div>
             </ScrollArea>
 
@@ -212,6 +236,11 @@ export const ChatAssistant = () => {
           </>
         )}
       </SheetContent>
+      <HumanSupportDialog
+        open={supportOpen}
+        onOpenChange={setSupportOpen}
+        recentMessages={messages}
+      />
     </Sheet>
   );
 };
