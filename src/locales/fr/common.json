@@ -546,19 +546,10 @@
       "transcriptHeader": "Conversation récente",
       "noTranscript": "Aucun message précédent."
     },
-    "premiumGate": {
-      "title": "Assistant IA — fonctionnalité Premium",
-      "description": "Votre assistant intelligent personnel qui enregistre le sommeil, les tétées, les couches et gère les notifications en un seul message.",
-      "cta": "Passer à Premium",
-      "trialNote": "Essai gratuit de 7 jours • Annulable à tout moment",
-      "toastTitle": "Fonctionnalité Premium",
-      "toastDescription": "L'Assistant IA est disponible sur le plan Premium. Passez à Premium pour le débloquer.",
-      "features": {
-        "sleep": "Démarrer et terminer les sessions de sommeil sans les mains",
-        "feeding": "Enregistrer les tétées (sein, biberon, solides)",
-        "diapers": "Enregistrer les couches et activités personnalisées",
-        "notifications": "Activer/désactiver les notifications et heures calmes"
-      }
-    }
+    "tier": {
+      "free": "Q&R",
+      "premium": "Smart"
+    },
+    "upgradeBar": "✨ Passez à Premium pour l'enregistrement automatique"
   }
 }

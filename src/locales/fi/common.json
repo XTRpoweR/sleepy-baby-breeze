@@ -546,19 +546,10 @@
       "transcriptHeader": "Viimeisin keskustelu",
       "noTranscript": "Ei aiempia viestejä."
     },
-    "premiumGate": {
-      "title": "Tekoälyavustaja — Premium-ominaisuus",
-      "description": "Henkilökohtainen älykäs avustajasi, joka kirjaa unen, syötöt ja vaipat sekä hallitsee ilmoituksia yhdellä viestillä.",
-      "cta": "Päivitä Premiumiin",
-      "trialNote": "7 päivän ilmainen kokeilu • Peruuta milloin tahansa",
-      "toastTitle": "Premium-ominaisuus",
-      "toastDescription": "Tekoälyavustaja on saatavilla Premium-tilauksessa. Päivitä avataksesi sen.",
-      "features": {
-        "sleep": "Aloita ja päätä uniunet ilman käsiä",
-        "feeding": "Kirjaa syötöt (rinta, pullo, kiinteät)",
-        "diapers": "Kirjaa vaipat ja mukautetut aktiviteetit",
-        "notifications": "Kytke ilmoitukset ja hiljaiset tunnit päälle/pois"
-      }
-    }
+    "tier": {
+      "free": "Q&A",
+      "premium": "Smart"
+    },
+    "upgradeBar": "✨ Päivitä Premiumiin automaattista kirjausta varten"
   }
 }

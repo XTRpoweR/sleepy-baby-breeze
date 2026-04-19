@@ -546,19 +546,10 @@
       "transcriptHeader": "Conversación reciente",
       "noTranscript": "Sin mensajes previos."
     },
-    "premiumGate": {
-      "title": "Asistente IA — función Premium",
-      "description": "Tu ayudante inteligente personal que registra sueño, tomas, pañales y gestiona las notificaciones con un solo mensaje.",
-      "cta": "Actualizar a Premium",
-      "trialNote": "Prueba gratis de 7 días • Cancela cuando quieras",
-      "toastTitle": "Función Premium",
-      "toastDescription": "El Asistente IA está disponible en el plan Premium. Actualiza para desbloquearlo.",
-      "features": {
-        "sleep": "Inicia y finaliza sesiones de sueño sin manos",
-        "feeding": "Registra tomas (pecho, biberón, sólidos)",
-        "diapers": "Registra pañales y actividades personalizadas",
-        "notifications": "Activa/desactiva notificaciones y horas tranquilas"
-      }
-    }
+    "tier": {
+      "free": "Q&A",
+      "premium": "Smart"
+    },
+    "upgradeBar": "✨ Mejora a Premium para registrar acciones automáticamente"
   }
 }

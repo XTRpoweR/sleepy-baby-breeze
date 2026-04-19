@@ -546,19 +546,10 @@
       "transcriptHeader": "Conversazione recente",
       "noTranscript": "Nessun messaggio precedente."
     },
-    "premiumGate": {
-      "title": "Assistente IA — funzione Premium",
-      "description": "Il tuo aiutante intelligente personale che registra sonno, poppate, pannolini e gestisce le notifiche con un solo messaggio.",
-      "cta": "Passa a Premium",
-      "trialNote": "Prova gratuita di 7 giorni • Annulla quando vuoi",
-      "toastTitle": "Funzione Premium",
-      "toastDescription": "L'Assistente IA è disponibile nel piano Premium. Esegui l'upgrade per sbloccarlo.",
-      "features": {
-        "sleep": "Avvia e termina le sessioni di sonno a mani libere",
-        "feeding": "Registra le poppate (seno, biberon, solidi)",
-        "diapers": "Registra pannolini e attività personalizzate",
-        "notifications": "Attiva/disattiva notifiche e ore silenziose"
-      }
-    }
+    "tier": {
+      "free": "Q&A",
+      "premium": "Smart"
+    },
+    "upgradeBar": "✨ Passa a Premium per registrazioni automatiche"
   }
 }
