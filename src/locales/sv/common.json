@@ -516,6 +516,7 @@
   },
   "chat": {
     "title": "AI-assistent",
+    "subtitle": "Din personliga assistent",
     "placeholder": "Fråga mig vad som helst…",
     "send": "Skicka",
     "welcome": "Hej! Jag är din SleepyBabyy-assistent. Fråga mig om ditt barns data eller hur du använder appen.",

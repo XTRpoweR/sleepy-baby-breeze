@@ -514,6 +514,7 @@
   },
   "chat": {
     "title": "Tekoälyavustaja",
+    "subtitle": "Henkilökohtainen avustajasi",
     "placeholder": "Kysy mitä tahansa…",
     "send": "Lähetä",
     "welcome": "Hei! Olen SleepyBabyy-avustajasi. Kysy vauvasi tiedoista tai sovelluksen käytöstä.",

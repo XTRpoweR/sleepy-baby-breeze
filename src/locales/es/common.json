@@ -514,6 +514,7 @@
   },
   "chat": {
     "title": "Asistente IA",
+    "subtitle": "Tu asistente personal",
     "placeholder": "Pregúntame lo que sea…",
     "send": "Enviar",
     "welcome": "¡Hola! Soy tu asistente de SleepyBabyy. Pregúntame sobre los datos de tu bebé o cómo usar la app.",

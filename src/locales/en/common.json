@@ -514,6 +514,7 @@
   },
   "chat": {
     "title": "AI Assistant",
+    "subtitle": "Your personal assistant",
     "placeholder": "Ask me anything…",
     "send": "Send",
     "welcome": "Hi! I'm your SleepyBabyy assistant. Ask me anything about your baby's data or how to use the app.",
