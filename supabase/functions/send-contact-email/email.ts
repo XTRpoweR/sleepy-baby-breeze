@@ -118,12 +118,18 @@ To unsubscribe: https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(f
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f8fb;padding:24px 12px;">
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
+        <!-- Logo Header -->
+        <tr>
+          <td style="background-color:#ffffff;padding:24px 24px 16px;border-bottom:1px solid #f1f5f9;text-align:center;">
+            <img src="https://sleepybabyy.com/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy" style="height:40px;width:auto;" />
+          </td>
+        </tr>
         <tr>
           <td style="background-color:#ecfdf5;padding:20px 24px;border-bottom:1px solid #e5e7eb;">
             <p style="margin:0;font-size:18px;font-weight:600;color:#047857;">✅ We received your message</p>
             <p style="margin:4px 0 0;font-size:13px;color:#64748b;">A member of our team will reply within 24 hours.</p>
           </td>
-        </tr>
+        </tr>`,
         <tr>
           <td style="padding:24px;">
             <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#1f2937;">Hi <strong>${formData.name}</strong>,</p>
