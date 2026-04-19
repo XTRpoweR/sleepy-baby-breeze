@@ -37,43 +37,27 @@ interface EditActivityDialogProps {
   updateLog: (logId: string, updates: Partial<ActivityLog>) => Promise<boolean>;
 }
 
-// Helper: split ISO string into date (YYYY-MM-DD) and time (HH:mm)
-const splitDateTime = (iso: string | null): { date: string; time: string } => {
-  if (!iso) return { date: '', time: '' };
+// Format ISO string -> 'YYYY-MM-DDTHH:mm' for datetime-local input (in local timezone)
+const toLocalInputValue = (iso: string | null): string => {
+  if (!iso) return '';
   const d = new Date(iso);
-  if (isNaN(d.getTime())) return { date: '', time: '' };
+  if (isNaN(d.getTime())) return '';
   const pad = (n: number) => n.toString().padStart(2, '0');
-  return {
-    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
-    time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
-  };
-};
-
-// Helper: combine date + time into ISO string
-const combineDateTime = (date: string, time: string): Date | null => {
-  if (!date || !time) return null;
-  const combined = new Date(`${date}T${time}:00`);
-  return isNaN(combined.getTime()) ? null : combined;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
 export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: EditActivityDialogProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [endTime, setEndTime] = useState('');
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (log) {
-      const start = splitDateTime(log.start_time);
-      const end = splitDateTime(log.end_time);
-      setStartDate(start.date);
-      setStartTime(start.time);
-      setEndDate(end.date);
-      setEndTime(end.time);
+      setStartTime(toLocalInputValue(log.start_time));
+      setEndTime(toLocalInputValue(log.end_time));
       setNotes(log.notes || '');
     }
   }, [log]);
@@ -82,10 +66,10 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
     e.preventDefault();
     setIsSubmitting(true);
 
-    const start = combineDateTime(startDate, startTime);
-    const end = combineDateTime(endDate, endTime);
+    const start = startTime ? new Date(startTime) : null;
+    const end = endTime ? new Date(endTime) : null;
 
-    if (!start) {
+    if (!start || isNaN(start.getTime())) {
       setIsSubmitting(false);
       return;
     }
@@ -113,50 +97,32 @@ export const EditActivityDialog = ({ log, open, onClose, babyId, updateLog }: Ed
     return t(`activities.${log?.activity_type}`);
   };
 
-  // Shared form content — separate date and time inputs work better on iOS Safari
+  // Shared form content. Using datetime-local gives iOS Safari its native bottom-sheet
+  // spinner picker (date + time together in one popup), which is the familiar iOS pattern.
   const formContent = (
     <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-4">
-        {/* Start date + time */}
-        <div className="space-y-2">
-          <Label>{t('tracking.editActivity.startTimeLabel')}</Label>
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-              aria-label="Start date"
-            />
-            <Input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              required
-              aria-label="Start time"
-            />
-          </div>
+        <div>
+          <Label htmlFor="editStartTime">{t('tracking.editActivity.startTimeLabel')}</Label>
+          <Input
+            id="editStartTime"
+            type="datetime-local"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            required
+            className="h-11"
+          />
         </div>
-
-        {/* End date + time */}
-        <div className="space-y-2">
-          <Label>{t('tracking.editActivity.endTimeLabel')}</Label>
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              aria-label="End date"
-            />
-            <Input
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              aria-label="End time"
-            />
-          </div>
+        <div>
+          <Label htmlFor="editEndTime">{t('tracking.editActivity.endTimeLabel')}</Label>
+          <Input
+            id="editEndTime"
+            type="datetime-local"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            className="h-11"
+          />
         </div>
-
         <div>
           <Label htmlFor="editNotes">{t('tracking.editActivity.notesLabel')}</Label>
           <Textarea
