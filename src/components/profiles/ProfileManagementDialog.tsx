@@ -150,9 +150,16 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
       } ${isProfileDeleting ? 'opacity-50' : ''}`}>
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center space-x-3 min-w-0 flex-1">
-            <div className="bg-primary/10 rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
-              <Baby className="h-5 w-5 text-primary" />
-            </div>
+            <ProfileAvatarEditor
+              profileId={profile.id}
+              currentPhoto={profile.photo_url}
+              name={profile.name}
+              canEdit={canDeleteThisProfile}
+              onPhotoChange={async (url) => {
+                await updateProfile(profile.id, { photo_url: url });
+                await refetch();
+              }}
+            />
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2 mb-1">
                 <h3 className="font-medium text-foreground truncate">{profile.name}</h3>
