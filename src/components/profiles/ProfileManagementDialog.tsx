@@ -307,86 +307,61 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
                 ) : null;
               })()}
 
-              {/* Create New Profile - Wrapped with FeatureGate */}
+              {/* Create New Profile - always available; createProfile enforces tier limits */}
               <FeatureGate feature="profiles" showUpgrade={true}>
-                <PermissionAwareActions 
-                  requiredPermission="canInvite" 
-                  showMessage={false}
-                  fallback={
-                    role !== 'owner' ? (
-                      <Card className="opacity-60">
-                        <CardHeader className="pb-3">
-                          <CardTitle className="flex items-center justify-between text-base lg:text-lg text-gray-500">
-                            <div className="flex items-center space-x-2">
-                              <Plus className="h-4 w-4 lg:h-5 lg:w-5" />
-                              <span>{t('profiles.addNew')}</span>
-                              <Shield className="h-4 w-4 ml-2" />
-                            </div>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-center py-4">
-                            <p className="text-gray-600 text-sm lg:text-base">Only account owners can create new child profiles.</p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ) : null
-                  }
-                >
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="flex items-center justify-between text-base lg:text-lg">
-                        <div className="flex items-center space-x-2">
-                          <Plus className="h-4 w-4 lg:h-5 lg:w-5" />
-                          <span>{t('profiles.addNew')}</span>
-                        </div>
-                        <ProfileLimitsIndicator />
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <form onSubmit={handleCreateProfile} className="space-y-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center justify-between text-base lg:text-lg">
+                      <div className="flex items-center space-x-2">
+                        <Plus className="h-4 w-4 lg:h-5 lg:w-5" />
+                        <span>{t('profiles.addNew')}</span>
+                      </div>
+                      <ProfileLimitsIndicator />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleCreateProfile} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>{t('profiles.babyPhoto', 'Baby Photo')} ({t('common.optional')})</Label>
+                        <PhotoUpload
+                          value={newProfilePhoto || undefined}
+                          onChange={setNewProfilePhoto}
+                          fallbackText={newProfileName.trim().charAt(0).toUpperCase() || 'B'}
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>{t('profiles.babyPhoto', 'Baby Photo')} ({t('common.optional')})</Label>
-                          <PhotoUpload
-                            value={newProfilePhoto || undefined}
-                            onChange={setNewProfilePhoto}
-                            fallbackText={newProfileName.trim().charAt(0).toUpperCase() || 'B'}
+                          <Label htmlFor="profileName">{t('profiles.babyName')}</Label>
+                          <Input
+                            id="profileName"
+                            value={newProfileName}
+                            onChange={(e) => setNewProfileName(e.target.value)}
+                            placeholder={t('profiles.enterBabyName')}
+                            className={isMobile ? "h-12" : ""}
+                            required
                           />
                         </div>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="profileName">{t('profiles.babyName')}</Label>
-                            <Input
-                              id="profileName"
-                              value={newProfileName}
-                              onChange={(e) => setNewProfileName(e.target.value)}
-                              placeholder={t('profiles.enterBabyName')}
-                              className={isMobile ? "h-12" : ""}
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="birthDate">{t('profiles.birthDate')} ({t('common.optional')})</Label>
-                            <Input
-                              id="birthDate"
-                              type="date"
-                              value={newProfileBirthDate}
-                              onChange={(e) => setNewProfileBirthDate(e.target.value)}
-                              className={isMobile ? "h-12" : ""}
-                            />
-                          </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="birthDate">{t('profiles.birthDate')} ({t('common.optional')})</Label>
+                          <Input
+                            id="birthDate"
+                            type="date"
+                            value={newProfileBirthDate}
+                            onChange={(e) => setNewProfileBirthDate(e.target.value)}
+                            className={isMobile ? "h-12" : ""}
+                          />
                         </div>
-                        <Button 
-                          type="submit" 
-                          disabled={!newProfileName.trim() || isCreating}
-                          className={`w-full ${isMobile ? 'h-12 text-base touch-manipulation' : ''}`}
-                        >
-                          {isCreating ? t('common.creating') : t('profiles.createProfile')}
-                        </Button>
-                      </form>
-                    </CardContent>
-                  </Card>
-                </PermissionAwareActions>
+                      </div>
+                      <Button 
+                        type="submit" 
+                        disabled={!newProfileName.trim() || isCreating}
+                        className={`w-full ${isMobile ? 'h-12 text-base touch-manipulation' : ''}`}
+                      >
+                        {isCreating ? t('common.creating') : t('profiles.createProfile')}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
               </FeatureGate>
 
               {/* Existing Profiles */}
