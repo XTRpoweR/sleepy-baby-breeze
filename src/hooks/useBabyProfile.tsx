@@ -131,24 +131,26 @@ export const useBabyProfile = () => {
       console.log('useBabyProfile: Received profile change event:', profileId);
       if (!profileId) return;
 
+      const matchingProfile = profiles.find((p) => p.id === profileId);
+
+      // If we don't have this profile locally, refetch the list (e.g. new profile created in another instance)
+      if (!matchingProfile) {
+        console.log('useBabyProfile: Profile not found locally, refetching profiles list');
+        fetchProfiles();
+        return;
+      }
+
       setActiveProfile((current) => {
         if (current?.id === profileId) {
           return current;
         }
-
-        const matchingProfile = profiles.find((p) => p.id === profileId) || null;
-        if (!matchingProfile) {
-          console.log('useBabyProfile: No matching profile found for event id:', profileId);
-          return current;
-        }
-
         console.log('useBabyProfile: Updating active profile from event to:', matchingProfile.name);
         return { ...matchingProfile };
       });
     });
 
     return unsubscribe;
-  }, [profiles]);
+  }, [profiles, fetchProfiles]);
 
   const createProfile = async (profileData: { name: string; birth_date?: string | null; photo_url?: string | null }) => {
     if (!user) return false;
@@ -221,7 +223,11 @@ export const useBabyProfile = () => {
       
       if (isFirstProfile) {
         setActiveProfile(newProfile);
+        localStorage.setItem(ACTIVE_PROFILE_KEY, newProfile.id);
       }
+
+      // Notify all other useBabyProfile instances to refetch
+      profileEventManager.emit(isFirstProfile ? newProfile.id : (activeProfile?.id ?? newProfile.id));
 
       toast({
         title: "Success!",
