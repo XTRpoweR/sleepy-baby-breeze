@@ -36,7 +36,7 @@ interface ProfileManagementDialogProps {
 export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagementDialogProps) => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const { profiles, activeProfile, createProfile, switchProfile, loading, refetch } = useBabyProfile();
+  const { profiles, activeProfile, createProfile, updateProfile, switchProfile, loading, refetch } = useBabyProfile();
   const { role } = useProfilePermissions(activeProfile?.id || null);
   const { deleteProfileCompletely, isDeletingProfile, deletionProgress } = useProfileDeletion();
   
