@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkles, Zap } from 'lucide-react';
+import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkles, Zap, Bot } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -41,6 +41,7 @@ export const SubscriptionPlans = () => {
   ];
 
   const premiumFeatures = [
+    { icon: Bot, text: "AI Assistant — log sleep, feeding, diapers & manage notifications by command", available: true, isNew: true },
     { icon: Baby, text: "Unlimited baby profiles", available: true },
     { icon: Clock, text: "Extended activity history", available: true },
     { icon: BarChart3, text: "Advanced analytics & trends", available: true },
