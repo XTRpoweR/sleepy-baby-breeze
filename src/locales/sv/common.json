@@ -6,7 +6,7 @@
   },
   "navigation": {
     "features": "Funktioner",
-    "insights": "Insikter", 
+    "insights": "Insikter",
     "reviews": "Recensioner",
     "getStarted": "Kom igång",
     "dashboard": "Till instrumentpanel",
@@ -513,5 +513,19 @@
     "blog": "Blogg",
     "careers": "Karriär",
     "copyright": "© 2025 SleepyBabyy. Alla rättigheter förbehållna."
+  },
+  "chat": {
+    "title": "AI-assistent",
+    "placeholder": "Fråga mig vad som helst…",
+    "send": "Skicka",
+    "welcome": "Hej! Jag är din SleepyBabyy-assistent. Fråga mig om ditt barns data eller hur du använder appen.",
+    "newChat": "Ny chatt",
+    "history": "Historik",
+    "delete": "Radera",
+    "noHistory": "Inga tidigare konversationer",
+    "thinking": "Tänker…",
+    "errorRateLimit": "För många förfrågningar. Försök igen om en stund.",
+    "errorCredits": "AI-krediter slut. Kontakta support.",
+    "errorGeneric": "Något gick fel. Försök igen."
   }
 }
