@@ -118,49 +118,57 @@ export const useNotifications = () => {
     })();
   }, []);
 
-  // Load settings from DB on mount
+  // Load settings from DB
+  const loadSettings = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      const saved = localStorage.getItem('notificationSettings');
+      if (saved) {
+        try { setSettings({ ...defaultSettings, ...JSON.parse(saved) }); } catch {}
+      }
+      return;
+    }
+
+    const { data } = await supabase
+      .from('notification_settings')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    if (data) {
+      setSettings({
+        feedingReminders: data.feeding_reminders,
+        sleepReminders: data.sleep_reminders,
+        milestoneReminders: data.milestone_reminders,
+        patternAlerts: data.pattern_alerts,
+        feedingInterval: data.feeding_interval,
+        sleepWindowAlert: true,
+        notificationsEnabled: (data as any).notifications_enabled ?? true,
+        quietHours: {
+          enabled: data.quiet_hours_enabled,
+          start: String(data.quiet_hours_start).substring(0, 5),
+          end: String(data.quiet_hours_end).substring(0, 5),
+        },
+      });
+    }
+  }, []);
+
   useEffect(() => {
     if (isSupported()) {
       setPermission(Notification.permission);
     }
-
-    const loadSettings = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        // Fallback to localStorage for unauthenticated
-        const saved = localStorage.getItem('notificationSettings');
-        if (saved) {
-          try { setSettings({ ...defaultSettings, ...JSON.parse(saved) }); } catch {}
-        }
-        return;
-      }
-
-      const { data } = await supabase
-        .from('notification_settings')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-
-      if (data) {
-        setSettings({
-          feedingReminders: data.feeding_reminders,
-          sleepReminders: data.sleep_reminders,
-          milestoneReminders: data.milestone_reminders,
-          patternAlerts: data.pattern_alerts,
-          feedingInterval: data.feeding_interval,
-          sleepWindowAlert: true,
-          notificationsEnabled: (data as any).notifications_enabled ?? true,
-          quietHours: {
-            enabled: data.quiet_hours_enabled,
-            start: String(data.quiet_hours_start).substring(0, 5),
-            end: String(data.quiet_hours_end).substring(0, 5),
-          },
-        });
-      }
-    };
-
     loadSettings();
-  }, [isSupported]);
+  }, [isSupported, loadSettings]);
+
+  // Listen for external refresh (e.g. chat assistant updated settings)
+  useEffect(() => {
+    const unsub = dataRefreshBus.subscribe((topic) => {
+      if (topic === 'notification_settings' || topic === 'all') {
+        loadSettings();
+      }
+    });
+    return unsub;
+  }, [loadSettings]);
 
   // Sync settings to DB
   const syncSettingsToDB = useCallback(async (updatedSettings: NotificationSettings) => {
