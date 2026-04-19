@@ -8,78 +8,92 @@ export class EmailService {
     console.log('Sending contact email');
     
     try {
-      // Send to support team
+      // Generate unique message ID for better deliverability
+      const messageId = `contact-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+      
+      // Send to support team - plain text heavy for better spam score
       const supportEmailResponse = await resend.emails.send({
-        from: "SleepyBabyy Contact <noreply@sleepybabyy.com>",
+        from: "SleepyBabyy Support <support@sleepybabyy.com>",
         to: ["support@sleepybabyy.com"],
-        subject: `New Contact Form: ${formData.subject}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #2563eb;">New Contact Form Submission</h2>
-            
-            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="margin-top: 0; color: #334155;">Contact Details</h3>
-              <p><strong>Name:</strong> ${formData.name}</p>
-              <p><strong>Email:</strong> ${formData.email}</p>
-              ${formData.category ? `<p><strong>Category:</strong> ${formData.category}</p>` : ''}
-              <p><strong>Subject:</strong> ${formData.subject}</p>
-            </div>
-            
-            <div style="background: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-              <h3 style="margin-top: 0; color: #334155;">Message</h3>
-              <p style="white-space: pre-wrap; line-height: 1.6;">${formData.message}</p>
-            </div>
-            
-            <div style="margin-top: 20px; padding: 15px; background: #eff6ff; border-radius: 8px;">
-              <p style="margin: 0; color: #1e40af; font-size: 14px;">
-                Reply directly to this email to respond to ${formData.name} at ${formData.email}
-              </p>
-            </div>
-          </div>
-        `,
+        subject: `Contact: ${formData.subject}`,
         reply_to: formData.email,
+        headers: {
+          'X-Entity-Ref-ID': messageId,
+          'List-Unsubscribe': '<mailto:support@sleepybabyy.com?subject=unsubscribe>',
+        },
+        text: `New contact form submission
+
+From: ${formData.name} <${formData.email}>
+${formData.category ? `Category: ${formData.category}\n` : ''}Subject: ${formData.subject}
+
+Message:
+${formData.message}
+
+---
+Reply directly to this email to respond to ${formData.name}.
+SleepyBabyy Support Team
+https://sleepybabyy.com`,
+        html: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+<p>Hello Support Team,</p>
+<p>You have received a new message from the SleepyBabyy contact form.</p>
+<p><strong>From:</strong> ${formData.name} (${formData.email})<br>
+${formData.category ? `<strong>Category:</strong> ${formData.category}<br>` : ''}<strong>Subject:</strong> ${formData.subject}</p>
+<p><strong>Message:</strong></p>
+<p style="white-space: pre-wrap; line-height: 1.6;">${formData.message}</p>
+<p>You can reply directly to this email to respond to ${formData.name}.</p>
+<p>Best regards,<br>SleepyBabyy System</p>
+</body>
+</html>`,
       });
 
       console.log("Support email sent successfully:", supportEmailResponse);
 
-      // Send confirmation to user
+      // Send confirmation to user - plain text heavy
       const userEmailResponse = await resend.emails.send({
-        from: "SleepyBabyy Support <noreply@sleepybabyy.com>",
+        from: "SleepyBabyy Support <support@sleepybabyy.com>",
         to: [formData.email],
-        subject: "We received your message - SleepyBabyy Support",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #2563eb;">Thank you for contacting SleepyBabyy!</h2>
-            
-            <p>Hi ${formData.name},</p>
-            
-            <p>We've received your message and will get back to you within 24 hours. Here's a copy of what you sent:</p>
-            
-            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>Subject:</strong> ${formData.subject}</p>
-              ${formData.category ? `<p><strong>Category:</strong> ${formData.category}</p>` : ''}
-              <p><strong>Message:</strong></p>
-              <p style="white-space: pre-wrap; line-height: 1.6;">${formData.message}</p>
-            </div>
-            
-            <div style="background: #eff6ff; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="margin-top: 0; color: #1e40af;">Need immediate help?</h3>
-              <p style="margin-bottom: 0;">
-                • Check our <a href="https://sleepybabyy.com/help" style="color: #2563eb;">Help Center</a> for instant answers<br>
-                • Premium subscribers can access 24/7 emergency support<br>
-                • Our support hours: Monday-Friday 9AM-6PM EST, Saturday 10AM-4PM EST
-              </p>
-            </div>
-            
-            <p>Best regards,<br>
-            The SleepyBabyy Support Team</p>
-            
-            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
-            <p style="font-size: 14px; color: #64748b;">
-              SleepyBabyy - Helping families get the rest they deserve, one night at a time.
-            </p>
-          </div>
-        `,
+        subject: `We received your message - ${formData.subject}`,
+        reply_to: "support@sleepybabyy.com",
+        headers: {
+          'X-Entity-Ref-ID': `${messageId}-confirm`,
+          'List-Unsubscribe': `<mailto:support@sleepybabyy.com?subject=unsubscribe>, <https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(formData.email)}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+        text: `Hi ${formData.name},
+
+Thank you for contacting SleepyBabyy. We have received your message and a member of our team will reply within 24 hours.
+
+Your message:
+Subject: ${formData.subject}
+${formData.category ? `Category: ${formData.category}\n` : ''}
+${formData.message}
+
+If you need quick answers, visit our Help Center: https://sleepybabyy.com/help
+
+Best regards,
+The SleepyBabyy Support Team
+https://sleepybabyy.com
+
+---
+You received this email because you contacted us through sleepybabyy.com.
+To unsubscribe from future communications, reply with "unsubscribe" or visit:
+https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(formData.email)}`,
+        html: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6;">
+<p>Hi ${formData.name},</p>
+<p>Thank you for contacting SleepyBabyy. We have received your message and a member of our team will reply within 24 hours.</p>
+<p><strong>Your message:</strong><br>
+Subject: ${formData.subject}${formData.category ? `<br>Category: ${formData.category}` : ''}</p>
+<p style="white-space: pre-wrap;">${formData.message}</p>
+<p>If you need quick answers, visit our <a href="https://sleepybabyy.com/help" style="color: #2563eb;">Help Center</a>.</p>
+<p>Best regards,<br>The SleepyBabyy Support Team<br><a href="https://sleepybabyy.com" style="color: #2563eb;">sleepybabyy.com</a></p>
+<hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0;">
+<p style="font-size: 12px; color: #888;">You received this email because you contacted us through sleepybabyy.com. To stop receiving these emails, <a href="https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(formData.email)}" style="color: #888;">unsubscribe here</a>.</p>
+</body>
+</html>`,
       });
 
       console.log("User confirmation email sent:", userEmailResponse);
