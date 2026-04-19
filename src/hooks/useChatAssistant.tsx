@@ -118,6 +118,15 @@ export const useChatAssistant = () => {
 
       if (error) {
         const status = (error as any).context?.status;
+        if (status === 403) {
+          toast({
+            title: t('chat.premiumGate.toastTitle'),
+            description: t('chat.premiumGate.toastDescription'),
+            variant: 'destructive',
+          });
+          setMessages((prev) => prev.slice(0, -2));
+          return;
+        }
         if (status === 429) {
           toast({ title: t('chat.errorRateLimit'), variant: 'destructive' });
         } else if (status === 402) {
