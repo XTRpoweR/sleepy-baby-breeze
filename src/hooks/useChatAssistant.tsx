@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { dataRefreshBus, type DataRefreshTopic } from '@/utils/profileEvents';
 
 export type ChatMessage = {
   id?: string;
@@ -81,6 +82,17 @@ export const useChatAssistant = () => {
     if (!title) return;
     if (evt.result.ok) {
       toast({ title: `✅ ${title}` });
+      // Broadcast a refresh hint so open pages reload their data instantly
+      const topicMap: Record<string, DataRefreshTopic> = {
+        start_sleep_session: 'activities',
+        end_sleep_session: 'activities',
+        log_feeding: 'activities',
+        log_diaper: 'activities',
+        log_custom_activity: 'activities',
+        update_notification_settings: 'notification_settings',
+      };
+      const topic = topicMap[evt.tool];
+      if (topic) dataRefreshBus.emit(topic);
     } else {
       toast({
         title: title,

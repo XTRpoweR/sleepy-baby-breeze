@@ -22,3 +22,35 @@ class ProfileEventManager {
 }
 
 export const profileEventManager = new ProfileEventManager();
+
+// ---------- Generic data refresh bus ----------
+// Used by the chat assistant (and other features) to tell pages
+// "your data may have changed — refetch now" without a full page reload.
+export type DataRefreshTopic =
+  | 'activities'
+  | 'notification_settings'
+  | 'sleep_schedule'
+  | 'all';
+
+type DataRefreshListener = (topic: DataRefreshTopic) => void;
+
+class DataRefreshBus {
+  private listeners: Set<DataRefreshListener> = new Set();
+
+  subscribe(listener: DataRefreshListener): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  emit(topic: DataRefreshTopic) {
+    this.listeners.forEach((l) => {
+      try {
+        l(topic);
+      } catch (e) {
+        console.error('DataRefreshBus listener error:', e);
+      }
+    });
+  }
+}
+
+export const dataRefreshBus = new DataRefreshBus();
