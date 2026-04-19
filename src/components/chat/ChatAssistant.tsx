@@ -209,6 +209,20 @@ export const ChatAssistant = () => {
               </div>
             </ScrollArea>
 
+            {!isPremium && (
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/subscription');
+                }}
+                className="border-t bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/15 hover:to-primary/10 transition-colors px-3 py-2 flex items-center justify-center gap-2 text-xs font-medium text-primary"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>{t('chat.upgradeBar')}</span>
+              </button>
+            )}
+
             <div className="border-t p-3 flex gap-2">
               <Input
                 value={input}
