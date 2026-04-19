@@ -459,16 +459,6 @@ export const UnifiedDashboard = ({
           </div>
         )}
 
-        {/* Floating Action Button */}
-        <div className="fixed bottom-6 right-6 z-40 lg:hidden">
-          <Button
-            onClick={onTrackActivity}
-            className="bg-primary hover:bg-primary/90 text-white rounded-full w-14 h-14 p-0 shadow-xl hover:shadow-2xl hover:shadow-primary/50 transition-all duration-500 transform hover:scale-110 hover:-translate-y-1 active:scale-95"
-            size="icon"
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
-        </div>
       </div>
     </div>
   );
