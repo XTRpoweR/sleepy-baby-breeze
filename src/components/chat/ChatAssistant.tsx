@@ -73,10 +73,13 @@ export const ChatAssistant = () => {
         )}
       >
         <SheetHeader className="p-4 border-b flex-row items-center justify-between space-y-0">
-          <SheetTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5" />
-            {t('chat.title')}
-          </SheetTitle>
+          <div className="flex items-center gap-2 min-w-0">
+            <MessageCircle className="h-5 w-5 shrink-0" />
+            <div className="flex flex-col min-w-0">
+              <SheetTitle className="text-base leading-tight truncate">{t('chat.title')}</SheetTitle>
+              <span className="text-xs text-muted-foreground truncate">{t('chat.subtitle')}</span>
+            </div>
+          </div>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
