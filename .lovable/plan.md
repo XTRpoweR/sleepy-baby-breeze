@@ -1,47 +1,70 @@
 
 
-## المشكلة
+## الخطة: إضافة جدول لحفظ محادثات الشات بوت
 
-هناك 4 مشاكل رئيسية في نظام الإشعارات:
+سأضيف جدولين لحفظ المحادثات بشكل دائم في قاعدة البيانات بدلاً من الذاكرة فقط.
 
-1. **إشعارات متكررة كل 5 دقائق**: الدالة `schedule-notifications` تعمل كل 5 دقائق عبر pg_cron. بمجرد إرسال الإشعار (تحديث `sent_at`)، تقوم بإنشاء إشعار جديد في الدورة التالية لأن شرط "مضى وقت أطول من الفاصل الزمني" لا يزال صحيحاً.
+### 1. جداول قاعدة البيانات
 
-2. **أوقات غير منطقية** ("4608h 37m"): لأن آخر رضاعة مسجلة كانت قبل أيام، والنظام يحسب الفرق بدون حد أقصى.
+**جدول `chat_conversations`** — كل محادثة (يمكن للمستخدم بدء عدة محادثات):
+- `id` uuid PK
+- `user_id` uuid (مرتبط بالمستخدم)
+- `title` text (ملخص أول رسالة، يُولّد تلقائياً)
+- `created_at`, `updated_at` timestamps
 
-3. **إشعارات لملفات أطفال محذوفة**: الأنشطة القديمة `baby_activities` لا تزال موجودة في قاعدة البيانات حتى بعد حذف ملف الطفل.
+**جدول `chat_messages`** — الرسائل داخل كل محادثة:
+- `id` uuid PK
+- `conversation_id` uuid → `chat_conversations(id)` ON DELETE CASCADE
+- `role` text ('user' | 'assistant')
+- `content` text
+- `created_at` timestamp
 
-4. **لا يوجد زر تشغيل/إيقاف عام**: الإعدادات تُحفظ في localStorage فقط ولا تُرسل لقاعدة البيانات، فالسيرفر يستخدم القيم الافتراضية (كل شيء مفعّل).
+**RLS Policies**: المستخدم يرى/يعدل/يحذف فقط محادثاته ورسائله الخاصة (عبر `user_id` في conversations، وعبر join في messages).
 
-## خطة الإصلاح
+### 2. Edge Function: `chat-assistant`
+- يستقبل: `conversationId` (اختياري) + `message` نصية
+- إذا لم يكن هناك `conversationId` → ينشئ محادثة جديدة
+- يحفظ رسالة المستخدم في `chat_messages`
+- يجلب آخر 20 رسالة من المحادثة + سياق الطفل (آخر أنشطة، جدول النوم)
+- يستدعي Lovable AI Gateway (`google/gemini-3-flash-preview`) مع streaming
+- بعد انتهاء الـ stream، يحفظ رد المساعد كاملاً في `chat_messages`
+- اللغة: System prompt يطلب الرد بنفس لغة المستخدم تلقائياً
 
-### 1. إصلاح دالة `schedule-notifications` (السيرفر)
-- **إضافة cooldown**: عدم إنشاء إشعار جديد إذا تم إرسال إشعار من نفس النوع لنفس الطفل خلال آخر `feeding_interval` دقيقة (بدل التحقق فقط من الإشعارات غير المرسلة)
-- **حد أقصى للوقت**: إذا مضى أكثر من 24 ساعة على آخر رضاعة، لا يتم إرسال إشعار (الموضوع لم يعد تذكيراً مفيداً)
-- **التحقق من وجود ملف الطفل**: التأكد أن `baby_id` موجود فعلاً في جدول `baby_profiles` قبل إرسال أي إشعار
-- **إضافة حقل `notifications_enabled`** للتحقق من الإعدادات المحفوظة في قاعدة البيانات
+### 3. Hook: `src/hooks/useChatAssistant.tsx`
+- يحمّل المحادثة النشطة من DB عند الفتح
+- `sendMessage` → streaming + حفظ تلقائي عبر edge function
+- `loadConversations`, `selectConversation`, `deleteConversation`, `newConversation`
 
-### 2. إضافة عمود `notifications_enabled` لجدول `notification_settings`
-- Migration لإضافة عمود `notifications_enabled BOOLEAN DEFAULT true`
+### 4. UI: `src/components/chat/ChatAssistant.tsx`
+- زر عائم (FAB) في أسفل اليمين
+- نافذة محادثة (Sheet على الموبايل full-screen، Sheet جانبي على الديسكتوب)
+- قائمة المحادثات السابقة (Drawer/Sidebar صغير)
+- عرض الرسائل بـ `react-markdown`
+- مؤشر typing أثناء الـ streaming
+- زر "محادثة جديدة"
 
-### 3. مزامنة الإعدادات مع قاعدة البيانات
-- تعديل `useNotifications` hook لحفظ وقراءة الإعدادات من جدول `notification_settings` بدل localStorage فقط
-- إضافة دالة `upsert` للإعدادات عند كل تغيير
+### 5. ترجمات
+مفاتيح جديدة في كل ملفات `src/locales/*/common.json`:
+`chat.title`, `chat.placeholder`, `chat.send`, `chat.welcome`, `chat.newChat`, `chat.history`, `chat.delete`, `chat.thinking`, `chat.errorRateLimit`, `chat.errorCredits`
 
-### 4. إضافة زر تشغيل/إيقاف عام للإشعارات
-- إضافة Switch رئيسي في أعلى صفحة الإشعارات لتشغيل/إيقاف كل الإشعارات
-- عند الإيقاف، يتم تحديث `notifications_enabled = false` في قاعدة البيانات
-- دالة `schedule-notifications` تتحقق من هذا الحقل وتتجاهل المستخدمين الذين أوقفوا الإشعارات
+### 6. تكامل
+- إضافة `<ChatAssistant />` في `src/App.tsx` (يظهر فقط للمستخدمين المسجلين، مخفي في `/auth`)
 
-### 5. تنظيف البيانات القديمة
-- حذف الإشعارات المجدولة غير المرسلة للأطفال المحذوفين
-- إضافة `ON DELETE CASCADE` أو تحقق في الدالة
+### الملفات
 
-## الملفات المتأثرة
-
-| الملف | التغيير |
+| ملف | تغيير |
 |---|---|
-| `supabase/functions/schedule-notifications/index.ts` | cooldown, حد أقصى 24h, تحقق من وجود الطفل, تحقق من `notifications_enabled` |
-| `src/hooks/useNotifications.tsx` | مزامنة الإعدادات مع Supabase, إضافة `notificationsEnabled` |
-| `src/components/notifications/SmartNotifications.tsx` | إضافة زر تشغيل/إيقاف عام |
-| Migration جديد | إضافة عمود `notifications_enabled` |
+| Migration جديد | جدولا `chat_conversations` + `chat_messages` مع RLS |
+| `supabase/functions/chat-assistant/index.ts` | جديد - streaming + حفظ في DB |
+| `src/hooks/useChatAssistant.tsx` | جديد |
+| `src/components/chat/ChatAssistant.tsx` | جديد - FAB + نافذة + تاريخ المحادثات |
+| `src/App.tsx` | إضافة المكون |
+| `src/locales/{en,ar,de,es,fr,it,el,fi,sv}/common.json` | مفاتيح ترجمة |
+| `package.json` | `react-markdown` |
+
+### ملاحظات
+- المحادثات تبقى محفوظة دائماً ويمكن للمستخدم العودة إليها
+- اللغة يكتشفها الـ AI تلقائياً من رسالة المستخدم
+- `LOVABLE_API_KEY` متوفر مسبقاً (مجاني مع gemini-flash)
+- الأمان: RLS صارم - كل مستخدم يرى محادثاته فقط
 
