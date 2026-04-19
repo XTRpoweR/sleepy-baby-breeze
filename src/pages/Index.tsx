@@ -363,12 +363,11 @@ const Index = () => {
                     muted
                     playsInline
                     preload="metadata"
-                    poster="/hero-demo-poster.jpg"
                     width="1280"
                     height="720"
                     aria-label="SleepyBabyy app demo"
                   >
-                    <source src="/hero-demo.mp4" type="video/mp4" />
+                    <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
                     <img
                       src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
                       alt="SleepyBabyy - Baby sleeping peacefully on moon"
