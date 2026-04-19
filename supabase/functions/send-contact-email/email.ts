@@ -130,8 +130,8 @@ To unsubscribe: https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(f
             <p style="margin:4px 0 0;font-size:13px;color:#64748b;">A member of our team will reply within 24 hours.</p>
           </td>
         </tr>`,
-        <tr>
-          <td style="padding:24px;">
+133:         <tr>
+134:           <td style="padding:24px;">
             <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#1f2937;">Hi <strong>${formData.name}</strong>,</p>
             <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#475569;">Thank you for contacting <strong style="color:#0f172a;">SleepyBabyy</strong>. We've received your message and will get back to you as soon as possible.</p>
 
