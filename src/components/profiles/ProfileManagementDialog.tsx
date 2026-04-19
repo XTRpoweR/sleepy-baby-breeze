@@ -42,6 +42,7 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   const [isCreating, setIsCreating] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileBirthDate, setNewProfileBirthDate] = useState('');
+  const [newProfilePhoto, setNewProfilePhoto] = useState<string | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     profileId: string;
