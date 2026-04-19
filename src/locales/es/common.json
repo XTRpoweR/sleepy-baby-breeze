@@ -6,7 +6,7 @@
   },
   "navigation": {
     "features": "Características",
-    "insights": "Perspectivas", 
+    "insights": "Perspectivas",
     "reviews": "Reseñas",
     "getStarted": "Comenzar",
     "dashboard": "Ir al Panel",
@@ -511,5 +511,19 @@
     "blog": "Blog",
     "careers": "Carreras",
     "copyright": "© 2025 SleepyBabyy. Todos los derechos reservados."
+  },
+  "chat": {
+    "title": "Asistente IA",
+    "placeholder": "Pregúntame lo que sea…",
+    "send": "Enviar",
+    "welcome": "¡Hola! Soy tu asistente de SleepyBabyy. Pregúntame sobre los datos de tu bebé o cómo usar la app.",
+    "newChat": "Nueva conversación",
+    "history": "Historial",
+    "delete": "Eliminar",
+    "noHistory": "Sin conversaciones previas",
+    "thinking": "Pensando…",
+    "errorRateLimit": "Demasiadas solicitudes. Intenta de nuevo en un momento.",
+    "errorCredits": "Créditos de IA agotados. Contacta con soporte.",
+    "errorGeneric": "Algo salió mal. Inténtalo de nuevo."
   }
 }

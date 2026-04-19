@@ -38,6 +38,7 @@ import BlogArticle from "./pages/BlogArticle";
 import ResetPassword from "./pages/ResetPassword";
 import AccountSecurity from "./pages/AccountSecurity";
 import EnhancedPasswordReset from "./components/auth/EnhancedPasswordReset";
+import ChatAssistant from "./components/chat/ChatAssistant";
 
 // Create queryClient outside of component to avoid recreation on each render
 const queryClient = new QueryClient({
@@ -96,6 +97,7 @@ const App: React.FC = () => {
                   <Route path="/404" element={<NotFound />} />
                   <Route path="*" element={<Navigate to="/404" replace />} />
                 </Routes>
+                <ChatAssistant />
               </div>
               <Toaster />
               <Sonner />
