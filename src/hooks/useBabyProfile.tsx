@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { profileEventManager } from '@/utils/profileEvents';
+import { dataRefreshBus, profileEventManager } from '@/utils/profileEvents';
 
 interface BabyProfile {
   id: string;
@@ -133,7 +133,6 @@ export const useBabyProfile = () => {
 
       const matchingProfile = profiles.find((p) => p.id === profileId);
 
-      // If we don't have this profile locally, refetch the list (e.g. new profile created in another instance)
       if (!matchingProfile) {
         console.log('useBabyProfile: Profile not found locally, refetching profiles list');
         fetchProfiles();
@@ -151,6 +150,18 @@ export const useBabyProfile = () => {
 
     return unsubscribe;
   }, [profiles, fetchProfiles]);
+
+  // Keep profile lists in sync across all hook instances after create/update/delete
+  useEffect(() => {
+    const unsubscribe = dataRefreshBus.subscribe((topic) => {
+      if (topic === 'profiles' || topic === 'all') {
+        console.log('useBabyProfile: Received profiles refresh event');
+        fetchProfiles();
+      }
+    });
+
+    return unsubscribe;
+  }, [fetchProfiles]);
 
   const createProfile = async (profileData: { name: string; birth_date?: string | null; photo_url?: string | null }) => {
     if (!user) return false;
@@ -220,14 +231,15 @@ export const useBabyProfile = () => {
       };
 
       setProfiles(prev => [...prev, newProfile]);
-      
+
       if (isFirstProfile) {
         setActiveProfile(newProfile);
         localStorage.setItem(ACTIVE_PROFILE_KEY, newProfile.id);
+        profileEventManager.emit(newProfile.id);
       }
 
-      // Notify all other useBabyProfile instances to refetch
-      profileEventManager.emit(isFirstProfile ? newProfile.id : (activeProfile?.id ?? newProfile.id));
+      // Notify all other useBabyProfile instances to refresh their profiles list immediately
+      dataRefreshBus.emit('profiles');
 
       toast({
         title: "Success!",
@@ -267,6 +279,8 @@ export const useBabyProfile = () => {
       if (activeProfile?.id === profileId) {
         setActiveProfile({ ...data, is_shared: activeProfile.is_shared, user_role: activeProfile.user_role });
       }
+
+      dataRefreshBus.emit('profiles');
 
       toast({
         title: "Success!",
@@ -519,6 +533,8 @@ export const useBabyProfile = () => {
           setActiveProfile(null);
         }
       }
+
+      dataRefreshBus.emit('profiles');
 
       toast({
         title: "Success!",
