@@ -289,18 +289,23 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4 lg:space-y-6 pb-20">
             <div className="max-w-4xl mx-auto space-y-4 lg:space-y-6">
-              {/* Role-based messaging for non-owners */}
-              {role !== 'owner' && (
-                <Alert className="border-blue-200 bg-blue-50">
-                  <Shield className="h-4 w-4 text-blue-600" />
-                  <AlertDescription className="text-blue-800 text-sm lg:text-base">
-                    {role === 'viewer' 
-                      ? "You have view-only access to baby profiles. You can see profile information but cannot create, edit, or delete profiles. Contact the baby's owner for management permissions if needed."
-                      : "As a caregiver, you can track activities but cannot create new profiles or manage account settings. Only the account owner can create new child profiles."
-                    }
-                  </AlertDescription>
-                </Alert>
-              )}
+              {/* Show role alert ONLY if active profile is shared AND user doesn't own any profile */}
+              {(() => {
+                const ownsAnyProfile = profiles.some(p => !p.is_shared || p.user_role === 'owner');
+                const activeIsShared = activeProfile?.is_shared === true;
+                const showRoleAlert = activeIsShared && !ownsAnyProfile && role && role !== 'owner';
+                return showRoleAlert ? (
+                  <Alert className="border-blue-200 bg-blue-50">
+                    <Shield className="h-4 w-4 text-blue-600" />
+                    <AlertDescription className="text-blue-800 text-sm lg:text-base">
+                      {role === 'viewer'
+                        ? "You have view-only access to this shared profile. Contact the baby's owner for management permissions."
+                        : "You're a caregiver on this shared profile. You can still create and manage your own child profiles below."
+                      }
+                    </AlertDescription>
+                  </Alert>
+                ) : null;
+              })()}
 
               {/* Create New Profile - Wrapped with FeatureGate */}
               <FeatureGate feature="profiles" showUpgrade={true}>
