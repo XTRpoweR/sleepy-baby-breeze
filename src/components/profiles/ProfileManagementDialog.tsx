@@ -257,9 +257,9 @@ export const ProfileManagementDialog = ({ open, onOpenChange }: ProfileManagemen
   if (open) {
     return (
       <>
-        <div className="fixed inset-0 z-[100] bg-background animate-slide-in-right">
+        <div className="fixed inset-0 z-[100] bg-background animate-slide-in-right flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 lg:p-6 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+          <div className="flex items-center justify-between p-4 lg:p-6 border-b bg-background/95 backdrop-blur-sm flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Baby className="h-5 w-5 lg:h-6 lg:w-6 text-primary" />
               <h1 className="text-lg lg:text-xl font-semibold">{t('profiles.manage')}</h1>
