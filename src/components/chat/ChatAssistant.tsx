@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles } from 'lucide-react';
+import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles, Mic, MicOff } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
+import { useVoiceInput } from '@/hooks/useVoiceInput';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -41,6 +42,16 @@ export const ChatAssistant = () => {
     newConversation,
     deleteConversation,
   } = useChatAssistant();
+
+  const handleVoiceFinal = (text: string) => {
+    setInput((prev) => (prev ? `${prev} ${text}` : text));
+  };
+  const {
+    isSupported: voiceSupported,
+    isListening,
+    interimTranscript,
+    toggle: toggleVoice,
+  } = useVoiceInput(handleVoiceFinal);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -225,7 +236,7 @@ export const ChatAssistant = () => {
 
             <div className="border-t p-3 flex gap-2">
               <Input
-                value={input}
+                value={isListening && interimTranscript ? `${input}${input ? ' ' : ''}${interimTranscript}` : input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -233,9 +244,26 @@ export const ChatAssistant = () => {
                     handleSend();
                   }
                 }}
-                placeholder={t('chat.placeholder')}
+                placeholder={isListening ? t('chat.voice.listening') : t('chat.placeholder')}
                 disabled={isStreaming}
               />
+              {voiceSupported && (
+                <Button
+                  size="icon"
+                  variant={isListening ? 'destructive' : 'outline'}
+                  onClick={toggleVoice}
+                  disabled={isStreaming}
+                  aria-label={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
+                  title={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
+                  className={cn(isListening && 'animate-pulse')}
+                >
+                  {isListening ? (
+                    <MicOff className="h-4 w-4" />
+                  ) : (
+                    <Mic className="h-4 w-4" />
+                  )}
+                </Button>
+              )}
               <Button
                 size="icon"
                 onClick={handleSend}
