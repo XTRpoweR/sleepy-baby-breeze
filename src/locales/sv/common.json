@@ -556,6 +556,14 @@
       "free": "Q&A",
       "premium": "Smart"
     },
-    "upgradeBar": "✨ Uppgradera till Premium för automatisk loggning"
+    "upgradeBar": "✨ Uppgradera till Premium för automatisk loggning",
+    "voice": {
+      "start": "Tala",
+      "stop": "Sluta lyssna",
+      "listening": "Lyssnar…",
+      "notSupported": "Din webbläsare stöder inte röstinmatning",
+      "permissionDenied": "Tillåt mikrofonåtkomst",
+      "error": "Röstinmatning misslyckades"
+    }
   }
 }

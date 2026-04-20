@@ -554,6 +554,14 @@
       "free": "Q&A",
       "premium": "Smart"
     },
-    "upgradeBar": "✨ Mejora a Premium para registrar acciones automáticamente"
+    "upgradeBar": "✨ Mejora a Premium para registrar acciones automáticamente",
+    "voice": {
+      "start": "Hablar",
+      "stop": "Detener escucha",
+      "listening": "Escuchando…",
+      "notSupported": "Tu navegador no admite entrada de voz",
+      "permissionDenied": "Permite el acceso al micrófono",
+      "error": "Error de entrada de voz"
+    }
   }
 }
