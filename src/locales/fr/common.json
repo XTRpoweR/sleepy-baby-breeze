@@ -554,6 +554,14 @@
       "free": "Q&R",
       "premium": "Smart"
     },
-    "upgradeBar": "✨ Passez à Premium pour l'enregistrement automatique"
+    "upgradeBar": "✨ Passez à Premium pour l'enregistrement automatique",
+    "voice": {
+      "start": "Parler",
+      "stop": "Arrêter l'écoute",
+      "listening": "Écoute…",
+      "notSupported": "Votre navigateur ne prend pas en charge l'entrée vocale",
+      "permissionDenied": "Veuillez autoriser l'accès au microphone",
+      "error": "Échec de la saisie vocale"
+    }
   }
 }
