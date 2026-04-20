@@ -302,7 +302,11 @@ export const ChatAssistant = () => {
                     disabled={isStreaming}
                     aria-label={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
                     title={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
-                    className={cn(isListening && 'animate-pulse')}
+                    className={cn(
+                      isListening && 'animate-pulse',
+                      isListening && 'duration-[3000ms]'
+                    )}
+                    style={isListening ? { animationDuration: '3s' } : undefined}
                   >
                     {isListening ? (
                       <MicOff className="h-4 w-4" />
