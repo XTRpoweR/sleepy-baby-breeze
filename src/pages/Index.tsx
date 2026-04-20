@@ -305,92 +305,80 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section — Full-Screen Video Background (Apple-style) */}
-      <section className="relative w-full h-screen min-h-[600px] max-h-[1000px] overflow-hidden flex items-center justify-center">
-        {/* Video Background — fills the entire section */}
-        <video
-          className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
-        >
-          <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
-        </video>
-
-        {/* Gradient overlay — dark at bottom for text readability, semi-transparent elsewhere */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
-
-        {/* Content overlay — centered, Apple-style minimal text */}
-        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto animate-fade-in-up">
-          {/* Logo badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-6 sm:mb-8">
-            <img
-              src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
-              alt="SleepyBabyy Logo"
-              className="h-5 w-5 sm:h-6 sm:w-6"
-              width="24"
-              height="24"
-            />
-            <span className="text-white/90 text-sm font-medium tracking-wide">SleepyBabyy</span>
-          </div>
-
-          {/* Main headline — large, bold, Apple-like */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight mb-4 sm:mb-6">
-            {t('hero.title')}
-            <br />
-            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 bg-clip-text text-transparent">
-              {t('hero.titleHighlight')}
-            </span>
-          </h1>
-
-          {/* Subtitle — clean, muted */}
-          <p className="text-base sm:text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed font-light">
-            {t('hero.subtitle')}
-          </p>
-
-          {/* CTA Buttons — prominent, clean */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-10">
-            <Button
-              size="lg"
-              className="bg-white text-gray-900 hover:bg-white/90 text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/20 font-semibold border-0 touch-target w-full sm:w-auto"
-              onClick={handleGetStarted}
-            >
-              <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              {t('hero.startTracking')}
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full border-white/30 hover:bg-white/10 transition-all duration-300 hover:scale-105 font-medium text-white touch-target w-full sm:w-auto backdrop-blur-sm"
-              onClick={handleScrollToFeatures}
-            >
-              {t('hero.exploreFeatures')}
-            </Button>
-          </div>
-
-          {/* Trust badges — subtle, Apple-style */}
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-white/50">
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="h-3.5 w-3.5 text-green-400/70" />
-              <span>Free</span>
+      {/* Hero Section — Clean split layout with prominent video */}
+      <section className="relative py-16 sm:py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          {/* Text centered on top, video below — stacks naturally on mobile */}
+          <div className="text-center mb-10 sm:mb-14 animate-fade-in-up">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-4 sm:mb-6">
+              {t('hero.title')}
+              <span className="text-gradient block mt-1 sm:mt-2">
+                {t('hero.titleHighlight')}
+              </span>
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light mb-8">
+              {t('hero.subtitle')}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
+              <Button
+                size="lg"
+                className="gradient-dynamic text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg font-semibold text-white border-0 touch-target w-full sm:w-auto"
+                onClick={handleGetStarted}
+              >
+                <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                {t('hero.startTracking')}
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full border-primary/30 hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary touch-target w-full sm:w-auto"
+                onClick={handleScrollToFeatures}
+              >
+                {t('hero.exploreFeatures')}
+              </Button>
             </div>
-            <div className="flex items-center gap-1.5">
-              <CheckCircle className="h-3.5 w-3.5 text-green-400/70" />
-              <span>{t('hero.noCreditCard')}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Heart className="h-3.5 w-3.5 text-rose-400/70" />
-              <span>{t('hero.madeByParents')}</span>
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                <span>Free</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                <span>{t('hero.noCreditCard')}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 text-red-400" />
+                <span>{t('hero.madeByParents')}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Scroll indicator — subtle bouncing arrow */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-          <ArrowRight className="h-5 w-5 text-white/40 rotate-90" />
+          {/* Video showcase — large, centered, with professional frame */}
+          <div className="relative max-w-5xl mx-auto animate-scale-in">
+            <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
+              <video
+                className="w-full h-auto block"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
+                width="1280"
+                height="720"
+                aria-label="SleepyBabyy app demo"
+              >
+                <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
+                <img
+                  src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
+                  alt="SleepyBabyy demo"
+                  className="w-full h-auto"
+                />
+              </video>
+            </div>
+            {/* Decorative glow behind the video */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-rose-400/20 rounded-3xl blur-2xl -z-10" />
+          </div>
         </div>
       </section>
 
