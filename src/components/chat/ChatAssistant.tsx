@@ -7,7 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles, Mic, MicOff } from 'lucide-react';
+import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles, Mic, MicOff, Globe } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
@@ -43,14 +51,20 @@ export const ChatAssistant = () => {
     deleteConversation,
   } = useChatAssistant();
 
-  const handleVoiceFinal = (text: string) => {
-    setInput((prev) => (prev ? `${prev} ${text}` : text));
+  const handleVoiceFinal = (chunk: string) => {
+    setInput((prev) => {
+      const sep = prev && !prev.endsWith(' ') ? ' ' : '';
+      return prev + sep + chunk.trim();
+    });
   };
   const {
     isSupported: voiceSupported,
     isListening,
     interimTranscript,
     toggle: toggleVoice,
+    language: voiceLang,
+    setLanguage: setVoiceLang,
+    availableLanguages,
   } = useVoiceInput(handleVoiceFinal);
 
   useEffect(() => {
