@@ -262,21 +262,55 @@ export const ChatAssistant = () => {
                 disabled={isStreaming}
               />
               {voiceSupported && (
-                <Button
-                  size="icon"
-                  variant={isListening ? 'destructive' : 'outline'}
-                  onClick={toggleVoice}
-                  disabled={isStreaming}
-                  aria-label={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
-                  title={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
-                  className={cn(isListening && 'animate-pulse')}
-                >
-                  {isListening ? (
-                    <MicOff className="h-4 w-4" />
-                  ) : (
-                    <Mic className="h-4 w-4" />
-                  )}
-                </Button>
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        disabled={isStreaming || isListening}
+                        aria-label="Voice language"
+                        title={`Voice: ${voiceLang}`}
+                      >
+                        <Globe className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="max-h-72 overflow-y-auto">
+                      <DropdownMenuLabel>{t('chat.voice.start')}</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {Object.entries(availableLanguages).map(([code, bcp47]) => {
+                        const labels: Record<string, string> = {
+                          ar: 'العربية', en: 'English', de: 'Deutsch', es: 'Español',
+                          fr: 'Français', it: 'Italiano', el: 'Ελληνικά', fi: 'Suomi', sv: 'Svenska',
+                        };
+                        return (
+                          <DropdownMenuItem
+                            key={code}
+                            onClick={() => setVoiceLang(bcp47)}
+                            className={cn(voiceLang === bcp47 && 'bg-accent font-medium')}
+                          >
+                            {labels[code] || code}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    size="icon"
+                    variant={isListening ? 'destructive' : 'outline'}
+                    onClick={toggleVoice}
+                    disabled={isStreaming}
+                    aria-label={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
+                    title={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
+                    className={cn(isListening && 'animate-pulse')}
+                  >
+                    {isListening ? (
+                      <MicOff className="h-4 w-4" />
+                    ) : (
+                      <Mic className="h-4 w-4" />
+                    )}
+                  </Button>
+                </>
               )}
               <Button
                 size="icon"
