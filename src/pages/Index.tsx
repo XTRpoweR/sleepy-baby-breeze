@@ -305,10 +305,10 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section — Clean split layout with prominent video */}
+      {/* Hero Section — Clean centered layout with video showcase */}
       <section className="relative py-16 sm:py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          {/* Text centered on top, video below — stacks naturally on mobile */}
+          {/* Centered headline and CTA */}
           <div className="text-center mb-10 sm:mb-14 animate-fade-in-up">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-4 sm:mb-6">
               {t('hero.title')}
@@ -316,72 +316,40 @@ const Index = () => {
                 {t('hero.titleHighlight')}
               </span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light mb-8">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light mb-3">
               {t('hero.subtitle')}
             </p>
+            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-8">
+              {t('hero.subtitleExtra')}
+            </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
-              <Button
-                size="lg"
-                className="gradient-dynamic text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg font-semibold text-white border-0 touch-target w-full sm:w-auto"
-                onClick={handleGetStarted}
-              >
+              <Button size="lg" className="gradient-dynamic text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg font-semibold text-white border-0 touch-target w-full sm:w-auto" onClick={handleGetStarted}>
                 <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 {t('hero.startTracking')}
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full border-primary/30 hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary touch-target w-full sm:w-auto"
-                onClick={handleScrollToFeatures}
-              >
+              <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full border-primary/30 hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary touch-target w-full sm:w-auto" onClick={handleScrollToFeatures}>
                 {t('hero.exploreFeatures')}
               </Button>
             </div>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                <span>Free</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                <span>{t('hero.noCreditCard')}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Heart className="h-3.5 w-3.5 text-red-400" />
-                <span>{t('hero.madeByParents')}</span>
-              </div>
+              <div className="flex items-center gap-1.5"><CheckCircle className="h-3.5 w-3.5 text-green-500" /><span>Free</span></div>
+              <div className="flex items-center gap-1.5"><CheckCircle className="h-3.5 w-3.5 text-green-500" /><span>{t('hero.noCreditCard')}</span></div>
+              <div className="flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-red-400" /><span>{t('hero.madeByParents')}</span></div>
             </div>
           </div>
 
-          {/* Video showcase — large, centered, with professional frame */}
+          {/* Video — large, centered, with clean professional frame */}
           <div className="relative max-w-5xl mx-auto animate-scale-in">
             <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
-              <video
-                className="w-full h-auto block"
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
-                width="1280"
-                height="720"
-                aria-label="SleepyBabyy app demo"
-              >
+              <video className="w-full h-auto block" autoPlay loop muted playsInline preload="auto" poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" width="1280" height="720">
                 <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
-                <img
-                  src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
-                  alt="SleepyBabyy demo"
-                  className="w-full h-auto"
-                />
+                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy demo" className="w-full h-auto" />
               </video>
             </div>
-            {/* Decorative glow behind the video */}
             <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-rose-400/20 rounded-3xl blur-2xl -z-10" />
           </div>
         </div>
       </section>
-
       {/* Features Section */}
       <section id="features" className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
