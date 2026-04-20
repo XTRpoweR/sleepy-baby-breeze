@@ -315,9 +315,9 @@ const Index = () => {
           muted
           playsInline
           preload="auto"
-          poster="/hero-demo-poster.jpg"
+          poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
         >
-          <source src="/hero-demo.mp4" type="video/mp4" />
+          <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
         </video>
 
         {/* Gradient overlay — dark at bottom for text readability, semi-transparent elsewhere */}
