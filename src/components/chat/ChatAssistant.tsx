@@ -7,7 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles, Mic, MicOff } from 'lucide-react';
+import { MessageCircle, Send, Plus, Trash2, History, Loader2, LifeBuoy, Sparkles, Mic, MicOff, Globe } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
 import { useChatAssistant } from '@/hooks/useChatAssistant';
 import { useVoiceInput } from '@/hooks/useVoiceInput';
@@ -43,14 +51,20 @@ export const ChatAssistant = () => {
     deleteConversation,
   } = useChatAssistant();
 
-  const handleVoiceFinal = (text: string) => {
-    setInput((prev) => (prev ? `${prev} ${text}` : text));
+  const handleVoiceFinal = (chunk: string) => {
+    setInput((prev) => {
+      const sep = prev && !prev.endsWith(' ') ? ' ' : '';
+      return prev + sep + chunk.trim();
+    });
   };
   const {
     isSupported: voiceSupported,
     isListening,
     interimTranscript,
     toggle: toggleVoice,
+    language: voiceLang,
+    setLanguage: setVoiceLang,
+    availableLanguages,
   } = useVoiceInput(handleVoiceFinal);
 
   useEffect(() => {
@@ -248,21 +262,55 @@ export const ChatAssistant = () => {
                 disabled={isStreaming}
               />
               {voiceSupported && (
-                <Button
-                  size="icon"
-                  variant={isListening ? 'destructive' : 'outline'}
-                  onClick={toggleVoice}
-                  disabled={isStreaming}
-                  aria-label={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
-                  title={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
-                  className={cn(isListening && 'animate-pulse')}
-                >
-                  {isListening ? (
-                    <MicOff className="h-4 w-4" />
-                  ) : (
-                    <Mic className="h-4 w-4" />
-                  )}
-                </Button>
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        disabled={isStreaming || isListening}
+                        aria-label="Voice language"
+                        title={`Voice: ${voiceLang}`}
+                      >
+                        <Globe className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="max-h-72 overflow-y-auto">
+                      <DropdownMenuLabel>{t('chat.voice.start')}</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {Object.entries(availableLanguages).map(([code, bcp47]) => {
+                        const labels: Record<string, string> = {
+                          ar: 'العربية', en: 'English', de: 'Deutsch', es: 'Español',
+                          fr: 'Français', it: 'Italiano', el: 'Ελληνικά', fi: 'Suomi', sv: 'Svenska',
+                        };
+                        return (
+                          <DropdownMenuItem
+                            key={code}
+                            onClick={() => setVoiceLang(bcp47)}
+                            className={cn(voiceLang === bcp47 && 'bg-accent font-medium')}
+                          >
+                            {labels[code] || code}
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <Button
+                    size="icon"
+                    variant={isListening ? 'destructive' : 'outline'}
+                    onClick={toggleVoice}
+                    disabled={isStreaming}
+                    aria-label={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
+                    title={isListening ? t('chat.voice.stop') : t('chat.voice.start')}
+                    className={cn(isListening && 'animate-pulse')}
+                  >
+                    {isListening ? (
+                      <MicOff className="h-4 w-4" />
+                    ) : (
+                      <Mic className="h-4 w-4" />
+                    )}
+                  </Button>
+                </>
               )}
               <Button
                 size="icon"
