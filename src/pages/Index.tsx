@@ -405,6 +405,30 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Features Section — Premium grid with gradient header */}
+      <section id="features" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-white overflow-hidden">
+        <div className="aurora-blob aurora-2 w-[500px] h-[500px] -top-32 right-0 opacity-30" aria-hidden="true" />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Zap className="h-3.5 w-3.5 text-primary" />
+              <span className="text-xs font-bold text-primary tracking-wider uppercase">Powerful Features</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight leading-[1.1]">
+              {t('features.title')}
+              <span className="text-shimmer block mt-2">that just work</span>
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
+              {t('features.subtitle')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+            {features.map((feature, index) => <FeatureCard key={index} feature={feature} index={index} />)}
+          </div>
+        </div>
+      </section>
+
       {/* Insights Section */}
       <section id="insights" className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 gradient-dynamic-slow">
         <div className="max-w-7xl mx-auto">
