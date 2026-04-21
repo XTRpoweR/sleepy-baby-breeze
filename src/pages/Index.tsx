@@ -305,15 +305,50 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Hero Section — Clean centered layout with video showcase */}
-      <section className="relative py-16 sm:py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          {/* Centered headline and CTA */}
-          <div className="text-center mb-10 sm:mb-14 animate-fade-in-up">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-4 sm:mb-6">
+      {/* Hero Section — Cinematic with aurora blobs and rotating words */}
+      <section className="relative py-16 sm:py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden mesh-bg">
+        {/* Aurora background blobs */}
+        <div className="aurora-blob aurora-1 w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] -top-32 -left-32" aria-hidden="true" />
+        <div className="aurora-blob aurora-2 w-[350px] h-[350px] sm:w-[500px] sm:h-[500px] top-20 -right-32" aria-hidden="true" />
+        <div className="aurora-blob aurora-3 w-[300px] h-[300px] sm:w-[450px] sm:h-[450px] bottom-0 left-1/3" aria-hidden="true" />
+
+        {/* Floating sparkle decorations */}
+        <Sparkles className="absolute top-24 right-[15%] h-5 w-5 text-primary/40 sparkle hidden sm:block" style={{ animationDelay: '0s' }} aria-hidden="true" />
+        <Moon className="absolute top-1/3 left-[8%] h-6 w-6 text-accent/40 float-gentle hidden sm:block" aria-hidden="true" />
+        <Star className="absolute bottom-32 right-[10%] h-4 w-4 text-pink-400/50 sparkle hidden sm:block" style={{ animationDelay: '1.2s' }} aria-hidden="true" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Trust badge */}
+          <div className="flex justify-center mb-6 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 shadow-sm">
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">
+                <span className="text-gradient">10,000+</span> happy families · 4.9 ★
+              </span>
+            </div>
+          </div>
+
+          {/* Centered headline with rotating word */}
+          <div className="text-center mb-10 sm:mb-14 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.05] tracking-tight mb-5 sm:mb-7">
               {t('hero.title')}
-              <span className="text-gradient block mt-1 sm:mt-2">
+              <span className="text-shimmer block mt-2 sm:mt-3 font-black">
                 {t('hero.titleHighlight')}
+              </span>
+              <span className="block mt-3 sm:mt-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700">
+                for{' '}
+                <span className="word-carousel text-gradient align-bottom">
+                  <span className="word-carousel-inner">
+                    <span className="word-carousel-item">peaceful nights</span>
+                    <span className="word-carousel-item">happy mornings</span>
+                    <span className="word-carousel-item">tired parents</span>
+                    <span className="word-carousel-item">growing babies</span>
+                    <span className="word-carousel-item">peaceful nights</span>
+                  </span>
+                </span>
               </span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light mb-3">
@@ -323,47 +358,49 @@ const Index = () => {
               {t('hero.subtitleExtra')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
-              <Button size="lg" className="gradient-dynamic text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg font-semibold text-white border-0 touch-target w-full sm:w-auto" onClick={handleGetStarted}>
-                <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              <Button size="lg" className="gradient-dynamic btn-glow text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl font-bold text-white border-0 touch-target w-full sm:w-auto group" onClick={handleGetStarted}>
+                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform" />
                 {t('hero.startTracking')}
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-1 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 rounded-full border-primary/30 hover:bg-primary/5 transition-all duration-300 hover:scale-105 font-medium text-primary touch-target w-full sm:w-auto" onClick={handleScrollToFeatures}>
+              <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full border-2 border-primary/30 hover:bg-primary/5 hover:border-primary transition-all duration-300 hover:scale-105 font-semibold text-primary touch-target w-full sm:w-auto bg-white/70 backdrop-blur-sm" onClick={handleScrollToFeatures}>
+                <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 {t('hero.exploreFeatures')}
               </Button>
             </div>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500">
-              <div className="flex items-center gap-1.5"><CheckCircle className="h-3.5 w-3.5 text-green-500" /><span>Free</span></div>
-              <div className="flex items-center gap-1.5"><CheckCircle className="h-3.5 w-3.5 text-green-500" /><span>{t('hero.noCreditCard')}</span></div>
-              <div className="flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-red-400" /><span>{t('hero.madeByParents')}</span></div>
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-600">
+              <div className="flex items-center gap-1.5"><CheckCircle className="h-3.5 w-3.5 text-green-500" /><span className="font-medium">Free forever plan</span></div>
+              <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-blue-500" /><span className="font-medium">{t('hero.noCreditCard')}</span></div>
+              <div className="flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-red-400" /><span className="font-medium">{t('hero.madeByParents')}</span></div>
             </div>
           </div>
 
-          {/* Video — large, centered, with clean professional frame */}
-          <div className="relative max-w-5xl mx-auto animate-scale-in">
-            <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
+          {/* Video — large, centered, with floating effect */}
+          <div className="relative max-w-5xl mx-auto animate-scale-in float-gentle">
+            {/* Animated gradient border */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-pink-500 rounded-3xl blur-md opacity-60 gradient-dynamic" />
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
               <video className="w-full h-auto block" autoPlay loop muted playsInline preload="auto" poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" width="1280" height="720">
                 <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
                 <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy demo" className="w-full h-auto" />
               </video>
             </div>
-            <div className="absolute -inset-4 bg-gradient-to-r from-purple-400/20 via-pink-400/20 to-rose-400/20 rounded-3xl blur-2xl -z-10" />
-          </div>
-        </div>
-      </section>
-      {/* Features Section */}
-      <section id="features" className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight leading-tight">
-              {t('features.title')}
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-              {t('features.subtitle')}
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-            {features.map((feature, index) => <FeatureCard key={index} feature={feature} index={index} />)}
+          {/* Stats bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto mt-12 sm:mt-16 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+            {[
+              { value: '10K+', label: 'Happy Families', icon: Heart },
+              { value: '2M+', label: 'Sleep Sessions', icon: Moon },
+              { value: '4.9★', label: 'App Rating', icon: Star },
+              { value: '8', label: 'Languages', icon: Globe },
+            ].map((stat, i) => (
+              <div key={i} className="text-center p-4 rounded-2xl bg-white/60 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 hover:scale-105 duration-300">
+                <stat.icon className="h-5 w-5 mx-auto mb-2 text-primary" />
+                <div className="text-2xl sm:text-3xl font-black text-gradient">{stat.value}</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
