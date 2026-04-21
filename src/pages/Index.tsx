@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X, ArrowRight } from "lucide-react";
+import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X, ArrowRight, Sparkles, Moon, Award, TrendingUp, Shield, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState } from "react";
 
