@@ -563,5 +563,26 @@
       "permissionDenied": "Salli mikrofonin käyttö",
       "error": "Puhesyöte epäonnistui"
     }
+  },
+  "menu": {
+    "accountSecurity": "Tili & Turvallisuus",
+    "accountSettings": "Tilin asetukset",
+    "accountSettingsDesc": "Hallitse tilausta ja asetuksia",
+    "security": "Turvallisuus",
+    "securityDesc": "Istunnot ja turvatapahtumat",
+    "notifications": "Ilmoitukset",
+    "notificationsDesc": "Hälytykset ja päivitykset",
+    "helpSupport": "Apu & Tuki",
+    "helpCenter": "Ohjekeskus",
+    "helpCenterDesc": "UKK ja dokumentaatio",
+    "contactSupport": "Ota yhteyttä tukeen",
+    "contactSupportDesc": "Saa apua tiimiltämme",
+    "tutorial": "Opastus",
+    "tutorialDesc": "Opi käyttämään sovellusta",
+    "preferences": "Asetukset",
+    "language": "Kieli",
+    "signOut": "Kirjaudu ulos",
+    "premium": "Premium",
+    "basic": "Perus"
   }
 }

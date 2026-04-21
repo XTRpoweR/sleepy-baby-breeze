@@ -563,5 +563,26 @@
       "permissionDenied": "Veuillez autoriser l'accès au microphone",
       "error": "Échec de la saisie vocale"
     }
+  },
+  "menu": {
+    "accountSecurity": "Compte et Sécurité",
+    "accountSettings": "Paramètres du compte",
+    "accountSettingsDesc": "Gérer abonnement et préférences",
+    "security": "Sécurité",
+    "securityDesc": "Sessions et événements de sécurité",
+    "notifications": "Notifications",
+    "notificationsDesc": "Alertes et mises à jour",
+    "helpSupport": "Aide et support",
+    "helpCenter": "Centre d'aide",
+    "helpCenterDesc": "FAQ et documentation",
+    "contactSupport": "Contacter le support",
+    "contactSupportDesc": "Obtenez de l'aide de notre équipe",
+    "tutorial": "Tutoriel",
+    "tutorialDesc": "Apprenez à utiliser l'application",
+    "preferences": "Préférences",
+    "language": "Langue",
+    "signOut": "Se déconnecter",
+    "premium": "Premium",
+    "basic": "Basique"
   }
 }

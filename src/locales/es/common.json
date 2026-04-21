@@ -563,5 +563,26 @@
       "permissionDenied": "Permite el acceso al micrófono",
       "error": "Error de entrada de voz"
     }
+  },
+  "menu": {
+    "accountSecurity": "Cuenta y Seguridad",
+    "accountSettings": "Configuración de cuenta",
+    "accountSettingsDesc": "Administrar suscripción y preferencias",
+    "security": "Seguridad",
+    "securityDesc": "Sesiones y eventos de seguridad",
+    "notifications": "Notificaciones",
+    "notificationsDesc": "Alertas y actualizaciones",
+    "helpSupport": "Ayuda y soporte",
+    "helpCenter": "Centro de ayuda",
+    "helpCenterDesc": "FAQ y documentación",
+    "contactSupport": "Contactar soporte",
+    "contactSupportDesc": "Obtén ayuda de nuestro equipo",
+    "tutorial": "Tutorial",
+    "tutorialDesc": "Aprende a usar la app",
+    "preferences": "Preferencias",
+    "language": "Idioma",
+    "signOut": "Cerrar sesión",
+    "premium": "Premium",
+    "basic": "Básico"
   }
 }

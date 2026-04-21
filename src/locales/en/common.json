@@ -563,5 +563,26 @@
       "permissionDenied": "Please allow microphone access",
       "error": "Voice input failed"
     }
+  },
+  "menu": {
+    "accountSecurity": "Account & Security",
+    "accountSettings": "Account Settings",
+    "accountSettingsDesc": "Manage subscription & preferences",
+    "security": "Security",
+    "securityDesc": "Sessions & security events",
+    "notifications": "Notifications",
+    "notificationsDesc": "Alerts & updates",
+    "helpSupport": "Help & Support",
+    "helpCenter": "Help Center",
+    "helpCenterDesc": "FAQ & documentation",
+    "contactSupport": "Contact Support",
+    "contactSupportDesc": "Get help from our team",
+    "tutorial": "Tutorial",
+    "tutorialDesc": "Learn how to use the app",
+    "preferences": "Preferences",
+    "language": "Language",
+    "signOut": "Sign Out",
+    "premium": "Premium",
+    "basic": "Basic"
   }
 }
