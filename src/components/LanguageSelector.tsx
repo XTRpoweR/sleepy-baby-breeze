@@ -15,11 +15,11 @@ const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸', comingSoon: false },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪', comingSoon: false },
   { code: 'sv', name: 'Svenska', flag: '🇸🇪', comingSoon: false },
-  { code: 'es', name: 'Español', flag: '🇪🇸', comingSoon: true },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', comingSoon: true },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹', comingSoon: true },
-  { code: 'el', name: 'Ελληνικά', flag: '🇬🇷', comingSoon: true },
-  { code: 'fi', name: 'Suomi', flag: '🇫🇮', comingSoon: true },
+  { code: 'es', name: 'Español', flag: '🇪🇸', comingSoon: false },
+  { code: 'fr', name: 'Français', flag: '🇫🇷', comingSoon: false },
+  { code: 'it', name: 'Italiano', flag: '🇮🇹', comingSoon: false },
+  { code: 'el', name: 'Ελληνικά', flag: '🇬🇷', comingSoon: false },
+  { code: 'fi', name: 'Suomi', flag: '🇫🇮', comingSoon: false },
 ];
 
 export const LanguageSelector = () => {
