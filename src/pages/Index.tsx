@@ -551,24 +551,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight leading-tight">
-              Loved by Parents Everywhere
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 font-light leading-relaxed">
-              Join thousands of families who've found their way to better sleep.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {testimonials.map((testimonial, index) => <TestimonialCard key={index} testimonial={testimonial} index={index} />)}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 gradient-dynamic">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
