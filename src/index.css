@@ -325,6 +325,224 @@
   }
 }
 
+/* ============================================
+   PREMIUM LANDING PAGE ANIMATIONS
+   ============================================ */
+
+/* Aurora floating blobs */
+@keyframes aurora-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
+@keyframes aurora-float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 30px) scale(1.15); }
+}
+
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.aurora-1 {
+  background: radial-gradient(circle, hsl(var(--feature-purple-from) / 0.6), transparent 70%);
+  animation: aurora-float 18s ease-in-out infinite;
+}
+.aurora-2 {
+  background: radial-gradient(circle, hsl(var(--feature-pink-from) / 0.55), transparent 70%);
+  animation: aurora-float-slow 22s ease-in-out infinite;
+}
+.aurora-3 {
+  background: radial-gradient(circle, hsl(var(--feature-blue-from) / 0.5), transparent 70%);
+  animation: aurora-float 25s ease-in-out infinite reverse;
+}
+
+/* Shimmer text reveal */
+@keyframes shimmer-text {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--gradient-from)) 0%,
+    hsl(var(--gradient-via)) 25%,
+    hsl(var(--gradient-to)) 50%,
+    hsl(var(--gradient-via)) 75%,
+    hsl(var(--gradient-from)) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-text 4s linear infinite;
+}
+
+/* Floating elements */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+.float-gentle {
+  animation: float-gentle 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Rotating word swap */
+@keyframes word-rotate {
+  0%, 20% { transform: translateY(0%); opacity: 1; }
+  25%, 45% { transform: translateY(-100%); opacity: 0; }
+  50%, 70% { transform: translateY(-200%); opacity: 0; }
+  75%, 95% { transform: translateY(-300%); opacity: 0; }
+  100% { transform: translateY(-400%); opacity: 0; }
+}
+
+.word-carousel {
+  display: inline-block;
+  height: 1.2em;
+  overflow: hidden;
+  vertical-align: bottom;
+  position: relative;
+}
+
+.word-carousel-inner {
+  display: flex;
+  flex-direction: column;
+  animation: word-cycle 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes word-cycle {
+  0%, 22% { transform: translateY(0%); }
+  25%, 47% { transform: translateY(-100%); }
+  50%, 72% { transform: translateY(-200%); }
+  75%, 97% { transform: translateY(-300%); }
+  100% { transform: translateY(-400%); }
+}
+
+.word-carousel-item {
+  height: 1.2em;
+  line-height: 1.2em;
+  white-space: nowrap;
+}
+
+/* Magnetic glow card */
+.glow-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+  will-change: transform;
+}
+
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-from) / 0.5),
+    hsl(var(--gradient-via) / 0.3),
+    hsl(var(--gradient-to) / 0.5)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.glow-card:hover::before { opacity: 1; }
+.glow-card:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 30px 60px -20px hsl(var(--gradient-from) / 0.25),
+    0 18px 36px -18px hsl(var(--gradient-via) / 0.2);
+}
+
+/* Marquee for testimonials */
+@keyframes marquee-x {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-x 40s linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover { animation-play-state: paused; }
+
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* Glow pulse on CTA button */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 hsl(var(--gradient-via) / 0.5),
+      0 10px 30px -10px hsl(var(--gradient-from) / 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0 18px hsl(var(--gradient-via) / 0),
+      0 18px 40px -10px hsl(var(--gradient-from) / 0.6);
+  }
+}
+
+.btn-glow {
+  animation: glow-pulse 2.6s ease-in-out infinite;
+}
+
+/* Number counter highlight */
+@keyframes count-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.count-pop { animation: count-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+/* Fade in up reusable */
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fade-in-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Gradient mesh background */
+.mesh-bg {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(at 20% 10%, hsl(var(--feature-purple-from) / 0.18) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsl(var(--feature-pink-from) / 0.15) 0px, transparent 50%),
+    radial-gradient(at 90% 80%, hsl(var(--feature-blue-from) / 0.15) 0px, transparent 50%),
+    radial-gradient(at 10% 90%, hsl(var(--feature-teal-from) / 0.12) 0px, transparent 50%);
+}
+
+/* Sparkle */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+.sparkle { animation: sparkle 2.5s ease-in-out infinite; }
+
 
 /* Fix for vaul Drawer leaving transform: translateZ(0px) on <html>, which breaks position:fixed on Dialogs. This forces the transform off so Dialogs are correctly positioned relative to the viewport. */
 html {
