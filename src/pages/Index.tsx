@@ -490,27 +490,63 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
+      {/* Pricing Section — Eye-catching header with badge */}
+      <section id="pricing" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-white overflow-hidden">
+        <div className="aurora-blob aurora-1 w-[500px] h-[500px] -bottom-32 -left-32 opacity-25" aria-hidden="true" />
+        <div className="aurora-blob aurora-3 w-[400px] h-[400px] -top-20 right-10 opacity-25" aria-hidden="true" />
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight leading-tight">
-              Simple, Transparent Pricing
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 mb-4">
+              <Crown className="h-3.5 w-3.5 text-accent" />
+              <span className="text-xs font-bold text-accent tracking-wider uppercase">Pricing</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight leading-[1.1]">
+              Simple pricing,
+              <span className="text-shimmer block mt-2">priceless sleep</span>
             </h2>
             <div className="space-y-2">
               <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-                Start for free with our Basic plan, or unlock premium features with our affordable Premium plan.
+                Start free forever. Upgrade anytime to unlock premium features for your whole family.
               </p>
-              <p className="text-sm sm:text-base text-gray-600 font-medium">
-                Perfect for families of any size.
-              </p>
+              <div className="flex items-center justify-center gap-2 text-sm font-medium text-green-700 bg-green-50 inline-flex px-4 py-1.5 rounded-full mt-3 border border-green-200">
+                <CheckCircle className="h-4 w-4" />
+                <span>No credit card required · Cancel anytime</span>
+              </div>
             </div>
           </div>
           
-          <div className="animate-fade-in-up" style={{
-           animationDelay: '200ms'
-         }}>
+          <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
             <SubscriptionPlans />
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section — Marquee scrolling */}
+      <section id="testimonials" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white via-purple-50/30 to-white overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 border border-yellow-300 mb-4">
+              <Star className="h-3.5 w-3.5 text-yellow-600 fill-yellow-500" />
+              <span className="text-xs font-bold text-yellow-700 tracking-wider uppercase">4.9 / 5 from 10,000+ reviews</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight leading-[1.1]">
+              Loved by parents
+              <span className="text-shimmer block mt-2">around the world</span>
+            </h2>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 font-light leading-relaxed">
+              Join thousands of families who've found their way to better sleep.
+            </p>
+          </div>
+        </div>
+
+        {/* Scrolling marquee — duplicated for seamless loop */}
+        <div className="marquee-mask overflow-hidden">
+          <div className="marquee gap-6 px-3">
+            {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
+              <div key={index} className="w-[320px] sm:w-[380px] flex-shrink-0">
+                <TestimonialCard testimonial={testimonial} index={index} />
+              </div>
+            ))}
           </div>
         </div>
       </section>
