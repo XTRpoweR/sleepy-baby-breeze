@@ -96,11 +96,11 @@ export const UnifiedHeader = () => {
                   ) : isPremium ? (
                     <div className="flex items-center space-x-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-sm">
                       <Crown className="h-3 w-3" />
-                      <span>Premium</span>
+                      <span>{t('menu.premium')}</span>
                     </div>
                   ) : (
                     <div className="flex items-center space-x-1 bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full text-xs font-medium">
-                      <span>Basic</span>
+                      <span>{t('menu.basic')}</span>
                     </div>
                   )}
                 </div>
@@ -111,7 +111,7 @@ export const UnifiedHeader = () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="w-1 h-4 bg-gradient-to-b from-primary to-primary/60 rounded-full"></div>
-                    <span className="text-sm font-semibold text-foreground">Account & Security</span>
+                    <span className="text-sm font-semibold text-foreground">{t('menu.accountSecurity')}</span>
                   </div>
                   
                   <button 
@@ -122,8 +122,8 @@ export const UnifiedHeader = () => {
                       <Settings className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-foreground">Account Settings</div>
-                      <div className="text-xs text-muted-foreground">Manage subscription & preferences</div>
+                      <div className="text-sm font-medium text-foreground">{t('menu.accountSettings')}</div>
+                      <div className="text-xs text-muted-foreground">{t('menu.accountSettingsDesc')}</div>
                     </div>
                   </button>
 
@@ -135,8 +135,8 @@ export const UnifiedHeader = () => {
                       <Shield className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-foreground">Security</div>
-                      <div className="text-xs text-muted-foreground">Sessions & security events</div>
+                      <div className="text-sm font-medium text-foreground">{t('menu.security')}</div>
+                      <div className="text-xs text-muted-foreground">{t('menu.securityDesc')}</div>
                     </div>
                   </button>
 
@@ -148,8 +148,8 @@ export const UnifiedHeader = () => {
                       <Bell className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-foreground">{t('notifications.title')}</div>
-                      <div className="text-xs text-muted-foreground">Alerts & updates</div>
+                      <div className="text-sm font-medium text-foreground">{t('menu.notifications')}</div>
+                      <div className="text-xs text-muted-foreground">{t('menu.notificationsDesc')}</div>
                     </div>
                   </button>
                 </div>
@@ -160,7 +160,7 @@ export const UnifiedHeader = () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-indigo-600 rounded-full"></div>
-                    <span className="text-sm font-semibold text-foreground">Help & Support</span>
+                    <span className="text-sm font-semibold text-foreground">{t('menu.helpSupport')}</span>
                   </div>
                   
                   <button 
@@ -171,8 +171,8 @@ export const UnifiedHeader = () => {
                       <HelpCircle className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-foreground">Help Center</div>
-                      <div className="text-xs text-muted-foreground">FAQ & documentation</div>
+                      <div className="text-sm font-medium text-foreground">{t('menu.helpCenter')}</div>
+                      <div className="text-xs text-muted-foreground">{t('menu.helpCenterDesc')}</div>
                     </div>
                   </button>
 
@@ -184,8 +184,8 @@ export const UnifiedHeader = () => {
                       <MessageCircle className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-foreground">Contact Support</div>
-                      <div className="text-xs text-muted-foreground">Get help from our team</div>
+                      <div className="text-sm font-medium text-foreground">{t('menu.contactSupport')}</div>
+                      <div className="text-xs text-muted-foreground">{t('menu.contactSupportDesc')}</div>
                     </div>
                   </button>
 
@@ -197,8 +197,8 @@ export const UnifiedHeader = () => {
                       <Sparkles className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-foreground">Tutorial</div>
-                      <div className="text-xs text-muted-foreground">Learn how to use the app</div>
+                      <div className="text-sm font-medium text-foreground">{t('menu.tutorial')}</div>
+                      <div className="text-xs text-muted-foreground">{t('menu.tutorialDesc')}</div>
                     </div>
                   </button>
                 </div>
@@ -209,7 +209,7 @@ export const UnifiedHeader = () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="w-1 h-4 bg-gradient-to-b from-slate-500 to-slate-600 rounded-full"></div>
-                    <span className="text-sm font-semibold text-foreground">Preferences</span>
+                    <span className="text-sm font-semibold text-foreground">{t('menu.preferences')}</span>
                   </div>
                   
                   <div className="flex items-center space-x-3 p-3 rounded-xl bg-slate-50/50">
@@ -217,7 +217,7 @@ export const UnifiedHeader = () => {
                       <Globe className="h-4 w-4 text-white" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-foreground mb-1">Language</div>
+                      <div className="text-sm font-medium text-foreground mb-1">{t('menu.language')}</div>
                       <div className="w-full">
                         <LanguageSelector />
                       </div>
@@ -232,7 +232,7 @@ export const UnifiedHeader = () => {
                 className="w-full flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 font-medium touch-manipulation"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
+                <span>{t('menu.signOut')}</span>
               </button>
             </div>
           </SheetContent>
