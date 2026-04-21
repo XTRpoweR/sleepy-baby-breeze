@@ -565,5 +565,26 @@
       "permissionDenied": "Tillåt mikrofonåtkomst",
       "error": "Röstinmatning misslyckades"
     }
+  },
+  "menu": {
+    "accountSecurity": "Konto & Säkerhet",
+    "accountSettings": "Kontoinställningar",
+    "accountSettingsDesc": "Hantera prenumeration & inställningar",
+    "security": "Säkerhet",
+    "securityDesc": "Sessioner & säkerhetshändelser",
+    "notifications": "Aviseringar",
+    "notificationsDesc": "Varningar & uppdateringar",
+    "helpSupport": "Hjälp & Support",
+    "helpCenter": "Hjälpcenter",
+    "helpCenterDesc": "FAQ & dokumentation",
+    "contactSupport": "Kontakta support",
+    "contactSupportDesc": "Få hjälp från vårt team",
+    "tutorial": "Handledning",
+    "tutorialDesc": "Lär dig använda appen",
+    "preferences": "Inställningar",
+    "language": "Språk",
+    "signOut": "Logga ut",
+    "premium": "Premium",
+    "basic": "Bas"
   }
 }

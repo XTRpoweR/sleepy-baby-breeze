@@ -563,5 +563,26 @@
       "permissionDenied": "Bitte Mikrofonzugriff erlauben",
       "error": "Spracheingabe fehlgeschlagen"
     }
+  },
+  "menu": {
+    "accountSecurity": "Konto & Sicherheit",
+    "accountSettings": "Kontoeinstellungen",
+    "accountSettingsDesc": "Abonnement & Einstellungen verwalten",
+    "security": "Sicherheit",
+    "securityDesc": "Sitzungen & Sicherheitsereignisse",
+    "notifications": "Benachrichtigungen",
+    "notificationsDesc": "Warnungen & Updates",
+    "helpSupport": "Hilfe & Support",
+    "helpCenter": "Hilfecenter",
+    "helpCenterDesc": "FAQ & Dokumentation",
+    "contactSupport": "Support kontaktieren",
+    "contactSupportDesc": "Hilfe vom Team erhalten",
+    "tutorial": "Tutorial",
+    "tutorialDesc": "App-Nutzung lernen",
+    "preferences": "Einstellungen",
+    "language": "Sprache",
+    "signOut": "Abmelden",
+    "premium": "Premium",
+    "basic": "Basis"
   }
 }

@@ -563,5 +563,26 @@
       "permissionDenied": "Επιτρέψτε την πρόσβαση στο μικρόφωνο",
       "error": "Αποτυχία φωνητικής εισαγωγής"
     }
+  },
+  "menu": {
+    "accountSecurity": "Λογαριασμός & Ασφάλεια",
+    "accountSettings": "Ρυθμίσεις λογαριασμού",
+    "accountSettingsDesc": "Διαχείριση συνδρομής & προτιμήσεων",
+    "security": "Ασφάλεια",
+    "securityDesc": "Συνεδρίες & συμβάντα ασφαλείας",
+    "notifications": "Ειδοποιήσεις",
+    "notificationsDesc": "Ειδοποιήσεις & ενημερώσεις",
+    "helpSupport": "Βοήθεια & Υποστήριξη",
+    "helpCenter": "Κέντρο βοήθειας",
+    "helpCenterDesc": "Συχνές ερωτήσεις & τεκμηρίωση",
+    "contactSupport": "Επικοινωνία υποστήριξης",
+    "contactSupportDesc": "Λάβετε βοήθεια από την ομάδα μας",
+    "tutorial": "Οδηγός",
+    "tutorialDesc": "Μάθετε πώς να χρησιμοποιείτε την εφαρμογή",
+    "preferences": "Προτιμήσεις",
+    "language": "Γλώσσα",
+    "signOut": "Αποσύνδεση",
+    "premium": "Premium",
+    "basic": "Βασικό"
   }
 }

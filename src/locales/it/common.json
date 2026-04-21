@@ -563,5 +563,26 @@
       "permissionDenied": "Consenti l'accesso al microfono",
       "error": "Input vocale fallito"
     }
+  },
+  "menu": {
+    "accountSecurity": "Account e Sicurezza",
+    "accountSettings": "Impostazioni dell'account",
+    "accountSettingsDesc": "Gestisci abbonamento e preferenze",
+    "security": "Sicurezza",
+    "securityDesc": "Sessioni ed eventi di sicurezza",
+    "notifications": "Notifiche",
+    "notificationsDesc": "Avvisi e aggiornamenti",
+    "helpSupport": "Aiuto e Supporto",
+    "helpCenter": "Centro assistenza",
+    "helpCenterDesc": "FAQ e documentazione",
+    "contactSupport": "Contatta il supporto",
+    "contactSupportDesc": "Ottieni aiuto dal nostro team",
+    "tutorial": "Tutorial",
+    "tutorialDesc": "Impara a usare l'app",
+    "preferences": "Preferenze",
+    "language": "Lingua",
+    "signOut": "Esci",
+    "premium": "Premium",
+    "basic": "Base"
   }
 }
