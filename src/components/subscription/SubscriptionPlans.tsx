@@ -95,10 +95,10 @@ export const SubscriptionPlans = () => {
             Annual
             <Badge
               className={cn(
-                "text-[10px] font-bold transition-all duration-300",
+                "text-[10px] font-bold transition-all duration-500 border-0",
                 annualSelected
-                  ? "bg-white/25 text-white border-0 animate-pulse"
-                  : "bg-green-500 text-white border-0"
+                  ? "bg-white/25 text-white"
+                  : "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-sm shadow-green-500/30"
               )}
             >
               Save $60
