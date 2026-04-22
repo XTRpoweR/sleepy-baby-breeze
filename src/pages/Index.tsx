@@ -31,6 +31,17 @@ const FeatureCard = memo(({
   const formattedNumber = (index + 1).toString().padStart(2, '0');
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Bulletproof gradient map (Tailwind purges dynamic class names — use inline styles)
+  const gradientMap: Record<string, string> = {
+    blue:   'linear-gradient(135deg, #3b82f6, #6366f1)',
+    purple: 'linear-gradient(135deg, #8b5cf6, #d946ef)',
+    teal:   'linear-gradient(135deg, #14b8a6, #06b6d4)',
+    pink:   'linear-gradient(135deg, #ec4899, #f43f5e)',
+    orange: 'linear-gradient(135deg, #f97316, #f59e0b)',
+    green:  'linear-gradient(135deg, #10b981, #84cc16)',
+  };
+  const gradientStyle = { background: gradientMap[feature.colorScheme] || gradientMap.blue };
+
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const card = cardRef.current;
     if (!card) return;
