@@ -893,6 +893,37 @@ html {
   .icon-3d-tilt { transition: none; }
 }
 
+/* Mobile performance: disable heavy decorative animations on small screens
+   to keep scrolling smooth and avoid jank on low-power devices. */
+@media (max-width: 768px) {
+  .aurora-blob,
+  .floating-particle,
+  .orbit-dot,
+  .ripple-ring,
+  .sparkle,
+  .float-gentle,
+  .feature-mesh,
+  .feature-wave,
+  .badge-glow,
+  .summary-sparkle,
+  .star-twinkle,
+  .shimmer-overlay,
+  .shimmer-overlay-light,
+  .animate-blob-float,
+  .animate-blob-float-delayed,
+  .animate-spin-slow,
+  .bento-border,
+  .cta-banner-glow,
+  .cta-pulse-glow {
+    animation: none !important;
+  }
+  .aurora-blob,
+  .floating-particle,
+  .orbit-dot {
+    display: none !important;
+  }
+}
+
 /* Feature visual hero area — animated mesh + orbits */
 .feature-visual {
   position: relative;
