@@ -62,6 +62,14 @@ export const SubscriptionPlans = () => {
   const monthlySelected = selectedPlan === 'monthly';
   const annualSelected = selectedPlan === 'annual';
 
+  const handlePlanAction = (pricingPlan: 'monthly' | 'annual') => {
+    if (selectedPlan !== pricingPlan) {
+      setSelectedPlan(pricingPlan);
+    }
+
+    handleUpgrade(pricingPlan);
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
       {/* Pricing Toggle - Glassmorphism with sliding pill */}
@@ -186,10 +194,11 @@ export const SubscriptionPlans = () => {
             "transition-all duration-500 ease-out",
             monthlySelected
               ? "bg-white/85 dark:bg-slate-900/80 border-orange-300/60 dark:border-orange-500/40 shadow-2xl shadow-orange-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-orange-400/60"
-              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
+              : "bg-white/80 dark:bg-slate-900/75 border-white/50 dark:border-white/15 opacity-100 hover:-translate-y-1 lg:bg-white/50 lg:dark:bg-slate-900/40 lg:scale-95 lg:opacity-70 lg:hover:opacity-90",
             isCurrentPlan('premium_monthly') && "ring-2 ring-orange-500"
           )}
           style={{ animationDelay: '100ms' }}
+          onClick={() => setSelectedPlan('monthly')}
         >
           {/* Soft animated glowing border halo (organized — outlines the whole card) */}
           {monthlySelected && (
@@ -295,12 +304,16 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
+                "relative z-20 w-full min-h-[3.75rem] touch-target group overflow-hidden rounded-full py-6 text-base font-bold tracking-wide whitespace-normal leading-tight border-0 transition-all duration-300",
                 "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white",
                 "shadow-[0_10px_30px_-8px_rgba(249,115,22,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(249,115,22,0.85)]",
                 "hover:scale-[1.02] ring-1 ring-orange-400/40"
               )}
-              onClick={() => handleUpgrade('monthly')}
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                handlePlanAction('monthly');
+              }}
               disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
             >
               {/* Subtle warm glow accent on the right */}
@@ -348,10 +361,11 @@ export const SubscriptionPlans = () => {
             "transition-all duration-500 ease-out",
             annualSelected
               ? "bg-white/85 dark:bg-slate-900/80 border-purple-300/60 dark:border-purple-500/40 shadow-2xl shadow-purple-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-purple-400/60"
-              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
+              : "bg-white/80 dark:bg-slate-900/75 border-white/50 dark:border-white/15 opacity-100 hover:-translate-y-1 lg:bg-white/50 lg:dark:bg-slate-900/40 lg:scale-95 lg:opacity-70 lg:hover:opacity-90",
             isCurrentPlan('premium_annual') && "ring-2 ring-purple-500"
           )}
           style={{ animationDelay: '200ms' }}
+          onClick={() => setSelectedPlan('annual')}
         >
           {/* Soft animated glowing border halo (organized — outlines the whole card) */}
           {annualSelected && (
@@ -456,12 +470,16 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
+                "relative z-20 w-full min-h-[3.75rem] touch-target group overflow-hidden rounded-full py-6 text-base font-bold tracking-wide whitespace-normal leading-tight border-0 transition-all duration-300",
                 "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white",
                 "shadow-[0_10px_30px_-8px_rgba(168,85,247,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(168,85,247,0.85)]",
                 "hover:scale-[1.02] ring-1 ring-purple-400/40"
               )}
-              onClick={() => handleUpgrade('annual')}
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                handlePlanAction('annual');
+              }}
               disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
             >
               {/* Subtle violet glow accent on the right */}
