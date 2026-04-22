@@ -420,21 +420,27 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "w-full touch-target group transition-all duration-300",
+                "w-full touch-target group relative overflow-hidden transition-all duration-300",
                 annualSelected
-                  ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-500/50 hover:scale-[1.02] py-6 text-base font-semibold"
+                  ? "bg-[linear-gradient(110deg,#a855f7,#ec4899,#a855f7)] bg-[length:200%_100%] animate-gradient-shift text-white shadow-lg shadow-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/60 hover:scale-[1.03] py-6 text-base font-bold tracking-wide border-0"
                   : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
               )}
               onClick={() => handleUpgrade('annual')}
               disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
             >
-              <span className="flex items-center justify-center gap-2">
+              {/* Shine sweep overlay */}
+              {annualSelected && !upgradingAnnual && !isCurrentPlan('premium_annual') && (
+                <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[inherit]">
+                  <span className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shine-sweep" />
+                </span>
+              )}
+              <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingAnnual ? 'Processing...' :
                   isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' :
                     user && isTrial && subscriptionTier === 'premium_annual' ? `Trial (${trialDaysLeft} days left)` :
                       user ? 'Start Free Trial' : 'Start Free Trial'}
                 {annualSelected && !upgradingAnnual && !isCurrentPlan('premium_annual') && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                 )}
               </span>
             </Button>
