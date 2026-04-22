@@ -1,64 +1,78 @@
 
 
-## الخطة: إدخال صوتي مجاني وغير محدود (Web Speech API)
+# إعادة تصميم قسم "Powerful Features"
 
-### القرار
-بدلاً من ElevenLabs (مدفوع وله حصص)، سأستخدم **Web Speech API** المدمج في المتصفح مجاناً وبدون حدود وبدون مفاتيح API.
+## الهدف
+تحويل شبكة المميزات الحالية إلى تجربة بصرية حديثة وتفاعلية تجذب الانتباه وتحفّز المستخدم على الضغط على "ابدأ الآن".
 
-### المزايا
-- **مجاني للأبد** — يعمل داخل المتصفح، لا سيرفر، لا API key، لا فاتورة.
-- **يدعم العربية** وكل لغات التطبيق التسع (يستخدم لغة `i18n` الحالية تلقائياً).
-- **زمن استجابة فوري** — التحويل يحصل محلياً/عبر خدمة Google المجانية للمتصفح.
-- **VAD مدمج** — يكتشف نهاية الكلام تلقائياً.
+## التصميم الجديد
 
-### القيود (للشفافية)
-- يعمل على **Chrome, Edge, Safari** (مدعوم في 95%+ من المتصفحات).
-- Firefox دعمه محدود — سنُخفي الزر إذا لم يكن مدعوماً.
-- يحتاج اتصال إنترنت في معظم المتصفحات.
+### 1) رأس القسم (Header)
+- شارة علوية بتأثير زجاجي (glass) مع نقطة نابضة وأيقونة `Zap` تدور بلطف.
+- العنوان بحجم أكبر مع كلمة مميّزة بتدرج متحرك (animated gradient text) ينتقل بين الألوان.
+- أسفل العنوان: شريط صغير بـ 3 أيقونات صغيرة (Trusted by 10K+ families, 4.9★, 8 languages) لبناء الثقة فوراً.
 
-### التغييرات
+### 2) شبكة البطاقات — تصميم Bento عصري
+بدل 6 بطاقات متطابقة (3×2)، نستخدم **Bento Grid** غير منتظم يجذب العين:
 
-**1. Hook جديد: `src/hooks/useVoiceInput.tsx`**
-- يغلّف `window.SpeechRecognition || window.webkitSpeechRecognition`
-- يدير: `isListening`, `transcript`, `interimTranscript`, `start()`, `stop()`, `isSupported`
-- يضبط `lang` حسب `i18n.language` (ar-SA, en-US, fr-FR, ...)
-- `continuous: false` + `interimResults: true` لعرض النص لحظياً
-- معالجة أخطاء: `not-allowed` (إذن مرفوض)، `no-speech`، `network`
-
-**2. تحديث `src/components/chat/ChatAssistant.tsx`**
-- إضافة زر مايكروفون بجانب زر Send (يظهر فقط إذا `isSupported`)
-- أثناء التسجيل: أيقونة `MicOff` حمراء مع `animate-pulse`
-- النص المؤقت يظهر مباشرة في الـ input field
-- عند انتهاء الكلام: النص يبقى في الـ input ليراجعه المستخدم ثم يضغط Send (أأمن من الإرسال التلقائي)
-- زر صغير لإلغاء التسجيل
-
-**3. مفاتيح ترجمة في 9 ملفات locale**
-```
-chat.voice.start: "تحدث"
-chat.voice.stop: "إيقاف الاستماع"  
-chat.voice.listening: "أستمع..."
-chat.voice.notSupported: "المتصفح لا يدعم الإدخال الصوتي"
-chat.voice.permissionDenied: "يرجى السماح بالوصول للمايكروفون"
-```
-
-### تجربة المستخدم
 ```text
-الوضع العادي:
-[اكتب رسالة...........] [🎤] [➤]
-
-أثناء الاستماع (نبضة حمراء):
-[أستمع... "متى نام طفلي"] [🔴] [➤]
-
-بعد التوقف:
-[متى نام طفلي اليوم؟........] [🎤] [➤]
-                              ↑ المستخدم يراجع ويضغط إرسال
+┌──────────────┬──────────┐
+│  FEATURE 1   │ FEATURE 2│
+│  (large 2x)  │          │
+├──────┬───────┼──────────┤
+│ F 3  │ F 4   │ FEATURE 5│
+│      │       │ (tall)   │
+├──────┴───────┤          │
+│   FEATURE 6  │          │
+└──────────────┴──────────┘
 ```
+على الموبايل: عمود واحد بترتيب الأهم أولاً.
 
-### الملفات المتأثرة
-- `src/hooks/useVoiceInput.tsx` (جديد)
-- `src/components/chat/ChatAssistant.tsx` (تعديل input bar)
-- `src/locales/{ar,en,de,es,fr,it,el,fi,sv}/common.json` (إضافة مفاتيح)
+### 3) تصميم البطاقة الواحدة (Premium)
+- خلفية بيضاء + حدود متدرّجة متحركة (conic-gradient border يدور ببطء عند hover).
+- **Spotlight effect**: بقعة ضوء تتبع مؤشر الفأرة داخل البطاقة (radial-gradient متحرك بـ CSS variables).
+- أيقونة كبيرة داخل صندوق متدرّج مع:
+  - دوران 3D خفيف عند hover (`rotateY`).
+  - حلقات متموّجة (ripple rings) تخرج من الأيقونة باستمرار.
+  - أيقونات ثانوية صغيرة تطفو حولها (floating particles).
+- شريط تقدّم صغير أسفل البطاقة يمتلئ عند hover.
+- زر "Learn more →" يظهر بانزلاق من الأسفل عند hover مع سهم متحرك.
+- Badge "🔥 POPULAR" / "⭐ PREMIUM" مع توهّج نابض.
+- عدّاد الإنجاز (مثل "10,000+ families") يعدّ من 0 إلى الرقم النهائي عند ظهور البطاقة في الشاشة (Intersection Observer + count-up).
 
-### بدون أي تكلفة
-- لا secrets، لا edge functions، لا packages جديدة، لا فواتير.
+### 4) عناصر تفاعلية حول الشبكة
+- **Aurora blobs** ملوّنة في الخلفية تتحرك ببطء.
+- خط متموّج (SVG wave) يربط البطاقات بصرياً في الخلفية.
+- ظهور البطاقات بترتيب متتابع (stagger) مع تأثير `fade-in-up + scale` عند الـ scroll.
+
+### 5) CTA قوي تحت الشبكة (الجديد — لتحفيز الإجراء)
+بطاقة عريضة بتدرّج ديناميكي تحت الشبكة:
+- عنوان: "Ready to give your baby better sleep tonight?"
+- نص فرعي قصير + 3 صور أفاتار صغيرة "Join 10,000+ parents".
+- زرّان:
+  - أساسي كبير "Start Free Today" — بتأثير glow نابض وسهم متحرك.
+  - ثانوي "Watch 60s Demo" بأيقونة Play.
+- شارة "No credit card · Cancel anytime" أسفل الزر.
+
+## الرسوم المتحركة (تفاصيل تقنية)
+
+سيتم إضافتها في `src/index.css`:
+- `@keyframes border-rotate` — حدود conic-gradient تدور 360° (8s).
+- `@keyframes float-particle` — جسيمات صغيرة تطفو حول الأيقونات.
+- `@keyframes ripple-ring` — حلقات تتوسع وتتلاشى.
+- `@keyframes shimmer-text` — تدرّج متحرك على النص.
+- `@keyframes pulse-glow` — توهّج نابض حول CTA.
+- Spotlight: متغيّرات `--mouse-x` / `--mouse-y` عبر `onMouseMove` على البطاقة.
+- Count-up: hook خفيف `useCountUp` مع `IntersectionObserver`.
+- جميع الحركات تحترم `prefers-reduced-motion`.
+
+## الملفات المعدّلة
+- `src/pages/Index.tsx` — إعادة بناء `FeatureCard` وقسم `#features` بالكامل + إضافة CTA.
+- `src/index.css` — إضافة keyframes والكلاسات الجديدة (`.feature-card-bento`, `.spotlight-card`, `.ripple-ring`, `.animated-border`, `.cta-glow`).
+- لا تعديل على `tailwind.config.ts` ولا على بيانات الـ features (نفس المصفوفة).
+
+## ما يبقى كما هو
+- محتوى المميزات الستة (العناوين، الأوصاف، الأيقونات، الصور).
+- بقية أقسام الصفحة (Hero, Insights, Testimonials...).
+- نظام الترجمة `t('features.title')`.
 
