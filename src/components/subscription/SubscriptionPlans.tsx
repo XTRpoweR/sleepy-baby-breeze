@@ -107,7 +107,7 @@ export const SubscriptionPlans = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-6">
         {/* ============ Basic Plan ============ */}
         <Card
           className={cn(
