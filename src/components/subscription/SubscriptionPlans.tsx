@@ -295,23 +295,35 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "w-full touch-target group relative overflow-hidden transition-all duration-300",
+                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
                 monthlySelected
-                  ? "bg-[linear-gradient(110deg,#f97316,#fbbf24,#fb923c)] bg-[length:180%_100%] animate-border-glow text-white shadow-lg shadow-orange-500/35 hover:shadow-xl hover:shadow-orange-500/40 hover:scale-[1.01] py-6 text-base font-bold tracking-wide border-0"
-                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
+                  ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(249,115,22,0.75)] hover:scale-[1.02] ring-1 ring-orange-400/30"
+                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-md py-3"
               )}
               onClick={() => handleUpgrade('monthly')}
               disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
             >
-              {/* Shine sweep overlay */}
-              {/* shine effect removed for a calmer experience */}
+              {/* Subtle warm glow accent on the right */}
+              {monthlySelected && (
+                <span
+                  aria-hidden
+                  className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-orange-500/40 via-amber-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
+                />
+              )}
+              {/* Glint sweep on hover */}
+              {monthlySelected && (
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
+                />
+              )}
               <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingMonthly ? 'Processing...' :
                   isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' :
                     user && isTrial && subscriptionTier === 'premium' ? `Trial (${trialDaysLeft} days left)` :
                       user ? 'Start Free Trial' : 'Start Free Trial'}
                 {monthlySelected && !upgradingMonthly && !isCurrentPlan('premium_monthly') && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-orange-300" />
                 )}
               </span>
             </Button>
@@ -448,23 +460,35 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "w-full touch-target group relative overflow-hidden transition-all duration-300",
+                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
                 annualSelected
-                  ? "bg-[linear-gradient(110deg,#a855f7,#ec4899,#c084fc)] bg-[length:180%_100%] animate-border-glow text-white shadow-lg shadow-purple-500/35 hover:shadow-xl hover:shadow-purple-500/40 hover:scale-[1.01] py-6 text-base font-bold tracking-wide border-0"
-                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
+                  ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(168,85,247,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(168,85,247,0.75)] hover:scale-[1.02] ring-1 ring-purple-400/30"
+                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-md py-3"
               )}
               onClick={() => handleUpgrade('annual')}
               disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
             >
-              {/* Shine sweep overlay */}
-              {/* shine effect removed for a calmer experience */}
+              {/* Subtle violet glow accent on the right */}
+              {annualSelected && (
+                <span
+                  aria-hidden
+                  className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-purple-500/40 via-pink-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
+                />
+              )}
+              {/* Glint sweep on hover */}
+              {annualSelected && (
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
+                />
+              )}
               <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingAnnual ? 'Processing...' :
                   isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' :
                     user && isTrial && subscriptionTier === 'premium_annual' ? `Trial (${trialDaysLeft} days left)` :
                       user ? 'Start Free Trial' : 'Start Free Trial'}
                 {annualSelected && !upgradingAnnual && !isCurrentPlan('premium_annual') && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-purple-300" />
                 )}
               </span>
             </Button>
