@@ -1,78 +1,77 @@
 
 
-# إعادة تصميم قسم "Powerful Features"
+## تحسين قائمة الأسعار — تصميم أنيق وتفاعلي
 
-## الهدف
-تحويل شبكة المميزات الحالية إلى تجربة بصرية حديثة وتفاعلية تجذب الانتباه وتحفّز المستخدم على الضغط على "ابدأ الآن".
+### الملف المعدّل
+- `src/components/subscription/SubscriptionPlans.tsx` (تعديل العرض فقط — بدون أي تغيير في منطق الدفع، الـ checkout، الـ subscription hook، أو الأزرار الوظيفية).
 
-## التصميم الجديد
+---
 
-### 1) رأس القسم (Header)
-- شارة علوية بتأثير زجاجي (glass) مع نقطة نابضة وأيقونة `Zap` تدور بلطف.
-- العنوان بحجم أكبر مع كلمة مميّزة بتدرج متحرك (animated gradient text) ينتقل بين الألوان.
-- أسفل العنوان: شريط صغير بـ 3 أيقونات صغيرة (Trusted by 10K+ families, 4.9★, 8 languages) لبناء الثقة فوراً.
+### 1) حل مشكلة "زر Monthly / Annual لا يفعل شيئًا"
 
-### 2) شبكة البطاقات — تصميم Bento عصري
-بدل 6 بطاقات متطابقة (3×2)، نستخدم **Bento Grid** غير منتظم يجذب العين:
+حاليًا التبديل يغير فقط حواف البطاقات (ring color + شارة Popular/Best Value)، لذلك المستخدم يشعر أنه لا يحدث شيء لأن البطاقات الثلاث تبقى ظاهرة بنفس الحجم.
+
+**الاقتراح المعتمد**: نجعل التبديل **يبرز فعليًا** الباقة المختارة بدل عرض البطاقتين بنفس الأهمية:
+
+- البطاقة المختارة (Monthly أو Annual) تكبر قليلاً (`scale-105`)، تُضيء بحدود متوهجة بلون مميز، وترتفع للأعلى (`-translate-y-2`)، وتكتسب توهجًا (`glow shadow`).
+- البطاقة غير المختارة من ضمن الباقتين المدفوعتين تتحول إلى وضع **"باهت/شفاف"** (`opacity-60`, `scale-95`, `grayscale-[20%]`) لتوجيه نظر المستخدم.
+- شارة "Popular" / "Best Value" تتحرك بحركة `fade-in + scale-in` عند التبديل.
+- السعر داخل البطاقة المختارة يتحرك بـ pulse خفيف عند التبديل لجذب الانتباه.
+- زر CTA الخاص بالبطاقة المختارة يصبح بحجم أكبر ولونه متدرج (gradient)، بينما الباقي outline هادئ.
+
+بهذه الطريقة المستخدم يرى تأثيرًا واضحًا فور الضغط على Monthly/Annual.
+
+---
+
+### 2) تحسين التصميم العام (أنيق + شفاف + يحث على الإجراء)
+
+**شريط التبديل (Toggle)**
+- استبدال الخلفية الرمادية بـ glassmorphism: `backdrop-blur-md bg-white/40 dark:bg-white/5 border border-white/20`.
+- المؤشر النشط عبارة عن "pill" ينزلق بسلاسة (`transition-all duration-500 ease-out`) خلف الخيار المختار.
+- شارة "Save $60" تنبض بلطف (`animate-pulse` خفيف).
+
+**البطاقات (Cards)**
+- خلفية شفافة متدرجة (glass effect): `bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30`.
+- توهج خلفي ملون لكل باقة (blue للـ Basic, orange للـ Monthly, purple للـ Annual) عبر `::before` blur خلف البطاقة.
+- على hover: `hover:-translate-y-2 hover:shadow-2xl` مع توهج أقوى.
+- زاوية الـ "Popular / Best Value" badge تطفو فوق البطاقة بتدرج لوني وحركة `float` خفيفة (up/down 4px).
+
+**الأسعار**
+- السعر الرئيسي بخط أكبر وتدرج لوني (`bg-gradient-to-r ... bg-clip-text text-transparent`).
+- السعر القديم المشطوب يبقى أصغر وبشفافية.
+- شارة الخصم (40% OFF / Save $60) ترتدي توهج (glow) ناعم.
+
+**قائمة الميزات**
+- أيقونة الـ check داخل دائرة بتدرج أخضر مع توهج خفيف.
+- على hover للصف، يتحرك السطر قليلاً لليمين (`hover:translate-x-1`) مع تغير لون النص.
+- شارة "NEW" متحركة بـ shimmer/gradient.
+
+**أزرار CTA**
+- الزر الرئيسي (للباقة المختارة): تدرج لوني (gradient) + ظل ملون + سهم ⟶ يتحرك يمينًا عند hover.
+- الأزرار الأخرى: outline أنيق بدون ظل.
+- جميع الأزرار `transition-all duration-300`.
+
+**حركات إضافية (دون إثقال)**
+- البطاقات تظهر بتسلسل عند التحميل (`animate-fade-in` مع `animation-delay` متدرج لكل بطاقة 100ms).
+- الـ ring الملون حول البطاقة المختارة ينبض بلطف.
+
+---
+
+### الجانب التقني
+
+- لا تغيير في `useSubscription`, `createCheckout`, الأسعار، العملات، أو منطق `isCurrentPlan`.
+- التعديلات حصرًا على className والـ wrappers البصرية.
+- نستخدم classes Tailwind الموجودة + animations المعرفة في `tailwind.config.ts` (`fade-in`, `scale-in`) — لا حاجة لإضافة keyframes جديدة، وإن لزم سنضيف `float` و `shimmer` بسيطين في `tailwind.config.ts`.
+- متجاوب بالكامل (mobile-first): على الجوال البطاقات تبقى مكدسة، وتأثيرات الـ scale تُخفّف لتفادي تجاوز الحدود.
+- يحترم `dark mode` الحالي.
 
 ```text
-┌──────────────┬──────────┐
-│  FEATURE 1   │ FEATURE 2│
-│  (large 2x)  │          │
-├──────┬───────┼──────────┤
-│ F 3  │ F 4   │ FEATURE 5│
-│      │       │ (tall)   │
-├──────┴───────┤          │
-│   FEATURE 6  │          │
-└──────────────┴──────────┘
+[ Monthly | (Annual ●) ]   ← toggle مع pill منزلق
+       │
+       ▼
+┌──────┐  ┌──────┐  ┌════════┐
+│Basic │  │ Mon  │  ║ Annual ║  ← المختارة أكبر + متوهجة
+│ dim  │  │ dim  │  ║ glow ★ ║
+└──────┘  └──────┘  ╚════════╝
 ```
-على الموبايل: عمود واحد بترتيب الأهم أولاً.
-
-### 3) تصميم البطاقة الواحدة (Premium)
-- خلفية بيضاء + حدود متدرّجة متحركة (conic-gradient border يدور ببطء عند hover).
-- **Spotlight effect**: بقعة ضوء تتبع مؤشر الفأرة داخل البطاقة (radial-gradient متحرك بـ CSS variables).
-- أيقونة كبيرة داخل صندوق متدرّج مع:
-  - دوران 3D خفيف عند hover (`rotateY`).
-  - حلقات متموّجة (ripple rings) تخرج من الأيقونة باستمرار.
-  - أيقونات ثانوية صغيرة تطفو حولها (floating particles).
-- شريط تقدّم صغير أسفل البطاقة يمتلئ عند hover.
-- زر "Learn more →" يظهر بانزلاق من الأسفل عند hover مع سهم متحرك.
-- Badge "🔥 POPULAR" / "⭐ PREMIUM" مع توهّج نابض.
-- عدّاد الإنجاز (مثل "10,000+ families") يعدّ من 0 إلى الرقم النهائي عند ظهور البطاقة في الشاشة (Intersection Observer + count-up).
-
-### 4) عناصر تفاعلية حول الشبكة
-- **Aurora blobs** ملوّنة في الخلفية تتحرك ببطء.
-- خط متموّج (SVG wave) يربط البطاقات بصرياً في الخلفية.
-- ظهور البطاقات بترتيب متتابع (stagger) مع تأثير `fade-in-up + scale` عند الـ scroll.
-
-### 5) CTA قوي تحت الشبكة (الجديد — لتحفيز الإجراء)
-بطاقة عريضة بتدرّج ديناميكي تحت الشبكة:
-- عنوان: "Ready to give your baby better sleep tonight?"
-- نص فرعي قصير + 3 صور أفاتار صغيرة "Join 10,000+ parents".
-- زرّان:
-  - أساسي كبير "Start Free Today" — بتأثير glow نابض وسهم متحرك.
-  - ثانوي "Watch 60s Demo" بأيقونة Play.
-- شارة "No credit card · Cancel anytime" أسفل الزر.
-
-## الرسوم المتحركة (تفاصيل تقنية)
-
-سيتم إضافتها في `src/index.css`:
-- `@keyframes border-rotate` — حدود conic-gradient تدور 360° (8s).
-- `@keyframes float-particle` — جسيمات صغيرة تطفو حول الأيقونات.
-- `@keyframes ripple-ring` — حلقات تتوسع وتتلاشى.
-- `@keyframes shimmer-text` — تدرّج متحرك على النص.
-- `@keyframes pulse-glow` — توهّج نابض حول CTA.
-- Spotlight: متغيّرات `--mouse-x` / `--mouse-y` عبر `onMouseMove` على البطاقة.
-- Count-up: hook خفيف `useCountUp` مع `IntersectionObserver`.
-- جميع الحركات تحترم `prefers-reduced-motion`.
-
-## الملفات المعدّلة
-- `src/pages/Index.tsx` — إعادة بناء `FeatureCard` وقسم `#features` بالكامل + إضافة CTA.
-- `src/index.css` — إضافة keyframes والكلاسات الجديدة (`.feature-card-bento`, `.spotlight-card`, `.ripple-ring`, `.animated-border`, `.cta-glow`).
-- لا تعديل على `tailwind.config.ts` ولا على بيانات الـ features (نفس المصفوفة).
-
-## ما يبقى كما هو
-- محتوى المميزات الستة (العناوين، الأوصاف، الأيقونات، الصور).
-- بقية أقسام الصفحة (Hero, Insights, Testimonials...).
-- نظام الترجمة `t('features.title')`.
 
