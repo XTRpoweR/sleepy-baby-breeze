@@ -711,3 +711,184 @@ html {
 .stat-card-interactive:active {
   transform: translateY(-2px) scale(1.02);
 }
+
+/* ============================================
+   BENTO FEATURE CARD — Premium animations
+   ============================================ */
+.bento-card {
+  isolation: isolate;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.bento-card:hover {
+  transform: translateY(-8px);
+}
+
+/* Rotating conic gradient border */
+.bento-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.5rem;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--border-angle, 0deg),
+    hsl(var(--primary)),
+    hsl(var(--accent)),
+    #ec4899,
+    hsl(var(--primary))
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0.35;
+  transition: opacity 0.5s ease;
+  animation: border-rotate 8s linear infinite;
+}
+.bento-card:hover .bento-border {
+  opacity: 1;
+}
+
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes border-rotate {
+  to { --border-angle: 360deg; }
+}
+
+/* Inner surface */
+.bento-inner {
+  box-shadow: 0 4px 20px -8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.5s ease;
+}
+.bento-card:hover .bento-inner {
+  box-shadow: 0 24px 60px -20px rgba(124, 58, 237, 0.35);
+}
+
+/* Cursor-following spotlight */
+.bento-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(168, 85, 247, 0.12),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+.bento-card:hover .bento-spotlight {
+  opacity: 1;
+}
+
+/* Floating particles around the card */
+.floating-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.bento-card:hover .floating-particle {
+  opacity: 0.7;
+}
+.particle-1 {
+  top: 20%; right: 15%;
+  animation: float-particle 4s ease-in-out infinite;
+}
+.particle-2 {
+  top: 60%; right: 25%;
+  width: 4px; height: 4px;
+  animation: float-particle 5s ease-in-out infinite 0.6s;
+}
+.particle-3 {
+  top: 35%; right: 8%;
+  width: 5px; height: 5px;
+  animation: float-particle 6s ease-in-out infinite 1.2s;
+}
+@keyframes float-particle {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-12px, -16px) scale(1.4); }
+}
+
+/* Icon ripple rings */
+.ripple-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+}
+.bento-card:hover .ripple-ring {
+  animation: ripple-ring 1.6s ease-out infinite;
+}
+.ripple-ring-delay {
+  animation-delay: 0.8s !important;
+}
+@keyframes ripple-ring {
+  0%   { transform: scale(1);   opacity: 0.5; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* 3D icon tilt */
+.icon-3d-tilt {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+.bento-card:hover .icon-3d-tilt {
+  transform: perspective(600px) rotateY(12deg) rotateX(-6deg) scale(1.08);
+}
+
+/* Badge glow */
+.badge-glow {
+  animation: badge-pulse 2.5s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.4); }
+  50%      { box-shadow: 0 0 0 6px rgba(251, 146, 60, 0); }
+}
+
+/* CTA banner glow */
+.cta-banner-glow {
+  background: linear-gradient(90deg,
+    hsl(var(--primary)),
+    hsl(var(--accent)),
+    #ec4899,
+    hsl(var(--primary))
+  );
+  background-size: 300% 100%;
+  animation: cta-flow 6s linear infinite;
+}
+@keyframes cta-flow {
+  to { background-position: 300% 0; }
+}
+
+.cta-pulse-glow {
+  animation: cta-pulse 2.4s ease-in-out infinite;
+}
+@keyframes cta-pulse {
+  0%, 100% { box-shadow: 0 10px 30px -10px rgba(255, 255, 255, 0.5), 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  50%      { box-shadow: 0 10px 40px -8px rgba(255, 255, 255, 0.7), 0 0 0 14px rgba(255, 255, 255, 0); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .bento-border,
+  .floating-particle,
+  .ripple-ring,
+  .badge-glow,
+  .cta-banner-glow,
+  .cta-pulse-glow {
+    animation: none !important;
+  }
+  .bento-card:hover { transform: none; }
+  .icon-3d-tilt { transition: none; }
+}
