@@ -892,3 +892,58 @@ html {
   .bento-card:hover { transform: none; }
   .icon-3d-tilt { transition: none; }
 }
+
+/* Feature visual hero area — animated mesh + orbits */
+.feature-visual {
+  position: relative;
+}
+.feature-mesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.35), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.25), transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15), transparent 60%);
+  background-size: 200% 200%;
+  animation: mesh-drift 8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes mesh-drift {
+  0%, 100% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+  50%      { background-position: 100% 50%, 0% 50%, 80% 20%; }
+}
+
+.feature-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  pointer-events: none;
+  animation: wave-slide 6s ease-in-out infinite;
+}
+@keyframes wave-slide {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(-8px); }
+}
+
+.orbit-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+.orbit-dot-1 { top: 18%; left: 12%; animation: orbit-float 5s ease-in-out infinite; }
+.orbit-dot-2 { top: 60%; right: 15%; width: 6px; height: 6px; animation: orbit-float 6.5s ease-in-out infinite 0.8s; }
+.orbit-dot-3 { top: 30%; right: 25%; width: 5px; height: 5px; animation: orbit-float 7s ease-in-out infinite 1.6s; }
+@keyframes orbit-float {
+  0%, 100% { transform: translate(0, 0) scale(1);   opacity: 0.7; }
+  50%      { transform: translate(14px, -10px) scale(1.4); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-mesh, .feature-wave, .orbit-dot { animation: none !important; }
+}
