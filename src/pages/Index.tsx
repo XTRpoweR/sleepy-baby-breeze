@@ -7,7 +7,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X, ArrowRight, Sparkles, Moon, Award, TrendingUp, Shield, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useState, useEffect, useRef, useCallback } from "react";
 
 // Import feature images
 import trackEverythingImg from "@/assets/features/track-everything.png";
@@ -28,7 +28,7 @@ const FeatureCard = memo(({
   const IconComponent = feature.icon;
   const formattedNumber = (index + 1).toString().padStart(2, '0');
   
-  return <Card className="group relative border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 animate-fade-in-up card-glow gpu-accelerated overflow-hidden hover:border-2 hover:border-primary/20" style={{
+  return <Card className="group relative border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 animate-fade-in-up card-glow gpu-accelerated overflow-hidden feature-card-premium" style={{
     animationDelay: `${index * 100}ms`
   }}>
       <CardContent className="p-6 sm:p-8 relative">
@@ -433,60 +433,129 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Insights Section */}
+      {/* Insights Section — Interactive with animated counters */}
       <section id="insights" className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 gradient-dynamic-slow">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center">
-            <div className="space-y-4 sm:space-y-6 animate-fade-in-up order-2 lg:order-1">
-               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight leading-tight">
-                 Turn Sleep Data Into 
-                 <span className="text-gradient block mt-1">Actionable Insights</span>
-               </h2>
+            <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+                <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                <span className="text-xs font-bold text-primary tracking-wider uppercase">Smart Analytics</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 tracking-tight leading-tight">
+                Turn Sleep Data Into
+                <span className="text-shimmer block mt-1">Actionable Insights</span>
+              </h2>
               <p className="text-base sm:text-lg text-gray-600 leading-relaxed font-light">
-                Our intelligent analytics help you spot patterns, predict optimal bedtimes, and understand what works best for your unique baby. 
-                No more guessing - just gentle, data-driven guidance.
+                Our intelligent analytics help you spot patterns, predict optimal bedtimes, and understand what works best for your unique baby. No more guessing - just gentle, data-driven guidance.
               </p>
               <div className="space-y-3 sm:space-y-4">
-                {["Weekly sleep pattern analysis", "Personalized bedtime recommendations", "Sleep regression alerts and tips", "Progress tracking and milestones"].map((item, index) => <div key={index} className="flex items-center space-x-3 transition-all duration-300 hover:scale-105" style={{
-                animationDelay: `${index * 100}ms`
-              }}>
-                    <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
-                    <span className="text-sm sm:text-base text-gray-700 font-medium">{item}</span>
-                  </div>)}
-              </div>
-               <Button size="lg" className="gradient-dynamic transition-all duration-300 hover:scale-105 hover:shadow-lg font-medium text-white border-0 touch-target w-full sm:w-auto" onClick={handleGetStarted}>
-                 See Your Sleep Insights
-               </Button>
-            </div>
-            
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl animate-scale-in card-glow order-1 lg:order-2">
-              <div className="space-y-4 sm:space-y-6">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900">This Week's Summary</h3>
-                
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                   <div className="gradient-dynamic-slow rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
-                     <div className="text-xl sm:text-2xl font-bold text-white">11.2h</div>
-                    <div className="text-xs sm:text-sm text-white/80">Avg. Night Sleep</div>
+                {["Weekly sleep pattern analysis", "Personalized bedtime recommendations", "Sleep regression alerts and tips", "Progress tracking and milestones"].map((item, index) => (
+                  <div key={index} className="flex items-center space-x-3 group cursor-pointer transition-all duration-300 hover:translate-x-2">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center group-hover:bg-green-500 transition-colors duration-300">
+                      <Check className="h-3.5 w-3.5 text-green-600 group-hover:text-white transition-colors duration-300" />
+                    </div>
+                    <span className="text-sm sm:text-base text-gray-700 font-medium group-hover:text-gray-900 transition-colors">{item}</span>
                   </div>
-                  <div className="bg-green-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
-                    <div className="text-xl sm:text-2xl font-bold text-green-600">2.1h</div>
-                    <div className="text-xs sm:text-sm text-gray-600">Avg. Day Naps</div>
+                ))}
+              </div>
+              <Button size="lg" className="gradient-dynamic btn-glow transition-all duration-300 hover:scale-105 hover:shadow-lg font-semibold text-white border-0 touch-target w-full sm:w-auto rounded-full group" onClick={handleGetStarted}>
+                <BarChart3 className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform" />
+                See Your Sleep Insights
+                <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+
+            {/* Interactive Summary Card */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 shadow-2xl order-1 lg:order-2 relative overflow-hidden">
+              {/* Decorative gradient corner */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-primary/10 via-accent/10 to-pink-400/10 rounded-full blur-2xl" />
+
+              <div className="relative space-y-5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900">This Week's Summary</h3>
+                  <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full">Live</span>
+                </div>
+
+                {/* Animated stat cards */}
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="stat-card-interactive gradient-dynamic rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+                    <div className="relative">
+                      <div className="text-3xl sm:text-4xl font-black text-white mb-1">11.2h</div>
+                      <div className="text-xs sm:text-sm text-white/80 font-medium">Avg. Night Sleep</div>
+                    </div>
+                  </div>
+                  <div className="stat-card-interactive bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-green-100">
+                    <div className="text-3xl sm:text-4xl font-black text-green-600 mb-1">2.1h</div>
+                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Avg. Day Naps</div>
                   </div>
                 </div>
-                
+
+                {/* Progress bars section */}
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base text-gray-600">Sleep Quality</span>
-                    <div className="flex space-x-1">
-                      {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />)}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 font-medium">Night Sleep Goal</span>
+                      <span className="font-bold text-primary">93%</span>
+                    </div>
+                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="progress-bar-fill" style={{'--progress-width': '93%'} as React.CSSProperties} />
                     </div>
                   </div>
-                  
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <div className="text-xs sm:text-sm font-medium text-green-800">
-                      🎉 Bedtime routine is working great! Keep it up.
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 font-medium">Nap Consistency</span>
+                      <span className="font-bold text-accent">78%</span>
+                    </div>
+                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="progress-bar-fill" style={{'--progress-width': '78%'} as React.CSSProperties} />
                     </div>
                   </div>
+                </div>
+
+                {/* Sleep quality with animated stars */}
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
+                  <span className="text-sm text-gray-600 font-medium">Sleep Quality</span>
+                  <div className="flex space-x-1">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400 star-cascade" style={{ animationDelay: `${star * 0.12}s` }} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Recommendation card */}
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <Sparkles className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-green-800 mb-1">AI Recommendation</div>
+                      <div className="text-xs text-green-700 leading-relaxed">
+                        Bedtime routine is working great! Try shifting bedtime 15 min earlier for even better results.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Weekly trend mini chart */}
+                <div className="flex items-end justify-between gap-1 h-16 px-2">
+                  {[65, 78, 72, 85, 90, 88, 93].map((val, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <div
+                        className="w-full rounded-t-md transition-all duration-500 hover:opacity-80"
+                        style={{
+                          height: `${val * 0.6}%`,
+                          background: i === 6 ? 'linear-gradient(to top, hsl(261 83% 58%), hsl(291 64% 42%))' : 'hsl(261 83% 58% / 0.2)',
+                          animationDelay: `${i * 0.1}s`
+                        }}
+                      />
+                      <span className="text-[9px] text-gray-400 font-medium">
+                        {['M','T','W','T','F','S','S'][i]}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
