@@ -912,6 +912,10 @@ html {
   .animate-blob-float,
   .animate-blob-float-delayed,
   .animate-spin-slow,
+  .animate-orb-drift,
+  .animate-glow-pulse,
+  .animate-border-glow,
+  .animate-gradient-shift,
   .bento-border,
   .cta-banner-glow,
   .cta-pulse-glow {
@@ -922,6 +926,17 @@ html {
   .orbit-dot {
     display: none !important;
   }
+  /* Kill expensive backdrop blur + heavy blur filters on mobile —
+     these are the #1 cause of jank when scrolling over pricing cards. */
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-lg,
+  .backdrop-blur-md {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .blur-3xl { filter: blur(24px) !important; }
+  .blur-2xl { filter: blur(18px) !important; }
 }
 
 /* Feature visual hero area — animated mesh + orbits */
