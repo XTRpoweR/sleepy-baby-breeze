@@ -98,9 +98,21 @@ const FeatureCard = memo(({
           </div>
         </div>
 
-        {/* Animated visual hero area (replaces empty white box) */}
-        <div className={`relative z-10 mb-5 h-32 sm:h-36 rounded-2xl overflow-hidden feature-gradient-${feature.colorScheme} feature-visual`}>
+        {/* Animated visual hero area with feature image + colored gradient */}
+        <div className="relative z-10 mb-5 h-36 sm:h-40 rounded-2xl overflow-hidden feature-visual" style={gradientStyle}>
+          {/* Feature illustration as background */}
+          {feature.image && (
+            <img
+              src={feature.image}
+              alt={feature.title}
+              className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-80 group-hover:scale-110 transition-transform duration-700"
+              loading="lazy"
+            />
+          )}
+
+          {/* Animated mesh + dark gradient for text contrast */}
           <div className="feature-mesh" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" aria-hidden="true" />
 
           {/* Orbiting glowing dots */}
           <span className="orbit-dot orbit-dot-1" aria-hidden="true" />
@@ -109,15 +121,15 @@ const FeatureCard = memo(({
 
           {/* Wave bottom */}
           <svg className="feature-wave" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0,20 Q50,5 100,20 T200,20 L200,40 L0,40 Z" fill="rgba(255,255,255,0.18)" />
-            <path d="M0,28 Q50,12 100,28 T200,28 L200,40 L0,40 Z" fill="rgba(255,255,255,0.12)" />
+            <path d="M0,20 Q50,5 100,20 T200,20 L200,40 L0,40 Z" fill="rgba(255,255,255,0.22)" />
+            <path d="M0,28 Q50,12 100,28 T200,28 L200,40 L0,40 Z" fill="rgba(255,255,255,0.14)" />
           </svg>
 
           {/* Center icon with rings */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 shadow-lg icon-3d-tilt">
-              <span className="ripple-ring rounded-2xl bg-white/40" aria-hidden="true" />
-              <span className="ripple-ring ripple-ring-delay rounded-2xl bg-white/40" aria-hidden="true" />
+            <div className="relative inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/25 backdrop-blur-md border border-white/40 shadow-xl icon-3d-tilt">
+              <span className="ripple-ring rounded-2xl" style={{ background: 'rgba(255,255,255,0.5)' }} aria-hidden="true" />
+              <span className="ripple-ring ripple-ring-delay rounded-2xl" style={{ background: 'rgba(255,255,255,0.5)' }} aria-hidden="true" />
               <IconComponent className="h-8 w-8 sm:h-10 sm:w-10 text-white relative z-10 drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />
             </div>
           </div>
