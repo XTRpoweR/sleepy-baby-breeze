@@ -300,11 +300,21 @@ export const SubscriptionPlans = () => {
             )}
           </CardContent>
         </Card>
+        </div>
 
         {/* ============ Premium Annual Plan ============ */}
+        <div className="relative">
+          {annualSelected && (
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20 animate-scale-in">
+              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/40 text-xs px-3 py-1 border-0 whitespace-nowrap">
+                <Zap className="h-3 w-3 mr-1" />
+                Best Value
+              </Badge>
+            </div>
+          )}
         <Card
           className={cn(
-            "relative overflow-hidden border backdrop-blur-xl animate-fade-in",
+            "relative overflow-hidden border backdrop-blur-xl animate-fade-in h-full",
             "transition-all duration-500 ease-out",
             annualSelected
               ? "bg-white/85 dark:bg-slate-900/80 border-purple-300/60 dark:border-purple-500/40 shadow-2xl shadow-purple-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-purple-400/60"
@@ -322,15 +332,6 @@ export const SubscriptionPlans = () => {
             "absolute -bottom-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
             annualSelected ? "bg-pink-400/20 opacity-100" : "opacity-0"
           )} />
-
-          {annualSelected && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10 animate-scale-in">
-              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/40 text-xs px-3 py-1 border-0">
-                <Zap className="h-3 w-3 mr-1" />
-                Best Value
-              </Badge>
-            </div>
-          )}
 
           <CardHeader className="text-center pb-6 lg:pb-8 relative">
             <div className="flex items-center justify-center space-x-2 mb-3">
