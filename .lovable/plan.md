@@ -1,77 +1,38 @@
 
 
-## تحسين قائمة الأسعار — تصميم أنيق وتفاعلي
+## تغيير ضمان الاسترداد من 30 يوم إلى 15 يوم
 
-### الملف المعدّل
-- `src/components/subscription/SubscriptionPlans.tsx` (تعديل العرض فقط — بدون أي تغيير في منطق الدفع، الـ checkout، الـ subscription hook، أو الأزرار الوظيفية).
-
----
-
-### 1) حل مشكلة "زر Monthly / Annual لا يفعل شيئًا"
-
-حاليًا التبديل يغير فقط حواف البطاقات (ring color + شارة Popular/Best Value)، لذلك المستخدم يشعر أنه لا يحدث شيء لأن البطاقات الثلاث تبقى ظاهرة بنفس الحجم.
-
-**الاقتراح المعتمد**: نجعل التبديل **يبرز فعليًا** الباقة المختارة بدل عرض البطاقتين بنفس الأهمية:
-
-- البطاقة المختارة (Monthly أو Annual) تكبر قليلاً (`scale-105`)، تُضيء بحدود متوهجة بلون مميز، وترتفع للأعلى (`-translate-y-2`)، وتكتسب توهجًا (`glow shadow`).
-- البطاقة غير المختارة من ضمن الباقتين المدفوعتين تتحول إلى وضع **"باهت/شفاف"** (`opacity-60`, `scale-95`, `grayscale-[20%]`) لتوجيه نظر المستخدم.
-- شارة "Popular" / "Best Value" تتحرك بحركة `fade-in + scale-in` عند التبديل.
-- السعر داخل البطاقة المختارة يتحرك بـ pulse خفيف عند التبديل لجذب الانتباه.
-- زر CTA الخاص بالبطاقة المختارة يصبح بحجم أكبر ولونه متدرج (gradient)، بينما الباقي outline هادئ.
-
-بهذه الطريقة المستخدم يرى تأثيرًا واضحًا فور الضغط على Monthly/Annual.
+سأستبدل جميع إشارات "استرداد الأموال خلال 30 يوم" في كافة أنحاء التطبيق بـ **15 يوم** مع الإبقاء على الفترة التجريبية المجانية (7 أيام) كما هي في باقات الأسعار.
 
 ---
 
-### 2) تحسين التصميم العام (أنيق + شفاف + يحث على الإجراء)
+### الملفات التي ستُعدَّل
 
-**شريط التبديل (Toggle)**
-- استبدال الخلفية الرمادية بـ glassmorphism: `backdrop-blur-md bg-white/40 dark:bg-white/5 border border-white/20`.
-- المؤشر النشط عبارة عن "pill" ينزلق بسلاسة (`transition-all duration-500 ease-out`) خلف الخيار المختار.
-- شارة "Save $60" تنبض بلطف (`animate-pulse` خفيف).
+**1. `src/pages/Subscription.tsx`**
+- سؤال FAQ "Do you offer refunds?" (سطر 114):
+  - من: *"We offer a 7-day free trial and a 30-day money-back guarantee..."*
+  - إلى: *"We offer a 7-day free trial and a 15-day money-back guarantee for your peace of mind."*
+- بطاقة الضمان السفلية (Money Back Guarantee Box):
+  - العنوان (سطر 266): **"30-Day Money-Back Guarantee"** → **"15-Day Money-Back Guarantee"**
+  - الوصف (سطر 268): استبدال *"within 30 days"* بـ *"within 15 days"*.
+  - النقاط الثلاث (No questions asked / Full refund / Cancel anytime) تبقى كما هي.
 
-**البطاقات (Cards)**
-- خلفية شفافة متدرجة (glass effect): `bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30`.
-- توهج خلفي ملون لكل باقة (blue للـ Basic, orange للـ Monthly, purple للـ Annual) عبر `::before` blur خلف البطاقة.
-- على hover: `hover:-translate-y-2 hover:shadow-2xl` مع توهج أقوى.
-- زاوية الـ "Popular / Best Value" badge تطفو فوق البطاقة بتدرج لوني وحركة `float` خفيفة (up/down 4px).
+**2. `src/pages/Pricing.tsx`** (سطر 379)
+- سؤال FAQ "Do you offer refunds?":
+  - من: *"Yes, we offer a 30-day money-back guarantee..."*
+  - إلى: *"Yes, we offer a 15-day money-back guarantee if you're not completely satisfied."*
 
-**الأسعار**
-- السعر الرئيسي بخط أكبر وتدرج لوني (`bg-gradient-to-r ... bg-clip-text text-transparent`).
-- السعر القديم المشطوب يبقى أصغر وبشفافية.
-- شارة الخصم (40% OFF / Save $60) ترتدي توهج (glow) ناعم.
+**3. `src/pages/HelpArticle.tsx`** — تحديث إشارات استرداد 30 يومًا في مقالات المساعدة:
+- سطر 1752: `30-day refund period for new subscribers` → `15-day refund period for new subscribers`
+- سطر 1815: `(except within 30 days of new subscription)` → `(except within 15 days of new subscription)`
+- سطر 1980: `New subscribers: 30-day money-back guarantee` → `New subscribers: 15-day money-back guarantee`
+- سطر 1987: `Contact customer support within 30 days` → `Contact customer support within 15 days`
 
-**قائمة الميزات**
-- أيقونة الـ check داخل دائرة بتدرج أخضر مع توهج خفيف.
-- على hover للصف، يتحرك السطر قليلاً لليمين (`hover:translate-x-1`) مع تغير لون النص.
-- شارة "NEW" متحركة بـ shimmer/gradient.
-
-**أزرار CTA**
-- الزر الرئيسي (للباقة المختارة): تدرج لوني (gradient) + ظل ملون + سهم ⟶ يتحرك يمينًا عند hover.
-- الأزرار الأخرى: outline أنيق بدون ظل.
-- جميع الأزرار `transition-all duration-300`.
-
-**حركات إضافية (دون إثقال)**
-- البطاقات تظهر بتسلسل عند التحميل (`animate-fade-in` مع `animation-delay` متدرج لكل بطاقة 100ms).
-- الـ ring الملون حول البطاقة المختارة ينبض بلطف.
+> ملاحظة هامة: الإشارات الأخرى للرقم "30 يوم" المتعلقة بـ **الاحتفاظ بالبيانات (data retention)**، **تذكير انتهاء البطاقة**، و**فترة سماح حذف الحساب** ستبقى دون تغيير لأنها غير مرتبطة باسترداد الأموال.
 
 ---
 
-### الجانب التقني
-
-- لا تغيير في `useSubscription`, `createCheckout`, الأسعار، العملات، أو منطق `isCurrentPlan`.
-- التعديلات حصرًا على className والـ wrappers البصرية.
-- نستخدم classes Tailwind الموجودة + animations المعرفة في `tailwind.config.ts` (`fade-in`, `scale-in`) — لا حاجة لإضافة keyframes جديدة، وإن لزم سنضيف `float` و `shimmer` بسيطين في `tailwind.config.ts`.
-- متجاوب بالكامل (mobile-first): على الجوال البطاقات تبقى مكدسة، وتأثيرات الـ scale تُخفّف لتفادي تجاوز الحدود.
-- يحترم `dark mode` الحالي.
-
-```text
-[ Monthly | (Annual ●) ]   ← toggle مع pill منزلق
-       │
-       ▼
-┌──────┐  ┌──────┐  ┌════════┐
-│Basic │  │ Mon  │  ║ Annual ║  ← المختارة أكبر + متوهجة
-│ dim  │  │ dim  │  ║ glow ★ ║
-└──────┘  └──────┘  ╚════════╝
-```
+### النتيجة المتوقعة
+- توحيد رسالة الضمان في كل صفحات التطبيق على **15 يوم لاسترداد الأموال** + **7 أيام تجربة مجانية**.
+- لن يبقى أي ذكر لـ "30-Day Money-Back Guarantee" في أي مكان.
 
