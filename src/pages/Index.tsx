@@ -338,15 +338,17 @@ const Index = () => {
               <span className="text-shimmer block mt-2 sm:mt-3 font-black">
                 {t('hero.titleHighlight')}
               </span>
-              <span className="block mt-3 sm:mt-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700">
-                for{' '}
-                <span className="word-carousel text-gradient align-bottom">
-                  <span className="word-carousel-inner">
-                    <span className="word-carousel-item">peaceful nights</span>
-                    <span className="word-carousel-item">happy mornings</span>
-                    <span className="word-carousel-item">tired parents</span>
-                    <span className="word-carousel-item">growing babies</span>
-                    <span className="word-carousel-item">peaceful nights</span>
+              <span className="block mt-3 sm:mt-4 text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700">
+                <span className="inline-flex flex-wrap justify-center items-baseline gap-x-2 max-w-full">
+                  <span>{t('hero.forLabel', 'for')}</span>
+                  <span className="word-carousel text-gradient">
+                    <span className="word-carousel-inner">
+                      <span className="word-carousel-item">{t('hero.word1', 'peaceful nights')}</span>
+                      <span className="word-carousel-item">{t('hero.word2', 'happy mornings')}</span>
+                      <span className="word-carousel-item">{t('hero.word3', 'tired parents')}</span>
+                      <span className="word-carousel-item">{t('hero.word4', 'growing babies')}</span>
+                      <span className="word-carousel-item">{t('hero.word1', 'peaceful nights')}</span>
+                    </span>
                   </span>
                 </span>
               </span>
