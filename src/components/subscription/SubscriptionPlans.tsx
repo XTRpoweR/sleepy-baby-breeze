@@ -23,7 +23,7 @@ export const SubscriptionPlans = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { currency, loading: currencyLoading, convertPrice, isUSD } = useGeoCurrency();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('annual');
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('monthly');
 
   const handleUpgrade = (pricingPlan: 'monthly' | 'annual' = 'monthly') => {
     if (!user) {
