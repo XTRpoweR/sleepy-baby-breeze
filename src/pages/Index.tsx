@@ -7,7 +7,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X, ArrowRight, Sparkles, Moon, Award, TrendingUp, Shield, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useState, useEffect } from "react";
 
 // Import feature images
 import trackEverythingImg from "@/assets/features/track-everything.png";
@@ -158,6 +158,10 @@ const Index = () => {
     toast
   } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  useEffect(() => {
+    document.body.classList.add('has-sticky-cta');
+    return () => document.body.classList.remove('has-sticky-cta');
+  }, []);
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -358,7 +362,7 @@ const Index = () => {
               {t('hero.subtitleExtra')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
-              <Button size="lg" className="gradient-dynamic btn-glow text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl font-bold text-white border-0 touch-target w-full sm:w-auto group" onClick={handleGetStarted}>
+              <Button size="lg" className="gradient-dynamic btn-glow cta-pulse text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl font-bold text-white border-0 touch-target w-full sm:w-auto group" onClick={handleGetStarted}>
                 <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform" />
                 {t('hero.startTracking')}
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-1 group-hover:translate-x-1 transition-transform" />
@@ -380,9 +384,9 @@ const Index = () => {
             {/* Animated gradient border */}
             <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-pink-500 rounded-3xl blur-md opacity-60 gradient-dynamic" />
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
-              <video className="w-full h-auto block" autoPlay loop muted playsInline preload="auto" poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" width="1280" height="720">
+              <video className="w-full h-auto block" autoPlay loop muted playsInline preload="metadata" poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" width="1280" height="720">
                 <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
-                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy demo" className="w-full h-auto" />
+                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy demo" className="w-full h-auto" loading="lazy" decoding="async" />
               </video>
             </div>
           </div>
@@ -578,6 +582,20 @@ const Index = () => {
           <p className="text-blue-100 text-xs sm:text-sm mt-4 sm:mt-6 font-medium leading-relaxed">Free trial • No credit card required • Coming soon on iOS & Android</p>
         </div>
       </section>
+
+      {/* Sticky Mobile CTA — boost conversion on small screens */}
+      {!user && (
+        <div className="sticky-mobile-cta md:hidden">
+          <Button
+            onClick={handleGetStarted}
+            className="gradient-dynamic btn-glow w-full h-12 rounded-full font-bold text-white border-0 text-base shadow-lg"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            {t('hero.startTracking')}
+            <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 sm:py-12 px-3 sm:px-4 md:px-6 lg:px-8 safe-area-bottom">

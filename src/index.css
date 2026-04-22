@@ -548,3 +548,31 @@
 html {
   transform: none !important;
 }
+
+/* Conversion optimization: pulsing CTA glow */
+@keyframes cta-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.55), 0 12px 30px -8px hsl(var(--primary) / 0.55); }
+  50% { box-shadow: 0 0 0 14px hsl(var(--primary) / 0), 0 18px 40px -8px hsl(var(--primary) / 0.7); }
+}
+.cta-pulse { animation: cta-pulse-glow 2.4s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .cta-pulse { animation: none; } }
+
+/* Sticky mobile CTA bar */
+.sticky-mobile-cta {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  padding: 0.65rem 0.85rem calc(0.65rem + env(safe-area-inset-bottom));
+  background: hsl(var(--background) / 0.92);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border-top: 1px solid hsl(var(--border));
+  box-shadow: 0 -8px 24px -10px hsl(var(--primary) / 0.25);
+  transform: translateY(0);
+  transition: transform .3s ease;
+}
+@media (min-width: 768px) { .sticky-mobile-cta { display: none; } }
+/* Add bottom padding so content isn't hidden behind sticky CTA on mobile */
+@media (max-width: 767px) {
+  body.has-sticky-cta { padding-bottom: 84px; }
+}
