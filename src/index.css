@@ -407,10 +407,10 @@
 
 .word-carousel {
   display: inline-block;
-  height: 1.4em;
-  line-height: 1.4em;
+  height: 1.2em;
+  line-height: 1.2em;
   overflow: hidden;
-  vertical-align: baseline;
+  vertical-align: middle;
   position: relative;
   white-space: nowrap;
 }
@@ -432,9 +432,10 @@
 }
 
 .word-carousel-item {
-  height: 1.4em;
-  line-height: 1.4em;
+  height: 1.2em;
+  line-height: 1.2em;
   white-space: nowrap;
+  display: block;
 }
 
 /* Magnetic glow card */
