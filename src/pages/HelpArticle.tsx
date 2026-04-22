@@ -1749,7 +1749,7 @@ Premium features are designed to grow with your family and provide increasing va
 - Billed once per year on renewal date
 - Automatic renewal for continued service
 - Significant savings compared to monthly billing
-- 30-day refund period for new subscribers
+- 15-day refund period for new subscribers
 
 ### Changing Billing Frequency
 
@@ -1812,7 +1812,7 @@ Premium features are designed to grow with your family and provide increasing va
 
 **Important Cancellation Details**
 - Service continues until end of current billing period
-- No refunds for partial months (except within 30 days of new subscription)
+- No refunds for partial months (except within 15 days of new subscription)
 - Account automatically downgrades to free plan
 - All data is preserved but premium features are disabled
 
@@ -1977,14 +1977,14 @@ Managing your subscription should be hassle-free. If you encounter any issues or
 ### Refund Requests
 
 **Eligible Refund Situations**:
-- **New subscribers**: 30-day money-back guarantee
+- **New subscribers**: 15-day money-back guarantee
 - **Billing errors**: System mistakes or overcharges
 - **Duplicate charges**: Accidental multiple payments
 - **Technical issues**: App malfunction preventing feature use
 
 **Refund Process**:
 1. **Submit Refund Request**
-   - Contact customer support within 30 days
+   - Contact customer support within 15 days
    - Provide reason for refund
    - Include relevant documentation
 
