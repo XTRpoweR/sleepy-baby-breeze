@@ -545,6 +545,49 @@
 }
 .sparkle { animation: sparkle 2.5s ease-in-out infinite; }
 
+/* Slow spin */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
+  will-change: transform;
+}
+
+/* Animated gradient border for tagline pill */
+@keyframes border-rotate {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.tagline-border {
+  position: relative;
+  z-index: 0;
+}
+.tagline-border::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 9999px;
+  padding: 1.5px;
+  background: linear-gradient(
+    90deg,
+    hsl(261 83% 58%),
+    hsl(330 81% 60%),
+    hsl(25 95% 53%),
+    hsl(217 91% 60%),
+    hsl(173 80% 40%),
+    hsl(261 83% 58%)
+  );
+  background-size: 200% 100%;
+  animation: border-rotate 4s linear infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+}
+
 
 /* Fix for vaul Drawer leaving transform: translateZ(0px) on <html>, which breaks position:fixed on Dialogs. This forces the transform off so Dialogs are correctly positioned relative to the viewport. */
 html {
