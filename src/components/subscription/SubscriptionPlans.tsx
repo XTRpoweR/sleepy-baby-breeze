@@ -431,6 +431,7 @@ export const SubscriptionPlans = () => {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
