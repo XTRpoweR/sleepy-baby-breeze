@@ -279,21 +279,27 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "w-full touch-target group transition-all duration-300",
+                "w-full touch-target group relative overflow-hidden transition-all duration-300",
                 monthlySelected
-                  ? "bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/40 hover:shadow-xl hover:shadow-orange-500/50 hover:scale-[1.02] py-6 text-base font-semibold"
+                  ? "bg-[linear-gradient(110deg,#f97316,#fbbf24,#f97316)] bg-[length:200%_100%] animate-gradient-shift text-white shadow-lg shadow-orange-500/50 hover:shadow-2xl hover:shadow-orange-500/60 hover:scale-[1.03] py-6 text-base font-bold tracking-wide border-0"
                   : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
               )}
               onClick={() => handleUpgrade('monthly')}
               disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
             >
-              <span className="flex items-center justify-center gap-2">
+              {/* Shine sweep overlay */}
+              {monthlySelected && !upgradingMonthly && !isCurrentPlan('premium_monthly') && (
+                <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[inherit]">
+                  <span className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shine-sweep" />
+                </span>
+              )}
+              <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingMonthly ? 'Processing...' :
                   isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' :
                     user && isTrial && subscriptionTier === 'premium' ? `Trial (${trialDaysLeft} days left)` :
                       user ? 'Start Free Trial' : 'Start Free Trial'}
                 {monthlySelected && !upgradingMonthly && !isCurrentPlan('premium_monthly') && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5" />
                 )}
               </span>
             </Button>
