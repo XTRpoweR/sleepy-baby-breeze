@@ -418,15 +418,16 @@
 .word-carousel-inner {
   display: flex;
   flex-direction: column;
-  animation: word-cycle 8s ease-in-out infinite;
+  animation: word-cycle 12s cubic-bezier(0.7, 0, 0.3, 1) infinite;
   will-change: transform;
 }
 
+/* Hold each word ~95% of its slot, slide quickly between */
 @keyframes word-cycle {
-  0%, 22% { transform: translateY(0%); }
-  25%, 47% { transform: translateY(-100%); }
-  50%, 72% { transform: translateY(-200%); }
-  75%, 97% { transform: translateY(-300%); }
+  0%, 23% { transform: translateY(0%); }
+  25%, 48% { transform: translateY(-100%); }
+  50%, 73% { transform: translateY(-200%); }
+  75%, 98% { transform: translateY(-300%); }
   100% { transform: translateY(-400%); }
 }
 
