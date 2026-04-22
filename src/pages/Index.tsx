@@ -338,21 +338,24 @@ const Index = () => {
               <span className="text-shimmer block mt-2 sm:mt-3 font-black">
                 {t('hero.titleHighlight')}
               </span>
-              <span className="block mt-3 sm:mt-4 text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-700">
-                <span className="inline-flex flex-wrap justify-center items-baseline gap-x-2 max-w-full">
-                  <span>{t('hero.forLabel', 'for')}</span>
-                  <span className="word-carousel text-gradient">
-                    <span className="word-carousel-inner">
-                      <span className="word-carousel-item">{t('hero.word1', 'peaceful nights')}</span>
-                      <span className="word-carousel-item">{t('hero.word2', 'happy mornings')}</span>
-                      <span className="word-carousel-item">{t('hero.word3', 'tired parents')}</span>
-                      <span className="word-carousel-item">{t('hero.word4', 'growing babies')}</span>
-                      <span className="word-carousel-item">{t('hero.word1', 'peaceful nights')}</span>
-                    </span>
+            </h1>
+
+            {/* Rotating tagline pill */}
+            <div className="flex justify-center mb-6 sm:mb-8">
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 shadow-sm">
+                <Sparkles className="h-4 w-4 text-primary shrink-0" />
+                <span className="word-carousel text-gradient text-sm sm:text-base md:text-lg font-semibold">
+                  <span className="word-carousel-inner">
+                    <span className="word-carousel-item">{t('hero.word1', 'Peaceful nights')}</span>
+                    <span className="word-carousel-item">{t('hero.word2', 'Happy mornings')}</span>
+                    <span className="word-carousel-item">{t('hero.word3', 'Restful parents')}</span>
+                    <span className="word-carousel-item">{t('hero.word4', 'Growing babies')}</span>
+                    <span className="word-carousel-item">{t('hero.word1', 'Peaceful nights')}</span>
                   </span>
                 </span>
-              </span>
-            </h1>
+              </div>
+            </div>
+
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light mb-3">
               {t('hero.subtitle')}
             </p>
