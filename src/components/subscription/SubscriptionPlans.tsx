@@ -199,7 +199,7 @@ export const SubscriptionPlans = () => {
               style={{
                 background: 'linear-gradient(120deg, rgba(249,115,22,0.5), rgba(251,191,36,0.3), rgba(249,115,22,0.5))',
                 backgroundSize: '200% 100%',
-                animation: 'gradient-shift 10s ease infinite',
+                animation: 'gradient-shift 22s ease-in-out infinite',
                 WebkitMask: 'linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)',
                 WebkitMaskComposite: 'xor',
                 maskComposite: 'exclude',
@@ -209,17 +209,17 @@ export const SubscriptionPlans = () => {
           )}
           {/* Animated top accent bar (only when selected) */}
           {monthlySelected && (
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#f97316,#fbbf24,#ef4444,#fbbf24,#f97316)] bg-[length:200%_100%] animate-gradient-shift z-10" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#f97316,#fbbf24,#ef4444,#fbbf24,#f97316)] bg-[length:200%_100%] animate-border-glow z-10 opacity-80" />
           )}
           {/* Drifting glow orbs - slow & calm */}
           <div className={cn(
             "absolute -top-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            monthlySelected ? "bg-orange-400/30 opacity-100 animate-orb-drift" : "bg-orange-400/10 opacity-50"
+            monthlySelected ? "bg-orange-400/20 opacity-80 animate-orb-drift" : "bg-orange-400/10 opacity-40"
           )} />
           <div className={cn(
             "absolute -bottom-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-[1500ms]",
-            monthlySelected ? "bg-amber-400/20 opacity-100 animate-glow-pulse" : "opacity-0"
-          )} style={{ animationDelay: '2s', animationDuration: '6s' }} />
+            monthlySelected ? "bg-amber-400/15 opacity-70 animate-glow-pulse" : "opacity-0"
+          )} style={{ animationDelay: '3s', animationDuration: '12s' }} />
 
 
           <CardHeader className="text-center pb-6 lg:pb-8 relative">
@@ -297,7 +297,7 @@ export const SubscriptionPlans = () => {
               className={cn(
                 "w-full touch-target group relative overflow-hidden transition-all duration-300",
                 monthlySelected
-                  ? "bg-[linear-gradient(110deg,#f97316,#fbbf24,#f97316)] bg-[length:200%_100%] animate-gradient-shift text-white shadow-lg shadow-orange-500/50 hover:shadow-2xl hover:shadow-orange-500/60 hover:scale-[1.03] py-6 text-base font-bold tracking-wide border-0"
+                  ? "bg-[linear-gradient(110deg,#f97316,#fbbf24,#fb923c)] bg-[length:180%_100%] animate-border-glow text-white shadow-lg shadow-orange-500/35 hover:shadow-xl hover:shadow-orange-500/40 hover:scale-[1.01] py-6 text-base font-bold tracking-wide border-0"
                   : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
               )}
               onClick={() => handleUpgrade('monthly')}
@@ -353,7 +353,7 @@ export const SubscriptionPlans = () => {
               style={{
                 background: 'linear-gradient(120deg, rgba(168,85,247,0.5), rgba(236,72,153,0.3), rgba(168,85,247,0.5))',
                 backgroundSize: '200% 100%',
-                animation: 'gradient-shift 10s ease infinite',
+                animation: 'gradient-shift 22s ease-in-out infinite',
                 WebkitMask: 'linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)',
                 WebkitMaskComposite: 'xor',
                 maskComposite: 'exclude',
@@ -363,17 +363,17 @@ export const SubscriptionPlans = () => {
           )}
           {/* Animated top accent bar (only when selected) */}
           {annualSelected && (
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#a855f7,#ec4899,#8b5cf6,#ec4899,#a855f7)] bg-[length:200%_100%] animate-gradient-shift z-10" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#a855f7,#ec4899,#8b5cf6,#ec4899,#a855f7)] bg-[length:200%_100%] animate-border-glow z-10 opacity-80" />
           )}
           {/* Drifting glow orbs - slow & calm */}
           <div className={cn(
             "absolute -top-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            annualSelected ? "bg-purple-400/30 opacity-100 animate-orb-drift" : "bg-purple-400/10 opacity-50"
+            annualSelected ? "bg-purple-400/20 opacity-80 animate-orb-drift" : "bg-purple-400/10 opacity-40"
           )} />
           <div className={cn(
             "absolute -bottom-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-[1500ms]",
-            annualSelected ? "bg-pink-400/20 opacity-100 animate-glow-pulse" : "opacity-0"
-          )} style={{ animationDelay: '2s', animationDuration: '6s' }} />
+            annualSelected ? "bg-pink-400/15 opacity-70 animate-glow-pulse" : "opacity-0"
+          )} style={{ animationDelay: '3s', animationDuration: '12s' }} />
 
           <CardHeader className="text-center pb-6 lg:pb-8 relative">
             <div className="flex items-center justify-center space-x-2 mb-3">
@@ -450,7 +450,7 @@ export const SubscriptionPlans = () => {
               className={cn(
                 "w-full touch-target group relative overflow-hidden transition-all duration-300",
                 annualSelected
-                  ? "bg-[linear-gradient(110deg,#a855f7,#ec4899,#a855f7)] bg-[length:200%_100%] animate-gradient-shift text-white shadow-lg shadow-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/60 hover:scale-[1.03] py-6 text-base font-bold tracking-wide border-0"
+                  ? "bg-[linear-gradient(110deg,#a855f7,#ec4899,#c084fc)] bg-[length:180%_100%] animate-border-glow text-white shadow-lg shadow-purple-500/35 hover:shadow-xl hover:shadow-purple-500/40 hover:scale-[1.01] py-6 text-base font-bold tracking-wide border-0"
                   : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
               )}
               onClick={() => handleUpgrade('annual')}
