@@ -304,11 +304,7 @@ export const SubscriptionPlans = () => {
               disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
             >
               {/* Shine sweep overlay */}
-              {monthlySelected && !upgradingMonthly && !isCurrentPlan('premium_monthly') && (
-                <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[inherit]">
-                  <span className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shine-sweep" />
-                </span>
-              )}
+              {/* shine effect removed for a calmer experience */}
               <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingMonthly ? 'Processing...' :
                   isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' :
@@ -461,11 +457,7 @@ export const SubscriptionPlans = () => {
               disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
             >
               {/* Shine sweep overlay */}
-              {annualSelected && !upgradingAnnual && !isCurrentPlan('premium_annual') && (
-                <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-[inherit]">
-                  <span className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shine-sweep" />
-                </span>
-              )}
+              {/* shine effect removed for a calmer experience */}
               <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingAnnual ? 'Processing...' :
                   isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' :
