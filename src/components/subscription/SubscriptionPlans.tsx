@@ -327,15 +327,19 @@ export const SubscriptionPlans = () => {
           )}
           style={{ animationDelay: '200ms' }}
         >
-          {/* Glow */}
+          {/* Animated top accent bar (only when selected) */}
+          {annualSelected && (
+            <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#a855f7,#ec4899,#8b5cf6,#ec4899,#a855f7)] bg-[length:200%_100%] animate-gradient-shift z-10" />
+          )}
+          {/* Drifting glow orbs */}
           <div className={cn(
             "absolute -top-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            annualSelected ? "bg-purple-400/30 opacity-100" : "bg-purple-400/10 opacity-50"
+            annualSelected ? "bg-purple-400/40 opacity-100 animate-orb-drift" : "bg-purple-400/10 opacity-50"
           )} />
           <div className={cn(
             "absolute -bottom-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            annualSelected ? "bg-pink-400/20 opacity-100" : "opacity-0"
-          )} />
+            annualSelected ? "bg-pink-400/30 opacity-100 animate-glow-pulse" : "opacity-0"
+          )} style={{ animationDelay: '1.5s' }} />
 
           <CardHeader className="text-center pb-6 lg:pb-8 relative">
             <div className="flex items-center justify-center space-x-2 mb-3">
