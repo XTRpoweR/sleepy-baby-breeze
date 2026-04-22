@@ -340,7 +340,7 @@ const Index = () => {
               </span>
             </h1>
 
-            {/* Modern animated tagline */}
+            {/* Modern static tagline */}
             <div className="flex justify-center mb-6 sm:mb-8">
               <div className="group relative inline-flex items-center gap-2.5 sm:gap-3 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/85 backdrop-blur-xl shadow-[0_8px_32px_-8px_hsl(var(--gradient-from)/0.35)] hover:shadow-[0_14px_44px_-10px_hsl(var(--gradient-via)/0.55)] transition-all duration-500 hover:-translate-y-0.5 tagline-border">
                 <span className="relative flex h-2.5 w-2.5 shrink-0">
@@ -348,24 +348,8 @@ const Index = () => {
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-gradient-to-r from-fuchsia-500 to-violet-500" />
                 </span>
                 <Sparkles className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-primary shrink-0 animate-spin-slow" />
-                <span className="word-carousel text-sm sm:text-base md:text-lg font-bold tracking-tight">
-                  <span className="word-carousel-inner">
-                    <span className="word-carousel-item bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
-                      {t('hero.word1', 'Peaceful nights')}
-                    </span>
-                    <span className="word-carousel-item bg-gradient-to-r from-pink-600 via-rose-500 to-orange-500 bg-clip-text text-transparent">
-                      {t('hero.word2', 'Happy mornings')}
-                    </span>
-                    <span className="word-carousel-item bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                      {t('hero.word3', 'Restful parents')}
-                    </span>
-                    <span className="word-carousel-item bg-gradient-to-r from-teal-500 via-emerald-500 to-green-600 bg-clip-text text-transparent">
-                      {t('hero.word4', 'Growing babies')}
-                    </span>
-                    <span className="word-carousel-item bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
-                      {t('hero.word1', 'Peaceful nights')}
-                    </span>
-                  </span>
+                <span className="text-sm sm:text-base md:text-lg font-bold tracking-tight bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent whitespace-nowrap">
+                  {t('hero.word1', 'Peaceful nights')}
                 </span>
                 <Heart className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-pink-500 shrink-0 animate-pulse fill-pink-500/30" />
               </div>
