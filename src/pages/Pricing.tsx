@@ -376,7 +376,7 @@ const Pricing = () => {
             answer: "Basic includes 1 baby profile. Premium includes unlimited baby profiles for your growing family."
           }, {
             question: "Do you offer refunds?",
-            answer: "Yes, we offer a 30-day money-back guarantee if you're not completely satisfied."
+            answer: "Yes, we offer a 15-day money-back guarantee if you're not completely satisfied."
           }, {
             question: "Is my data secure?",
             answer: "Absolutely. We use enterprise-grade encryption and never share your personal data."

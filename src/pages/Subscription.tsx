@@ -111,7 +111,7 @@ const Subscription = () => {
     },
     {
       question: "Do you offer refunds?",
-      answer: "We offer a 7-day free trial and a 30-day money-back guarantee for your peace of mind."
+      answer: "We offer a 7-day free trial and a 15-day money-back guarantee for your peace of mind."
     },
     {
       question: "How many family members can I add?",
@@ -263,9 +263,9 @@ const Subscription = () => {
               <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
             </div>
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">30-Day Money-Back Guarantee</h3>
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">15-Day Money-Back Guarantee</h3>
           <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">
-            Try SleepyBabyy Premium risk-free. If you're not completely satisfied, we'll refund your money within 30 days.
+            Try SleepyBabyy Premium risk-free. If you're not completely satisfied, we'll refund your money within 15 days.
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 text-sm text-gray-600">
             <div className="flex items-center justify-center space-x-1">
