@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkles, Zap, Bot } from 'lucide-react';
+import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkles, Zap, Bot, ArrowRight } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useGeoCurrency } from '@/hooks/useGeoCurrency';
+import { cn } from '@/lib/utils';
 
 export const SubscriptionPlans = () => {
   const {
@@ -23,13 +24,12 @@ export const SubscriptionPlans = () => {
   const navigate = useNavigate();
   const { currency, loading: currencyLoading, convertPrice, isUSD } = useGeoCurrency();
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('annual');
-  
+
   const handleUpgrade = (pricingPlan: 'monthly' | 'annual' = 'monthly') => {
     if (!user) {
       navigate('/auth');
       return;
     }
-    
     createCheckout(pricingPlan);
   };
 
@@ -59,41 +59,74 @@ export const SubscriptionPlans = () => {
     return false;
   };
 
+  const monthlySelected = selectedPlan === 'monthly';
+  const annualSelected = selectedPlan === 'annual';
+
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Pricing Toggle */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1 flex">
+      {/* Pricing Toggle - Glassmorphism with sliding pill */}
+      <div className="flex justify-center mb-10">
+        <div className="relative bg-white/40 dark:bg-white/5 backdrop-blur-md rounded-full p-1.5 flex border border-white/30 dark:border-white/10 shadow-lg">
+          {/* Sliding pill indicator */}
+          <div
+            className={cn(
+              "absolute top-1.5 bottom-1.5 rounded-full bg-gradient-to-r shadow-md transition-all duration-500 ease-out",
+              monthlySelected
+                ? "left-1.5 right-[50%] from-orange-500 to-orange-600"
+                : "left-[50%] right-1.5 from-purple-500 to-purple-600"
+            )}
+          />
           <button
             onClick={() => setSelectedPlan('monthly')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-              selectedPlan === 'monthly'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-            }`}
+            className={cn(
+              "relative z-10 px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300",
+              monthlySelected ? "text-white" : "text-gray-700 dark:text-gray-300 hover:text-gray-900"
+            )}
           >
             Monthly
           </button>
           <button
             onClick={() => setSelectedPlan('annual')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-              selectedPlan === 'annual'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-            }`}
+            className={cn(
+              "relative z-10 px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300 flex items-center gap-2",
+              annualSelected ? "text-white" : "text-gray-700 dark:text-gray-300 hover:text-gray-900"
+            )}
           >
             Annual
-            <Badge className="ml-2 bg-green-500 text-white text-xs">Save $60</Badge>
+            <Badge
+              className={cn(
+                "text-[10px] font-bold transition-all duration-300",
+                annualSelected
+                  ? "bg-white/25 text-white border-0 animate-pulse"
+                  : "bg-green-500 text-white border-0"
+              )}
+            >
+              Save $60
+            </Badge>
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Basic Plan */}
-        <Card className={`relative transition-all duration-300 hover:shadow-xl ${isCurrentPlan('basic') ? 'ring-2 ring-blue-500' : 'hover:-translate-y-1'}`}>
-          <CardHeader className="text-center pb-6 lg:pb-8">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Baby className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+        {/* ============ Basic Plan ============ */}
+        <Card
+          className={cn(
+            "relative overflow-hidden border border-white/40 dark:border-white/10",
+            "bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl",
+            "transition-all duration-500 ease-out animate-fade-in",
+            "hover:-translate-y-2 hover:shadow-2xl",
+            isCurrentPlan('basic') && "ring-2 ring-blue-500"
+          )}
+          style={{ animationDelay: '0ms' }}
+        >
+          {/* Soft glow */}
+          <div className="absolute -top-20 -right-20 w-48 h-48 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
+
+          <CardHeader className="text-center pb-6 lg:pb-8 relative">
+            <div className="flex items-center justify-center space-x-2 mb-3">
+              <div className="bg-blue-100 dark:bg-blue-900/40 rounded-full p-2">
+                <Baby className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
               <CardTitle className="text-lg sm:text-xl">Basic</CardTitle>
               {isCurrentPlan('basic') && (
                 <Badge variant="default" className="bg-blue-100 text-blue-800 text-xs">
@@ -101,28 +134,35 @@ export const SubscriptionPlans = () => {
                 </Badge>
               )}
             </div>
-            <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Free</div>
-            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">Perfect for getting started</p>
+            <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              Free
+            </div>
+            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mt-2">Perfect for getting started</p>
             {!isUSD && !currencyLoading && (
               <p className="text-xs text-muted-foreground mt-1">Billing in USD</p>
             )}
           </CardHeader>
-          <CardContent className="space-y-4 lg:space-y-6">
-            <div className="space-y-3 lg:space-y-4">
+          <CardContent className="space-y-4 lg:space-y-6 relative">
+            <div className="space-y-3">
               {basicFeatures.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <div className="bg-green-100 dark:bg-green-900 rounded-full p-1">
-                    <Check className="h-3 w-3 text-green-600 dark:text-green-400 flex-shrink-0" />
+                <div
+                  key={index}
+                  className="flex items-center space-x-3 group transition-transform duration-200 hover:translate-x-1"
+                >
+                  <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-1 shadow-sm shadow-green-500/30">
+                    <Check className="h-3 w-3 text-white flex-shrink-0" strokeWidth={3} />
                   </div>
-                  <feature.icon className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium">{feature.text}</span>
+                  <feature.icon className="h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                    {feature.text}
+                  </span>
                 </div>
               ))}
             </div>
-            <Button 
-              className="w-full touch-target" 
-              variant={isCurrentPlan('basic') ? 'default' : 'outline'} 
-              disabled={isCurrentPlan('basic')} 
+            <Button
+              className="w-full touch-target transition-all duration-300 hover:shadow-lg"
+              variant={isCurrentPlan('basic') ? 'default' : 'outline'}
+              disabled={isCurrentPlan('basic')}
               onClick={() => !user && navigate('/auth')}
             >
               {user ? isCurrentPlan('basic') ? 'Current Plan' : 'Downgrade' : 'Get Started Free'}
@@ -130,21 +170,42 @@ export const SubscriptionPlans = () => {
           </CardContent>
         </Card>
 
-        {/* Premium Monthly Plan */}
-        <Card className={`relative transition-all duration-300 hover:shadow-xl ${
-          selectedPlan === 'monthly' ? 'ring-2 ring-orange-200' : ''
-        } ${isCurrentPlan('premium_monthly') ? 'ring-2 ring-orange-500' : 'hover:-translate-y-1'}`}>
-          {selectedPlan === 'monthly' && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <Badge className="bg-orange-500 text-white shadow-lg text-xs">
+        {/* ============ Premium Monthly Plan ============ */}
+        <Card
+          className={cn(
+            "relative overflow-hidden border backdrop-blur-xl animate-fade-in",
+            "transition-all duration-500 ease-out",
+            monthlySelected
+              ? "bg-white/85 dark:bg-slate-900/80 border-orange-300/60 dark:border-orange-500/40 shadow-2xl shadow-orange-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-orange-400/60"
+              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
+            isCurrentPlan('premium_monthly') && "ring-2 ring-orange-500"
+          )}
+          style={{ animationDelay: '100ms' }}
+        >
+          {/* Glow */}
+          <div className={cn(
+            "absolute -top-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
+            monthlySelected ? "bg-orange-400/30 opacity-100" : "bg-orange-400/10 opacity-50"
+          )} />
+          <div className={cn(
+            "absolute -bottom-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
+            monthlySelected ? "bg-amber-400/20 opacity-100" : "opacity-0"
+          )} />
+
+          {monthlySelected && (
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10 animate-scale-in">
+              <Badge className="bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/40 text-xs px-3 py-1 border-0">
                 <Crown className="h-3 w-3 mr-1" />
                 Popular
               </Badge>
             </div>
           )}
-          <CardHeader className="text-center pb-6 lg:pb-8">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Crown className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+
+          <CardHeader className="text-center pb-6 lg:pb-8 relative">
+            <div className="flex items-center justify-center space-x-2 mb-3">
+              <div className="bg-orange-100 dark:bg-orange-900/40 rounded-full p-2">
+                <Crown className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              </div>
               <CardTitle className="text-lg sm:text-xl">Premium Monthly</CardTitle>
               {isCurrentPlan('premium_monthly') && !isTrial && (
                 <Badge variant="default" className="bg-orange-100 text-orange-800 text-xs">
@@ -157,27 +218,31 @@ export const SubscriptionPlans = () => {
                 </Badge>
               )}
             </div>
-            
-            <div className="mb-2">
-              <Badge className="bg-red-500 text-white text-xs font-bold px-2 py-1">
+
+            <div className="mb-2 flex justify-center">
+              <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 shadow-md shadow-red-500/30 border-0">
                 40% OFF
               </Badge>
             </div>
-            
+
             {currencyLoading ? (
               <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Loading...</div>
             ) : (
               <>
-                <div className="flex items-center justify-center space-x-2 mb-1">
-                  <span className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 line-through font-medium">
+                <div className="flex items-baseline justify-center space-x-2 mb-1">
+                  <span className="text-base sm:text-lg text-gray-400 dark:text-gray-500 line-through font-medium">
                     {convertPrice(49.99)}
                   </span>
-                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+                  <span className={cn(
+                    "text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent transition-all duration-500",
+                    "bg-gradient-to-r from-orange-500 to-amber-500",
+                    monthlySelected && "drop-shadow-md"
+                  )}>
                     {convertPrice(29.99)}
                   </span>
                   <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/month</span>
                 </div>
-                <p className="text-red-600 dark:text-red-400 text-xs sm:text-sm font-medium">
+                <p className="text-red-600 dark:text-red-400 text-xs sm:text-sm font-semibold">
                   Save {convertPrice(20.00, false)} per month!
                 </p>
                 {!isUSD && (
@@ -185,34 +250,47 @@ export const SubscriptionPlans = () => {
                 )}
               </>
             )}
-            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">Complete baby tracking solution</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mt-2">Complete baby tracking solution</p>
           </CardHeader>
-          <CardContent className="space-y-4 lg:space-y-6">
-            <div className="space-y-3 lg:space-y-4">
+          <CardContent className="space-y-4 lg:space-y-6 relative">
+            <div className="space-y-3">
               {premiumFeatures.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <div className="bg-green-100 dark:bg-green-900 rounded-full p-1">
-                    <Check className="h-3 w-3 text-green-600 dark:text-green-400 flex-shrink-0" />
+                <div
+                  key={index}
+                  className="flex items-center space-x-3 group transition-transform duration-200 hover:translate-x-1"
+                >
+                  <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-1 shadow-sm shadow-green-500/30">
+                    <Check className="h-3 w-3 text-white flex-shrink-0" strokeWidth={3} />
                   </div>
-                  <feature.icon className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1">{feature.text}</span>
+                  <feature.icon className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                    {feature.text}
+                  </span>
                   {(feature as any).isNew && (
-                    <Badge className="bg-primary text-primary-foreground text-[10px] h-5 px-1.5">NEW</Badge>
+                    <Badge className="bg-gradient-to-r from-primary to-purple-500 text-primary-foreground text-[10px] h-5 px-1.5 border-0">NEW</Badge>
                   )}
                 </div>
               ))}
             </div>
-            <Button 
-              className={`w-full transition-all duration-300 hover:scale-105 touch-target ${
-                selectedPlan === 'monthly' ? 'bg-orange-600 hover:bg-orange-700' : 'bg-gray-600 hover:bg-gray-700'
-              }`}
-              onClick={() => handleUpgrade('monthly')} 
+            <Button
+              className={cn(
+                "w-full touch-target group transition-all duration-300",
+                monthlySelected
+                  ? "bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/40 hover:shadow-xl hover:shadow-orange-500/50 hover:scale-[1.02] py-6 text-base font-semibold"
+                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
+              )}
+              onClick={() => handleUpgrade('monthly')}
               disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
             >
-              {upgradingMonthly ? 'Processing...' : 
-               isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' : 
-               user && isTrial && subscriptionTier === 'premium' ? `Trial (${trialDaysLeft} days left)` : 
-               user ? 'Start Free Trial' : 'Start Free Trial'}
+              <span className="flex items-center justify-center gap-2">
+                {upgradingMonthly ? 'Processing...' :
+                  isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' :
+                    user && isTrial && subscriptionTier === 'premium' ? `Trial (${trialDaysLeft} days left)` :
+                      user ? 'Start Free Trial' : 'Start Free Trial'}
+                {monthlySelected && !upgradingMonthly && !isCurrentPlan('premium_monthly') && (
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                )}
+              </span>
             </Button>
             {(!user || !isPremium || (isTrial && subscriptionTier === 'premium')) && (
               <p className="text-xs text-center text-gray-500 dark:text-gray-400">
@@ -222,21 +300,42 @@ export const SubscriptionPlans = () => {
           </CardContent>
         </Card>
 
-        {/* Premium Annual Plan */}
-        <Card className={`relative transition-all duration-300 hover:shadow-xl ${
-          selectedPlan === 'annual' ? 'ring-2 ring-purple-200' : ''
-        } ${isCurrentPlan('premium_annual') ? 'ring-2 ring-purple-500' : 'hover:-translate-y-1'}`}>
-          {selectedPlan === 'annual' && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <Badge className="bg-purple-500 text-white shadow-lg text-xs">
+        {/* ============ Premium Annual Plan ============ */}
+        <Card
+          className={cn(
+            "relative overflow-hidden border backdrop-blur-xl animate-fade-in",
+            "transition-all duration-500 ease-out",
+            annualSelected
+              ? "bg-white/85 dark:bg-slate-900/80 border-purple-300/60 dark:border-purple-500/40 shadow-2xl shadow-purple-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-purple-400/60"
+              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
+            isCurrentPlan('premium_annual') && "ring-2 ring-purple-500"
+          )}
+          style={{ animationDelay: '200ms' }}
+        >
+          {/* Glow */}
+          <div className={cn(
+            "absolute -top-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
+            annualSelected ? "bg-purple-400/30 opacity-100" : "bg-purple-400/10 opacity-50"
+          )} />
+          <div className={cn(
+            "absolute -bottom-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
+            annualSelected ? "bg-pink-400/20 opacity-100" : "opacity-0"
+          )} />
+
+          {annualSelected && (
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10 animate-scale-in">
+              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/40 text-xs px-3 py-1 border-0">
                 <Zap className="h-3 w-3 mr-1" />
                 Best Value
               </Badge>
             </div>
           )}
-          <CardHeader className="text-center pb-6 lg:pb-8">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+
+          <CardHeader className="text-center pb-6 lg:pb-8 relative">
+            <div className="flex items-center justify-center space-x-2 mb-3">
+              <div className="bg-purple-100 dark:bg-purple-900/40 rounded-full p-2">
+                <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
               <CardTitle className="text-lg sm:text-xl">Premium Annual</CardTitle>
               {isCurrentPlan('premium_annual') && (
                 <Badge variant="default" className="bg-purple-100 text-purple-800 text-xs">
@@ -249,27 +348,31 @@ export const SubscriptionPlans = () => {
                 </Badge>
               )}
             </div>
-            
-            <div className="mb-2">
-              <Badge className="bg-green-500 text-white text-xs font-bold px-2 py-1">
+
+            <div className="mb-2 flex justify-center">
+              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-3 py-1 shadow-md shadow-green-500/30 border-0">
                 Save $60/year
               </Badge>
             </div>
-            
+
             {currencyLoading ? (
               <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Loading...</div>
             ) : (
               <>
-                <div className="flex items-center justify-center space-x-2 mb-1">
-                  <span className="text-lg sm:text-xl text-gray-500 dark:text-gray-400 line-through font-medium">
+                <div className="flex items-baseline justify-center space-x-2 mb-1">
+                  <span className="text-base sm:text-lg text-gray-400 dark:text-gray-500 line-through font-medium">
                     {convertPrice(359.88)}
                   </span>
-                  <span className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+                  <span className={cn(
+                    "text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent transition-all duration-500",
+                    "bg-gradient-to-r from-purple-500 to-pink-500",
+                    annualSelected && "drop-shadow-md"
+                  )}>
                     {convertPrice(299)}
                   </span>
                   <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/year</span>
                 </div>
-                <p className="text-green-600 dark:text-green-400 text-xs sm:text-sm font-medium">
+                <p className="text-green-600 dark:text-green-400 text-xs sm:text-sm font-semibold">
                   Equivalent to {convertPrice(299 / 12)}/month
                 </p>
                 {!isUSD && (
@@ -277,34 +380,47 @@ export const SubscriptionPlans = () => {
                 )}
               </>
             )}
-            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">All premium features included</p>
+            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mt-2">All premium features included</p>
           </CardHeader>
-          <CardContent className="space-y-4 lg:space-y-6">
-            <div className="space-y-3 lg:space-y-4">
+          <CardContent className="space-y-4 lg:space-y-6 relative">
+            <div className="space-y-3">
               {premiumFeatures.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-3">
-                  <div className="bg-green-100 dark:bg-green-900 rounded-full p-1">
-                    <Check className="h-3 w-3 text-green-600 dark:text-green-400 flex-shrink-0" />
+                <div
+                  key={index}
+                  className="flex items-center space-x-3 group transition-transform duration-200 hover:translate-x-1"
+                >
+                  <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-1 shadow-sm shadow-green-500/30">
+                    <Check className="h-3 w-3 text-white flex-shrink-0" strokeWidth={3} />
                   </div>
-                  <feature.icon className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1">{feature.text}</span>
+                  <feature.icon className="h-4 w-4 text-purple-500 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+                    {feature.text}
+                  </span>
                   {(feature as any).isNew && (
-                    <Badge className="bg-primary text-primary-foreground text-[10px] h-5 px-1.5">NEW</Badge>
+                    <Badge className="bg-gradient-to-r from-primary to-purple-500 text-primary-foreground text-[10px] h-5 px-1.5 border-0">NEW</Badge>
                   )}
                 </div>
               ))}
             </div>
-            <Button 
-              className={`w-full transition-all duration-300 hover:scale-105 touch-target ${
-                selectedPlan === 'annual' ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-600 hover:bg-gray-700'
-              }`}
-              onClick={() => handleUpgrade('annual')} 
+            <Button
+              className={cn(
+                "w-full touch-target group transition-all duration-300",
+                annualSelected
+                  ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-500/50 hover:scale-[1.02] py-6 text-base font-semibold"
+                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200"
+              )}
+              onClick={() => handleUpgrade('annual')}
               disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
             >
-              {upgradingAnnual ? 'Processing...' : 
-               isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' : 
-               user && isTrial && subscriptionTier === 'premium_annual' ? `Trial (${trialDaysLeft} days left)` : 
-               user ? 'Start Free Trial' : 'Start Free Trial'}
+              <span className="flex items-center justify-center gap-2">
+                {upgradingAnnual ? 'Processing...' :
+                  isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' :
+                    user && isTrial && subscriptionTier === 'premium_annual' ? `Trial (${trialDaysLeft} days left)` :
+                      user ? 'Start Free Trial' : 'Start Free Trial'}
+                {annualSelected && !upgradingAnnual && !isCurrentPlan('premium_annual') && (
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                )}
+              </span>
             </Button>
             {(!user || !isPremiumAnnual || (isTrial && subscriptionTier === 'premium_annual')) && (
               <p className="text-xs text-center text-gray-500 dark:text-gray-400">
