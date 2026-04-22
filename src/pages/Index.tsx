@@ -158,6 +158,10 @@ const Index = () => {
     toast
   } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  useEffect(() => {
+    document.body.classList.add('has-sticky-cta');
+    return () => document.body.classList.remove('has-sticky-cta');
+  }, []);
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
