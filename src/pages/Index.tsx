@@ -619,7 +619,7 @@ const Index = () => {
                     <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
                     <div className="absolute inset-0 shimmer-overlay" />
                     <div className="relative">
-                      <div className="text-3xl sm:text-4xl font-black text-white mb-1 animate-number-pop">11.2h</div>
+                      <div className="text-3xl sm:text-4xl font-black text-white mb-1 animate-number-pop"><CountUp end={11.2} decimals={1} suffix="h" /></div>
                       <div className="text-xs sm:text-sm text-white/90 font-medium flex items-center justify-center gap-1">
                         <Moon className="h-3 w-3 animate-pulse" />
                         Avg. Night Sleep
@@ -629,7 +629,7 @@ const Index = () => {
                   <div className="stat-card-interactive bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-green-200 relative overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
                     <div className="absolute inset-0 shimmer-overlay-light" />
                     <div className="relative">
-                      <div className="text-3xl sm:text-4xl font-black text-green-600 mb-1 animate-number-pop" style={{ animationDelay: '0.2s' }}>2.1h</div>
+                      <div className="text-3xl sm:text-4xl font-black text-green-600 mb-1 animate-number-pop" style={{ animationDelay: '0.2s' }}><CountUp end={2.1} decimals={1} suffix="h" delay={200} /></div>
                       <div className="text-xs sm:text-sm text-gray-600 font-medium flex items-center justify-center gap-1">
                         <Sun className="h-3 w-3 text-yellow-500 animate-spin-slow" />
                         Avg. Day Naps
@@ -643,7 +643,7 @@ const Index = () => {
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 font-medium">Night Sleep Goal</span>
-                      <span className="font-bold text-primary tabular-nums">93%</span>
+                      <span className="font-bold text-primary"><CountUp end={93} suffix="%" delay={300} /></span>
                     </div>
                     <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden relative">
                       <div className="progress-bar-fill-glow" style={{'--progress-width': '93%'} as React.CSSProperties} />
@@ -652,7 +652,7 @@ const Index = () => {
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 font-medium">Nap Consistency</span>
-                      <span className="font-bold text-accent tabular-nums">78%</span>
+                      <span className="font-bold text-accent"><CountUp end={78} suffix="%" delay={500} /></span>
                     </div>
                     <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden relative">
                       <div className="progress-bar-fill-glow accent" style={{'--progress-width': '78%'} as React.CSSProperties} />
