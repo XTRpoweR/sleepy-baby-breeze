@@ -380,9 +380,9 @@ const Index = () => {
             {/* Animated gradient border */}
             <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-pink-500 rounded-3xl blur-md opacity-60 gradient-dynamic" />
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
-              <video className="w-full h-auto block" autoPlay loop muted playsInline preload="auto" poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" width="1280" height="720">
+              <video className="w-full h-auto block" autoPlay loop muted playsInline preload="metadata" poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" width="1280" height="720">
                 <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
-                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy demo" className="w-full h-auto" />
+                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy demo" className="w-full h-auto" loading="lazy" decoding="async" />
               </video>
             </div>
           </div>
