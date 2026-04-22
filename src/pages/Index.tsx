@@ -576,29 +576,64 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Interactive Summary Card */}
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 shadow-2xl order-1 lg:order-2 relative overflow-hidden">
-              {/* Decorative gradient corner */}
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-primary/10 via-accent/10 to-pink-400/10 rounded-full blur-2xl" />
+            {/* Interactive Summary Card — Live & Animated */}
+            <div className="summary-card-live bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 md:p-8 shadow-2xl order-1 lg:order-2 relative overflow-hidden group/card">
+              {/* Animated decorative gradient corners */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-gradient-to-br from-primary/20 via-accent/20 to-pink-400/20 rounded-full blur-2xl animate-blob-float" />
+              <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-gradient-to-tr from-blue-400/15 via-purple-400/15 to-pink-400/15 rounded-full blur-3xl animate-blob-float-delayed" />
+
+              {/* Floating sparkle particles */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {[...Array(8)].map((_, i) => (
+                  <span
+                    key={i}
+                    className="summary-sparkle"
+                    style={{
+                      left: `${10 + i * 11}%`,
+                      top: `${15 + (i % 4) * 20}%`,
+                      animationDelay: `${i * 0.7}s`,
+                      animationDuration: `${4 + (i % 3)}s`,
+                    }}
+                  />
+                ))}
+              </div>
 
               <div className="relative space-y-5">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900">This Week's Summary</h3>
-                  <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full">Live</span>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                    This Week's Summary
+                  </h3>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                    </span>
+                    Live
+                  </span>
                 </div>
 
                 {/* Animated stat cards */}
                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  <div className="stat-card-interactive gradient-dynamic rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center relative overflow-hidden">
+                  <div className="stat-card-interactive gradient-dynamic rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center relative overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
                     <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+                    <div className="absolute inset-0 shimmer-overlay" />
                     <div className="relative">
-                      <div className="text-3xl sm:text-4xl font-black text-white mb-1">11.2h</div>
-                      <div className="text-xs sm:text-sm text-white/80 font-medium">Avg. Night Sleep</div>
+                      <div className="text-3xl sm:text-4xl font-black text-white mb-1 animate-number-pop">11.2h</div>
+                      <div className="text-xs sm:text-sm text-white/90 font-medium flex items-center justify-center gap-1">
+                        <Moon className="h-3 w-3 animate-pulse" />
+                        Avg. Night Sleep
+                      </div>
                     </div>
                   </div>
-                  <div className="stat-card-interactive bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-green-100">
-                    <div className="text-3xl sm:text-4xl font-black text-green-600 mb-1">2.1h</div>
-                    <div className="text-xs sm:text-sm text-gray-600 font-medium">Avg. Day Naps</div>
+                  <div className="stat-card-interactive bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl sm:rounded-2xl p-4 sm:p-5 text-center border border-green-200 relative overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
+                    <div className="absolute inset-0 shimmer-overlay-light" />
+                    <div className="relative">
+                      <div className="text-3xl sm:text-4xl font-black text-green-600 mb-1 animate-number-pop" style={{ animationDelay: '0.2s' }}>2.1h</div>
+                      <div className="text-xs sm:text-sm text-gray-600 font-medium flex items-center justify-center gap-1">
+                        <Sun className="h-3 w-3 text-yellow-500 animate-spin-slow" />
+                        Avg. Day Naps
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -607,37 +642,43 @@ const Index = () => {
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 font-medium">Night Sleep Goal</span>
-                      <span className="font-bold text-primary">93%</span>
+                      <span className="font-bold text-primary tabular-nums">93%</span>
                     </div>
-                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="progress-bar-fill" style={{'--progress-width': '93%'} as React.CSSProperties} />
+                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden relative">
+                      <div className="progress-bar-fill-glow" style={{'--progress-width': '93%'} as React.CSSProperties} />
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 font-medium">Nap Consistency</span>
-                      <span className="font-bold text-accent">78%</span>
+                      <span className="font-bold text-accent tabular-nums">78%</span>
                     </div>
-                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="progress-bar-fill" style={{'--progress-width': '78%'} as React.CSSProperties} />
+                    <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden relative">
+                      <div className="progress-bar-fill-glow accent" style={{'--progress-width': '78%'} as React.CSSProperties} />
                     </div>
                   </div>
                 </div>
 
-                {/* Sleep quality with animated stars */}
-                <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
-                  <span className="text-sm text-gray-600 font-medium">Sleep Quality</span>
-                  <div className="flex space-x-1">
+                {/* Sleep quality with twinkling animated stars */}
+                <div className="flex justify-between items-center p-3 bg-gradient-to-r from-yellow-50 via-amber-50 to-orange-50 rounded-xl border border-yellow-100 relative overflow-hidden">
+                  <div className="absolute inset-0 shimmer-overlay-light" />
+                  <span className="text-sm text-gray-700 font-semibold relative z-10">Sleep Quality</span>
+                  <div className="flex space-x-1 relative z-10">
                     {[1, 2, 3, 4, 5].map(star => (
-                      <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400 star-cascade" style={{ animationDelay: `${star * 0.12}s` }} />
+                      <Star
+                        key={star}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400 star-twinkle drop-shadow-[0_0_4px_rgba(250,204,21,0.6)]"
+                        style={{ animationDelay: `${star * 0.25}s` }}
+                      />
                     ))}
                   </div>
                 </div>
 
                 {/* Recommendation card */}
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100 relative overflow-hidden hover:border-green-300 transition-colors group/rec">
+                  <div className="absolute inset-0 shimmer-overlay-light" />
+                  <div className="flex items-start gap-3 relative">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-green-100 to-emerald-200 flex items-center justify-center animate-icon-bounce">
                       <Sparkles className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
@@ -649,17 +690,21 @@ const Index = () => {
                   </div>
                 </div>
 
-                {/* Weekly trend mini chart */}
-                <div className="flex items-end justify-between gap-1 h-16 px-2">
+                {/* Weekly trend mini chart with animated bars */}
+                <div className="flex items-end justify-between gap-1 h-20 px-2 pt-2">
                   {[65, 78, 72, 85, 90, 88, 93].map((val, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group/bar cursor-pointer">
+                      <span className="text-[9px] font-bold text-primary opacity-0 group-hover/bar:opacity-100 transition-opacity tabular-nums">{val}%</span>
                       <div
-                        className="w-full rounded-t-md transition-all duration-500 hover:opacity-80"
+                        className="w-full rounded-t-md chart-bar-grow group-hover/bar:opacity-90 group-hover/bar:scale-y-105 origin-bottom transition-transform"
                         style={{
-                          height: `${val * 0.6}%`,
-                          background: i === 6 ? 'linear-gradient(to top, hsl(261 83% 58%), hsl(291 64% 42%))' : 'hsl(261 83% 58% / 0.2)',
-                          animationDelay: `${i * 0.1}s`
-                        }}
+                          '--bar-height': `${val}%`,
+                          background: i === 6
+                            ? 'linear-gradient(to top, hsl(261 83% 58%), hsl(291 64% 52%))'
+                            : 'linear-gradient(to top, hsl(261 83% 58% / 0.4), hsl(261 83% 58% / 0.15))',
+                          animationDelay: `${i * 0.12}s`,
+                          boxShadow: i === 6 ? '0 0 12px hsl(261 83% 58% / 0.5)' : 'none',
+                        } as React.CSSProperties}
                       />
                       <span className="text-[9px] text-gray-400 font-medium">
                         {['M','T','W','T','F','S','S'][i]}
