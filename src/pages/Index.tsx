@@ -358,7 +358,7 @@ const Index = () => {
               {t('hero.subtitleExtra')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
-              <Button size="lg" className="gradient-dynamic btn-glow text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl font-bold text-white border-0 touch-target w-full sm:w-auto group" onClick={handleGetStarted}>
+              <Button size="lg" className="gradient-dynamic btn-glow cta-pulse text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl font-bold text-white border-0 touch-target w-full sm:w-auto group" onClick={handleGetStarted}>
                 <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform" />
                 {t('hero.startTracking')}
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-1 group-hover:translate-x-1 transition-transform" />
