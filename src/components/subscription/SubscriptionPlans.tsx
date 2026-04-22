@@ -88,21 +88,21 @@ export const SubscriptionPlans = () => {
           <button
             onClick={() => setSelectedPlan('annual')}
             className={cn(
-              "relative z-10 px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300 flex items-center gap-2",
+              "relative z-10 px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300",
               annualSelected ? "text-white" : "text-gray-700 dark:text-gray-300 hover:text-gray-900"
             )}
           >
             Annual
-            <Badge
+            {/* Floating discount tag — always above the button, doesn't compete with the active pill */}
+            <span
               className={cn(
-                "text-[10px] font-bold transition-all duration-500 border-0",
-                annualSelected
-                  ? "bg-white/25 text-white"
-                  : "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-sm shadow-green-500/30"
+                "absolute -top-3 -right-2 px-1.5 py-0.5 rounded-full text-[9px] font-bold leading-none border-2 border-white dark:border-slate-900 shadow-md transition-all duration-500 pointer-events-none",
+                "bg-gradient-to-r from-green-500 to-emerald-500 text-white",
+                annualSelected ? "scale-90 opacity-90" : "scale-100 opacity-100"
               )}
             >
-              Save $60
-            </Badge>
+              -$60
+            </span>
           </button>
         </div>
       </div>
