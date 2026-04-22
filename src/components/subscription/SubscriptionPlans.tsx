@@ -361,7 +361,7 @@ export const SubscriptionPlans = () => {
             "transition-all duration-500 ease-out",
             annualSelected
               ? "bg-white/85 dark:bg-slate-900/80 border-purple-300/60 dark:border-purple-500/40 shadow-2xl shadow-purple-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-purple-400/60"
-              : "bg-white/80 dark:bg-slate-900/75 border-white/50 dark:border-white/15 opacity-100 hover:-translate-y-1 lg:bg-white/50 lg:dark:bg-slate-900/40 lg:scale-95 lg:opacity-70 lg:hover:opacity-90",
+              : "bg-white/88 dark:bg-slate-900/78 border-purple-200/70 dark:border-purple-400/20 shadow-lg shadow-purple-500/10 opacity-100 hover:-translate-y-1 lg:scale-[0.98]",
             isCurrentPlan('premium_annual') && "ring-2 ring-purple-500"
           )}
           style={{ animationDelay: '200ms' }}
@@ -471,9 +471,9 @@ export const SubscriptionPlans = () => {
             <Button
               className={cn(
                 "relative z-20 w-full min-h-[3.75rem] touch-target group overflow-hidden rounded-full py-6 text-base font-bold tracking-wide whitespace-normal leading-tight border-0 transition-all duration-300",
-                "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white",
-                "shadow-[0_10px_30px_-8px_rgba(168,85,247,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(168,85,247,0.85)]",
-                "hover:scale-[1.02] ring-1 ring-purple-400/40"
+                "bg-gradient-to-r from-purple-400 via-violet-400 to-purple-500 text-white",
+                "shadow-[0_16px_36px_-12px_rgba(168,85,247,0.65)] hover:shadow-[0_20px_42px_-12px_rgba(168,85,247,0.82)]",
+                "hover:scale-[1.02] hover:brightness-105"
               )}
               type="button"
               onClick={(event) => {
