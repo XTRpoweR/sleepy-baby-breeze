@@ -143,7 +143,7 @@ export default {
 				},
 				'shine-sweep': {
 					'0%': { transform: 'translateX(-150%) skewX(-20deg)' },
-					'100%': { transform: 'translateX(250%) skewX(-20deg)' }
+					'60%, 100%': { transform: 'translateX(350%) skewX(-20deg)' }
 				},
 				'orb-drift': {
 					'0%, 100%': { transform: 'translate(0, 0) scale(1)' },
@@ -162,8 +162,9 @@ export default {
 				'shimmer': 'shimmer 3s linear infinite',
 				'gradient-shift': 'gradient-shift 6s ease infinite',
 				'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
-				'shine-sweep': 'shine-sweep 2.5s ease-in-out infinite',
-				'orb-drift': 'orb-drift 8s ease-in-out infinite',
+				'shine-sweep': 'shine-sweep 5s ease-in-out infinite',
+				'orb-drift': 'orb-drift 14s ease-in-out infinite',
+				'border-glow': 'gradient-shift 8s ease infinite',
 			}
 		}
 	},

@@ -191,19 +191,35 @@ export const SubscriptionPlans = () => {
           )}
           style={{ animationDelay: '100ms' }}
         >
+          {/* Soft animated glowing border halo (organized — outlines the whole card) */}
+          {monthlySelected && (
+            <div
+              aria-hidden
+              className="absolute -inset-[1px] rounded-[inherit] pointer-events-none opacity-60"
+              style={{
+                background: 'linear-gradient(120deg, rgba(249,115,22,0.5), rgba(251,191,36,0.3), rgba(249,115,22,0.5))',
+                backgroundSize: '200% 100%',
+                animation: 'gradient-shift 10s ease infinite',
+                WebkitMask: 'linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+                padding: '1.5px',
+              }}
+            />
+          )}
           {/* Animated top accent bar (only when selected) */}
           {monthlySelected && (
             <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#f97316,#fbbf24,#ef4444,#fbbf24,#f97316)] bg-[length:200%_100%] animate-gradient-shift z-10" />
           )}
-          {/* Drifting glow orbs */}
+          {/* Drifting glow orbs - slow & calm */}
           <div className={cn(
             "absolute -top-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            monthlySelected ? "bg-orange-400/40 opacity-100 animate-orb-drift" : "bg-orange-400/10 opacity-50"
+            monthlySelected ? "bg-orange-400/30 opacity-100 animate-orb-drift" : "bg-orange-400/10 opacity-50"
           )} />
           <div className={cn(
-            "absolute -bottom-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            monthlySelected ? "bg-amber-400/30 opacity-100 animate-glow-pulse" : "opacity-0"
-          )} style={{ animationDelay: '1.5s' }} />
+            "absolute -bottom-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-[1500ms]",
+            monthlySelected ? "bg-amber-400/20 opacity-100 animate-glow-pulse" : "opacity-0"
+          )} style={{ animationDelay: '2s', animationDuration: '6s' }} />
 
 
           <CardHeader className="text-center pb-6 lg:pb-8 relative">
@@ -333,19 +349,35 @@ export const SubscriptionPlans = () => {
           )}
           style={{ animationDelay: '200ms' }}
         >
+          {/* Soft animated glowing border halo (organized — outlines the whole card) */}
+          {annualSelected && (
+            <div
+              aria-hidden
+              className="absolute -inset-[1px] rounded-[inherit] pointer-events-none opacity-60"
+              style={{
+                background: 'linear-gradient(120deg, rgba(168,85,247,0.5), rgba(236,72,153,0.3), rgba(168,85,247,0.5))',
+                backgroundSize: '200% 100%',
+                animation: 'gradient-shift 10s ease infinite',
+                WebkitMask: 'linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+                padding: '1.5px',
+              }}
+            />
+          )}
           {/* Animated top accent bar (only when selected) */}
           {annualSelected && (
             <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#a855f7,#ec4899,#8b5cf6,#ec4899,#a855f7)] bg-[length:200%_100%] animate-gradient-shift z-10" />
           )}
-          {/* Drifting glow orbs */}
+          {/* Drifting glow orbs - slow & calm */}
           <div className={cn(
             "absolute -top-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            annualSelected ? "bg-purple-400/40 opacity-100 animate-orb-drift" : "bg-purple-400/10 opacity-50"
+            annualSelected ? "bg-purple-400/30 opacity-100 animate-orb-drift" : "bg-purple-400/10 opacity-50"
           )} />
           <div className={cn(
-            "absolute -bottom-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            annualSelected ? "bg-pink-400/30 opacity-100 animate-glow-pulse" : "opacity-0"
-          )} style={{ animationDelay: '1.5s' }} />
+            "absolute -bottom-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-[1500ms]",
+            annualSelected ? "bg-pink-400/20 opacity-100 animate-glow-pulse" : "opacity-0"
+          )} style={{ animationDelay: '2s', animationDuration: '6s' }} />
 
           <CardHeader className="text-center pb-6 lg:pb-8 relative">
             <div className="flex items-center justify-center space-x-2 mb-3">
