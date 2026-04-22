@@ -407,10 +407,12 @@
 
 .word-carousel {
   display: inline-block;
-  height: 1.2em;
+  height: 1.4em;
+  line-height: 1.4em;
   overflow: hidden;
-  vertical-align: bottom;
+  vertical-align: baseline;
   position: relative;
+  white-space: nowrap;
 }
 
 .word-carousel-inner {
@@ -429,8 +431,8 @@
 }
 
 .word-carousel-item {
-  height: 1.2em;
-  line-height: 1.2em;
+  height: 1.4em;
+  line-height: 1.4em;
   white-space: nowrap;
 }
 
