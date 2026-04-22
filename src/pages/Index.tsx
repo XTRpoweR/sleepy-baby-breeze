@@ -409,13 +409,19 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section — Premium grid with gradient header */}
-      <section id="features" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-white overflow-hidden">
-        <div className="aurora-blob aurora-2 w-[500px] h-[500px] -top-32 right-0 opacity-30" aria-hidden="true" />
+      {/* Features Section — Bento grid with premium animations */}
+      <section id="features" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white via-purple-50/30 to-white overflow-hidden">
+        <div className="aurora-blob aurora-1 w-[500px] h-[500px] -top-32 -left-20 opacity-40" aria-hidden="true" />
+        <div className="aurora-blob aurora-2 w-[600px] h-[600px] -bottom-40 right-0 opacity-30" aria-hidden="true" />
+
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-              <Zap className="h-3.5 w-3.5 text-primary" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 shadow-sm mb-5">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+              </span>
+              <Zap className="h-3.5 w-3.5 text-primary animate-pulse" />
               <span className="text-xs font-bold text-primary tracking-wider uppercase">Powerful Features</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight leading-[1.1]">
@@ -425,10 +431,79 @@ const Index = () => {
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
               {t('features.subtitle')}
             </p>
+
+            {/* Trust strip */}
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm text-gray-500">
+              <div className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-pink-500" /> <span className="font-medium">10,000+ families</span></div>
+              <span className="text-gray-300">•</span>
+              <div className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" /> <span className="font-medium">4.9 rating</span></div>
+              <span className="text-gray-300">•</span>
+              <div className="inline-flex items-center gap-1.5"><Globe className="h-3.5 w-3.5 text-blue-500" /> <span className="font-medium">8 languages</span></div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-            {features.map((feature, index) => <FeatureCard key={index} feature={feature} index={index} />)}
+          {/* Bento grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-fr">
+            {features.map((feature, index) => (
+              <FeatureCard key={index} feature={feature} index={index} size="md" />
+            ))}
+          </div>
+
+          {/* CTA Banner */}
+          <div className="mt-14 sm:mt-20 relative animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+            <div className="cta-banner-glow absolute -inset-1 rounded-3xl opacity-70 blur-xl" aria-hidden="true" />
+            <div className="relative gradient-dynamic rounded-3xl p-7 sm:p-10 md:p-12 overflow-hidden shadow-2xl">
+              <div className="absolute -top-16 -right-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-20 -left-10 w-72 h-72 bg-pink-300/20 rounded-full blur-3xl" />
+
+              <div className="relative flex flex-col md:flex-row items-center justify-between gap-7">
+                <div className="text-center md:text-left max-w-xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 mb-4">
+                    <Sparkles className="h-3.5 w-3.5 text-white animate-pulse" />
+                    <span className="text-[11px] font-bold text-white tracking-wider uppercase">Start tonight</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight mb-3">
+                    Ready to give your baby <span className="underline decoration-white/40 decoration-4 underline-offset-4">better sleep</span> tonight?
+                  </h3>
+                  <p className="text-white/85 text-sm sm:text-base font-light leading-relaxed">
+                    Join thousands of parents who finally figured out their baby's sleep — in just a few taps.
+                  </p>
+
+                  <div className="mt-5 flex items-center justify-center md:justify-start gap-3">
+                    <div className="flex -space-x-2">
+                      {['from-pink-400 to-rose-500','from-blue-400 to-indigo-500','from-emerald-400 to-teal-500','from-amber-400 to-orange-500'].map((g, i) => (
+                        <div key={i} className={`w-8 h-8 rounded-full bg-gradient-to-br ${g} ring-2 ring-white flex items-center justify-center text-white text-[10px] font-bold`}>
+                          {['JM','SK','AL','RT'][i]}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-xs text-white/90">
+                      <div className="font-semibold">Joined by 10,000+ parents</div>
+                      <div className="flex items-center gap-1 text-white/70">
+                        {[1,2,3,4,5].map(s => <Star key={s} className="h-3 w-3 fill-yellow-300 text-yellow-300" />)}
+                        <span className="ml-1">4.9 average</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-3 w-full md:w-auto shrink-0">
+                  <Button
+                    size="lg"
+                    onClick={handleGetStarted}
+                    className="cta-pulse-glow w-full md:w-auto bg-white text-primary hover:bg-white/95 hover:scale-105 font-bold text-base px-8 py-6 rounded-full shadow-2xl border-0 group transition-all duration-300"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform" />
+                    Start Free Today
+                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1.5 transition-transform" />
+                  </Button>
+                  <div className="flex items-center gap-2 text-[11px] text-white/80 font-medium">
+                    <Shield className="h-3 w-3" />
+                    No credit card · Cancel anytime
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
