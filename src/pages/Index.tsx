@@ -583,6 +583,20 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Sticky Mobile CTA — boost conversion on small screens */}
+      {!user && (
+        <div className="sticky-mobile-cta md:hidden">
+          <Button
+            onClick={handleGetStarted}
+            className="gradient-dynamic btn-glow w-full h-12 rounded-full font-bold text-white border-0 text-base shadow-lg"
+          >
+            <Sparkles className="h-4 w-4 mr-2" />
+            {t('hero.startTracking')}
+            <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      )}
+
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 sm:py-12 px-3 sm:px-4 md:px-6 lg:px-8 safe-area-bottom">
         <div className="max-w-7xl mx-auto">
