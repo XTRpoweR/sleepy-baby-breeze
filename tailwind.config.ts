@@ -143,7 +143,7 @@ export default {
 				},
 				'shine-sweep': {
 					'0%': { transform: 'translateX(-150%) skewX(-20deg)' },
-					'60%, 100%': { transform: 'translateX(350%) skewX(-20deg)' }
+					'40%, 100%': { transform: 'translateX(350%) skewX(-20deg)' }
 				},
 				'orb-drift': {
 					'0%, 100%': { transform: 'translate(0, 0) scale(1)' },
