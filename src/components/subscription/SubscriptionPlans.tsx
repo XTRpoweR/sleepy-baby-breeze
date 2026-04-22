@@ -171,9 +171,18 @@ export const SubscriptionPlans = () => {
         </Card>
 
         {/* ============ Premium Monthly Plan ============ */}
+        <div className="relative">
+          {monthlySelected && (
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20 animate-scale-in">
+              <Badge className="bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/40 text-xs px-3 py-1 border-0 whitespace-nowrap">
+                <Crown className="h-3 w-3 mr-1" />
+                Popular
+              </Badge>
+            </div>
+          )}
         <Card
           className={cn(
-            "relative overflow-hidden border backdrop-blur-xl animate-fade-in",
+            "relative overflow-hidden border backdrop-blur-xl animate-fade-in h-full",
             "transition-all duration-500 ease-out",
             monthlySelected
               ? "bg-white/85 dark:bg-slate-900/80 border-orange-300/60 dark:border-orange-500/40 shadow-2xl shadow-orange-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-orange-400/60"
@@ -192,14 +201,6 @@ export const SubscriptionPlans = () => {
             monthlySelected ? "bg-amber-400/20 opacity-100" : "opacity-0"
           )} />
 
-          {monthlySelected && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10 animate-scale-in">
-              <Badge className="bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/40 text-xs px-3 py-1 border-0">
-                <Crown className="h-3 w-3 mr-1" />
-                Popular
-              </Badge>
-            </div>
-          )}
 
           <CardHeader className="text-center pb-6 lg:pb-8 relative">
             <div className="flex items-center justify-center space-x-2 mb-3">
