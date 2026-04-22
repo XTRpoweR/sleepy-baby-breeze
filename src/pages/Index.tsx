@@ -20,111 +20,111 @@ import whiteNoiseImg from "@/assets/features/white-noise.png";
 // Memoized components for better performance
 const FeatureCard = memo(({
   feature,
-  index
+  index,
+  size = 'md',
 }: {
   feature: any;
   index: number;
+  size?: 'sm' | 'md' | 'lg' | 'tall';
 }) => {
   const IconComponent = feature.icon;
   const formattedNumber = (index + 1).toString().padStart(2, '0');
-  
-  return <Card className="group relative border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 animate-fade-in-up card-glow gpu-accelerated overflow-hidden feature-card-premium" style={{
-    animationDelay: `${index * 100}ms`
-  }}>
-      <CardContent className="p-6 sm:p-8 relative">
-        {/* Decorative background pattern */}
-        <div className="absolute top-0 right-0 w-32 h-32 opacity-5">
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <circle cx="50" cy="50" r="40" fill="currentColor" className="text-primary" />
-            <circle cx="20" cy="20" r="15" fill="currentColor" className="text-primary" />
-            <circle cx="80" cy="80" r="20" fill="currentColor" className="text-primary" />
-          </svg>
-        </div>
-        
-        {/* Number indicator */}
-        <div className="absolute top-4 left-4 sm:top-6 sm:left-6">
-          <span className={`text-5xl sm:text-6xl font-black opacity-10 feature-gradient-${feature.colorScheme} bg-clip-text text-transparent`}>
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+  }, []);
+
+  const sizeClasses = {
+    sm: 'sm:col-span-1 sm:row-span-1',
+    md: 'sm:col-span-1 sm:row-span-1',
+    lg: 'sm:col-span-2 sm:row-span-1',
+    tall: 'sm:col-span-1 sm:row-span-2',
+  }[size];
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      className={`bento-card group relative rounded-3xl overflow-hidden animate-fade-in-up gpu-accelerated ${sizeClasses}`}
+      style={{ animationDelay: `${index * 90}ms` }}
+    >
+      {/* Animated rotating gradient border */}
+      <div className={`bento-border feature-gradient-${feature.colorScheme}`} aria-hidden="true" />
+
+      {/* Inner card surface */}
+      <div className="bento-inner relative h-full bg-white rounded-[calc(1.5rem-2px)] p-6 sm:p-7 flex flex-col">
+        {/* Spotlight follow-cursor */}
+        <div className="bento-spotlight" aria-hidden="true" />
+
+        {/* Floating particles */}
+        <span className="floating-particle particle-1" aria-hidden="true" />
+        <span className="floating-particle particle-2" aria-hidden="true" />
+        <span className="floating-particle particle-3" aria-hidden="true" />
+
+        {/* Top row: number + badges */}
+        <div className="relative z-10 flex items-start justify-between mb-4">
+          <span className={`text-3xl sm:text-4xl font-black opacity-15 feature-gradient-${feature.colorScheme} bg-clip-text text-transparent leading-none`}>
             {formattedNumber}
           </span>
+          <div className="flex flex-col items-end gap-1.5">
+            <span className="text-[10px] font-bold tracking-widest text-primary/70 bg-primary/5 px-2 py-1 rounded-full border border-primary/15 backdrop-blur-sm uppercase">
+              {feature.category}
+            </span>
+            {feature.badge && (
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full badge-glow ${
+                feature.badge === 'POPULAR'
+                  ? 'bg-orange-100 text-orange-700 border border-orange-300'
+                  : 'bg-purple-100 text-purple-700 border border-purple-300'
+              }`}>
+                {feature.badge === 'POPULAR' ? '🔥 POPULAR' : '⭐ PREMIUM'}
+              </span>
+            )}
+          </div>
         </div>
-        
-        {/* Category Label */}
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10">
-          <span className="text-[10px] sm:text-xs font-bold tracking-wider text-primary/60 bg-primary/5 px-2 py-1 rounded-full border border-primary/20 backdrop-blur-sm">
-            {feature.category}
+
+        {/* Icon with ripple rings */}
+        <div className="relative z-10 mb-5">
+          <div className={`relative inline-flex p-4 rounded-2xl feature-gradient-${feature.colorScheme} text-white shadow-lg icon-3d-tilt`}>
+            <span className={`ripple-ring feature-gradient-${feature.colorScheme}`} aria-hidden="true" />
+            <span className={`ripple-ring ripple-ring-delay feature-gradient-${feature.colorScheme}`} aria-hidden="true" />
+            <IconComponent className="h-7 w-7 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+          </div>
+        </div>
+
+        {/* Text content */}
+        <div className="relative z-10 flex-1 space-y-2.5">
+          <h3 className="text-xl sm:text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300 leading-tight">
+            {feature.title}
+          </h3>
+          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+            {feature.description}
+          </p>
+        </div>
+
+        {/* Bottom: metric + reveal CTA */}
+        <div className="relative z-10 mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
+          {feature.metric ? (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+              <span className="font-medium">{feature.metric}</span>
+            </div>
+          ) : <span />}
+          <span className="learn-more-arrow inline-flex items-center gap-1 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+            Learn more
+            <ArrowRight className="h-3.5 w-3.5" />
           </span>
         </div>
-        
-        {/* Premium/Popular Badge for specific features */}
-        {feature.badge && (
-          <div className="absolute top-12 right-3 sm:top-14 sm:right-4 z-10">
-            <span className={`text-[10px] sm:text-xs font-bold px-2 py-1 rounded-full ${
-              feature.badge === 'POPULAR' 
-                ? 'bg-orange-100 text-orange-700 border border-orange-300' 
-                : 'bg-purple-100 text-purple-700 border border-purple-300'
-            }`}>
-              {feature.badge === 'POPULAR' ? '🔥 POPULAR' : '⭐ PREMIUM'}
-            </span>
-          </div>
-        )}
-        
-        <div className="flex flex-col items-start gap-5 relative z-10 mt-12 sm:mt-16">
-          {/* Image container with icon overlay */}
-          <div className="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden mb-2">
-            {/* Feature illustration */}
-            {feature.image && (
-              <img
-                src={feature.image}
-                alt={feature.title}
-                className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
-                loading="lazy"
-              />
-            )}
-            {/* Gradient overlay on hover */}
-            <div className={`absolute inset-0 bg-gradient-to-br from-black/0 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-            {/* Icon overlay */}
-            <div className={`absolute inset-0 flex items-center justify-center`}>
-              <div className={`relative p-4 sm:p-5 rounded-2xl feature-gradient-${feature.colorScheme} text-white group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg group-hover:shadow-2xl`}>
-                <IconComponent className="h-7 w-7 sm:h-9 sm:w-9 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                {/* Glow effect on hover */}
-                <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-60 blur-xl transition-opacity duration-500`} />
-                {/* Pulse ring effect */}
-                <div className={`absolute inset-0 rounded-2xl feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-30 animate-ping`} />
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-3 text-left flex-1">
-            {/* Larger, bolder title */}
-            <h3 className="text-xl sm:text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
-              {feature.title}
-            </h3>
-            {/* Enhanced description */}
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              {feature.description}
-            </p>
-            
-            {/* Usage metrics badge for popular features */}
-            {feature.metric && (
-              <div className="flex items-center gap-2 pt-2">
-                <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
-                  <CheckCircle className="h-3 w-3 text-green-500" />
-                  <span className="font-medium">{feature.metric}</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        {/* Subtle background glow that matches feature color */}
-        <div className={`absolute -bottom-8 -right-8 w-32 h-32 feature-gradient-${feature.colorScheme} opacity-0 group-hover:opacity-10 blur-3xl transition-opacity duration-700 rounded-full`} />
-        
-        {/* Corner accent decoration */}
-        <div className="absolute bottom-0 left-0 w-16 h-16 opacity-5">
-          <div className={`w-full h-full feature-gradient-${feature.colorScheme} transform rotate-45 -translate-x-8 translate-y-8`} />
-        </div>
-      </CardContent>
-    </Card>;
+
+        {/* Bottom progress bar */}
+        <div className={`absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-700 ease-out feature-gradient-${feature.colorScheme}`} />
+      </div>
+    </div>
+  );
 });
 const TestimonialCard = memo(({
   testimonial,
@@ -409,13 +409,19 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section — Premium grid with gradient header */}
-      <section id="features" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-white overflow-hidden">
-        <div className="aurora-blob aurora-2 w-[500px] h-[500px] -top-32 right-0 opacity-30" aria-hidden="true" />
+      {/* Features Section — Bento grid with premium animations */}
+      <section id="features" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white via-purple-50/30 to-white overflow-hidden">
+        <div className="aurora-blob aurora-1 w-[500px] h-[500px] -top-32 -left-20 opacity-40" aria-hidden="true" />
+        <div className="aurora-blob aurora-2 w-[600px] h-[600px] -bottom-40 right-0 opacity-30" aria-hidden="true" />
+
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-              <Zap className="h-3.5 w-3.5 text-primary" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 shadow-sm mb-5">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+              </span>
+              <Zap className="h-3.5 w-3.5 text-primary animate-pulse" />
               <span className="text-xs font-bold text-primary tracking-wider uppercase">Powerful Features</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight leading-[1.1]">
@@ -425,10 +431,79 @@ const Index = () => {
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
               {t('features.subtitle')}
             </p>
+
+            {/* Trust strip */}
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm text-gray-500">
+              <div className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-pink-500" /> <span className="font-medium">10,000+ families</span></div>
+              <span className="text-gray-300">•</span>
+              <div className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" /> <span className="font-medium">4.9 rating</span></div>
+              <span className="text-gray-300">•</span>
+              <div className="inline-flex items-center gap-1.5"><Globe className="h-3.5 w-3.5 text-blue-500" /> <span className="font-medium">8 languages</span></div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-            {features.map((feature, index) => <FeatureCard key={index} feature={feature} index={index} />)}
+          {/* Bento grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-fr">
+            {features.map((feature, index) => (
+              <FeatureCard key={index} feature={feature} index={index} size="md" />
+            ))}
+          </div>
+
+          {/* CTA Banner */}
+          <div className="mt-14 sm:mt-20 relative animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+            <div className="cta-banner-glow absolute -inset-1 rounded-3xl opacity-70 blur-xl" aria-hidden="true" />
+            <div className="relative gradient-dynamic rounded-3xl p-7 sm:p-10 md:p-12 overflow-hidden shadow-2xl">
+              <div className="absolute -top-16 -right-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute -bottom-20 -left-10 w-72 h-72 bg-pink-300/20 rounded-full blur-3xl" />
+
+              <div className="relative flex flex-col md:flex-row items-center justify-between gap-7">
+                <div className="text-center md:text-left max-w-xl">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 mb-4">
+                    <Sparkles className="h-3.5 w-3.5 text-white animate-pulse" />
+                    <span className="text-[11px] font-bold text-white tracking-wider uppercase">Start tonight</span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight mb-3">
+                    Ready to give your baby <span className="underline decoration-white/40 decoration-4 underline-offset-4">better sleep</span> tonight?
+                  </h3>
+                  <p className="text-white/85 text-sm sm:text-base font-light leading-relaxed">
+                    Join thousands of parents who finally figured out their baby's sleep — in just a few taps.
+                  </p>
+
+                  <div className="mt-5 flex items-center justify-center md:justify-start gap-3">
+                    <div className="flex -space-x-2">
+                      {['from-pink-400 to-rose-500','from-blue-400 to-indigo-500','from-emerald-400 to-teal-500','from-amber-400 to-orange-500'].map((g, i) => (
+                        <div key={i} className={`w-8 h-8 rounded-full bg-gradient-to-br ${g} ring-2 ring-white flex items-center justify-center text-white text-[10px] font-bold`}>
+                          {['JM','SK','AL','RT'][i]}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-xs text-white/90">
+                      <div className="font-semibold">Joined by 10,000+ parents</div>
+                      <div className="flex items-center gap-1 text-white/70">
+                        {[1,2,3,4,5].map(s => <Star key={s} className="h-3 w-3 fill-yellow-300 text-yellow-300" />)}
+                        <span className="ml-1">4.9 average</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-3 w-full md:w-auto shrink-0">
+                  <Button
+                    size="lg"
+                    onClick={handleGetStarted}
+                    className="cta-pulse-glow w-full md:w-auto bg-white text-primary hover:bg-white/95 hover:scale-105 font-bold text-base px-8 py-6 rounded-full shadow-2xl border-0 group transition-all duration-300"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform" />
+                    Start Free Today
+                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1.5 transition-transform" />
+                  </Button>
+                  <div className="flex items-center gap-2 text-[11px] text-white/80 font-medium">
+                    <Shield className="h-3 w-3" />
+                    No credit card · Cancel anytime
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
