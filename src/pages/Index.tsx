@@ -330,7 +330,9 @@ const Index = () => {
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label="Toggle menu"
-                className="relative h-10 w-10 rounded-2xl flex items-center justify-center text-white bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-600 shadow-lg shadow-purple-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
+                aria-expanded={mobileMenuOpen}
+                data-open={mobileMenuOpen}
+                className="brand-burger"
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
@@ -338,21 +340,21 @@ const Index = () => {
           </div>
 
           {/* Mobile Menu */}
-          {mobileMenuOpen && <div className="lg:hidden py-4 border-t border-gray-200 animate-fade-in">
-              <div className="flex flex-col space-y-3">
-                <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.features')}</a>
-                <a href="#insights" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.insights')}</a>
-                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">Pricing</a>
-                <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium py-2 touch-target">{t('navigation.reviews')}</a>
+          {mobileMenuOpen && <div className="lg:hidden mobile-menu-panel -mx-3 sm:-mx-4 md:-mx-6 px-3 sm:px-4 md:px-6 py-4 animate-fade-in">
+              <div className="flex flex-col space-y-2">
+                <a href="#features" onClick={() => setMobileMenuOpen(false)} className="mobile-menu-link touch-target" style={{ animationDelay: '0.05s' }}>{t('navigation.features')}</a>
+                <a href="#insights" onClick={() => setMobileMenuOpen(false)} className="mobile-menu-link touch-target" style={{ animationDelay: '0.1s' }}>{t('navigation.insights')}</a>
+                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="mobile-menu-link touch-target" style={{ animationDelay: '0.15s' }}>Pricing</a>
+                <a href="#testimonials" onClick={() => setMobileMenuOpen(false)} className="mobile-menu-link touch-target" style={{ animationDelay: '0.2s' }}>{t('navigation.reviews')}</a>
                 {user ? <Button onClick={() => {
               navigate('/dashboard');
               setMobileMenuOpen(false);
-            }} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 w-full mt-2 touch-target">
+            }} className="gradient-dynamic hover:scale-[1.02] transition-all duration-300 font-semibold text-white border-0 w-full mt-3 h-12 rounded-2xl shadow-lg shadow-purple-500/40 touch-target" style={{ opacity: 0, animation: 'menu-item-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards' }}>
                     {t('navigation.dashboard')}
                   </Button> : <Button onClick={() => {
               handleGetStarted();
               setMobileMenuOpen(false);
-            }} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 w-full mt-2 touch-target">
+            }} className="gradient-dynamic hover:scale-[1.02] transition-all duration-300 font-semibold text-white border-0 w-full mt-3 h-12 rounded-2xl shadow-lg shadow-purple-500/40 touch-target" style={{ opacity: 0, animation: 'menu-item-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards' }}>
                     {t('navigation.getStarted')}
                   </Button>}
               </div>
