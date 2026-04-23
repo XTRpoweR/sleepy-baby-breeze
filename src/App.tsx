@@ -82,6 +82,7 @@ const App: React.FC = () => {
         <BrowserRouter>
           <AuthProvider>
             <SubscriptionProvider>
+              <PixelRouteTracker />
               <div className="min-h-screen bg-background font-sans antialiased">
                 <Suspense fallback={<RouteFallback />}>
                   <Routes>
