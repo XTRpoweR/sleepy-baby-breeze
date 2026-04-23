@@ -24,7 +24,9 @@
     "exploreFeatures": "Explorer toutes les fonctionnalités",
     "freeTrial": "Gratuit pendant 14 jours",
     "noCreditCard": "Aucune carte de crédit requise",
-    "madeByParents": "Fait par des parents"
+    "madeByParents": "Fait par des parents",
+    "moneyBackTitle": "Garantie de remboursement de 30 jours",
+    "moneyBackSubtitle": "Abonnez-vous en toute confiance — remboursement intégral, sans questions"
   },
   "tutorial": {
     "title": "Commencer avec SleepyBaby",
