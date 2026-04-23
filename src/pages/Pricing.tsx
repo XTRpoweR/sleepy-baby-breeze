@@ -12,6 +12,7 @@ import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useGeoCurrency } from "@/hooks/useGeoCurrency";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
+import { fbqTrack } from "@/utils/metaPixel";
 const Pricing = () => {
   const navigate = useNavigate();
   const {
