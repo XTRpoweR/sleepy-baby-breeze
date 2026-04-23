@@ -586,5 +586,98 @@
     "signOut": "Kirjaudu ulos",
     "premium": "Premium",
     "basic": "Perus"
+  },
+  "pricing": {
+    "free": "Ilmainen",
+    "billingInUsd": "Laskutus USD:ssa",
+    "equivalentTo": "Vastaa hintaa",
+    "hero": {
+      "title": "Valitse paketti",
+      "titleAccent": "perheellesi",
+      "subtitle": "Aloita ilmaiseksi 7 päivää. Peruuta milloin vain. Ei piilokuluja."
+    },
+    "comparison": {
+      "title": "Vertaile kaikkia ominaisuuksia",
+      "featuresHeader": "Ominaisuudet",
+      "unlimited": "Rajoittamaton",
+      "currentDay": "Vain tänään",
+      "extended": "Täysi historia",
+      "rows": {
+        "profiles": "Vauvaprofiilit",
+        "history": "Aktiivisuushistoria",
+        "familySharing": "Perhejakaminen",
+        "advancedAnalytics": "Edistynyt analytiikka",
+        "photoStorage": "Valokuvasäilytys",
+        "smartNotifications": "Älykkäät ilmoitukset",
+        "pediatricianReports": "Lääkäriraportit",
+        "dataExport": "Tietojen vienti",
+        "prioritySupport": "Etusijatuki",
+        "sleepCoaching": "AI-uniopas"
+      }
+    },
+    "toggle": {
+      "monthly": "Kuukausi",
+      "quarterly": "3 kk",
+      "annual": "Vuosi"
+    },
+    "interval": {
+      "month": "kk",
+      "quarter": "3 kk",
+      "year": "vuosi"
+    },
+    "plans": {
+      "basic": {
+        "name": "Perus",
+        "subtitle": "Aloita ilmaiseksi"
+      },
+      "monthly": {
+        "name": "Kuukausi-Premium",
+        "subtitle": "Joustava kuukausilaskutus"
+      },
+      "quarterly": {
+        "name": "3 kk Premium",
+        "subtitle": "Säästä enemmän neljännesvuosittain"
+      },
+      "annual": {
+        "name": "Vuosi-Premium",
+        "subtitle": "Paras tarjous — säästä 27%"
+      }
+    },
+    "badges": {
+      "mostPopular": "Suosituin",
+      "bestValue": "Paras Arvo",
+      "new": "UUSI"
+    },
+    "cta": {
+      "getStartedFree": "Aloita Ilmaiseksi",
+      "currentPlan": "Nykyinen Paketti",
+      "downgrade": "Alenna",
+      "startFreeTrial": "7 päivän ilmainen kokeilu",
+      "processing": "Käsitellään..."
+    },
+    "trial": {
+      "label": "Kokeilu",
+      "daysLeft": "päivää jäljellä",
+      "note": "Kaikki Premium-paketit sisältävät 7 päivän ilmaisen kokeilun. Peruuta milloin vain."
+    },
+    "features": {
+      "basic": {
+        "ai": "Perus AI-avustaja",
+        "profile": "1 vauvaprofiili",
+        "todayTracking": "Päivän seuranta",
+        "basicReports": "Perusraportit",
+        "simpleSchedule": "Yksinkertainen uniaikataulu"
+      },
+      "premium": {
+        "smartAi": "Edistynyt AI-uniopas",
+        "unlimitedProfiles": "Rajattomat profiilit",
+        "extendedHistory": "Täysi historia",
+        "advancedAnalytics": "Edistynyt analytiikka",
+        "familySharing": "Perhejakaminen ja yhteistyö",
+        "aiSleepOptimization": "AI-unen optimointi",
+        "exportBackup": "Vie ja varmuuskopioi",
+        "premiumSounds": "Premium-rauhoittavat äänet"
+      }
+    }
   }
 }

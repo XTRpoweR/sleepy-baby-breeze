@@ -586,5 +586,98 @@
     "signOut": "Abmelden",
     "premium": "Premium",
     "basic": "Basis"
+  },
+  "pricing": {
+    "free": "Kostenlos",
+    "billingInUsd": "Abrechnung in USD",
+    "equivalentTo": "Entspricht",
+    "hero": {
+      "title": "Wählen Sie den passenden Plan für",
+      "titleAccent": "Ihre Familie",
+      "subtitle": "Starten Sie 7 Tage kostenlos. Jederzeit kündbar. Keine versteckten Gebühren."
+    },
+    "comparison": {
+      "title": "Alle Funktionen vergleichen",
+      "featuresHeader": "Funktionen",
+      "unlimited": "Unbegrenzt",
+      "currentDay": "Nur heute",
+      "extended": "Vollständige Historie",
+      "rows": {
+        "profiles": "Babyprofile",
+        "history": "Aktivitätshistorie",
+        "familySharing": "Familienfreigabe",
+        "advancedAnalytics": "Erweiterte Analysen",
+        "photoStorage": "Fotospeicher",
+        "smartNotifications": "Intelligente Benachrichtigungen",
+        "pediatricianReports": "Kinderarztberichte",
+        "dataExport": "Datenexport",
+        "prioritySupport": "Priorisierter Support",
+        "sleepCoaching": "KI-Schlafcoaching"
+      }
+    },
+    "toggle": {
+      "monthly": "Monatlich",
+      "quarterly": "3 Monate",
+      "annual": "Jährlich"
+    },
+    "interval": {
+      "month": "Monat",
+      "quarter": "3 Monate",
+      "year": "Jahr"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basis",
+        "subtitle": "Kostenlos starten"
+      },
+      "monthly": {
+        "name": "Monats-Premium",
+        "subtitle": "Flexible monatliche Abrechnung"
+      },
+      "quarterly": {
+        "name": "3-Monats-Premium",
+        "subtitle": "Mehr sparen mit Quartalsabo"
+      },
+      "annual": {
+        "name": "Jahres-Premium",
+        "subtitle": "Bestes Angebot – 27% sparen"
+      }
+    },
+    "badges": {
+      "mostPopular": "Am Beliebtesten",
+      "bestValue": "Bestes Angebot",
+      "new": "NEU"
+    },
+    "cta": {
+      "getStartedFree": "Kostenlos loslegen",
+      "currentPlan": "Aktueller Plan",
+      "downgrade": "Herunterstufen",
+      "startFreeTrial": "7 Tage kostenlos testen",
+      "processing": "Verarbeitung..."
+    },
+    "trial": {
+      "label": "Testphase",
+      "daysLeft": "Tage übrig",
+      "note": "Alle Premium-Pläne beinhalten 7 Tage kostenlos. Jederzeit kündbar."
+    },
+    "features": {
+      "basic": {
+        "ai": "Basis-KI-Assistent",
+        "profile": "1 Babyprofil",
+        "todayTracking": "Aktivitätstracking heute",
+        "basicReports": "Basisberichte",
+        "simpleSchedule": "Einfacher Schlafplan"
+      },
+      "premium": {
+        "smartAi": "Erweiterter KI-Schlafcoach",
+        "unlimitedProfiles": "Unbegrenzte Babyprofile",
+        "extendedHistory": "Vollständige Aktivitätshistorie",
+        "advancedAnalytics": "Erweiterte Analysen & Einblicke",
+        "familySharing": "Familienfreigabe & Zusammenarbeit",
+        "aiSleepOptimization": "KI-Schlafoptimierung",
+        "exportBackup": "Daten exportieren & sichern",
+        "premiumSounds": "Premium-Beruhigungstöne"
+      }
+    }
   }
 }

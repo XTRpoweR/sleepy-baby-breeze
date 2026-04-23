@@ -77,14 +77,14 @@ const Dashboard = () => {
           content_category: 'subscription',
           content_name: 'sleepybabyy_premium',
           currency: 'USD',
-          value: 29.99,
+          value: 7.99,
         });
         fbqTrack('Purchase', {
           content_category: 'subscription',
           content_name: 'sleepybabyy_premium',
           content_type: 'product',
           currency: 'USD',
-          value: 29.99,
+          value: 7.99,
         });
       } catch {
         // never let analytics block the flow

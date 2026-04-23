@@ -586,5 +586,98 @@
     "signOut": "Se déconnecter",
     "premium": "Premium",
     "basic": "Basique"
+  },
+  "pricing": {
+    "free": "Gratuit",
+    "billingInUsd": "Facturé en USD",
+    "equivalentTo": "Équivalent à",
+    "hero": {
+      "title": "Choisissez le plan parfait pour",
+      "titleAccent": "votre famille",
+      "subtitle": "Commencez gratuitement 7 jours. Annulez à tout moment. Sans frais cachés."
+    },
+    "comparison": {
+      "title": "Comparez toutes les fonctionnalités",
+      "featuresHeader": "Fonctionnalités",
+      "unlimited": "Illimité",
+      "currentDay": "Aujourd'hui seulement",
+      "extended": "Historique complet",
+      "rows": {
+        "profiles": "Profils bébé",
+        "history": "Historique d'activité",
+        "familySharing": "Partage familial",
+        "advancedAnalytics": "Analyses avancées",
+        "photoStorage": "Stockage de photos",
+        "smartNotifications": "Notifications intelligentes",
+        "pediatricianReports": "Rapports pédiatre",
+        "dataExport": "Export de données",
+        "prioritySupport": "Support prioritaire",
+        "sleepCoaching": "Coach de sommeil IA"
+      }
+    },
+    "toggle": {
+      "monthly": "Mensuel",
+      "quarterly": "3 Mois",
+      "annual": "Annuel"
+    },
+    "interval": {
+      "month": "mois",
+      "quarter": "3 mois",
+      "year": "an"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basique",
+        "subtitle": "Commencez gratuitement"
+      },
+      "monthly": {
+        "name": "Premium Mensuel",
+        "subtitle": "Facturation mensuelle flexible"
+      },
+      "quarterly": {
+        "name": "Premium 3 Mois",
+        "subtitle": "Économisez plus chaque trimestre"
+      },
+      "annual": {
+        "name": "Premium Annuel",
+        "subtitle": "Meilleure offre — économisez 27%"
+      }
+    },
+    "badges": {
+      "mostPopular": "Le Plus Populaire",
+      "bestValue": "Meilleure Offre",
+      "new": "NOUVEAU"
+    },
+    "cta": {
+      "getStartedFree": "Commencer Gratuitement",
+      "currentPlan": "Plan Actuel",
+      "downgrade": "Rétrograder",
+      "startFreeTrial": "Essai gratuit 7 jours",
+      "processing": "Traitement..."
+    },
+    "trial": {
+      "label": "Essai",
+      "daysLeft": "jours restants",
+      "note": "Tous les plans Premium incluent 7 jours gratuits. Annulez à tout moment."
+    },
+    "features": {
+      "basic": {
+        "ai": "Assistant IA basique",
+        "profile": "1 profil bébé",
+        "todayTracking": "Suivi du jour",
+        "basicReports": "Rapports basiques",
+        "simpleSchedule": "Programme de sommeil simple"
+      },
+      "premium": {
+        "smartAi": "Coach IA sommeil avancé",
+        "unlimitedProfiles": "Profils illimités",
+        "extendedHistory": "Historique complet",
+        "advancedAnalytics": "Analyses avancées",
+        "familySharing": "Partage et collaboration familiale",
+        "aiSleepOptimization": "Optimisation du sommeil par IA",
+        "exportBackup": "Export et sauvegarde",
+        "premiumSounds": "Sons apaisants premium"
+      }
+    }
   }
 }

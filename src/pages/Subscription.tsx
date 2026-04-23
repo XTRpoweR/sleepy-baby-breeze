@@ -45,7 +45,7 @@ const Subscription = () => {
       content_type: 'product_group',
       content_category: 'subscription',
       content_name: 'subscription_page',
-      content_ids: ['premium_monthly', 'premium_annual'],
+      content_ids: ['premium_monthly', 'premium_quarterly', 'premium_annual'],
     });
   }, []);
 

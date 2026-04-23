@@ -189,8 +189,8 @@ export const UpgradePrompt = ({ isOpen, onClose, feature }: UpgradePromptProps) 
 
           {/* Pricing */}
           <div className="text-center py-2">
-            <div className="text-2xl font-bold text-gray-900">$29.99/month</div>
-            <div className="text-sm text-gray-600">Unlock all Premium features</div>
+            <div className="text-2xl font-bold text-gray-900">From $7.99/month</div>
+            <div className="text-sm text-gray-600">7-day free trial · Unlock all Premium features</div>
           </div>
 
           {/* Actions */}

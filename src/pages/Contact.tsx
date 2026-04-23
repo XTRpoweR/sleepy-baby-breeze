@@ -390,8 +390,7 @@ const Contact = () => {
                       Emergency support available 24/7 for Premium subscribers
                     </p>
                     <div className="mt-2 flex items-center space-x-2">
-                      <span className="text-xs text-gray-500 line-through">$49.99/month</span>
-                      <span className="text-sm font-bold text-blue-800">$29.99/month (40% OFF)</span>
+                      <span className="text-sm font-bold text-blue-800">Premium starts at $7.99/month</span>
                     </div>
                   </div>
                 </CardContent>

@@ -586,5 +586,98 @@
     "signOut": "Sign Out",
     "premium": "Premium",
     "basic": "Basic"
+  },
+  "pricing": {
+    "free": "Free",
+    "billingInUsd": "Billed in USD",
+    "equivalentTo": "Equivalent to",
+    "hero": {
+      "title": "Choose the plan that fits",
+      "titleAccent": "your family",
+      "subtitle": "Start free for 7 days. Cancel anytime. No hidden fees."
+    },
+    "comparison": {
+      "title": "Compare all features",
+      "featuresHeader": "Features",
+      "unlimited": "Unlimited",
+      "currentDay": "Today only",
+      "extended": "Full history",
+      "rows": {
+        "profiles": "Baby profiles",
+        "history": "Activity history",
+        "familySharing": "Family sharing",
+        "advancedAnalytics": "Advanced analytics",
+        "photoStorage": "Photo storage",
+        "smartNotifications": "Smart notifications",
+        "pediatricianReports": "Pediatrician reports",
+        "dataExport": "Data export",
+        "prioritySupport": "Priority support",
+        "sleepCoaching": "AI sleep coaching"
+      }
+    },
+    "toggle": {
+      "monthly": "Monthly",
+      "quarterly": "3 Months",
+      "annual": "Yearly"
+    },
+    "interval": {
+      "month": "month",
+      "quarter": "3 months",
+      "year": "year"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "subtitle": "Get started for free"
+      },
+      "monthly": {
+        "name": "Monthly Premium",
+        "subtitle": "Flexible monthly billing"
+      },
+      "quarterly": {
+        "name": "3-Month Premium",
+        "subtitle": "Save more with quarterly"
+      },
+      "annual": {
+        "name": "Yearly Premium",
+        "subtitle": "Best value — save 27%"
+      }
+    },
+    "badges": {
+      "mostPopular": "Most Popular",
+      "bestValue": "Best Value",
+      "new": "NEW"
+    },
+    "cta": {
+      "getStartedFree": "Get Started Free",
+      "currentPlan": "Current Plan",
+      "downgrade": "Downgrade",
+      "startFreeTrial": "Start 7-Day Free Trial",
+      "processing": "Processing..."
+    },
+    "trial": {
+      "label": "Trial",
+      "daysLeft": "days left",
+      "note": "All Premium plans include a 7-day free trial. Cancel anytime."
+    },
+    "features": {
+      "basic": {
+        "ai": "Basic AI assistant",
+        "profile": "1 baby profile",
+        "todayTracking": "Today's activity tracking",
+        "basicReports": "Basic reports",
+        "simpleSchedule": "Simple sleep schedule"
+      },
+      "premium": {
+        "smartAi": "Advanced AI sleep coach",
+        "unlimitedProfiles": "Unlimited baby profiles",
+        "extendedHistory": "Full activity history",
+        "advancedAnalytics": "Advanced analytics & insights",
+        "familySharing": "Family sharing & collaboration",
+        "aiSleepOptimization": "AI sleep optimization",
+        "exportBackup": "Export & backup data",
+        "premiumSounds": "Premium soothing sounds"
+      }
+    }
   }
 }
