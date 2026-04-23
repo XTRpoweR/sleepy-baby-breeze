@@ -25,6 +25,11 @@ const Auth = () => {
 
   const redirectTo = searchParams.get('redirect');
 
+  // Meta Pixel: visiting the auth page is a Lead intent
+  useEffect(() => {
+    fbqTrack('Lead', { content_category: 'auth', content_name: 'auth_page_view' });
+  }, []);
+
   useEffect(() => {
     if (user && session) {
       if (redirectTo) {
