@@ -25,6 +25,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { fbqTrack } from '@/utils/metaPixel';
 
 const Subscription = () => {
   const { user, loading, signOut } = useAuth();
@@ -37,6 +38,16 @@ const Subscription = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Meta Pixel: viewing subscription/upgrade page
+  useEffect(() => {
+    fbqTrack('ViewContent', {
+      content_type: 'product_group',
+      content_category: 'subscription',
+      content_name: 'subscription_page',
+      content_ids: ['premium_monthly', 'premium_annual'],
+    });
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();

@@ -12,6 +12,7 @@ import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useGeoCurrency } from "@/hooks/useGeoCurrency";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
+import { fbqTrack } from "@/utils/metaPixel";
 const Pricing = () => {
   const navigate = useNavigate();
   const {
@@ -23,9 +24,15 @@ const Pricing = () => {
   const { currency, loading: currencyLoading, convertPrice, isUSD } = useGeoCurrency();
   const [isAnnual, setIsAnnual] = useState(true);
 
-  // Scroll to top when component mounts
+  // Scroll to top + Meta Pixel ViewContent (Pricing/Service page)
   useEffect(() => {
     window.scrollTo(0, 0);
+    fbqTrack('ViewContent', {
+      content_type: 'product_group',
+      content_category: 'pricing',
+      content_name: 'pricing_page',
+      content_ids: ['premium_monthly', 'premium_annual'],
+    });
   }, []);
   const handleGetStarted = () => {
     if (user) {

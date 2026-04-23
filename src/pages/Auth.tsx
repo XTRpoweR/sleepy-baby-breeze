@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { Mail, Lock, User, ArrowLeft, Moon, Loader2, ShieldCheck, Heart, Sparkles } from 'lucide-react';
+import { fbqTrack } from '@/utils/metaPixel';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,6 +24,11 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
 
   const redirectTo = searchParams.get('redirect');
+
+  // Meta Pixel: visiting the auth page is a Lead intent
+  useEffect(() => {
+    fbqTrack('Lead', { content_category: 'auth', content_name: 'auth_page_view' });
+  }, []);
 
   useEffect(() => {
     if (user && session) {
@@ -73,6 +79,11 @@ const Auth = () => {
             variant: "destructive",
           });
         } else {
+          // Meta Pixel: successful registration
+          fbqTrack('CompleteRegistration', {
+            content_name: 'sleepybabyy_signup',
+            status: data.user && !data.session ? 'pending_verification' : 'active',
+          });
           if (data.user && !data.session) {
             toast({ title: "Account created", description: "Please check your email to verify your account." });
           } else {

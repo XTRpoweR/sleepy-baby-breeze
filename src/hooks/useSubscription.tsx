@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { fbqTrack } from '@/utils/metaPixel';
 
 interface SubscriptionContextType {
   subscriptionTier: 'basic' | 'premium' | 'premium_annual';
@@ -262,6 +263,19 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       }
 
       console.log('Checkout URL received, redirecting:', data.url);
+
+      // Meta Pixel: user is leaving for Stripe Checkout — fire InitiateCheckout
+      // (Stripe Checkout = our cart/checkout page; pricing is in USD).
+      const checkoutValue = pricingPlan === 'annual' ? 299.99 : 29.99;
+      fbqTrack('InitiateCheckout', {
+        content_category: 'subscription',
+        content_name: pricingPlan === 'annual' ? 'premium_annual' : 'premium_monthly',
+        content_ids: [pricingPlan === 'annual' ? 'premium_annual' : 'premium_monthly'],
+        num_items: 1,
+        value: checkoutValue,
+        currency: 'USD',
+      });
+
       window.location.href = data.url;
       
     } catch (error: any) {

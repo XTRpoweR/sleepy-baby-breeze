@@ -12,6 +12,7 @@ import { NewUserOnboarding } from '@/components/onboarding/NewUserOnboarding';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { UnifiedHeader } from '@/components/layout/UnifiedHeader';
 import { UnifiedDashboard } from '@/components/dashboard/UnifiedDashboard';
+import { fbqTrack } from '@/utils/metaPixel';
 
 const Dashboard = () => {
   const {
@@ -67,6 +68,28 @@ const Dashboard = () => {
     if (urlParams.get('success') === 'true') {
       console.log('Payment successful, checking subscription...');
       checkSubscription();
+
+      // Meta Pixel: fire Purchase + Subscribe on successful Stripe redirect.
+      // Value/currency are best-effort defaults (USD billing per create-checkout).
+      // We don't yet know monthly vs annual here, so report a conservative value.
+      try {
+        fbqTrack('Subscribe', {
+          content_category: 'subscription',
+          content_name: 'sleepybabyy_premium',
+          currency: 'USD',
+          value: 29.99,
+        });
+        fbqTrack('Purchase', {
+          content_category: 'subscription',
+          content_name: 'sleepybabyy_premium',
+          content_type: 'product',
+          currency: 'USD',
+          value: 29.99,
+        });
+      } catch {
+        // never let analytics block the flow
+      }
+
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (urlParams.get('canceled') === 'true') {

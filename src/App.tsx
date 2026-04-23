@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
 import { preloadCriticalResources } from "@/utils/performanceUtils";
+import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 
 // Eager-load the landing page so the first paint is instant
 import Index from "./pages/Index";
@@ -62,6 +63,13 @@ const RouteFallback: React.FC = () => (
   </div>
 );
 
+// Fires Meta Pixel PageView on every SPA route change.
+// Lives inside <BrowserRouter> via the AppRoutes wrapper below.
+const PixelRouteTracker: React.FC = () => {
+  usePageViewTracking();
+  return null;
+};
+
 const App: React.FC = () => {
   useEffect(() => {
     // Initialize performance optimizations
@@ -74,6 +82,7 @@ const App: React.FC = () => {
         <BrowserRouter>
           <AuthProvider>
             <SubscriptionProvider>
+              <PixelRouteTracker />
               <div className="min-h-screen bg-background font-sans antialiased">
                 <Suspense fallback={<RouteFallback />}>
                   <Routes>
