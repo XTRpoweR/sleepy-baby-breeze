@@ -1,29 +1,38 @@
 
 
-## حل بطء قسم الأسعار عند التمرير
+## تغيير ضمان الاسترداد من 30 يوم إلى 15 يوم
 
-**السبب الجذري**: بطاقات الأسعار تستخدم تأثيرات بصرية ثقيلة جداً تُجبر المتصفح على إعادة الرسم باستمرار أثناء التمرير على الموبايل:
-- `backdrop-blur-xl` على كل بطاقة (ضبابية زجاجية مكلفة جداً)
-- 4 توهجات `blur-3xl` كبيرة (224px) خلف كل بطاقة
-- 4 أنيميشن مستمرة في نفس الوقت: `gradient-shift` + `border-glow` + `orb-drift` + `glow-pulse`
-- كل هذه التأثيرات تعمل بشكل دائم حتى لو لم يتفاعل معها المستخدم
+سأستبدل جميع إشارات "استرداد الأموال خلال 30 يوم" في كافة أنحاء التطبيق بـ **15 يوم** مع الإبقاء على الفترة التجريبية المجانية (7 أيام) كما هي في باقات الأسعار.
 
 ---
 
-### الإصلاح (ملف واحد فقط: `src/index.css`)
+### الملفات التي ستُعدَّل
 
-سأضيف داخل media query الموبايل الموجود (`@media (max-width: 768px)`) القواعد التالية:
+**1. `src/pages/Subscription.tsx`**
+- سؤال FAQ "Do you offer refunds?" (سطر 114):
+  - من: *"We offer a 7-day free trial and a 30-day money-back guarantee..."*
+  - إلى: *"We offer a 7-day free trial and a 15-day money-back guarantee for your peace of mind."*
+- بطاقة الضمان السفلية (Money Back Guarantee Box):
+  - العنوان (سطر 266): **"30-Day Money-Back Guarantee"** → **"15-Day Money-Back Guarantee"**
+  - الوصف (سطر 268): استبدال *"within 30 days"* بـ *"within 15 days"*.
+  - النقاط الثلاث (No questions asked / Full refund / Cancel anytime) تبقى كما هي.
 
-1. **تعطيل أنيميشن قسم الأسعار**:
-   - `.animate-orb-drift`, `.animate-glow-pulse`, `.animate-border-glow`, `.animate-gradient-shift` → `animation: none`
+**2. `src/pages/Pricing.tsx`** (سطر 379)
+- سؤال FAQ "Do you offer refunds?":
+  - من: *"Yes, we offer a 30-day money-back guarantee..."*
+  - إلى: *"Yes, we offer a 15-day money-back guarantee if you're not completely satisfied."*
 
-2. **تعطيل backdrop-filter (السبب الأكبر للبطء)**:
-   - `.backdrop-blur-xl/2xl/lg/md` → `backdrop-filter: none`
-   - هذا الفلتر يفرض على المتصفح إعادة حساب كل ما خلف العنصر في كل frame أثناء التمرير
+**3. `src/pages/HelpArticle.tsx`** — تحديث إشارات استرداد 30 يومًا في مقالات المساعدة:
+- سطر 1752: `30-day refund period for new subscribers` → `15-day refund period for new subscribers`
+- سطر 1815: `(except within 30 days of new subscription)` → `(except within 15 days of new subscription)`
+- سطر 1980: `New subscribers: 30-day money-back guarantee` → `New subscribers: 15-day money-back guarantee`
+- سطر 1987: `Contact customer support within 30 days` → `Contact customer support within 15 days`
 
-3. **تخفيف فلاتر blur الكبيرة**:
-   - `.blur-3xl` → من 64px إلى 24px
-   - `.blur-2xl` → من 40px إلى 18px
+> ملاحظة هامة: الإشارات الأخرى للرقم "30 يوم" المتعلقة بـ **الاحتفاظ بالبيانات (data retention)**، **تذكير انتهاء البطاقة**، و**فترة سماح حذف الحساب** ستبقى دون تغيير لأنها غير مرتبطة باسترداد الأموال.
 
-النتيجة: التمرير يصبح سلساً 60fps على الموبايل، البطاقات تبقى جميلة لكن بدون تأثيرات تُحرق المعالج. التصميم على الديسكتوب يبقى كما هو دون أي تغيير.
+---
+
+### النتيجة المتوقعة
+- توحيد رسالة الضمان في كل صفحات التطبيق على **15 يوم لاسترداد الأموال** + **7 أيام تجربة مجانية**.
+- لن يبقى أي ذكر لـ "30-Day Money-Back Guarantee" في أي مكان.
 

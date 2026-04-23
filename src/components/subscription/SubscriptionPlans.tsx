@@ -62,14 +62,6 @@ export const SubscriptionPlans = () => {
   const monthlySelected = selectedPlan === 'monthly';
   const annualSelected = selectedPlan === 'annual';
 
-  const handlePlanAction = (pricingPlan: 'monthly' | 'annual') => {
-    if (selectedPlan !== pricingPlan) {
-      setSelectedPlan(pricingPlan);
-    }
-
-    handleUpgrade(pricingPlan);
-  };
-
   return (
     <div className="max-w-7xl mx-auto">
       {/* Pricing Toggle - Glassmorphism with sliding pill */}
@@ -194,11 +186,10 @@ export const SubscriptionPlans = () => {
             "transition-all duration-500 ease-out",
             monthlySelected
               ? "bg-white/85 dark:bg-slate-900/80 border-orange-300/60 dark:border-orange-500/40 shadow-2xl shadow-orange-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-orange-400/60"
-              : "bg-white/80 dark:bg-slate-900/75 border-white/50 dark:border-white/15 opacity-100 hover:-translate-y-1 lg:bg-white/50 lg:dark:bg-slate-900/40 lg:scale-95 lg:opacity-70 lg:hover:opacity-90",
+              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
             isCurrentPlan('premium_monthly') && "ring-2 ring-orange-500"
           )}
           style={{ animationDelay: '100ms' }}
-          onClick={() => setSelectedPlan('monthly')}
         >
           {/* Soft animated glowing border halo (organized — outlines the whole card) */}
           {monthlySelected && (
@@ -304,34 +295,34 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "relative z-20 w-full min-h-[3.75rem] touch-target group overflow-hidden rounded-full py-6 text-base font-bold tracking-wide whitespace-normal leading-tight border-0 transition-all duration-300",
-                "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white",
-                "shadow-[0_10px_30px_-8px_rgba(249,115,22,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(249,115,22,0.85)]",
-                "hover:scale-[1.02] ring-1 ring-orange-400/40"
+                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
+                monthlySelected
+                  ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(249,115,22,0.75)] hover:scale-[1.02] ring-1 ring-orange-400/30"
+                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-md py-3"
               )}
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                handlePlanAction('monthly');
-              }}
+              onClick={() => handleUpgrade('monthly')}
               disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
             >
               {/* Subtle warm glow accent on the right */}
-              <span
-                aria-hidden
-                className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-orange-500/40 via-amber-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
-              />
+              {monthlySelected && (
+                <span
+                  aria-hidden
+                  className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-orange-500/40 via-amber-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
+                />
+              )}
               {/* Glint sweep on hover */}
-              <span
-                aria-hidden
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
-              />
+              {monthlySelected && (
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
+                />
+              )}
               <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingMonthly ? 'Processing...' :
                   isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' :
                     user && isTrial && subscriptionTier === 'premium' ? `Trial (${trialDaysLeft} days left)` :
-                      'Start Free Trial'}
-                {!upgradingMonthly && !isCurrentPlan('premium_monthly') && (
+                      user ? 'Start Free Trial' : 'Start Free Trial'}
+                {monthlySelected && !upgradingMonthly && !isCurrentPlan('premium_monthly') && (
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-orange-300" />
                 )}
               </span>
@@ -361,11 +352,10 @@ export const SubscriptionPlans = () => {
             "transition-all duration-500 ease-out",
             annualSelected
               ? "bg-white/85 dark:bg-slate-900/80 border-purple-300/60 dark:border-purple-500/40 shadow-2xl shadow-purple-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-purple-400/60"
-              : "bg-white/88 dark:bg-slate-900/78 border-purple-200/70 dark:border-purple-400/20 shadow-lg shadow-purple-500/10 opacity-100 hover:-translate-y-1 lg:scale-[0.98]",
+              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
             isCurrentPlan('premium_annual') && "ring-2 ring-purple-500"
           )}
           style={{ animationDelay: '200ms' }}
-          onClick={() => setSelectedPlan('annual')}
         >
           {/* Soft animated glowing border halo (organized — outlines the whole card) */}
           {annualSelected && (
@@ -470,34 +460,34 @@ export const SubscriptionPlans = () => {
             </div>
             <Button
               className={cn(
-                "relative z-20 w-full min-h-[3.75rem] touch-target group overflow-hidden rounded-full py-6 text-base font-bold tracking-wide whitespace-normal leading-tight border-0 transition-all duration-300",
-                "bg-gradient-to-r from-purple-400 via-violet-400 to-purple-500 text-white",
-                "shadow-[0_16px_36px_-12px_rgba(168,85,247,0.65)] hover:shadow-[0_20px_42px_-12px_rgba(168,85,247,0.82)]",
-                "hover:scale-[1.02] hover:brightness-105"
+                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
+                annualSelected
+                  ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(168,85,247,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(168,85,247,0.75)] hover:scale-[1.02] ring-1 ring-purple-400/30"
+                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-md py-3"
               )}
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                handlePlanAction('annual');
-              }}
+              onClick={() => handleUpgrade('annual')}
               disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
             >
               {/* Subtle violet glow accent on the right */}
-              <span
-                aria-hidden
-                className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-purple-500/40 via-pink-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
-              />
+              {annualSelected && (
+                <span
+                  aria-hidden
+                  className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-purple-500/40 via-pink-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
+                />
+              )}
               {/* Glint sweep on hover */}
-              <span
-                aria-hidden
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
-              />
+              {annualSelected && (
+                <span
+                  aria-hidden
+                  className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
+                />
+              )}
               <span className="relative flex items-center justify-center gap-2 z-10">
                 {upgradingAnnual ? 'Processing...' :
                   isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' :
                     user && isTrial && subscriptionTier === 'premium_annual' ? `Trial (${trialDaysLeft} days left)` :
-                      'Start Free Trial'}
-                {!upgradingAnnual && !isCurrentPlan('premium_annual') && (
+                      user ? 'Start Free Trial' : 'Start Free Trial'}
+                {annualSelected && !upgradingAnnual && !isCurrentPlan('premium_annual') && (
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-purple-300" />
                 )}
               </span>
