@@ -111,13 +111,17 @@ serve(async (req) => {
     if (activeSubscriptions.length > 0) {
       const subscription = activeSubscriptions[0];
       
-      // Determine subscription tier based on pricing interval
+      // Determine subscription tier based on pricing interval & interval_count
       const priceId = subscription.items.data[0].price.id;
       const price = await stripe.prices.retrieve(priceId);
+      const recurring = price.recurring;
       
-      if (price.recurring?.interval === 'year') {
+      if (recurring?.interval === 'year') {
         subscriptionTier = 'premium_annual';
         billingCycle = 'yearly';
+      } else if (recurring?.interval === 'month' && (recurring.interval_count || 1) === 3) {
+        subscriptionTier = 'premium_quarterly';
+        billingCycle = 'quarterly';
       } else {
         subscriptionTier = 'premium';
         billingCycle = 'monthly';

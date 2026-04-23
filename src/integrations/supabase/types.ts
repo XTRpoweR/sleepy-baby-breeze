@@ -648,6 +648,45 @@ export type Database = {
           },
         ]
       }
+      stripe_price_config: {
+        Row: {
+          active: boolean
+          amount_cents: number
+          created_at: string
+          currency: string
+          id: string
+          interval: string
+          interval_count: number
+          plan_key: string
+          stripe_price_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          id?: string
+          interval: string
+          interval_count?: number
+          plan_key: string
+          stripe_price_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          interval?: string
+          interval_count?: number
+          plan_key?: string
+          stripe_price_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           billing_cycle: string | null

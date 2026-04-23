@@ -292,22 +292,27 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
       return;
     }
 
-    // Determine subscription tier based on the price
+    // Determine subscription tier based on the price's recurring interval
     let subscriptionTier = 'basic';
     if (subscription.items?.data[0]?.price) {
       const price = subscription.items.data[0].price;
-      const amount = price.unit_amount || 0;
-      
-      // Map pricing to tiers - adjust these amounts based on your actual pricing
-      if (amount >= 2999) { // $29.99 or more
+      const recurring: any = price.recurring;
+
+      if (recurring?.interval === 'year') {
+        subscriptionTier = 'premium_annual';
+      } else if (recurring?.interval === 'month' && (recurring.interval_count || 1) === 3) {
+        subscriptionTier = 'premium_quarterly';
+      } else if (recurring?.interval === 'month') {
         subscriptionTier = 'premium';
       }
-      
-      console.log('Determined subscription tier', { 
-        priceId: price.id, 
-        amount, 
+
+      console.log('Determined subscription tier', {
+        priceId: price.id,
+        amount: price.unit_amount,
+        interval: recurring?.interval,
+        interval_count: recurring?.interval_count,
         subscriptionTier,
-        productId: price.product 
+        productId: price.product
       });
     }
 
