@@ -63,6 +63,13 @@ const RouteFallback: React.FC = () => (
   </div>
 );
 
+// Fires Meta Pixel PageView on every SPA route change.
+// Lives inside <BrowserRouter> via the AppRoutes wrapper below.
+const PixelRouteTracker: React.FC = () => {
+  usePageViewTracking();
+  return null;
+};
+
 const App: React.FC = () => {
   useEffect(() => {
     // Initialize performance optimizations
