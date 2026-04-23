@@ -586,5 +586,98 @@
     "signOut": "Αποσύνδεση",
     "premium": "Premium",
     "basic": "Βασικό"
+  },
+  "pricing": {
+    "free": "Δωρεάν",
+    "billingInUsd": "Χρέωση σε USD",
+    "equivalentTo": "Ισοδύναμο με",
+    "hero": {
+      "title": "Επιλέξτε το πλάνο για",
+      "titleAccent": "την οικογένειά σας",
+      "subtitle": "Ξεκινήστε δωρεάν για 7 ημέρες. Ακύρωση οποτεδήποτε. Χωρίς κρυφές χρεώσεις."
+    },
+    "comparison": {
+      "title": "Συγκρίνετε όλες τις λειτουργίες",
+      "featuresHeader": "Λειτουργίες",
+      "unlimited": "Απεριόριστο",
+      "currentDay": "Μόνο σήμερα",
+      "extended": "Πλήρες ιστορικό",
+      "rows": {
+        "profiles": "Προφίλ μωρών",
+        "history": "Ιστορικό δραστηριότητας",
+        "familySharing": "Οικογενειακή κοινή χρήση",
+        "advancedAnalytics": "Προηγμένα αναλυτικά",
+        "photoStorage": "Αποθήκευση φωτογραφιών",
+        "smartNotifications": "Έξυπνες ειδοποιήσεις",
+        "pediatricianReports": "Αναφορές παιδιάτρου",
+        "dataExport": "Εξαγωγή δεδομένων",
+        "prioritySupport": "Υποστήριξη προτεραιότητας",
+        "sleepCoaching": "AI προπονητής ύπνου"
+      }
+    },
+    "toggle": {
+      "monthly": "Μηνιαίο",
+      "quarterly": "3 Μήνες",
+      "annual": "Ετήσιο"
+    },
+    "interval": {
+      "month": "μήνα",
+      "quarter": "3 μήνες",
+      "year": "έτος"
+    },
+    "plans": {
+      "basic": {
+        "name": "Βασικό",
+        "subtitle": "Ξεκινήστε δωρεάν"
+      },
+      "monthly": {
+        "name": "Μηνιαίο Premium",
+        "subtitle": "Ευέλικτη μηνιαία χρέωση"
+      },
+      "quarterly": {
+        "name": "Premium 3 Μηνών",
+        "subtitle": "Εξοικονομήστε περισσότερα"
+      },
+      "annual": {
+        "name": "Ετήσιο Premium",
+        "subtitle": "Καλύτερη αξία — εξοικ. 27%"
+      }
+    },
+    "badges": {
+      "mostPopular": "Πιο Δημοφιλές",
+      "bestValue": "Καλύτερη Αξία",
+      "new": "ΝΕΟ"
+    },
+    "cta": {
+      "getStartedFree": "Ξεκινήστε Δωρεάν",
+      "currentPlan": "Τρέχον Πλάνο",
+      "downgrade": "Υποβάθμιση",
+      "startFreeTrial": "Δωρεάν δοκιμή 7 ημερών",
+      "processing": "Επεξεργασία..."
+    },
+    "trial": {
+      "label": "Δοκιμή",
+      "daysLeft": "ημέρες απομένουν",
+      "note": "Όλα τα Premium πλάνα περιλαμβάνουν 7 ημέρες δωρεάν. Ακύρωση οποτεδήποτε."
+    },
+    "features": {
+      "basic": {
+        "ai": "Βασικός βοηθός AI",
+        "profile": "1 προφίλ μωρού",
+        "todayTracking": "Παρακολούθηση σήμερα",
+        "basicReports": "Βασικές αναφορές",
+        "simpleSchedule": "Απλό πρόγραμμα ύπνου"
+      },
+      "premium": {
+        "smartAi": "Προηγμένος AI προπονητής",
+        "unlimitedProfiles": "Απεριόριστα προφίλ",
+        "extendedHistory": "Πλήρες ιστορικό",
+        "advancedAnalytics": "Προηγμένα αναλυτικά",
+        "familySharing": "Οικογενειακή κοινή χρήση",
+        "aiSleepOptimization": "Βελτιστοποίηση ύπνου AI",
+        "exportBackup": "Εξαγωγή και αντίγραφα",
+        "premiumSounds": "Premium καταπραϋντικοί ήχοι"
+      }
+    }
   }
 }

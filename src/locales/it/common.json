@@ -586,5 +586,98 @@
     "signOut": "Esci",
     "premium": "Premium",
     "basic": "Base"
+  },
+  "pricing": {
+    "free": "Gratis",
+    "billingInUsd": "Fatturato in USD",
+    "equivalentTo": "Equivalente a",
+    "hero": {
+      "title": "Scegli il piano giusto per",
+      "titleAccent": "la tua famiglia",
+      "subtitle": "Inizia gratis 7 giorni. Cancella quando vuoi. Nessun costo nascosto."
+    },
+    "comparison": {
+      "title": "Confronta tutte le funzionalità",
+      "featuresHeader": "Funzionalità",
+      "unlimited": "Illimitato",
+      "currentDay": "Solo oggi",
+      "extended": "Cronologia completa",
+      "rows": {
+        "profiles": "Profili bebè",
+        "history": "Cronologia attività",
+        "familySharing": "Condivisione familiare",
+        "advancedAnalytics": "Analisi avanzate",
+        "photoStorage": "Archivio foto",
+        "smartNotifications": "Notifiche intelligenti",
+        "pediatricianReports": "Report per pediatra",
+        "dataExport": "Esportazione dati",
+        "prioritySupport": "Supporto prioritario",
+        "sleepCoaching": "Sleep coach IA"
+      }
+    },
+    "toggle": {
+      "monthly": "Mensile",
+      "quarterly": "3 Mesi",
+      "annual": "Annuale"
+    },
+    "interval": {
+      "month": "mese",
+      "quarter": "3 mesi",
+      "year": "anno"
+    },
+    "plans": {
+      "basic": {
+        "name": "Base",
+        "subtitle": "Inizia gratis"
+      },
+      "monthly": {
+        "name": "Premium Mensile",
+        "subtitle": "Fatturazione mensile flessibile"
+      },
+      "quarterly": {
+        "name": "Premium 3 Mesi",
+        "subtitle": "Risparmia di più ogni trimestre"
+      },
+      "annual": {
+        "name": "Premium Annuale",
+        "subtitle": "Miglior valore — risparmia 27%"
+      }
+    },
+    "badges": {
+      "mostPopular": "Più Popolare",
+      "bestValue": "Miglior Valore",
+      "new": "NUOVO"
+    },
+    "cta": {
+      "getStartedFree": "Inizia Gratis",
+      "currentPlan": "Piano Attuale",
+      "downgrade": "Declassa",
+      "startFreeTrial": "Prova gratis 7 giorni",
+      "processing": "Elaborazione..."
+    },
+    "trial": {
+      "label": "Prova",
+      "daysLeft": "giorni rimasti",
+      "note": "Tutti i piani Premium includono 7 giorni gratis. Cancella quando vuoi."
+    },
+    "features": {
+      "basic": {
+        "ai": "Assistente IA base",
+        "profile": "1 profilo bebè",
+        "todayTracking": "Tracciamento di oggi",
+        "basicReports": "Report base",
+        "simpleSchedule": "Programma sonno semplice"
+      },
+      "premium": {
+        "smartAi": "Sleep coach IA avanzato",
+        "unlimitedProfiles": "Profili illimitati",
+        "extendedHistory": "Cronologia completa",
+        "advancedAnalytics": "Analisi avanzate",
+        "familySharing": "Condivisione familiare",
+        "aiSleepOptimization": "Ottimizzazione sonno IA",
+        "exportBackup": "Esporta e backup",
+        "premiumSounds": "Suoni rilassanti premium"
+      }
+    }
   }
 }

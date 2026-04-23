@@ -588,5 +588,98 @@
     "signOut": "Logga ut",
     "premium": "Premium",
     "basic": "Bas"
+  },
+  "pricing": {
+    "free": "Gratis",
+    "billingInUsd": "Faktureras i USD",
+    "equivalentTo": "Motsvarar",
+    "hero": {
+      "title": "Välj plan som passar",
+      "titleAccent": "din familj",
+      "subtitle": "Börja gratis i 7 dagar. Avsluta när som helst. Inga dolda avgifter."
+    },
+    "comparison": {
+      "title": "Jämför alla funktioner",
+      "featuresHeader": "Funktioner",
+      "unlimited": "Obegränsat",
+      "currentDay": "Endast idag",
+      "extended": "Fullständig historik",
+      "rows": {
+        "profiles": "Babyprofiler",
+        "history": "Aktivitetshistorik",
+        "familySharing": "Familjedelning",
+        "advancedAnalytics": "Avancerad analys",
+        "photoStorage": "Fotolagring",
+        "smartNotifications": "Smarta notiser",
+        "pediatricianReports": "Barnläkarrapporter",
+        "dataExport": "Dataexport",
+        "prioritySupport": "Prioriterad support",
+        "sleepCoaching": "AI-sömncoach"
+      }
+    },
+    "toggle": {
+      "monthly": "Månadsvis",
+      "quarterly": "3 Månader",
+      "annual": "Årligen"
+    },
+    "interval": {
+      "month": "mån",
+      "quarter": "3 mån",
+      "year": "år"
+    },
+    "plans": {
+      "basic": {
+        "name": "Bas",
+        "subtitle": "Börja gratis"
+      },
+      "monthly": {
+        "name": "Månads-Premium",
+        "subtitle": "Flexibel månadsfakturering"
+      },
+      "quarterly": {
+        "name": "3-Månaders Premium",
+        "subtitle": "Spara mer kvartalsvis"
+      },
+      "annual": {
+        "name": "Års-Premium",
+        "subtitle": "Bästa värdet — spara 27%"
+      }
+    },
+    "badges": {
+      "mostPopular": "Mest Populär",
+      "bestValue": "Bästa Värde",
+      "new": "NY"
+    },
+    "cta": {
+      "getStartedFree": "Kom igång gratis",
+      "currentPlan": "Nuvarande Plan",
+      "downgrade": "Nedgradera",
+      "startFreeTrial": "7 dagars gratis prov",
+      "processing": "Bearbetar..."
+    },
+    "trial": {
+      "label": "Provperiod",
+      "daysLeft": "dagar kvar",
+      "note": "Alla Premium-planer inkluderar 7 dagar gratis. Avsluta när som helst."
+    },
+    "features": {
+      "basic": {
+        "ai": "Bas AI-assistent",
+        "profile": "1 babyprofil",
+        "todayTracking": "Dagens spårning",
+        "basicReports": "Basrapporter",
+        "simpleSchedule": "Enkelt sömnschema"
+      },
+      "premium": {
+        "smartAi": "Avancerad AI-sömncoach",
+        "unlimitedProfiles": "Obegränsade profiler",
+        "extendedHistory": "Fullständig historik",
+        "advancedAnalytics": "Avancerad analys",
+        "familySharing": "Familjedelning och samarbete",
+        "aiSleepOptimization": "AI-sömnoptimering",
+        "exportBackup": "Exportera och säkerhetskopiera",
+        "premiumSounds": "Premium lugnande ljud"
+      }
+    }
   }
 }
