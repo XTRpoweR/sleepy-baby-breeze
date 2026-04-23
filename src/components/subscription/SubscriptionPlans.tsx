@@ -160,12 +160,27 @@ export const SubscriptionPlans = () => {
               ))}
             </div>
             <Button
-              className="w-full touch-target transition-all duration-300 hover:shadow-lg"
-              variant={isCurrentPlan('basic') ? 'default' : 'outline'}
-              disabled={isCurrentPlan('basic')}
+              className={cn(
+                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
+                "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(59,130,246,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(59,130,246,0.75)] hover:scale-[1.02] ring-1 ring-blue-400/30"
+              )}
+              disabled={isCurrentPlan('basic') && !!user}
               onClick={() => !user && navigate('/auth')}
             >
-              {user ? isCurrentPlan('basic') ? 'Current Plan' : 'Downgrade' : 'Get Started Free'}
+              <span
+                aria-hidden
+                className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-blue-500/40 via-cyan-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
+              />
+              <span
+                aria-hidden
+                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
+              />
+              <span className="relative flex items-center justify-center gap-2 z-10">
+                {user ? isCurrentPlan('basic') ? 'Current Plan' : 'Downgrade' : 'Get Started Free'}
+                {(!user || !isCurrentPlan('basic')) && (
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-blue-300" />
+                )}
+              </span>
             </Button>
           </CardContent>
         </Card>
