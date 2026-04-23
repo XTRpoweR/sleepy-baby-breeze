@@ -2,520 +2,367 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkles, Zap, Bot, ArrowRight } from 'lucide-react';
+import { Check, Crown, Baby, Clock, BarChart3, Users, Calendar, Download, Sparkles, Zap, Bot, ArrowRight, Star } from 'lucide-react';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useGeoCurrency } from '@/hooks/useGeoCurrency';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+
+type PlanKey = 'monthly' | 'quarterly' | 'annual';
 
 export const SubscriptionPlans = () => {
   const {
     subscriptionTier,
     createCheckout,
     upgradingMonthly,
+    upgradingQuarterly,
     upgradingAnnual,
     isPremium,
+    isPremiumQuarterly,
     isPremiumAnnual,
     isTrial,
-    trialDaysLeft
+    trialDaysLeft,
   } = useSubscription();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { currency, loading: currencyLoading, convertPrice, isUSD } = useGeoCurrency();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annual'>('monthly');
+  const { currencyLoading, convertPrice, isUSD } = useGeoCurrency() as any;
+  const { t } = useTranslation();
+  const [selectedPlan, setSelectedPlan] = useState<PlanKey>('quarterly');
 
-  const handleUpgrade = (pricingPlan: 'monthly' | 'annual' = 'monthly') => {
+  const handleUpgrade = (plan: PlanKey) => {
     if (!user) {
       navigate('/auth');
       return;
     }
-    createCheckout(pricingPlan);
+    createCheckout(plan);
   };
 
   const basicFeatures = [
-    { icon: Bot, text: "AI Q&A Assistant — ask anything about your baby & the app", available: true },
-    { icon: Baby, text: "1 baby profile", available: true },
-    { icon: Clock, text: "Current day activity tracking", available: true },
-    { icon: BarChart3, text: "Basic sleep reports", available: true },
-    { icon: Calendar, text: "Simple sleep schedule", available: true }
+    { icon: Bot, text: t('pricing.features.basic.ai') },
+    { icon: Baby, text: t('pricing.features.basic.profile') },
+    { icon: Clock, text: t('pricing.features.basic.todayTracking') },
+    { icon: BarChart3, text: t('pricing.features.basic.basicReports') },
+    { icon: Calendar, text: t('pricing.features.basic.simpleSchedule') },
   ];
 
   const premiumFeatures = [
-    { icon: Bot, text: "Smart AI Assistant — auto-logs sleep, feeding, diapers & manages notifications by command", available: true, isNew: true },
-    { icon: Baby, text: "Unlimited baby profiles", available: true },
-    { icon: Clock, text: "Extended activity history", available: true },
-    { icon: BarChart3, text: "Advanced analytics & trends", available: true },
-    { icon: Users, text: "Family sharing & collaboration", available: true },
-    { icon: Calendar, text: "AI-powered sleep optimization", available: true },
-    { icon: Download, text: "Data export & backup", available: true },
-    { icon: Sparkles, text: "Premium sounds library", available: true }
+    { icon: Bot, text: t('pricing.features.premium.smartAi'), isNew: true },
+    { icon: Baby, text: t('pricing.features.premium.unlimitedProfiles') },
+    { icon: Clock, text: t('pricing.features.premium.extendedHistory') },
+    { icon: BarChart3, text: t('pricing.features.premium.advancedAnalytics') },
+    { icon: Users, text: t('pricing.features.premium.familySharing') },
+    { icon: Calendar, text: t('pricing.features.premium.aiSleepOptimization') },
+    { icon: Download, text: t('pricing.features.premium.exportBackup') },
+    { icon: Sparkles, text: t('pricing.features.premium.premiumSounds') },
   ];
 
-  const isCurrentPlan = (plan: string) => {
+  const isCurrentPlan = (plan: 'basic' | PlanKey) => {
     if (plan === 'basic') return subscriptionTier === 'basic';
-    if (plan === 'premium_monthly') return subscriptionTier === 'premium';
-    if (plan === 'premium_annual') return subscriptionTier === 'premium_annual';
+    if (plan === 'monthly') return subscriptionTier === 'premium';
+    if (plan === 'quarterly') return subscriptionTier === 'premium_quarterly';
+    if (plan === 'annual') return subscriptionTier === 'premium_annual';
     return false;
   };
 
-  const monthlySelected = selectedPlan === 'monthly';
-  const annualSelected = selectedPlan === 'annual';
+  const PRICES = { monthly: 7.99, quarterly: 19.99, annual: 69.99 };
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Pricing Toggle - Glassmorphism with sliding pill */}
-      <div className="flex justify-center mb-10">
+      {/* Triple Toggle */}
+      <div className="flex justify-center mb-10 px-4">
         <div className="relative bg-white/40 dark:bg-white/5 backdrop-blur-md rounded-full p-1.5 flex border border-white/30 dark:border-white/10 shadow-lg">
-          {/* Sliding pill indicator */}
-          <div
-            className={cn(
-              "absolute top-1.5 bottom-1.5 rounded-full bg-gradient-to-r shadow-md transition-all duration-500 ease-out",
-              monthlySelected
-                ? "left-1.5 right-[50%] from-orange-500 to-orange-600"
-                : "left-[50%] right-1.5 from-purple-500 to-purple-600"
-            )}
-          />
-          <button
-            onClick={() => setSelectedPlan('monthly')}
-            className={cn(
-              "relative z-10 px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300",
-              monthlySelected ? "text-white" : "text-gray-700 dark:text-gray-300 hover:text-gray-900"
-            )}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setSelectedPlan('annual')}
-            className={cn(
-              "relative z-10 px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-300",
-              annualSelected ? "text-white" : "text-gray-700 dark:text-gray-300 hover:text-gray-900"
-            )}
-          >
-            Annual
-            {/* Floating discount tag — always above the button, doesn't compete with the active pill */}
-            <span
+          {(['monthly', 'quarterly', 'annual'] as PlanKey[]).map((plan) => (
+            <button
+              key={plan}
+              onClick={() => setSelectedPlan(plan)}
               className={cn(
-                "absolute -top-3 -right-2 px-1.5 py-0.5 rounded-full text-[9px] font-bold leading-none border-2 border-white dark:border-slate-900 shadow-md transition-all duration-500 pointer-events-none",
-                "bg-gradient-to-r from-green-500 to-emerald-500 text-white",
-                annualSelected ? "scale-90 opacity-90" : "scale-100 opacity-100"
+                'relative z-10 px-3 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300',
+                selectedPlan === plan
+                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md'
+                  : 'text-gray-700 dark:text-gray-300 hover:text-gray-900'
               )}
             >
-              -$60
-            </span>
-          </button>
+              {t(`pricing.toggle.${plan}`)}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch pt-6">
         {/* ============ Basic Plan ============ */}
         <Card
           className={cn(
-            "pricing-card relative overflow-hidden border border-white/40 dark:border-white/10",
-            "bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl",
-            "transition-all duration-500 ease-out animate-fade-in",
-            "hover:-translate-y-2 hover:shadow-2xl",
-            isCurrentPlan('basic') && "ring-2 ring-blue-500"
+            'pricing-card relative overflow-hidden border border-white/40 dark:border-white/10',
+            'bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl',
+            'transition-all duration-500 ease-out animate-fade-in',
+            'hover:-translate-y-2 hover:shadow-2xl',
+            isCurrentPlan('basic') && 'ring-2 ring-blue-500'
           )}
           style={{ animationDelay: '0ms' }}
         >
-          {/* Soft glow */}
           <div className="absolute -top-20 -right-20 w-48 h-48 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
 
-          <CardHeader className="text-center pb-6 lg:pb-8 relative">
+          <CardHeader className="text-center pb-6 relative">
             <div className="flex items-center justify-center space-x-2 mb-3">
               <div className="bg-blue-100 dark:bg-blue-900/40 rounded-full p-2">
                 <Baby className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <CardTitle className="text-lg sm:text-xl">Basic</CardTitle>
-              {isCurrentPlan('basic') && (
-                <Badge variant="default" className="bg-blue-100 text-blue-800 text-xs">
-                  Current Plan
-                </Badge>
-              )}
+              <CardTitle className="text-lg">{t('pricing.plans.basic.name')}</CardTitle>
             </div>
-            <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Free
+            <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              {t('pricing.free')}
             </div>
-            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mt-2">Perfect for getting started</p>
-            {!isUSD && !currencyLoading && (
-              <p className="text-xs text-muted-foreground mt-1">Billing in USD</p>
-            )}
+            <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">{t('pricing.plans.basic.subtitle')}</p>
           </CardHeader>
-          <CardContent className="space-y-4 lg:space-y-6 relative">
+          <CardContent className="space-y-4 relative">
             <div className="space-y-3">
-              {basicFeatures.map((feature, index) => (
-                <div
-                  key={index}
-                  className="flex items-center space-x-3 group transition-transform duration-200 hover:translate-x-1"
-                >
+              {basicFeatures.map((f, i) => (
+                <div key={i} className="flex items-center space-x-3 group transition-transform duration-200 hover:translate-x-1">
                   <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-1 shadow-sm shadow-green-500/30">
                     <Check className="h-3 w-3 text-white flex-shrink-0" strokeWidth={3} />
                   </div>
-                  <feature.icon className="h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                    {feature.text}
-                  </span>
+                  <f.icon className="h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium">{f.text}</span>
                 </div>
               ))}
             </div>
             <Button
-              className={cn(
-                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
-                "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(59,130,246,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(59,130,246,0.75)] hover:scale-[1.02] ring-1 ring-blue-400/30"
-              )}
+              className="w-full rounded-full py-5 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white"
               disabled={isCurrentPlan('basic') && !!user}
               onClick={() => !user && navigate('/auth')}
             >
-              <span
-                aria-hidden
-                className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-blue-500/40 via-cyan-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
-              />
-              <span
-                aria-hidden
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
-              />
-              <span className="relative flex items-center justify-center gap-2 z-10">
-                {user ? isCurrentPlan('basic') ? 'Current Plan' : 'Downgrade' : 'Get Started Free'}
-                {(!user || !isCurrentPlan('basic')) && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-blue-300" />
-                )}
-              </span>
+              {user ? (isCurrentPlan('basic') ? t('pricing.cta.currentPlan') : t('pricing.cta.downgrade')) : t('pricing.cta.getStartedFree')}
             </Button>
           </CardContent>
         </Card>
 
-        {/* ============ Premium Monthly Plan ============ */}
-        <div className="relative">
-          {monthlySelected && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20 animate-scale-in">
-              <Badge className="bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/40 text-xs px-3 py-1 border-0 whitespace-nowrap">
-                <Crown className="h-3 w-3 mr-1" />
-                Popular
-              </Badge>
-            </div>
-          )}
-        <Card
-          className={cn(
-            "pricing-card relative overflow-hidden border backdrop-blur-xl animate-fade-in h-full",
-            "transition-all duration-500 ease-out",
-            monthlySelected
-              ? "bg-white/85 dark:bg-slate-900/80 border-orange-300/60 dark:border-orange-500/40 shadow-2xl shadow-orange-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-orange-400/60"
-              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
-            isCurrentPlan('premium_monthly') && "ring-2 ring-orange-500"
-          )}
-          style={{ animationDelay: '100ms' }}
-        >
-          {/* Soft animated glowing border halo (organized — outlines the whole card) */}
-          {monthlySelected && (
-            <div
-              aria-hidden
-              className="absolute -inset-[1px] rounded-[inherit] pointer-events-none opacity-60"
-              style={{
-                background: 'linear-gradient(120deg, rgba(249,115,22,0.5), rgba(251,191,36,0.3), rgba(249,115,22,0.5))',
-                backgroundSize: '200% 100%',
-                animation: 'gradient-shift 22s ease-in-out infinite',
-                WebkitMask: 'linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)',
-                WebkitMaskComposite: 'xor',
-                maskComposite: 'exclude',
-                padding: '1.5px',
-              }}
-            />
-          )}
-          {/* Animated top accent bar (only when selected) */}
-          {monthlySelected && (
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#f97316,#fbbf24,#ef4444,#fbbf24,#f97316)] bg-[length:200%_100%] animate-border-glow z-10 opacity-80" />
-          )}
-          {/* Drifting glow orbs - slow & calm */}
-          <div className={cn(
-            "absolute -top-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            monthlySelected ? "bg-orange-400/20 opacity-80 animate-orb-drift" : "bg-orange-400/10 opacity-40"
-          )} />
-          <div className={cn(
-            "absolute -bottom-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-[1500ms]",
-            monthlySelected ? "bg-amber-400/15 opacity-70 animate-glow-pulse" : "opacity-0"
-          )} style={{ animationDelay: '3s', animationDuration: '12s' }} />
+        {/* ============ Monthly Plan ============ */}
+        <PlanCard
+          planKey="monthly"
+          icon={Crown}
+          color="orange"
+          title={t('pricing.plans.monthly.name')}
+          subtitle={t('pricing.plans.monthly.subtitle')}
+          price={convertPrice(PRICES.monthly)}
+          intervalLabel={t('pricing.interval.month')}
+          equivalentLabel={null}
+          badge={null}
+          isSelected={selectedPlan === 'monthly'}
+          isCurrent={isCurrentPlan('monthly')}
+          isTrialBadge={user && isTrial && subscriptionTier === 'premium' ? `${t('pricing.trial.label')} - ${trialDaysLeft} ${t('pricing.trial.daysLeft')}` : null}
+          features={premiumFeatures}
+          loading={upgradingMonthly}
+          onClick={() => handleUpgrade('monthly')}
+          ctaLabel={user ? t('pricing.cta.startFreeTrial') : t('pricing.cta.startFreeTrial')}
+          isUSD={isUSD}
+          currencyLoading={currencyLoading}
+          delay="100ms"
+          t={t}
+        />
 
+        {/* ============ Quarterly Plan (NEW - Popular) ============ */}
+        <PlanCard
+          planKey="quarterly"
+          icon={Star}
+          color="purple"
+          title={t('pricing.plans.quarterly.name')}
+          subtitle={t('pricing.plans.quarterly.subtitle')}
+          price={convertPrice(PRICES.quarterly)}
+          intervalLabel={t('pricing.interval.quarter')}
+          equivalentLabel={`${t('pricing.equivalentTo')} ${convertPrice(PRICES.quarterly / 3)}/${t('pricing.interval.month')}`}
+          badge={t('pricing.badges.mostPopular')}
+          isSelected={selectedPlan === 'quarterly'}
+          isCurrent={isCurrentPlan('quarterly')}
+          isTrialBadge={user && isTrial && subscriptionTier === 'premium_quarterly' ? `${t('pricing.trial.label')} - ${trialDaysLeft} ${t('pricing.trial.daysLeft')}` : null}
+          features={premiumFeatures}
+          loading={upgradingQuarterly}
+          onClick={() => handleUpgrade('quarterly')}
+          ctaLabel={t('pricing.cta.startFreeTrial')}
+          isUSD={isUSD}
+          currencyLoading={currencyLoading}
+          delay="200ms"
+          t={t}
+        />
 
-          <CardHeader className="text-center pb-6 lg:pb-8 relative">
-            <div className="flex items-center justify-center space-x-2 mb-3">
-              <div className="bg-orange-100 dark:bg-orange-900/40 rounded-full p-2">
-                <Crown className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-              </div>
-              <CardTitle className="text-lg sm:text-xl">Premium Monthly</CardTitle>
-              {isCurrentPlan('premium_monthly') && !isTrial && (
-                <Badge variant="default" className="bg-orange-100 text-orange-800 text-xs">
-                  Current Plan
-                </Badge>
-              )}
-              {user && isTrial && subscriptionTier === 'premium' && (
-                <Badge variant="default" className="bg-green-100 text-green-800 text-xs">
-                  Trial - {trialDaysLeft} days left
-                </Badge>
-              )}
-            </div>
-
-            <div className="mb-2 flex justify-center">
-              <Badge className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 shadow-md shadow-red-500/30 border-0">
-                40% OFF
-              </Badge>
-            </div>
-
-            {currencyLoading ? (
-              <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Loading...</div>
-            ) : (
-              <>
-                <div className="flex items-baseline justify-center space-x-2 mb-1">
-                  <span className="text-base sm:text-lg text-gray-400 dark:text-gray-500 line-through font-medium">
-                    {convertPrice(49.99)}
-                  </span>
-                  <span className={cn(
-                    "text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent transition-all duration-500",
-                    "bg-gradient-to-r from-orange-500 to-amber-500",
-                    monthlySelected && "drop-shadow-md"
-                  )}>
-                    {convertPrice(29.99)}
-                  </span>
-                  <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/month</span>
-                </div>
-                <p className="text-red-600 dark:text-red-400 text-xs sm:text-sm font-semibold">
-                  Save {convertPrice(20.00, false)} per month!
-                </p>
-                {!isUSD && (
-                  <p className="text-xs text-muted-foreground">Billing in USD</p>
-                )}
-              </>
-            )}
-            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mt-2">Complete baby tracking solution</p>
-          </CardHeader>
-          <CardContent className="space-y-4 lg:space-y-6 relative">
-            <div className="space-y-3">
-              {premiumFeatures.map((feature, index) => (
-                <div
-                  key={index}
-                  className="flex items-center space-x-3 group transition-transform duration-200 hover:translate-x-1"
-                >
-                  <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-1 shadow-sm shadow-green-500/30">
-                    <Check className="h-3 w-3 text-white flex-shrink-0" strokeWidth={3} />
-                  </div>
-                  <feature.icon className="h-4 w-4 text-orange-500 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                    {feature.text}
-                  </span>
-                  {(feature as any).isNew && (
-                    <Badge className="bg-gradient-to-r from-primary to-purple-500 text-primary-foreground text-[10px] h-5 px-1.5 border-0">NEW</Badge>
-                  )}
-                </div>
-              ))}
-            </div>
-            <Button
-              className={cn(
-                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
-                monthlySelected
-                  ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(249,115,22,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(249,115,22,0.75)] hover:scale-[1.02] ring-1 ring-orange-400/30"
-                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-md py-3"
-              )}
-              onClick={() => handleUpgrade('monthly')}
-              disabled={upgradingMonthly || isCurrentPlan('premium_monthly')}
-            >
-              {/* Subtle warm glow accent on the right */}
-              {monthlySelected && (
-                <span
-                  aria-hidden
-                  className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-orange-500/40 via-amber-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
-                />
-              )}
-              {/* Glint sweep on hover */}
-              {monthlySelected && (
-                <span
-                  aria-hidden
-                  className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
-                />
-              )}
-              <span className="relative flex items-center justify-center gap-2 z-10">
-                {upgradingMonthly ? 'Processing...' :
-                  isCurrentPlan('premium_monthly') && !isTrial ? 'Current Plan' :
-                    user && isTrial && subscriptionTier === 'premium' ? `Trial (${trialDaysLeft} days left)` :
-                      user ? 'Start Free Trial' : 'Start Free Trial'}
-                {monthlySelected && !upgradingMonthly && !isCurrentPlan('premium_monthly') && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-orange-300" />
-                )}
-              </span>
-            </Button>
-            {(!user || !isPremium || (isTrial && subscriptionTier === 'premium')) && (
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                {isTrial && subscriptionTier === 'premium' ? ' • 7-day free trial • Cancel anytime during trial' : ' • 7-day free trial • Cancel anytime'}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-        </div>
-
-        {/* ============ Premium Annual Plan ============ */}
-        <div className="relative">
-          {annualSelected && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20 animate-scale-in">
-              <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/40 text-xs px-3 py-1 border-0 whitespace-nowrap">
-                <Zap className="h-3 w-3 mr-1" />
-                Best Value
-              </Badge>
-            </div>
-          )}
-        <Card
-          className={cn(
-            "pricing-card relative overflow-hidden border backdrop-blur-xl animate-fade-in h-full",
-            "transition-all duration-500 ease-out",
-            annualSelected
-              ? "bg-white/85 dark:bg-slate-900/80 border-purple-300/60 dark:border-purple-500/40 shadow-2xl shadow-purple-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-purple-400/60"
-              : "bg-white/50 dark:bg-slate-900/40 border-white/30 dark:border-white/10 lg:scale-95 opacity-70 hover:opacity-90 hover:-translate-y-1",
-            isCurrentPlan('premium_annual') && "ring-2 ring-purple-500"
-          )}
-          style={{ animationDelay: '200ms' }}
-        >
-          {/* Soft animated glowing border halo (organized — outlines the whole card) */}
-          {annualSelected && (
-            <div
-              aria-hidden
-              className="absolute -inset-[1px] rounded-[inherit] pointer-events-none opacity-60"
-              style={{
-                background: 'linear-gradient(120deg, rgba(168,85,247,0.5), rgba(236,72,153,0.3), rgba(168,85,247,0.5))',
-                backgroundSize: '200% 100%',
-                animation: 'gradient-shift 22s ease-in-out infinite',
-                WebkitMask: 'linear-gradient(#000,#000) content-box, linear-gradient(#000,#000)',
-                WebkitMaskComposite: 'xor',
-                maskComposite: 'exclude',
-                padding: '1.5px',
-              }}
-            />
-          )}
-          {/* Animated top accent bar (only when selected) */}
-          {annualSelected && (
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(90deg,#a855f7,#ec4899,#8b5cf6,#ec4899,#a855f7)] bg-[length:200%_100%] animate-border-glow z-10 opacity-80" />
-          )}
-          {/* Drifting glow orbs - slow & calm */}
-          <div className={cn(
-            "absolute -top-24 -left-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-500",
-            annualSelected ? "bg-purple-400/20 opacity-80 animate-orb-drift" : "bg-purple-400/10 opacity-40"
-          )} />
-          <div className={cn(
-            "absolute -bottom-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none transition-opacity duration-[1500ms]",
-            annualSelected ? "bg-pink-400/15 opacity-70 animate-glow-pulse" : "opacity-0"
-          )} style={{ animationDelay: '3s', animationDuration: '12s' }} />
-
-          <CardHeader className="text-center pb-6 lg:pb-8 relative">
-            <div className="flex items-center justify-center space-x-2 mb-3">
-              <div className="bg-purple-100 dark:bg-purple-900/40 rounded-full p-2">
-                <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <CardTitle className="text-lg sm:text-xl">Premium Annual</CardTitle>
-              {isCurrentPlan('premium_annual') && (
-                <Badge variant="default" className="bg-purple-100 text-purple-800 text-xs">
-                  Current Plan
-                </Badge>
-              )}
-              {user && isTrial && subscriptionTier === 'premium_annual' && (
-                <Badge variant="default" className="bg-green-100 text-green-800 text-xs">
-                  Trial - {trialDaysLeft} days left
-                </Badge>
-              )}
-            </div>
-
-            <div className="mb-2 flex justify-center">
-              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold px-3 py-1 shadow-md shadow-green-500/30 border-0">
-                Save $60/year
-              </Badge>
-            </div>
-
-            {currencyLoading ? (
-              <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Loading...</div>
-            ) : (
-              <>
-                <div className="flex items-baseline justify-center space-x-2 mb-1">
-                  <span className="text-base sm:text-lg text-gray-400 dark:text-gray-500 line-through font-medium">
-                    {convertPrice(359.88)}
-                  </span>
-                  <span className={cn(
-                    "text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent transition-all duration-500",
-                    "bg-gradient-to-r from-purple-500 to-pink-500",
-                    annualSelected && "drop-shadow-md"
-                  )}>
-                    {convertPrice(299)}
-                  </span>
-                  <span className="text-gray-600 dark:text-gray-300 font-medium text-sm sm:text-base">/year</span>
-                </div>
-                <p className="text-green-600 dark:text-green-400 text-xs sm:text-sm font-semibold">
-                  Equivalent to {convertPrice(299 / 12)}/month
-                </p>
-                {!isUSD && (
-                  <p className="text-xs text-muted-foreground">Billing in USD</p>
-                )}
-              </>
-            )}
-            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mt-2">All premium features included</p>
-          </CardHeader>
-          <CardContent className="space-y-4 lg:space-y-6 relative">
-            <div className="space-y-3">
-              {premiumFeatures.map((feature, index) => (
-                <div
-                  key={index}
-                  className="flex items-center space-x-3 group transition-transform duration-200 hover:translate-x-1"
-                >
-                  <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-1 shadow-sm shadow-green-500/30">
-                    <Check className="h-3 w-3 text-white flex-shrink-0" strokeWidth={3} />
-                  </div>
-                  <feature.icon className="h-4 w-4 text-purple-500 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                    {feature.text}
-                  </span>
-                  {(feature as any).isNew && (
-                    <Badge className="bg-gradient-to-r from-primary to-purple-500 text-primary-foreground text-[10px] h-5 px-1.5 border-0">NEW</Badge>
-                  )}
-                </div>
-              ))}
-            </div>
-            <Button
-              className={cn(
-                "w-full touch-target group relative overflow-hidden rounded-full py-6 text-base font-bold tracking-wide border-0 transition-all duration-300",
-                annualSelected
-                  ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-[0_10px_30px_-8px_rgba(168,85,247,0.55)] hover:shadow-[0_15px_40px_-8px_rgba(168,85,247,0.75)] hover:scale-[1.02] ring-1 ring-purple-400/30"
-                  : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-md py-3"
-              )}
-              onClick={() => handleUpgrade('annual')}
-              disabled={upgradingAnnual || isCurrentPlan('premium_annual')}
-            >
-              {/* Subtle violet glow accent on the right */}
-              {annualSelected && (
-                <span
-                  aria-hidden
-                  className="absolute -right-8 top-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-l from-purple-500/40 via-pink-400/20 to-transparent rounded-full blur-2xl pointer-events-none"
-                />
-              )}
-              {/* Glint sweep on hover */}
-              {annualSelected && (
-                <span
-                  aria-hidden
-                  className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none"
-                />
-              )}
-              <span className="relative flex items-center justify-center gap-2 z-10">
-                {upgradingAnnual ? 'Processing...' :
-                  isCurrentPlan('premium_annual') && !isTrial ? 'Current Plan' :
-                    user && isTrial && subscriptionTier === 'premium_annual' ? `Trial (${trialDaysLeft} days left)` :
-                      user ? 'Start Free Trial' : 'Start Free Trial'}
-                {annualSelected && !upgradingAnnual && !isCurrentPlan('premium_annual') && (
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1.5 text-purple-300" />
-                )}
-              </span>
-            </Button>
-            {(!user || !isPremiumAnnual || (isTrial && subscriptionTier === 'premium_annual')) && (
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400">
-                {isTrial && subscriptionTier === 'premium_annual' ? ' • 7-day free trial • Cancel anytime during trial' : ' • 7-day free trial • Cancel anytime'}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-        </div>
+        {/* ============ Annual Plan (Best Value) ============ */}
+        <PlanCard
+          planKey="annual"
+          icon={Zap}
+          color="emerald"
+          title={t('pricing.plans.annual.name')}
+          subtitle={t('pricing.plans.annual.subtitle')}
+          price={convertPrice(PRICES.annual)}
+          intervalLabel={t('pricing.interval.year')}
+          equivalentLabel={`${t('pricing.equivalentTo')} ${convertPrice(PRICES.annual / 12)}/${t('pricing.interval.month')}`}
+          badge={t('pricing.badges.bestValue')}
+          isSelected={selectedPlan === 'annual'}
+          isCurrent={isCurrentPlan('annual')}
+          isTrialBadge={user && isTrial && subscriptionTier === 'premium_annual' ? `${t('pricing.trial.label')} - ${trialDaysLeft} ${t('pricing.trial.daysLeft')}` : null}
+          features={premiumFeatures}
+          loading={upgradingAnnual}
+          onClick={() => handleUpgrade('annual')}
+          ctaLabel={t('pricing.cta.startFreeTrial')}
+          isUSD={isUSD}
+          currencyLoading={currencyLoading}
+          delay="300ms"
+          t={t}
+        />
       </div>
+
+      <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-6">
+        {t('pricing.trial.note')}
+      </p>
+    </div>
+  );
+};
+
+/* ----------- Reusable Plan Card ----------- */
+type Color = 'orange' | 'purple' | 'emerald';
+
+const colorMap: Record<Color, { gradient: string; ring: string; orb: string; iconBg: string; iconColor: string; priceGradient: string }> = {
+  orange: {
+    gradient: 'from-orange-500 to-amber-500',
+    ring: 'ring-orange-400/60',
+    orb: 'bg-orange-400/20',
+    iconBg: 'bg-orange-100 dark:bg-orange-900/40',
+    iconColor: 'text-orange-600 dark:text-orange-400',
+    priceGradient: 'from-orange-500 to-amber-500',
+  },
+  purple: {
+    gradient: 'from-purple-500 to-pink-500',
+    ring: 'ring-purple-400/60',
+    orb: 'bg-purple-400/20',
+    iconBg: 'bg-purple-100 dark:bg-purple-900/40',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+    priceGradient: 'from-purple-500 to-pink-500',
+  },
+  emerald: {
+    gradient: 'from-emerald-500 to-teal-500',
+    ring: 'ring-emerald-400/60',
+    orb: 'bg-emerald-400/20',
+    iconBg: 'bg-emerald-100 dark:bg-emerald-900/40',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    priceGradient: 'from-emerald-500 to-teal-500',
+  },
+};
+
+interface PlanCardProps {
+  planKey: PlanKey;
+  icon: any;
+  color: Color;
+  title: string;
+  subtitle: string;
+  price: string;
+  intervalLabel: string;
+  equivalentLabel: string | null;
+  badge: string | null;
+  isSelected: boolean;
+  isCurrent: boolean;
+  isTrialBadge: string | null;
+  features: Array<{ icon: any; text: string; isNew?: boolean }>;
+  loading: boolean;
+  onClick: () => void;
+  ctaLabel: string;
+  isUSD: boolean;
+  currencyLoading: boolean;
+  delay: string;
+  t: (k: string) => string;
+}
+
+const PlanCard = ({
+  icon: Icon, color, title, subtitle, price, intervalLabel, equivalentLabel,
+  badge, isSelected, isCurrent, isTrialBadge, features, loading, onClick, ctaLabel,
+  isUSD, currencyLoading, delay, t,
+}: PlanCardProps) => {
+  const c = colorMap[color];
+  return (
+    <div className="relative">
+      {badge && (
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+          <Badge className={cn('text-white shadow-lg text-xs px-3 py-1 border-0 whitespace-nowrap bg-gradient-to-r', c.gradient)}>
+            <Icon className="h-3 w-3 mr-1" />
+            {badge}
+          </Badge>
+        </div>
+      )}
+      <Card
+        className={cn(
+          'pricing-card relative overflow-hidden border backdrop-blur-xl animate-fade-in h-full transition-all duration-500 ease-out',
+          isSelected
+            ? `bg-white/85 dark:bg-slate-900/80 shadow-2xl lg:scale-105 lg:-translate-y-2 ring-2 ${c.ring}`
+            : 'bg-white/60 dark:bg-slate-900/50 border-white/30 dark:border-white/10 hover:-translate-y-1',
+          isCurrent && `ring-2 ${c.ring}`
+        )}
+        style={{ animationDelay: delay }}
+      >
+        <div className={cn('absolute -top-24 -right-16 w-56 h-56 rounded-full blur-3xl pointer-events-none', c.orb)} />
+
+        <CardHeader className="text-center pb-6 relative">
+          <div className="flex items-center justify-center space-x-2 mb-3">
+            <div className={cn('rounded-full p-2', c.iconBg)}>
+              <Icon className={cn('h-5 w-5', c.iconColor)} />
+            </div>
+            <CardTitle className="text-lg">{title}</CardTitle>
+          </div>
+          {isTrialBadge && (
+            <div className="mb-2 flex justify-center">
+              <Badge className="bg-green-100 text-green-800 text-xs">{isTrialBadge}</Badge>
+            </div>
+          )}
+          {currencyLoading ? (
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">...</div>
+          ) : (
+            <>
+              <div className="flex items-baseline justify-center space-x-1 mb-1">
+                <span className={cn('text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r', c.priceGradient)}>
+                  {price}
+                </span>
+                <span className="text-gray-600 dark:text-gray-300 font-medium text-sm">/{intervalLabel}</span>
+              </div>
+              {equivalentLabel && (
+                <p className="text-green-600 dark:text-green-400 text-xs font-semibold">{equivalentLabel}</p>
+              )}
+              {!isUSD && (
+                <p className="text-xs text-muted-foreground mt-1">{t('pricing.billingInUsd')}</p>
+              )}
+            </>
+          )}
+          <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">{subtitle}</p>
+        </CardHeader>
+        <CardContent className="space-y-4 relative">
+          <div className="space-y-3">
+            {features.map((f, i) => (
+              <div key={i} className="flex items-center space-x-3">
+                <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full p-1 shadow-sm shadow-green-500/30">
+                  <Check className="h-3 w-3 text-white flex-shrink-0" strokeWidth={3} />
+                </div>
+                <f.icon className={cn('h-4 w-4 flex-shrink-0', c.iconColor)} />
+                <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-medium flex-1">{f.text}</span>
+                {f.isNew && (
+                  <Badge className="bg-gradient-to-r from-primary to-purple-500 text-primary-foreground text-[10px] h-5 px-1.5 border-0">
+                    {t('pricing.badges.new')}
+                  </Badge>
+                )}
+              </div>
+            ))}
+          </div>
+          <Button
+            className={cn(
+              'w-full rounded-full py-5 text-base font-bold tracking-wide border-0 transition-all duration-300',
+              'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white hover:scale-[1.02]'
+            )}
+            onClick={onClick}
+            disabled={loading || isCurrent}
+          >
+            <span className="flex items-center justify-center gap-2">
+              {loading ? t('pricing.cta.processing') : isCurrent ? t('pricing.cta.currentPlan') : ctaLabel}
+              {!loading && !isCurrent && <ArrowRight className="h-4 w-4" />}
+            </span>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };

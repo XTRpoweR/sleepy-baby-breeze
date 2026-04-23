@@ -6,17 +6,19 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { fbqTrack } from '@/utils/metaPixel';
 
 interface SubscriptionContextType {
-  subscriptionTier: 'basic' | 'premium' | 'premium_annual';
+  subscriptionTier: 'basic' | 'premium' | 'premium_quarterly' | 'premium_annual';
   status: string;
   currentPeriodEnd: string | null;
   loading: boolean;
   upgrading: boolean;
   upgradingMonthly: boolean;
+  upgradingQuarterly: boolean;
   upgradingAnnual: boolean;
   checkSubscription: () => Promise<void>;
-  createCheckout: (pricingPlan?: 'monthly' | 'annual') => Promise<void>;
+  createCheckout: (pricingPlan?: 'monthly' | 'quarterly' | 'annual') => Promise<void>;
   openCustomerPortal: () => Promise<void>;
   isPremium: boolean;
+  isPremiumQuarterly: boolean;
   isPremiumAnnual: boolean;
   isBasic: boolean;
   isTrial: boolean;
@@ -38,11 +40,12 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const { user, session, loading: authLoading, refreshSession } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [subscriptionTier, setSubscriptionTier] = useState<'basic' | 'premium' | 'premium_annual'>('basic');
+  const [subscriptionTier, setSubscriptionTier] = useState<'basic' | 'premium' | 'premium_quarterly' | 'premium_annual'>('basic');
   const [status, setStatus] = useState('active');
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [upgradingMonthly, setUpgradingMonthly] = useState(false);
+  const [upgradingQuarterly, setUpgradingQuarterly] = useState(false);
   const [upgradingAnnual, setUpgradingAnnual] = useState(false);
   const [isTrial, setIsTrial] = useState(false);
   const [trialEnd, setTrialEnd] = useState<string | null>(null);
@@ -176,23 +179,27 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const createCheckout = async (pricingPlan: 'monthly' | 'annual' = 'monthly') => {
-    const isUpgrading = pricingPlan === 'monthly' ? upgradingMonthly : upgradingAnnual;
+  const createCheckout = async (pricingPlan: 'monthly' | 'quarterly' | 'annual' = 'monthly') => {
+    const isUpgrading =
+      pricingPlan === 'monthly' ? upgradingMonthly :
+      pricingPlan === 'quarterly' ? upgradingQuarterly :
+      upgradingAnnual;
     if (isUpgrading) {
       console.log('Already processing upgrade, skipping...');
       return;
     }
-    
+
+    const setUpgrading = (v: boolean) => {
+      if (pricingPlan === 'monthly') setUpgradingMonthly(v);
+      else if (pricingPlan === 'quarterly') setUpgradingQuarterly(v);
+      else setUpgradingAnnual(v);
+    };
+
     try {
-      if (pricingPlan === 'monthly') {
-        setUpgradingMonthly(true);
-      } else {
-        setUpgradingAnnual(true);
-      }
-      console.log('Starting checkout process...');
-      
+      setUpgrading(true);
+      console.log('Starting checkout process...', pricingPlan);
+
       if (!user) {
-        console.error('User not authenticated');
         toast({
           title: "Authentication Required",
           description: "Please log in to upgrade your subscription.",
@@ -203,7 +210,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
 
       const accessToken = await ensureValidSession();
       if (!accessToken) {
-        console.error('No valid access token available for checkout');
         toast({
           title: "Session Expired",
           description: "Your login session has expired. Please sign in again to continue.",
@@ -212,34 +218,18 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         return;
       }
 
-      console.log('Creating checkout session for user:', user.email);
-
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
         body: { pricingPlan },
       });
-
-      console.log('Checkout response:', { data, error });
 
       if (error) {
         console.error('Checkout error:', error);
         const msg = error?.message || '';
-        
-        if (msg.includes('User not authenticated') || 
-            msg.includes('No authorization header') || 
-            msg.includes('Session from session_id claim in JWT does not exist') ||
-            msg.includes('session_not_found')) {
+        if (msg.includes('session') || msg.includes('JWT')) {
           toast({
             title: "Session Expired",
             description: "Your login session has expired. Please sign in again to continue with checkout.",
-            variant: "destructive",
-          });
-        } else if (msg.includes('STRIPE_SECRET_KEY')) {
-          toast({
-            title: "Configuration Error",
-            description: "Payment system is not properly configured. Please contact support.",
             variant: "destructive",
           });
         } else {
@@ -253,7 +243,6 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       }
 
       if (!data?.url) {
-        console.error('No checkout URL received:', data);
         toast({
           title: "Checkout Error",
           description: "Failed to get checkout URL. Please try again.",
@@ -262,49 +251,34 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         return;
       }
 
-      console.log('Checkout URL received, redirecting:', data.url);
-
-      // Meta Pixel: user is leaving for Stripe Checkout — fire InitiateCheckout
-      // (Stripe Checkout = our cart/checkout page; pricing is in USD).
-      const checkoutValue = pricingPlan === 'annual' ? 299.99 : 29.99;
+      // Meta Pixel: InitiateCheckout (USD pricing)
+      const checkoutValue =
+        pricingPlan === 'annual' ? 69.99 :
+        pricingPlan === 'quarterly' ? 19.99 :
+        7.99;
+      const planContentName =
+        pricingPlan === 'annual' ? 'premium_annual' :
+        pricingPlan === 'quarterly' ? 'premium_quarterly' :
+        'premium_monthly';
       fbqTrack('InitiateCheckout', {
         content_category: 'subscription',
-        content_name: pricingPlan === 'annual' ? 'premium_annual' : 'premium_monthly',
-        content_ids: [pricingPlan === 'annual' ? 'premium_annual' : 'premium_monthly'],
+        content_name: planContentName,
+        content_ids: [planContentName],
         num_items: 1,
         value: checkoutValue,
         currency: 'USD',
       });
 
       window.location.href = data.url;
-      
     } catch (error: any) {
       console.error('Checkout exception:', error);
-      const msg = error?.message || '';
-      
-      if (msg.includes('User not authenticated') || 
-          msg.includes('No authorization header') || 
-          msg.includes('Session from session_id claim in JWT does not exist')) {
-        toast({
-          title: "Session Expired",
-          description: "Your login session has expired. Please sign in again to continue with checkout.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to create checkout session. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to create checkout session. Please try again.",
+        variant: "destructive",
+      });
     } finally {
-      setTimeout(() => {
-        if (pricingPlan === 'monthly') {
-          setUpgradingMonthly(false);
-        } else {
-          setUpgradingAnnual(false);
-        }
-      }, 2000);
+      setTimeout(() => setUpgrading(false), 2000);
     }
   };
 
@@ -414,14 +388,13 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   }, [user, authLoading]);
 
-  const isPremium = subscriptionTier === 'premium' || subscriptionTier === 'premium_annual';
+  const isPremium = subscriptionTier === 'premium' || subscriptionTier === 'premium_quarterly' || subscriptionTier === 'premium_annual';
+  const isPremiumQuarterly = subscriptionTier === 'premium_quarterly';
   const isPremiumAnnual = subscriptionTier === 'premium_annual';
   const isBasic = subscriptionTier === 'basic';
-  
-  // Computed upgrading state for backward compatibility
-  const upgrading = upgradingMonthly || upgradingAnnual;
-  
-  // Calculate trial days left
+
+  const upgrading = upgradingMonthly || upgradingQuarterly || upgradingAnnual;
+
   const trialDaysLeft = trialEnd ? Math.max(0, Math.ceil((new Date(trialEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))) : null;
 
   return (
@@ -432,11 +405,13 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       loading,
       upgrading,
       upgradingMonthly,
+      upgradingQuarterly,
       upgradingAnnual,
       checkSubscription,
       createCheckout,
       openCustomerPortal,
       isPremium,
+      isPremiumQuarterly,
       isPremiumAnnual,
       isBasic,
       isTrial,
