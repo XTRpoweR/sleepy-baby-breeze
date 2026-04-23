@@ -39,6 +39,16 @@ const Subscription = () => {
     }
   }, [user, loading, navigate]);
 
+  // Meta Pixel: viewing subscription/upgrade page
+  useEffect(() => {
+    fbqTrack('ViewContent', {
+      content_type: 'product_group',
+      content_category: 'subscription',
+      content_name: 'subscription_page',
+      content_ids: ['premium_monthly', 'premium_annual'],
+    });
+  }, []);
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
