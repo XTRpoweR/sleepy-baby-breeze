@@ -191,7 +191,7 @@ export const UnifiedDashboard = ({
                     Unlock Premium
                   </h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      Unlimited profiles, family sharing & more for $29.99/month
+                      Unlimited profiles, family sharing & more — from $7.99/month
                     </p>
                 </div>
               </div>
