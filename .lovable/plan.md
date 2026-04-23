@@ -1,106 +1,100 @@
 
 
-## تحسين تصميم صفحة تسجيل الدخول (Auth Page)
+## إضافة باقة "3 أشهر" + تحديث جميع الأسعار
 
-سأعيد تصميم صفحة `/auth` بالكامل لتصبح أكثر دفئاً واحترافية وجاذبية، مع رسوم متحركة ناعمة وألوان هادئة تناسب هوية تطبيق "SleepyBabyy" (ألوان البنفسجي/الوردي/الكريمي الدافئ).
+### الأسعار الجديدة
+| الباقة | السعر | الفترة |
+|--------|------|--------|
+| Basic (مجانية) | Free | — لن تُمسّ |
+| **Premium شهرية** | **$7.99** | شهرياً |
+| **Premium 3 أشهر** (جديدة) | **$19.99** | كل 3 أشهر (≈ $6.66/شهر) |
+| **Premium سنوية** | **$69.99** | سنوياً (≈ $5.83/شهر) |
 
----
-
-### المشاكل في التصميم الحالي
-
-- التصميم "مسطح" وبارد، يفتقر للحياة والحركة.
-- لا يوجد عنوان ترحيبي يجذب الزائر أو يشرح القيمة.
-- البطاقة بسيطة جداً بدون عمق أو تأثيرات زجاجية.
-- الحقول ثابتة بلا تفاعل عند التركيز (focus).
-- لا يوجد أيقونة/شعار يربط الصفحة بهوية الموقع.
-- لا توجد عناصر طمأنينة (مثل: "ضمان الخصوصية" أو "آمن ومشفّر").
+التجربة المجانية 7 أيام تبقى مفعّلة على جميع باقات Premium الثلاث.
 
 ---
 
-### التصميم الجديد المقترح
+### 1) تحديث Stripe (يتم تلقائياً عبر edge function)
 
-#### 1. الخلفية الدافئة المتحركة
-- تدرج ناعم من الكريمي الفاتح → البنفسجي الفاتح → الوردي الباهت (`from-amber-50 via-purple-50 to-pink-50`).
-- إضافة "blobs" ضبابية متحركة في الخلفية (دوائر كبيرة بلون بنفسجي/وردي مع `blur-3xl` و `animate-pulse` بطيء) لإعطاء حياة دون إزعاج.
-- نجوم/فقاعات صغيرة عائمة (floating particles) تذكّر بأجواء النوم الهادئ — اختيارية وخفيفة.
+سأنشئ edge function لمرة واحدة `setup-stripe-prices` تقوم بـ:
+- **أرشفة (تعطيل)** جميع الأسعار النشطة الحالية للمنتج `prod_SngH6Y04uO0jIF` (تشمل $29.99 الشهرية و $299.99 السنوية والقديمة 49.99) — Stripe لا يسمح بحذف الأسعار، فقط أرشفتها، وهذا آمن للمشتركين الحاليين (يستمرون بأسعارهم القديمة).
+- **إنشاء 3 أسعار جديدة** بالدولار:
+  - `monthly` → 799 سنت / month
+  - `quarterly` → 1999 سنت / month × 3 (interval: month, interval_count: 3)
+  - `annual` → 6999 سنت / year
+- إرجاع `priceId` لكل واحدة + حفظها في جدول جديد `stripe_price_config` لاستخدامها في checkout.
 
-#### 2. هيدر الصفحة (فوق البطاقة)
-- شعار/أيقونة قمر 🌙 صغير دائري مع توهج خفيف (glow) في الأعلى.
-- عنوان كبير: "أهلاً بعودتك" أو "ابدأ رحلتك معنا" (يتغير بحسب login/signup).
-- نص فرعي مهدّئ: "تتبّع نوم طفلك بسهولة وراحة بال".
-- كلاهما يدخل بحركة `fade-in-up` متتابعة.
+سأشغّل هذه الدالة مرة واحدة بعد النشر، ثم سيكون النظام جاهزاً.
 
-#### 3. البطاقة (Glass Card)
-- خلفية زجاجية: `bg-white/70 backdrop-blur-xl` مع حدود بيضاء شفافة.
-- ظل ناعم متعدد الطبقات (soft glow shadow) بلون بنفسجي خفيف.
-- زوايا مدورة `rounded-3xl`.
-- حركة دخول `scale-in + fade-in` عند تحميل الصفحة.
+### 2) تحديث `create-checkout`
+- إزالة الـ `priceId` السنوي الثابت `price_1S4MDsKxuyUBlfIJ2zvZjYFB`.
+- قبول `pricingPlan: 'monthly' | 'quarterly' | 'annual'`.
+- جلب `priceId` الصحيح ديناميكياً من جدول `stripe_price_config` (أو من قائمة أسعار المنتج النشطة).
+- الحفاظ على `trial_period_days: 7` للجميع.
 
-#### 4. الحقول (Inputs) المحسّنة
-- ارتفاع أكبر (`h-12`) وحواف `rounded-xl`.
-- الأيقونة على اليسار تتحول لونها للبنفسجي عند التركيز (focus).
-- حلقة توهج بنفسجية ناعمة عند التركيز (`focus:ring-4 focus:ring-purple-200/50`).
-- انتقال سلس `transition-all duration-300`.
-- التسمية (Label) ترتفع قليلاً عند التركيز (تأثير دقيق).
+### 3) تحديث `check-subscription` و `webhook-handler`
+- إضافة tier جديد: `premium_quarterly`.
+- التعرف على نوع الاشتراك من `interval` و `interval_count`:
+  - `year` → `premium_annual`
+  - `month` + `interval_count: 3` → `premium_quarterly`
+  - `month` → `premium`
+- تحديث webhook ليتعرف على المبالغ الجديدة (799/1999/6999).
 
-#### 5. زر تسجيل الدخول الرئيسي
-- تدرج بنفسجي → وردي مع تأثير "shine" (لمعة تمر عبر الزر كل بضع ثواني).
-- ارتفاع أكبر `h-12` مع نص أوضح.
-- عند التحميل: spinner أنيق بدلاً من نص "Processing...".
-- تأثير `hover:scale-[1.02]` و ظل متوهج عند التحويم.
+### 4) تحديث الـ Hook والـ Types
+- `useSubscription.tsx`: توسيع `subscriptionTier` ليشمل `'premium_quarterly'`، إضافة `upgradingQuarterly`، تحديث القيم في `fbqTrack('InitiateCheckout')` للأسعار الجديدة (7.99 / 19.99 / 69.99).
+- إضافة helpers: `isPremiumQuarterly`.
 
-#### 6. زر Google
-- خلفية بيضاء نقية مع حدود ناعمة.
-- يرتفع قليلاً عند التحويم (`hover:-translate-y-0.5`) مع ظل أعمق.
+### 5) إعادة تصميم `SubscriptionPlans.tsx` و `Pricing.tsx`
+- **4 بطاقات** بدل 3: Basic / Monthly / **Quarterly (Best Value الأوسط)** / Annual.
+- على الموبايل: عمود واحد. على Desktop: 4 أعمدة (`lg:grid-cols-4`).
+- Toggle ثلاثي بدل ثنائي: Monthly | 3 Months | Yearly.
+- **إزالة كل الأسعار المشطوبة والـ "40% OFF"** نهائياً (حسب طلبك). الأسعار الجديدة تُعرض بشكل نظيف.
+- بطاقة "3 أشهر" بلون البنفسجي/الأزرق وتحمل شارة "Most Popular".
+- البطاقة السنوية بشارة "Best Value — Save 27%" (محسوبة فعلياً: 7.99×12=95.88 → موفّر ≈ $26).
+- الحفاظ على كل الرسوم المتحركة والتصميم الزجاجي الموجود.
 
-#### 7. الفاصل "Or continue with"
-- خط متدرج بدلاً من خط صلب، يتلاشى من الجوانب.
+### 6) i18n — توحيد اللغات (8 لغات)
+سأضيف قسم `pricing` كامل في كل ملف من `src/locales/{en,de,es,fr,it,el,fi,sv}/common.json` يحتوي على:
+- أسماء البطاقات (Basic / Monthly / Quarterly / Annual)
+- العناوين الفرعية والوصف
+- جميع نصوص المميزات (basic + premium) — حالياً hardcoded إنجليزي
+- نصوص الأزرار (Start Free Trial / Current Plan / Processing / Upgrade)
+- شارات (Most Popular, Best Value, 7-day free trial, Save X%)
+- نصوص الـ toggle (Monthly / 3 Months / Yearly)
+- "Equivalent to X/month", "Cancel anytime"
 
-#### 8. التبديل بين تسجيل الدخول/إنشاء حساب
-- انتقال انسيابي (`fade + slide`) عند التبديل بين الوضعين باستخدام `key` على الـ form.
-- حقل "الاسم الكامل" يظهر بحركة `slide-down` ناعمة عند التبديل لـ Sign Up.
+ثم استبدال كل النصوص الإنجليزية الثابتة في `SubscriptionPlans.tsx` و `Pricing.tsx` بـ `t('pricing.xxx')`.
 
-#### 9. شارة الثقة في الأسفل
-- صف صغير تحت البطاقة مع أيقونات: 🔒 "تشفير SSL" • ⭐ "موثوق من +10,000 عائلة" • ✓ "بدون التزامات".
+### 7) العملات لكل دولة
+نظام `useGeoCurrency` الحالي يعمل تماماً (USD/EUR/GBP/SEK/NOK يكتشف تلقائياً حسب IP). سيتم استخدام `convertPrice()` على الأسعار الجديدة (7.99 / 19.99 / 69.99) — بدون أي تعديل على المنطق. الفوترة في Stripe تبقى بالدولار مع عرض السعر المحلي للمستخدم (مع ملاحظة "Billing in USD" الموجودة حالياً).
 
-#### 10. الترجمة
-- ترجمة جميع النصوص الجديدة (welcome titles, subtitles, trust badges) للغات الثمانية المدعومة.
+### 8) تحديث المراجع للسعر في باقي الموقع
+استبدال `$29.99` و `$49.99` (المشطوب) في:
+- `src/pages/Account.tsx` (سطرين)
+- `src/pages/Contact.tsx`
+- `src/pages/Features.tsx`
+- `src/pages/HelpCenter.tsx`
+- `src/components/dashboard/MobileDashboard.tsx`
+- `src/components/dashboard/UnifiedDashboard.tsx`
+- `src/components/subscription/UpgradePrompt.tsx`
+- `src/pages/Dashboard.tsx` (قيم Meta Pixel Purchase)
 
----
-
-### الألوان الدافئة المقترحة
-
-```text
-Background:    amber-50 → purple-50 → pink-50  (دافئ هادئ)
-Card:          white/70 + backdrop-blur
-Primary CTA:   purple-500 → pink-500 (تدرج)
-Focus ring:    purple-200/50
-Icons (focus): purple-500
-Trust badges:  emerald-600 / amber-600
-Text:          slate-700 / slate-500
-```
-
----
-
-### الملفات المعدّلة
-
-- **`src/pages/Auth.tsx`** — إعادة بناء كامل للـ JSX مع الهيدر الترحيبي، الخلفية المتحركة، البطاقة الزجاجية، والحقول المحسّنة.
-- **`src/index.css`** — إضافة:
-  - `.auth-blob` (دوائر الخلفية المتحركة)
-  - `.auth-card-glow` (الظل المتوهج للبطاقة)
-  - `.auth-input` (حالة التركيز المحسّنة)
-  - `.auth-shine-btn` (تأثير اللمعة على الزر)
-  - keyframes: `blob-float`, `shine-sweep`
-- **`src/locales/{en,de,es,fr,it,el,fi,sv}/common.json`** — إضافة:
-  - `auth.welcomeBack`, `auth.welcomeNew`
-  - `auth.subtitleLogin`, `auth.subtitleSignup`
-  - `auth.trustEncryption`, `auth.trustFamilies`, `auth.trustNoCommitment`
+→ تصبح `$7.99/month` (السعر الأرخص لجذب الانتباه)، بدون أسعار مشطوبة.
 
 ---
 
-### ملاحظات الأداء
-- جميع تأثيرات `backdrop-blur` تُعطّل تلقائياً على الموبايل (≤768px) عبر media query (نفس النمط المستخدم في الهيدر).
-- الـ blobs المتحركة تستخدم `transform` فقط (GPU-accelerated) ولا تسبب reflow.
-- عدد العناصر المتحركة محدود (3 blobs كحد أقصى).
-- `prefers-reduced-motion` محترم: الحركات تتوقف للمستخدمين الذين يفضّلون تقليل الحركة.
+### قاعدة البيانات (Migration)
+1. إنشاء جدول `stripe_price_config`:
+   - `id`, `plan_key` (monthly/quarterly/annual), `stripe_price_id`, `amount_cents`, `interval`, `created_at`
+   - RLS: قراءة عامة (anon/authenticated)، كتابة فقط للـ service role.
+2. تحديث `subscriptions.subscription_tier` — لا يحتاج تغيير schema (نص حر)، لكن سأحدّث `get_user_subscription_tier` و `has_premium_access` لتشمل `'premium_quarterly'`.
+
+---
+
+### ضمانات السلامة
+- ✅ الباقة المجانية لن تُمس (لا حذف ولا تعديل).
+- ✅ المشتركون الحاليون على الأسعار القديمة يبقون عليها (Stripe يحتفظ بـ `subscription.items.price` الأصلي حتى لو أُرشف السعر).
+- ✅ التجربة المجانية 7 أيام محفوظة.
+- ✅ كل الوظائف (auth, checkout, webhook, customer portal, family sharing, Meta Pixel) ستبقى تعمل.
+- ✅ بعد إضافة الأسعار في Stripe، سأتحقق عبر `curl_edge_functions` و `edge_function_logs`.
 
