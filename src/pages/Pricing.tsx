@@ -159,6 +159,11 @@ const Pricing = () => {
                     </td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       {/* FAQ Section */}
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
