@@ -64,3 +64,6 @@ verify_jwt = true
 
 [functions.chat-assistant]
 verify_jwt = true
+
+[functions.meta-capi]
+verify_jwt = false
