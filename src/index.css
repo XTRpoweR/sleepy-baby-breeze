@@ -1136,6 +1136,8 @@ html {
 .header-lang-mobile :is(button, [role="button"]) {
   height: 2.5rem !important;
   width: 2.5rem !important;
+  min-width: 2.5rem !important;
+  max-width: 2.5rem !important;
   padding: 0 !important;
   border-radius: 1rem !important;
   background: linear-gradient(135deg, hsla(261, 83%, 95%, 1), hsla(330, 81%, 95%, 1)) !important;
