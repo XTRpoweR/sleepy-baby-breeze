@@ -382,7 +382,7 @@ const Index = () => {
                 <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" strokeWidth={2.5} />
               </span>
               <span className="text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-700 to-green-700 bg-clip-text text-transparent whitespace-nowrap">
-                {t('hero.moneyBackTitle', '30-Day Money-Back Guarantee')}
+                {t('hero.moneyBackTitle', '14-Day Money-Back Guarantee')}
               </span>
               <span className="hidden sm:inline text-xs text-emerald-700/70 font-medium border-l border-emerald-300/60 pl-2.5">
                 {t('hero.moneyBackSubtitle', 'Full refund, no questions asked')}
