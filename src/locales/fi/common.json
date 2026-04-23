@@ -24,7 +24,9 @@
     "exploreFeatures": "Tutustu kaikkiin ominaisuuksiin",
     "freeTrial": "Ilmainen 14 päivää",
     "noCreditCard": "Luottokorttia ei tarvita",
-    "madeByParents": "Vanhempien tekemä"
+    "madeByParents": "Vanhempien tekemä",
+    "moneyBackTitle": "30 päivän rahat takaisin -takuu",
+    "moneyBackSubtitle": "Tilaa luottavaisin mielin — täysi palautus, ilman kysymyksiä"
   },
   "tutorial": {
     "title": "SleepyBabyyn tutustuminen",

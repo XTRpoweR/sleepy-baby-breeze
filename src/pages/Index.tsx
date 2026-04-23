@@ -375,8 +375,23 @@ const Index = () => {
         <Star className="absolute bottom-32 right-[10%] h-4 w-4 text-pink-400/50 sparkle hidden sm:block" style={{ animationDelay: '1.2s' }} aria-hidden="true" />
 
         <div className="max-w-7xl mx-auto relative z-10">
+          {/* Money-Back Guarantee Banner */}
+          <div className="flex justify-center mb-4 animate-fade-in-up">
+            <div className="group inline-flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-50 border border-emerald-300/60 shadow-[0_4px_20px_-6px_rgba(16,185,129,0.35)] hover:shadow-[0_6px_24px_-4px_rgba(16,185,129,0.5)] hover:-translate-y-0.5 transition-all duration-300">
+              <span className="relative flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-600 shadow-sm shrink-0">
+                <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" strokeWidth={2.5} />
+              </span>
+              <span className="text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-700 to-green-700 bg-clip-text text-transparent whitespace-nowrap">
+                {t('hero.moneyBackTitle', '30-Day Money-Back Guarantee')}
+              </span>
+              <span className="hidden sm:inline text-xs text-emerald-700/70 font-medium border-l border-emerald-300/60 pl-2.5">
+                {t('hero.moneyBackSubtitle', 'Full refund, no questions asked')}
+              </span>
+            </div>
+          </div>
+
           {/* Trust badge */}
-          <div className="flex justify-center mb-6 animate-fade-in-up">
+          <div className="flex justify-center mb-6 animate-fade-in-up" style={{ animationDelay: '0.05s' }}>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 shadow-sm">
               <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
