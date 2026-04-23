@@ -287,34 +287,53 @@ const Index = () => {
     rating: 5
   }], []);
   return <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
-      {/* Navigation */}
-      <nav className="bg-white/95 backdrop-blur-sm border-b border-primary/20 sticky top-0 z-50 animate-fade-in safe-area-top">
+      {/* Navigation — Glass Aurora Header */}
+      <nav className="glass-header sticky top-0 z-50 animate-fade-in safe-area-top">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-14 sm:h-16">
-            <div className="flex items-center space-x-2 sm:space-x-3 group">
-              <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-8 sm:h-10 w-auto transition-transform duration-300 group-hover:scale-110" loading="eager" width="40" height="40" />
-              <span className="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight">{t('app.name')}</span>
+          <div className="flex justify-between items-center h-16">
+            {/* Logo with glow */}
+            <div className="flex items-center gap-2 sm:gap-3 group cursor-pointer logo-wrap">
+              <div className="relative shrink-0">
+                <span className="logo-glow" aria-hidden="true" />
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="relative h-9 sm:h-10 w-auto transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]" loading="eager" width="40" height="40" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-purple-700 to-pink-600 bg-clip-text text-transparent">
+                  {t('app.name')}
+                </span>
+                <span className="relative hidden sm:flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+              </div>
             </div>
-            
+
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-              <a href="#features" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium text-sm xl:text-base">{t('navigation.features')}</a>
-              <a href="#insights" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium text-sm xl:text-base">{t('navigation.insights')}</a>
-              <a href="#pricing" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium text-sm xl:text-base">Pricing</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-primary transition-colors duration-300 font-medium text-sm xl:text-base">{t('navigation.reviews')}</a>
-              <LanguageSelector />
-              {user ? <Button onClick={() => navigate('/dashboard')} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-4 xl:px-6">
+            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+              <a href="#features" className="text-gray-700 hover:text-primary hover:bg-purple-50 transition-all duration-300 font-medium text-sm xl:text-base px-3 py-1.5 rounded-full">{t('navigation.features')}</a>
+              <a href="#insights" className="text-gray-700 hover:text-primary hover:bg-purple-50 transition-all duration-300 font-medium text-sm xl:text-base px-3 py-1.5 rounded-full">{t('navigation.insights')}</a>
+              <a href="#pricing" className="text-gray-700 hover:text-primary hover:bg-purple-50 transition-all duration-300 font-medium text-sm xl:text-base px-3 py-1.5 rounded-full">Pricing</a>
+              <a href="#testimonials" className="text-gray-700 hover:text-primary hover:bg-purple-50 transition-all duration-300 font-medium text-sm xl:text-base px-3 py-1.5 rounded-full">{t('navigation.reviews')}</a>
+              <div className="ml-2"><LanguageSelector /></div>
+              {user ? <Button onClick={() => navigate('/dashboard')} className="ml-2 gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-5 xl:px-6 rounded-full shadow-lg shadow-purple-500/30">
                   {t('navigation.dashboard')}
-                </Button> : <Button onClick={handleGetStarted} className="gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-4 xl:px-6">
+                </Button> : <Button onClick={handleGetStarted} className="ml-2 gradient-dynamic hover:scale-105 transition-all duration-300 font-medium text-white border-0 text-sm xl:text-base px-5 xl:px-6 rounded-full shadow-lg shadow-purple-500/30">
                   {t('navigation.getStarted')}
                 </Button>}
             </div>
 
-            {/* Mobile Navigation */}
-            <div className="lg:hidden flex items-center">
-              <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="touch-target">
+            {/* Mobile Navigation — compact icon buttons */}
+            <div className="lg:hidden flex items-center gap-2">
+              <div className="header-lang-mobile">
+                <LanguageSelector />
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+                className="relative h-10 w-10 rounded-2xl flex items-center justify-center text-white bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-600 shadow-lg shadow-purple-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
+              >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
+              </button>
             </div>
           </div>
 

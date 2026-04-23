@@ -1105,3 +1105,65 @@ html {
   .star-twinkle, .animate-icon-bounce, .shimmer-overlay, .shimmer-overlay-light,
   .animate-spin-slow, .progress-bar-fill-glow { animation: none !important; }
 }
+
+/* ===== Glass Aurora Header ===== */
+.glass-header {
+  background: hsla(0, 0%, 100%, 0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  backdrop-filter: saturate(180%) blur(18px);
+  border-bottom: 1px solid hsla(261, 83%, 58%, 0.12);
+  box-shadow: 0 4px 30px -10px hsla(261, 83%, 58%, 0.08);
+  will-change: backdrop-filter;
+}
+
+.logo-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, hsla(291, 64%, 60%, 0.45), transparent 70%);
+  filter: blur(10px);
+  opacity: 0.7;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.logo-wrap:hover .logo-glow {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* Compact mobile language selector */
+.header-lang-mobile :is(button, [role="button"]) {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  padding: 0 !important;
+  border-radius: 1rem !important;
+  background: linear-gradient(135deg, hsla(261, 83%, 95%, 1), hsla(330, 81%, 95%, 1)) !important;
+  border: 1px solid hsla(261, 83%, 70%, 0.35) !important;
+  color: hsl(261, 83%, 50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px -2px hsla(261, 83%, 58%, 0.2) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+.header-lang-mobile :is(button, [role="button"]):hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px -2px hsla(261, 83%, 58%, 0.35) !important;
+}
+.header-lang-mobile :is(button, [role="button"]) > span:not(.sr-only) {
+  display: none !important;
+}
+.header-lang-mobile :is(button, [role="button"]) svg {
+  margin: 0 !important;
+}
+
+/* Mobile perf: disable expensive blur on small devices */
+@media (max-width: 768px) {
+  .glass-header {
+    background: hsla(0, 0%, 100%, 0.95);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .logo-glow { display: none; }
+}
