@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
 import { preloadCriticalResources } from "@/utils/performanceUtils";
+import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 
 // Eager-load the landing page so the first paint is instant
 import Index from "./pages/Index";
