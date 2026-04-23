@@ -111,7 +111,7 @@ export const SubscriptionPlans = () => {
         {/* ============ Basic Plan ============ */}
         <Card
           className={cn(
-            "relative overflow-hidden border border-white/40 dark:border-white/10",
+            "pricing-card relative overflow-hidden border border-white/40 dark:border-white/10",
             "bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl",
             "transition-all duration-500 ease-out animate-fade-in",
             "hover:-translate-y-2 hover:shadow-2xl",
