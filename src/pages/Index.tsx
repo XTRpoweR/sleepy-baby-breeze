@@ -878,11 +878,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-      
-      {/* Fixed language selector hamburger menu - mobile only */}
-      <div className="fixed top-4 right-20 z-50 md:hidden">
-        <LanguageSelector />
-      </div>
     </div>;
 };
 export default Index;
