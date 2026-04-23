@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { ForgotPasswordDialog } from '@/components/auth/ForgotPasswordDialog';
 import { Mail, Lock, User, ArrowLeft, Moon, Loader2, ShieldCheck, Heart, Sparkles } from 'lucide-react';
+import { fbqTrack } from '@/utils/metaPixel';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
