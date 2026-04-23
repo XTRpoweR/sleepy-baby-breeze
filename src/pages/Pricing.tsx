@@ -11,51 +11,35 @@ import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useGeoCurrency } from "@/hooks/useGeoCurrency";
-import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft } from "lucide-react";
+import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft, Zap } from "lucide-react";
 import { fbqTrack } from "@/utils/metaPixel";
+import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
+
 const Pricing = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
-  const {
-    t
-  } = useTranslation();
+  const { user } = useAuth();
+  const { t } = useTranslation();
   const { currency, loading: currencyLoading, convertPrice, isUSD } = useGeoCurrency();
-  const [isAnnual, setIsAnnual] = useState(true);
 
-  // Scroll to top + Meta Pixel ViewContent (Pricing/Service page)
+  // Scroll to top + Meta Pixel ViewContent
   useEffect(() => {
     window.scrollTo(0, 0);
     fbqTrack('ViewContent', {
       content_type: 'product_group',
       content_category: 'pricing',
       content_name: 'pricing_page',
-      content_ids: ['premium_monthly', 'premium_annual'],
+      content_ids: ['premium_monthly', 'premium_quarterly', 'premium_annual'],
     });
   }, []);
+
   const handleGetStarted = () => {
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      navigate('/auth');
-    }
+    if (user) navigate('/dashboard');
+    else navigate('/auth');
   };
   const handleBackNavigation = () => {
-    if (user) {
-      navigate('/dashboard');
-    } else {
-      navigate('/');
-    }
+    if (user) navigate('/dashboard');
+    else navigate('/');
   };
-  const features = {
-    basic: ["1 baby profile", "Current day tracking", "Basic sleep reports", "Essential sound library", "Mobile app access", "Basic customer support"],
-    premium: ["Unlimited baby profiles", "Extended activity history", "Family sharing & collaboration", "Advanced analytics & trends", "Premium sound library", "Photo memories", "Smart notifications", "Pediatrician reports", "Data backup & export", "Priority customer support", "Sleep coaching resources", "Custom activity types"]
-  };
-  const monthlyPrice = 29.99;
-  const annualPrice = 299.99;
-  const originalPrice = 49.99;
-  const annualSavings = (monthlyPrice * 12 - annualPrice).toFixed(2);
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Navigation */}
       {user ? <>
