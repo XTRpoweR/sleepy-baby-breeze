@@ -1,38 +1,68 @@
 
 
-## تغيير ضمان الاسترداد من 30 يوم إلى 15 يوم
+## تحسين تصميم الهيدر (Navigation) في الصفحة الرئيسية
 
-سأستبدل جميع إشارات "استرداد الأموال خلال 30 يوم" في كافة أنحاء التطبيق بـ **15 يوم** مع الإبقاء على الفترة التجريبية المجانية (7 أيام) كما هي في باقات الأسعار.
+سأعيد تصميم الشريط العلوي في `src/pages/Index.tsx` (السطور 291-342) ليصبح أكثر عصرية وتناسقاً مع باقي الموقع، مع التركيز على تجربة الموبايل التي تظهر في صورتك.
+
+---
+
+### المشاكل الحالية في الهيدر
+
+- زر اللغة يظهر بحدود وردية باهتة وكبيرة جداً في الموبايل (يأخذ مساحة كبيرة دون قيمة).
+- زر القائمة (Menu) بنفسجي صلب بدون أي تأثيرات أو تناغم مع هوية الموقع.
+- الشعار والنص بسيطان بدون لمسة فاخرة.
+- الخلفية بيضاء مسطحة بدون عمق.
+
+---
+
+### التصميم الجديد المقترح — "Glass Aurora Header"
+
+**1. الخلفية (Container)**
+- خلفية شبه شفافة `bg-white/70` مع `backdrop-blur-xl` لإعطاء تأثير زجاجي عصري.
+- حد سفلي رفيع متدرج (`border-b border-primary/10`) بدل اللون الأزرق العادي.
+- ظل ناعم خفيف عند التمرير `shadow-[0_4px_30px_rgba(139,92,246,0.06)]`.
+- ارتفاع أكبر قليلاً في الموبايل (h-16) لراحة بصرية أفضل.
+
+**2. الشعار (Logo)**
+- إضافة هالة توهج خلف الصورة باستخدام `::before` مع تدرج بنفسجي/وردي ضبابي.
+- النص "SleepyBabyy" بتدرج لوني (`bg-gradient-to-r from-slate-900 via-purple-700 to-pink-600 bg-clip-text text-transparent`) لإضفاء لمسة فاخرة.
+- نقطة متوهجة صغيرة (•) خضراء بجانب الاسم تشير إلى "نشط".
+
+**3. زر اختيار اللغة (Mobile)**
+- استبدال الحدود الوردية الحالية بزر دائري مدمج (icon-only) بحجم 40×40 بكسل.
+- خلفية متدرجة خفيفة `from-purple-50 to-pink-50` مع حد `border-purple-200/60`.
+- أيقونة Globe ملونة بنفسجي + سهم سفلي صغير يدل على القائمة المنسدلة.
+
+**4. زر القائمة (Hamburger)**
+- استبدال الزر النفسجي الصلب بزر دائري متدرج: `bg-gradient-to-br from-purple-600 via-fuchsia-600 to-pink-600`.
+- ظل ملون متوهج: `shadow-lg shadow-purple-500/40`.
+- تأثير hover: تكبير خفيف (`scale-105`) وتدوير بسيط للأيقونة.
+- أيقونة Menu بحجم h-5 w-5 باللون الأبيض.
+
+**5. تخطيط الموبايل النهائي**
+```text
+┌──────────────────────────────────────────┐
+│ [🌙 Logo] SleepyBabyy •      [🌐] [☰]   │
+└──────────────────────────────────────────┘
+```
+- تباعد متوازن بين الأقسام الثلاثة.
+- مسافة 8px بين زرَّي اللغة والقائمة.
+
+**6. تخطيط الديسكتوب (lg+)**
+- نفس التحسينات + تحويل روابط التنقل (Features, Pricing...) إلى نمط "pill" خفيف عند الـ hover (`hover:bg-purple-50 px-3 py-1.5 rounded-full`).
+- زر "Get Started" يبقى بتصميم gradient الحالي مع تحسين الظل ليصبح ملوناً (`shadow-purple-500/30`).
+
+**7. تأثير التمرير (Scroll Effect)**
+- عند التمرير لأسفل، يصبح الهيدر أكثر كثافة (`bg-white/90`) ويظهر ظل أوضح — باستخدام `useState` + scroll listener بسيط (مع throttle لضمان الأداء).
 
 ---
 
 ### الملفات التي ستُعدَّل
+- **`src/pages/Index.tsx`** (السطور 291-342): إعادة بناء الـ `<nav>` بالكامل مع الأنماط الجديدة.
+- **`src/index.css`** (إضافة فقط): إضافة كلاس `.glass-header` و `.logo-glow` لإدارة التأثيرات الزجاجية والتوهج بطريقة محسّنة للأداء (تجنباً للريرندر).
 
-**1. `src/pages/Subscription.tsx`**
-- سؤال FAQ "Do you offer refunds?" (سطر 114):
-  - من: *"We offer a 7-day free trial and a 30-day money-back guarantee..."*
-  - إلى: *"We offer a 7-day free trial and a 15-day money-back guarantee for your peace of mind."*
-- بطاقة الضمان السفلية (Money Back Guarantee Box):
-  - العنوان (سطر 266): **"30-Day Money-Back Guarantee"** → **"15-Day Money-Back Guarantee"**
-  - الوصف (سطر 268): استبدال *"within 30 days"* بـ *"within 15 days"*.
-  - النقاط الثلاث (No questions asked / Full refund / Cancel anytime) تبقى كما هي.
-
-**2. `src/pages/Pricing.tsx`** (سطر 379)
-- سؤال FAQ "Do you offer refunds?":
-  - من: *"Yes, we offer a 30-day money-back guarantee..."*
-  - إلى: *"Yes, we offer a 15-day money-back guarantee if you're not completely satisfied."*
-
-**3. `src/pages/HelpArticle.tsx`** — تحديث إشارات استرداد 30 يومًا في مقالات المساعدة:
-- سطر 1752: `30-day refund period for new subscribers` → `15-day refund period for new subscribers`
-- سطر 1815: `(except within 30 days of new subscription)` → `(except within 15 days of new subscription)`
-- سطر 1980: `New subscribers: 30-day money-back guarantee` → `New subscribers: 15-day money-back guarantee`
-- سطر 1987: `Contact customer support within 30 days` → `Contact customer support within 15 days`
-
-> ملاحظة هامة: الإشارات الأخرى للرقم "30 يوم" المتعلقة بـ **الاحتفاظ بالبيانات (data retention)**، **تذكير انتهاء البطاقة**، و**فترة سماح حذف الحساب** ستبقى دون تغيير لأنها غير مرتبطة باسترداد الأموال.
-
----
-
-### النتيجة المتوقعة
-- توحيد رسالة الضمان في كل صفحات التطبيق على **15 يوم لاسترداد الأموال** + **7 أيام تجربة مجانية**.
-- لن يبقى أي ذكر لـ "30-Day Money-Back Guarantee" في أي مكان.
+### ملاحظات الأداء
+- استخدام `will-change: backdrop-filter` فقط على الهيدر.
+- على الموبايل (≤768px): تعطيل `backdrop-blur` تلقائياً عبر media query (كما هو معمول به في باقي المشروع) واستبداله بـ `bg-white/95` صلب لضمان السرعة.
+- لن يؤثر التغيير على بقية الصفحات (Dashboard / Pricing / Help) لأن لها هيدر منفصل.
 
