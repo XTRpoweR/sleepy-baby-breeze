@@ -25,6 +25,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { fbqTrack } from '@/utils/metaPixel';
 
 const Subscription = () => {
   const { user, loading, signOut } = useAuth();
