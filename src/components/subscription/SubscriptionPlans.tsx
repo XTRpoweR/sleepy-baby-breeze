@@ -363,7 +363,7 @@ export const SubscriptionPlans = () => {
           )}
         <Card
           className={cn(
-            "relative overflow-hidden border backdrop-blur-xl animate-fade-in h-full",
+            "pricing-card relative overflow-hidden border backdrop-blur-xl animate-fade-in h-full",
             "transition-all duration-500 ease-out",
             annualSelected
               ? "bg-white/85 dark:bg-slate-900/80 border-purple-300/60 dark:border-purple-500/40 shadow-2xl shadow-purple-500/20 lg:scale-105 lg:-translate-y-2 ring-2 ring-purple-400/60"
