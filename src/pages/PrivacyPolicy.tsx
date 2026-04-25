@@ -5,12 +5,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { ArrowLeft, Shield, Eye, Lock, Download } from "lucide-react";
+import { ArrowLeft, Shield, Eye, Lock, Download, Cookie } from "lucide-react";
+import { useCookieConsent } from "@/hooks/useCookieConsent";
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
   const {
     t
   } = useTranslation();
+  const { openPreferences } = useCookieConsent();
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -231,7 +233,56 @@ const PrivacyPolicy = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Contact Us</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Cookie className="h-6 w-6 text-blue-600" />
+                    9. Cookies & Tracking Technologies
+                  </h2>
+                  <div className="text-gray-700 space-y-4">
+                    <p>
+                      We use cookies and similar technologies to operate SleepyBabyy, remember your
+                      preferences, understand how the app is used, and (only with your consent) measure
+                      the effectiveness of our marketing. You are asked for consent the first time you
+                      visit, and you can change your mind at any time using the button below.
+                    </p>
+                    <div className="bg-blue-50 p-6 rounded-lg space-y-4">
+                      <div>
+                        <h4 className="font-semibold mb-1">Strictly necessary</h4>
+                        <p className="text-sm">Required for the site to work — authentication, language preference, security. Always active.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Functional</h4>
+                        <p className="text-sm">Remember preferences such as audio settings and notification choices.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Analytics</h4>
+                        <p className="text-sm">Google Analytics — helps us understand aggregate usage so we can improve the app. Disabled by default.</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Marketing</h4>
+                        <p className="text-sm">Meta Pixel and Conversions API — measure ad effectiveness. Disabled by default. Only loaded after you grant consent.</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      We use Google Consent Mode v2, so when you decline, no marketing or analytics
+                      identifiers are stored on your device. Your choice is remembered for 12 months.
+                    </p>
+                    <Button
+                      onClick={openPreferences}
+                      className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl"
+                    >
+                      <Cookie className="h-4 w-4 mr-2" />
+                      Manage cookie preferences
+                    </Button>
+                    <p className="text-sm text-gray-600 mt-3">
+                      <strong>California residents:</strong> Use the button above to opt out of the sharing
+                      of personal information for cross-context behavioral advertising ("Do Not Sell or
+                      Share My Personal Information").
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Contact Us</h2>
                   <div className="text-gray-700 space-y-4">
                     <p>
                       If you have any questions about this privacy policy or our data practices, 
