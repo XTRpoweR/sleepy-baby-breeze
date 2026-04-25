@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
+import { CookieConsentProvider } from "@/hooks/useCookieConsent";
+import { CookieConsentBanner } from "@/components/cookies/CookieConsentBanner";
+import { CookieSettingsButton } from "@/components/cookies/CookieSettingsButton";
 import { preloadCriticalResources } from "@/utils/performanceUtils";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 
