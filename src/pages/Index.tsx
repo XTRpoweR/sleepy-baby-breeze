@@ -195,6 +195,7 @@ const Index = () => {
     toast
   } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { openPreferences } = useCookieConsent();
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -879,6 +880,7 @@ const Index = () => {
                 <Link to="/help" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.helpCenter')}</Link>
                 <Link to="/contact" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.contactUs')}</Link>
                 <Link to="/privacy" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.privacyPolicy')}</Link>
+                <button type="button" onClick={openPreferences} className="block text-left hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.cookieSettings', 'Cookie settings')}</button>
               </div>
             </div>
             
