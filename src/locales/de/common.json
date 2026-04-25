@@ -679,5 +679,35 @@
         "premiumSounds": "Premium-Beruhigungstöne"
       }
     }
+  },
+  "cookies": {
+    "bannerTitle": "Wir respektieren Ihre Privatsphäre",
+    "bannerBody": "Wir verwenden Cookies, um SleepyBabyy zu betreiben, die Nutzung zu verstehen und Ihr Erlebnis zu personalisieren. Sie können alle akzeptieren, nicht-essentielle ablehnen oder Ihre Auswahl anpassen.",
+    "learnMore": "Mehr erfahren",
+    "acceptAll": "Alle akzeptieren",
+    "rejectAll": "Alle ablehnen",
+    "customize": "Anpassen",
+    "saveChoices": "Auswahl speichern",
+    "prefsTitle": "Cookie-Einstellungen",
+    "prefsDesc": "Wählen Sie, welche Cookies Sie erlauben. Ihre Auswahl wird auf diesem Gerät gespeichert und kann jederzeit geändert werden.",
+    "settingsAria": "Cookie-Einstellungen",
+    "cat": {
+      "necessary": {
+        "title": "Unbedingt erforderlich",
+        "desc": "Für die Funktion der Website notwendig: Anmeldung, Sprache, Sicherheit. Kann nicht deaktiviert werden."
+      },
+      "functional": {
+        "title": "Funktional",
+        "desc": "Speichert Einstellungen wie Audio und Benachrichtigungen, um Ihr Erlebnis zu verbessern."
+      },
+      "analytics": {
+        "title": "Analyse",
+        "desc": "Hilft uns zu verstehen, wie die App genutzt wird (Google Analytics), damit wir sie verbessern können."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "desc": "Misst die Wirksamkeit unserer Anzeigen (Meta Pixel) und personalisiert, was Sie sehen."
+      }
+    }
   }
 }

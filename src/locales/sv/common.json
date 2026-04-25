@@ -681,5 +681,35 @@
         "premiumSounds": "Premium lugnande ljud"
       }
     }
+  },
+  "cookies": {
+    "bannerTitle": "Vi värnar om din integritet",
+    "bannerBody": "Vi använder cookies för att driva SleepyBabyy, förstå hur den används och anpassa din upplevelse. Du kan acceptera alla, neka icke nödvändiga eller anpassa dina val.",
+    "learnMore": "Läs mer",
+    "acceptAll": "Acceptera alla",
+    "rejectAll": "Neka alla",
+    "customize": "Anpassa",
+    "saveChoices": "Spara mina val",
+    "prefsTitle": "Cookie-inställningar",
+    "prefsDesc": "Välj vilka cookies du tillåter. Ditt val sparas på denna enhet och kan ändras när som helst.",
+    "settingsAria": "Cookie-inställningar",
+    "cat": {
+      "necessary": {
+        "title": "Strikt nödvändiga",
+        "desc": "Krävs för att webbplatsen ska fungera: inloggning, språk, säkerhet. Kan inte stängas av."
+      },
+      "functional": {
+        "title": "Funktionella",
+        "desc": "Kommer ihåg inställningar som ljud och notiser för att förbättra din upplevelse."
+      },
+      "analytics": {
+        "title": "Analys",
+        "desc": "Hjälper oss förstå hur appen används (Google Analytics) så vi kan förbättra den."
+      },
+      "marketing": {
+        "title": "Marknadsföring",
+        "desc": "Mäter effektiviteten av våra annonser (Meta Pixel) och anpassar vad du ser."
+      }
+    }
   }
 }

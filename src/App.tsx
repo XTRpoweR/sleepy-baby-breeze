@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SubscriptionProvider } from "@/hooks/useSubscription";
+import { CookieConsentProvider } from "@/hooks/useCookieConsent";
+import { CookieConsentBanner } from "@/components/cookies/CookieConsentBanner";
+import { CookieSettingsButton } from "@/components/cookies/CookieSettingsButton";
 import { preloadCriticalResources } from "@/utils/performanceUtils";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
 
@@ -82,51 +85,55 @@ const App: React.FC = () => {
         <BrowserRouter>
           <AuthProvider>
             <SubscriptionProvider>
-              <PixelRouteTracker />
-              <div className="min-h-screen bg-background font-sans antialiased">
-                <Suspense fallback={<RouteFallback />}>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/reset-password" element={<EnhancedPasswordReset />} />
-                    <Route path="/security" element={<AccountSecurity />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/track" element={<TrackActivity />} />
-                    <Route path="/reports" element={<Reports />} />
-                    <Route path="/sleep-schedule" element={<SleepSchedule />} />
-                    <Route path="/family" element={<FamilySharing />} />
-                    <Route path="/invitation" element={<InvitationAcceptPage />} />
-                    <Route path="/sounds" element={<Sounds />} />
-                    <Route path="/memories" element={<Memories />} />
-                    <Route path="/pediatrician-reports" element={<PediatricianReports />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/subscription" element={<Subscription />} />
-                    <Route path="/account" element={<Account />} />
-                    <Route path="/features" element={<Features />} />
-                    <Route path="/pricing" element={<Pricing />} />
-                    <Route path="/download" element={<Download />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/help" element={<HelpCenter />} />
-                    <Route path="/help/category/:categoryName" element={<HelpArticles />} />
-                    <Route path="/help/article/:categoryName/:articleId" element={<HelpArticle />} />
-                    <Route path="/tutorial" element={<Tutorial />} />
-                    <Route path="/getting-started" element={<Tutorial />} />
-                    <Route path="/privacy" element={<PrivacyPolicy />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/blog/:slug" element={<BlogArticle />} />
-                    <Route path="/careers" element={<Careers />} />
-                    <Route path="/unsubscribe" element={<Unsubscribe />} />
-                    <Route path="/404" element={<NotFound />} />
-                    <Route path="*" element={<Navigate to="/404" replace />} />
-                  </Routes>
-                </Suspense>
-                <Suspense fallback={null}>
-                  <ChatAssistant />
-                </Suspense>
-              </div>
-              <Toaster />
-              <Sonner />
+              <CookieConsentProvider>
+                <PixelRouteTracker />
+                <div className="min-h-screen bg-background font-sans antialiased">
+                  <Suspense fallback={<RouteFallback />}>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/reset-password" element={<EnhancedPasswordReset />} />
+                      <Route path="/security" element={<AccountSecurity />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/track" element={<TrackActivity />} />
+                      <Route path="/reports" element={<Reports />} />
+                      <Route path="/sleep-schedule" element={<SleepSchedule />} />
+                      <Route path="/family" element={<FamilySharing />} />
+                      <Route path="/invitation" element={<InvitationAcceptPage />} />
+                      <Route path="/sounds" element={<Sounds />} />
+                      <Route path="/memories" element={<Memories />} />
+                      <Route path="/pediatrician-reports" element={<PediatricianReports />} />
+                      <Route path="/notifications" element={<Notifications />} />
+                      <Route path="/subscription" element={<Subscription />} />
+                      <Route path="/account" element={<Account />} />
+                      <Route path="/features" element={<Features />} />
+                      <Route path="/pricing" element={<Pricing />} />
+                      <Route path="/download" element={<Download />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/help" element={<HelpCenter />} />
+                      <Route path="/help/category/:categoryName" element={<HelpArticles />} />
+                      <Route path="/help/article/:categoryName/:articleId" element={<HelpArticle />} />
+                      <Route path="/tutorial" element={<Tutorial />} />
+                      <Route path="/getting-started" element={<Tutorial />} />
+                      <Route path="/privacy" element={<PrivacyPolicy />} />
+                      <Route path="/blog" element={<Blog />} />
+                      <Route path="/blog/:slug" element={<BlogArticle />} />
+                      <Route path="/careers" element={<Careers />} />
+                      <Route path="/unsubscribe" element={<Unsubscribe />} />
+                      <Route path="/404" element={<NotFound />} />
+                      <Route path="*" element={<Navigate to="/404" replace />} />
+                    </Routes>
+                  </Suspense>
+                  <Suspense fallback={null}>
+                    <ChatAssistant />
+                  </Suspense>
+                  <CookieConsentBanner />
+                  <CookieSettingsButton />
+                </div>
+                <Toaster />
+                <Sonner />
+              </CookieConsentProvider>
             </SubscriptionProvider>
           </AuthProvider>
         </BrowserRouter>

@@ -11,6 +11,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { hasMarketingConsent } from '@/utils/consentManager';
 
 declare global {
   interface Window {
@@ -102,6 +103,8 @@ export const fbqTrack = (
   params?: Record<string, unknown>,
   userData?: UserData,
 ): void => {
+  // GDPR/ePrivacy: do nothing until the user has granted marketing consent.
+  if (!hasMarketingConsent()) return;
   const eventID = generateEventId();
   try {
     if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
@@ -127,6 +130,7 @@ export const fbqTrackCustom = (
   params?: Record<string, unknown>,
   userData?: UserData,
 ): void => {
+  if (!hasMarketingConsent()) return;
   const eventID = generateEventId();
   try {
     if (typeof window !== 'undefined' && typeof window.fbq === 'function') {

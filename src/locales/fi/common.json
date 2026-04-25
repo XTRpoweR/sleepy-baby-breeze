@@ -679,5 +679,35 @@
         "premiumSounds": "Premium-rauhoittavat äänet"
       }
     }
+  },
+  "cookies": {
+    "bannerTitle": "Arvostamme yksityisyyttäsi",
+    "bannerBody": "Käytämme evästeitä SleepyBabyy:n toimintaan, käytön ymmärtämiseen ja kokemuksesi mukauttamiseen. Voit hyväksyä kaikki, hylätä ei-välttämättömät tai mukauttaa valintojasi.",
+    "learnMore": "Lue lisää",
+    "acceptAll": "Hyväksy kaikki",
+    "rejectAll": "Hylkää kaikki",
+    "customize": "Mukauta",
+    "saveChoices": "Tallenna valintani",
+    "prefsTitle": "Evästeasetukset",
+    "prefsDesc": "Valitse, mitkä evästeet sallit. Valintasi tallennetaan tälle laitteelle ja voit muuttaa sitä milloin tahansa.",
+    "settingsAria": "Evästeasetukset",
+    "cat": {
+      "necessary": {
+        "title": "Ehdottoman välttämättömät",
+        "desc": "Sivuston toimintaan tarvittavat: kirjautuminen, kieli, turvallisuus. Ei voi poistaa käytöstä."
+      },
+      "functional": {
+        "title": "Toiminnalliset",
+        "desc": "Muistavat asetukset kuten äänen ja ilmoitukset kokemuksen parantamiseksi."
+      },
+      "analytics": {
+        "title": "Analytiikka",
+        "desc": "Auttavat ymmärtämään sovelluksen käyttöä (Google Analytics) sen parantamiseksi."
+      },
+      "marketing": {
+        "title": "Markkinointi",
+        "desc": "Mittaa mainostemme tehokkuutta (Meta Pixel) ja personoi näkemääsi."
+      }
+    }
   }
 }

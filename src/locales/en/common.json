@@ -679,5 +679,35 @@
         "premiumSounds": "Premium soothing sounds"
       }
     }
+  },
+  "cookies": {
+    "bannerTitle": "We value your privacy",
+    "bannerBody": "We use cookies to keep SleepyBabyy running, understand how it is used, and personalize your experience. You can accept all, reject non-essential ones, or customize your choices.",
+    "learnMore": "Learn more",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize",
+    "saveChoices": "Save my choices",
+    "prefsTitle": "Cookie preferences",
+    "prefsDesc": "Choose which cookies you allow. Your choice is saved on this device and you can change it any time.",
+    "settingsAria": "Cookie preferences",
+    "cat": {
+      "necessary": {
+        "title": "Strictly necessary",
+        "desc": "Required for the site to function: authentication, language, security. Cannot be disabled."
+      },
+      "functional": {
+        "title": "Functional",
+        "desc": "Remember preferences such as audio settings and notification choices to improve your experience."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "desc": "Help us understand how the app is used (Google Analytics) so we can improve it."
+      },
+      "marketing": {
+        "title": "Marketing",
+        "desc": "Used to measure the effectiveness of our ads (Meta Pixel) and personalize what you see."
+      }
+    }
   }
 }
