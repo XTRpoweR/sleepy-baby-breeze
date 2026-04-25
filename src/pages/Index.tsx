@@ -9,6 +9,7 @@ import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, P
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState, useEffect, useRef, useCallback } from "react";
 import CountUp from "@/components/CountUp";
+import { useCookieConsent } from "@/hooks/useCookieConsent";
 
 // Import feature images
 import trackEverythingImg from "@/assets/features/track-everything.png";
