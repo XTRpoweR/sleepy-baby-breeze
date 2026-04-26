@@ -12,55 +12,135 @@ const corsHeaders = {
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-// Rate limiting store (in-memory; for production use Redis)
 const rateLimitStore = new Map<string, number[]>();
 
-// Allow max 3 subscription attempts per IP per 10 minutes (prevents spam/abuse)
-function checkRateLimit(key: string, limit: number = 3, windowMs: number = 600000): boolean {
+function checkRateLimit(key: string, limit = 5, windowMs = 600000): boolean {
   const now = Date.now();
   const windowStart = now - windowMs;
-
-  if (!rateLimitStore.has(key)) {
-    rateLimitStore.set(key, []);
-  }
-
-  const requests = rateLimitStore.get(key)!.filter((time: number) => time > windowStart);
-
-  if (requests.length >= limit) {
-    return false;
-  }
-
+  if (!rateLimitStore.has(key)) rateLimitStore.set(key, []);
+  const requests = rateLimitStore.get(key)!.filter(t => t > windowStart);
+  if (requests.length >= limit) return false;
   requests.push(now);
   rateLimitStore.set(key, requests);
-
-  // Clean up old entries periodically (every 100 requests roughly)
-  if (Math.random() < 0.01) {
-    for (const [k, times] of rateLimitStore.entries()) {
-      const recent = times.filter(t => t > windowStart);
-      if (recent.length === 0) rateLimitStore.delete(k);
-      else rateLimitStore.set(k, recent);
-    }
-  }
-
   return true;
 }
 
-// Stricter email validation (RFC-5322 simplified)
 function isValidEmail(email: string): boolean {
   if (!email || typeof email !== 'string') return false;
   if (email.length > 254) return false;
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 }
+
+const welcomeEmailHtml = (email: string) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to SleepyBabyy</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#f1f5f9;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(15,23,42,0.08);">
+          <!-- Hero -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#3b82f6 0%,#8b5cf6 100%);padding:48px 32px;text-align:center;">
+              <div style="font-size:48px;line-height:1;margin-bottom:12px;">🌙</div>
+              <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:700;letter-spacing:-0.5px;">Welcome to SleepyBabyy</h1>
+              <p style="margin:12px 0 0;color:rgba(255,255,255,0.92);font-size:16px;">Sweet dreams start here ✨</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 32px 24px;">
+              <h2 style="margin:0 0 16px;color:#0f172a;font-size:22px;font-weight:600;">You're officially in! 🎉</h2>
+              <p style="margin:0 0 24px;color:#475569;font-size:16px;line-height:1.6;">
+                Thanks for subscribing to the SleepyBabyy newsletter. You'll now receive expert tips, science-backed insights, and practical advice to help your little one (and you) sleep better.
+              </p>
+
+              <!-- Features -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:24px 0;">
+                <tr>
+                  <td style="padding:14px 0;border-top:1px solid #e2e8f0;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td style="vertical-align:top;padding-right:14px;font-size:22px;">🌟</td>
+                        <td>
+                          <div style="color:#0f172a;font-size:15px;font-weight:600;margin-bottom:2px;">Weekly sleep tips</div>
+                          <div style="color:#64748b;font-size:14px;">Curated advice from pediatric sleep experts</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 0;border-top:1px solid #e2e8f0;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td style="vertical-align:top;padding-right:14px;font-size:22px;">📚</td>
+                        <td>
+                          <div style="color:#0f172a;font-size:15px;font-weight:600;margin-bottom:2px;">Early access to articles</div>
+                          <div style="color:#64748b;font-size:14px;">Read new guides before anyone else</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:14px 0;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;">
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td style="vertical-align:top;padding-right:14px;font-size:22px;">💡</td>
+                        <td>
+                          <div style="color:#0f172a;font-size:15px;font-weight:600;margin-bottom:2px;">Subscriber-only content</div>
+                          <div style="color:#64748b;font-size:14px;">Exclusive guides not published on the blog</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin:32px 0 8px;">
+                <tr>
+                  <td align="center">
+                    <a href="https://sleepybabyy.com/blog" style="display:inline-block;background:linear-gradient(135deg,#3b82f6 0%,#8b5cf6 100%);color:#ffffff;text-decoration:none;font-size:16px;font-weight:600;padding:14px 36px;border-radius:10px;box-shadow:0 4px 14px rgba(59,130,246,0.35);">
+                      Read our latest guides →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 32px 36px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+              <p style="margin:0 0 8px;color:#475569;font-size:14px;">Sweet dreams ahead 💤</p>
+              <p style="margin:0 0 16px;color:#0f172a;font-size:14px;font-weight:600;">— The SleepyBabyy Team</p>
+              <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;">
+                You're receiving this because you subscribed at <a href="https://sleepybabyy.com" style="color:#3b82f6;text-decoration:none;">sleepybabyy.com</a><br/>
+                Sent to ${email}
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
 
 interface NewsletterSubscriptionRequest {
   email: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  console.log('Newsletter subscribe function called');
-
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -73,19 +153,16 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    // Rate limiting based on IP (prevents spam/abuse of Resend quota)
-    const clientIP = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const clientIP = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || req.headers.get('x-real-ip') || 'unknown';
     if (!checkRateLimit(clientIP)) {
-      console.log('Rate limit exceeded for IP:', clientIP);
       return new Response(JSON.stringify({ error: 'Too many subscription attempts. Please try again later.' }), {
         status: 429,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Validate request size before parsing
     const contentLength = req.headers.get('content-length');
-    if (contentLength && parseInt(contentLength) > 1024) { // 1KB limit
+    if (contentLength && parseInt(contentLength) > 1024) {
       return new Response(JSON.stringify({ error: 'Request too large' }), {
         status: 413,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -93,9 +170,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const { email }: NewsletterSubscriptionRequest = await req.json();
-    console.log('Processing subscription for email:', email);
 
-    // Stricter email validation
     if (!isValidEmail(email)) {
       return new Response(JSON.stringify({ error: 'Please enter a valid email address' }), {
         status: 400,
@@ -105,32 +180,37 @@ const handler = async (req: Request): Promise<Response> => {
 
     const sanitizedEmail = email.toLowerCase().trim();
 
-    // Initialize Supabase client with service role for database operations
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Check if email already exists
     const { data: existingSubscriber, error: selectError } = await supabase
       .from('newsletter_subscribers')
       .select('email, status')
       .eq('email', sanitizedEmail)
-      .single();
+      .maybeSingle();
 
-    if (selectError && selectError.code !== 'PGRST116') {
+    if (selectError) {
       console.error('Error checking existing subscriber:', selectError);
       throw selectError;
     }
 
+    let isReturning = false;
+
     if (existingSubscriber) {
       if (existingSubscriber.status === 'active') {
-        return new Response(JSON.stringify({ error: 'You are already subscribed to our newsletter!' }), {
-          status: 400,
+        // Friendly: already subscribed is NOT an error.
+        return new Response(JSON.stringify({
+          success: true,
+          alreadySubscribed: true,
+          message: "You're already subscribed to our newsletter. Thank you! 💙"
+        }), {
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       } else {
-        // Reactivate subscription
+        // Reactivate
         const { error: updateError } = await supabase
           .from('newsletter_subscribers')
           .update({
@@ -139,14 +219,10 @@ const handler = async (req: Request): Promise<Response> => {
             updated_at: new Date().toISOString()
           })
           .eq('email', sanitizedEmail);
-
-        if (updateError) {
-          console.error('Error updating subscriber:', updateError);
-          throw updateError;
-        }
+        if (updateError) throw updateError;
+        isReturning = true;
       }
     } else {
-      // Create new subscription
       const { error: insertError } = await supabase
         .from('newsletter_subscribers')
         .insert({
@@ -154,63 +230,28 @@ const handler = async (req: Request): Promise<Response> => {
           status: 'active',
           subscribed_at: new Date().toISOString()
         });
-
-      if (insertError) {
-        console.error('Error inserting subscriber:', insertError);
-        throw insertError;
-      }
+      if (insertError) throw insertError;
     }
 
-    // Send welcome email
+    // Send welcome email (non-blocking)
     try {
-      await resend.emails.send({
-        from: "SleepyBabyy Newsletter <noreply@sleepybabyy.com>",
+      const result = await resend.emails.send({
+        from: "SleepyBabyy <noreply@sleepybabyy.com>",
         to: [sanitizedEmail],
-        subject: "Welcome to SleepyBabyy Newsletter! 🌙",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #2563eb; margin-bottom: 10px;">Welcome to SleepyBabyy! 🌙</h1>
-              <p style="color: #64748b; font-size: 18px;">Thank you for subscribing to our newsletter</p>
-            </div>
-            <div style="background: #f8fafc; padding: 25px; border-radius: 10px; margin-bottom: 25px;">
-              <h2 style="color: #334155; margin-top: 0;">What to expect:</h2>
-              <ul style="color: #475569; line-height: 1.8;">
-                <li>🌟 Weekly sleep tips and expert advice</li>
-                <li>📚 Early access to new blog articles</li>
-                <li>💡 Practical parenting insights</li>
-                <li>🎯 Exclusive content just for subscribers</li>
-              </ul>
-            </div>
-            <div style="background: #eff6ff; padding: 20px; border-radius: 8px; border-left: 4px solid #2563eb;">
-              <p style="margin: 0; color: #1e40af;">
-                <strong>🎉 Welcome Gift:</strong> Check out our 
-                <a href="https://sleepybabyy.com/blog" style="color: #2563eb;">latest sleep guides</a> 
-                to get started on your journey to better sleep!
-              </p>
-            </div>
-            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-              <p style="color: #64748b; font-size: 14px; margin-bottom: 10px;">
-                Sweet dreams ahead! 💤<br>
-                The SleepyBabyy Team
-              </p>
-              <p style="color: #94a3b8; font-size: 12px;">
-                You can unsubscribe at any time by clicking the unsubscribe link in our emails.
-              </p>
-            </div>
-          </div>
-        `,
+        subject: isReturning ? "Welcome back to SleepyBabyy 🌙" : "Welcome to SleepyBabyy 🌙",
+        html: welcomeEmailHtml(sanitizedEmail),
       });
-
-      console.log('Welcome email sent successfully to:', sanitizedEmail);
+      console.log('Welcome email sent:', JSON.stringify(result));
     } catch (emailError) {
       console.error('Failed to send welcome email:', emailError);
-      // Don't fail the subscription if email fails
+      // Don't fail the subscription
     }
 
     return new Response(JSON.stringify({
       success: true,
-      message: 'Successfully subscribed! Check your email for a welcome message.'
+      message: isReturning
+        ? 'Welcome back! Check your inbox for a confirmation.'
+        : 'Successfully subscribed! Check your email for a welcome message.'
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

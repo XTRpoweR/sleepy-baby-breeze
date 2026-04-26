@@ -44,13 +44,20 @@ export const useNewsletterSubscription = () => {
         return false;
       }
 
-      if (data.success) {
-        toast({
-          title: "Successfully Subscribed! 🎉",
-          description: data.message || "Welcome to SleepyBabyy newsletter!",
-        });
+      if (data?.success) {
+        if (data.alreadySubscribed) {
+          toast({
+            title: "Already Subscribed 📧",
+            description: data.message || "You're already on our newsletter list. Thank you!",
+          });
+        } else {
+          toast({
+            title: "Successfully Subscribed! 🎉",
+            description: data.message || "Welcome to SleepyBabyy newsletter!",
+          });
+        }
         return true;
-      } else if (data.error) {
+      } else if (data?.error) {
         // Handle error responses from the function
         if (data.error.includes('already subscribed')) {
           toast({
