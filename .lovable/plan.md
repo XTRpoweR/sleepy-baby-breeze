@@ -1,63 +1,45 @@
-## Goals
+# إصلاح إشعار إلغاء الاشتراك (Admin Notification)
 
-1. Remove the word "expert/experts" (and its translations) from the welcome email and across the entire site, replacing it with a more attractive but truthful phrase.
-2. Fix the issue where unsubscribing does NOT send a notification to `support@sleepybabyy.com`.
+## التشخيص
 
----
+بعد فحص السجلات والكود، اكتشفت السبب الحقيقي للمشكلة:
 
-## 1. Replace "expert" wording
+1. ✅ Edge Function `newsletter-unsubscribe` **منشورة وتعمل** بشكل صحيح (تم اختبارها).
+2. ❌ **لم يتم استدعاؤها أبداً** عند إلغاء اشتراكك (لا توجد أي سجلات HTTP).
+3. ⚠️ مع ذلك، تم تحديث الحالة في قاعدة البيانات إلى `unsubscribed`.
 
-The word "expert" (and its localized variants) currently appears in:
+### السبب الجذري
 
-- `supabase/functions/newsletter-subscribe/index.ts` — in 8 languages (intro paragraph + `feat1Desc`).
-- `src/locales/{en,de,es,fr,it,el,fi,sv}/common.json` — line 97 (`description` for the Sounds feature card).
+توجد **دالة قاعدة بيانات قديمة** اسمها `safe_newsletter_unsubscribe` تقوم بتحديث حالة المشترك مباشرة في قاعدة البيانات **بدون استدعاء الـ Edge Function** (وبالتالي بدون إرسال إشعار للأدمن).
 
-### Replacement wording (per language)
+بالإضافة إلى ذلك، رابط `List-Unsubscribe` في رأس الإيميل يجعل Gmail/Apple Mail أحياناً يقوم بـ **prefetch** للرابط بشكل تلقائي، مما يفتح صفحة `/unsubscribe` لكن JavaScript لا يعمل في هذه الحالة، فلا يتم استدعاء الـ Edge Function.
 
-Instead of "expert" we will use phrasing built around **"science-backed", "carefully curated", "trusted by parents", "parent-approved"** — accurate and more engaging.
+## خطة الإصلاح
 
-| Lang | Old fragment | New fragment |
-|------|--------------|--------------|
-| EN | "expert tips, science-backed insights" → | "science-backed tips, carefully curated insights" |
-| EN | "Curated advice from pediatric sleep experts" → | "Carefully curated, science-backed advice" |
-| EN | "expert-backed sleep tips" (locales) → | "science-backed sleep tips trusted by parents" |
-| DE | "Experten-Tipps" / "Schlafexperten" → | "wissenschaftlich fundierte Tipps" / "sorgfältig ausgewählte Schlaftipps" |
-| ES | "consejos de expertos" / "expertos en sueño infantil" → | "consejos basados en la ciencia" / "consejos cuidadosamente seleccionados sobre el sueño infantil" |
-| FR | "conseils d'experts" / "experts du sommeil pédiatrique" → | "conseils fondés sur la science" / "conseils soigneusement sélectionnés sur le sommeil" |
-| IT | (no "esperti" found, will double-check) | — |
-| EL | "από ειδικούς" → | "βασισμένες στην επιστήμη" |
-| FI | "asiantuntijavinkkejä" / "uniasiantuntijoilta" → | "tieteeseen perustuvia univinkkejä" / "huolellisesti valittuja univinkkejä" |
-| SV | "expertråd" / "barnsömnsexperter" / "expertbackade" → | "vetenskapligt underbyggda råd" / "noggrant utvalda sömnråd" |
+### 1. حذف الدالة القديمة `safe_newsletter_unsubscribe`
+- إنشاء migration لحذف هذه الدالة من قاعدة البيانات بحيث لا يكون هناك أي طريق آخر لإلغاء الاشتراك يتجاوز الـ Edge Function.
 
-The Arabic message uses "خبراء" — Arabic isn't currently shipped as a locale file, so no `.json` change needed there; only English/EU languages are touched.
+### 2. تحويل `newsletter-unsubscribe` لقبول طلبات GET أيضاً
+- حالياً الدالة تقبل POST فقط. سنضيف دعم GET لكي يعمل الرابط مباشرة عند فتحه في المتصفح أو عند prefetch من Gmail.
+- عند GET: تنفيذ إلغاء الاشتراك + إرسال إشعار للأدمن + إرجاع صفحة HTML بسيطة (success page) بنفس تصميم الموقع.
 
----
+### 3. تحديث رابط `List-Unsubscribe` في إيميل الترحيب
+- تغيير `List-Unsubscribe` header ليشير مباشرة إلى الـ Edge Function (`https://wjxxgccfazpkdfzbcgen.supabase.co/functions/v1/newsletter-unsubscribe?token=...`) بدلاً من صفحة الموقع.
+- إضافة `List-Unsubscribe-Post: List-Unsubscribe=One-Click` لدعم One-Click Unsubscribe القياسي (RFC 8058) الذي يستخدمه Gmail.
+- إبقاء رابط الويب داخل نص الإيميل (للنقر اليدوي) كما هو.
 
-## 2. Fix admin notification on unsubscribe
+### 4. تبسيط صفحة `/unsubscribe`
+- تبقى كما هي (تستدعي الـ Edge Function عبر POST عند التحميل) — لا تغيير مطلوب لأنها تعمل بشكل صحيح.
 
-### Root cause
+### 5. التحقق
+- بعد النشر: اشترك بإيميل تجريبي → ألغِ الاشتراك من الإيميل → تأكد من وصول إشعار `support@sleepybabyy.com`.
 
-Looking at `src/pages/Unsubscribe.tsx`, the page **requires the user to click "Confirm Unsubscribe"** before calling the `newsletter-unsubscribe` Edge Function. Many users (and most email clients' anti-spam scanners) expect the unsubscribe link to work **instantly** when opened. If the user closed the tab without pressing the button, no request was sent → no admin email.
+## الملفات المتأثرة
 
-Additionally, the Edge Function logs show no invocations at all, confirming the request never reached the server in the user's last test.
+- **جديد**: migration لحذف `safe_newsletter_unsubscribe`
+- **تعديل**: `supabase/functions/newsletter-unsubscribe/index.ts` (إضافة GET handler + HTML response)
+- **تعديل**: `supabase/functions/newsletter-subscribe/index.ts` (تحديث List-Unsubscribe headers)
 
-### Fix
+## النتيجة المتوقعة
 
-1. **Auto-trigger unsubscribe on page mount** when a `token` (or `email`) is present in the URL. Show a loader → success state. Keep a "Resubscribe" link to home as the only action. This is the standard newsletter UX and guarantees the admin notification fires.
-2. Keep the manual "Confirm" button only as a fallback if the auto-call fails.
-3. Re-deploy `newsletter-unsubscribe` to ensure the latest version (with `support@sleepybabyy.com` notification) is live.
-4. Verify the admin email in `newsletter-unsubscribe/index.ts` is sent with the same verified `from` domain (`noreply@sleepybabyy.com`) as the working subscribe notification — already correct, so no change there.
-
-### Files touched
-
-- `supabase/functions/newsletter-subscribe/index.ts` — wording for 8 languages.
-- `src/locales/{en,de,es,fr,el,fi,sv}/common.json` — Sounds feature description wording.
-- `src/pages/Unsubscribe.tsx` — auto-fire unsubscribe on mount; simplified UX.
-- Re-deploy `newsletter-subscribe` and `newsletter-unsubscribe` Edge Functions.
-
----
-
-## What you'll see after approval
-
-- The welcome email no longer says "expert" in any language; it uses phrases like "science-backed" / "carefully curated" instead.
-- Clicking the unsubscribe link in any newsletter email will instantly unsubscribe you and immediately send a notification to `support@sleepybabyy.com` with the unsubscriber's email, language, IP, and user-agent.
+بعد التطبيق، **كل** عملية إلغاء اشتراك (سواء من زر Gmail المدمج، أو من الرابط في الإيميل، أو من صفحة الموقع) ستمر عبر الـ Edge Function وستُرسل إشعاراً فورياً إلى `support@sleepybabyy.com` يحتوي على بريد المشترك واللغة وعنوان IP والوقت.
