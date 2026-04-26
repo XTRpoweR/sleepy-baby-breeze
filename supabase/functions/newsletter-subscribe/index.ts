@@ -420,9 +420,16 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('email', sanitizedEmail)
       .maybeSingle();
 
+    // User-facing unsubscribe page (clickable in email body)
     const unsubscribeUrl = tokenRow?.unsubscribe_token
       ? `https://sleepybabyy.com/unsubscribe?token=${tokenRow.unsubscribe_token}`
       : `https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(sanitizedEmail)}`;
+
+    // Direct edge function URL for one-click unsubscribe (Gmail/Apple Mail header button)
+    // This bypasses the React page so admin notification fires even from mail-client prefetch.
+    const oneClickUnsubscribeUrl = tokenRow?.unsubscribe_token
+      ? `https://wjxxgccfazpkdfzbcgen.supabase.co/functions/v1/newsletter-unsubscribe?token=${tokenRow.unsubscribe_token}`
+      : `https://wjxxgccfazpkdfzbcgen.supabase.co/functions/v1/newsletter-unsubscribe?email=${encodeURIComponent(sanitizedEmail)}`;
 
     const t = LOCALES[lang];
 
@@ -434,7 +441,7 @@ const handler = async (req: Request): Promise<Response> => {
         subject: isReturning ? t.subjectReturning : t.subject,
         html: welcomeEmailHtml(sanitizedEmail, unsubscribeUrl, lang),
         headers: {
-          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe': `<${oneClickUnsubscribeUrl}>, <${unsubscribeUrl}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         },
       });
