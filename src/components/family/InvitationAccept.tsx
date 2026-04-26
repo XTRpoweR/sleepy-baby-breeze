@@ -106,34 +106,24 @@ export const InvitationAccept = () => {
     console.log('Current user:', user ? `${user.email} (authenticated)` : 'Anonymous');
 
     try {
-      // First try to get pending invitation
-      let { data: invitationData, error: invitationError } = await supabase
-        .from('family_invitations')
-        .select('*')
-        .eq('invitation_token', token)
-        .eq('status', 'pending')
-        .gt('expires_at', new Date().toISOString())
-        .maybeSingle();
+      // Fetch invitation via secure RPC (token-gated)
+      const { data: rpcRows, error: rpcError } = await supabase
+        .rpc('get_invitation_by_token', { token_param: token });
+      const fetched = Array.isArray(rpcRows) && rpcRows.length > 0 ? rpcRows[0] : null;
+      let invitationError: any = rpcError;
+      let invitationData: any = null;
 
-      console.log('Pending invitation query result:', { invitationData, invitationError });
-
-      // If no pending invitation found, check for accepted one
-      if (!invitationData && !invitationError) {
-        console.log('No pending invitation, checking for accepted invitation...');
-        const { data: acceptedInvitation, error: acceptedError } = await supabase
-          .from('family_invitations')
-          .select('*')
-          .eq('invitation_token', token)
-          .eq('status', 'accepted')
-          .maybeSingle();
-
-        console.log('Accepted invitation query result:', { acceptedInvitation, acceptedError });
-
-        if (acceptedInvitation && !acceptedError) {
+      if (fetched) {
+        const notExpired = new Date(fetched.expires_at) > new Date();
+        if (fetched.status === 'pending' && notExpired) {
+          invitationData = fetched;
+        } else if (fetched.status === 'accepted') {
           setAlreadyAccepted(true);
-          invitationData = acceptedInvitation;
+          invitationData = fetched;
         }
       }
+
+      console.log('Invitation query result:', { invitationData, invitationError });
 
       // If we have an error, it might be RLS related
       if (invitationError) {
