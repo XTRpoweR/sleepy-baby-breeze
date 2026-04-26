@@ -164,11 +164,32 @@ serve(async (req) => {
     const baseUrl = 'https://sleepybabyy.com';
     const invitationLink = `${baseUrl}/invitation?token=${invitationToken}`;
 
+    // Plain-text fallback (improves deliverability significantly)
+    const plainText = `Hi there!
+
+${inviterName} has invited you to join ${babyName}'s family on SleepyBabyy as a ${role}.
+
+Accept the invitation here:
+${invitationLink}
+
+This invitation will expire in 7 days. If you didn't expect this invitation, you can safely ignore this email.
+
+Questions? Email support@sleepybabyy.com
+
+— The SleepyBabyy Team`;
+
     // Send email using Resend
     const emailData = {
       from: 'SleepyBabyy <invitations@sleepybabyy.com>',
       to: [email],
-      subject: `You're invited to join ${babyName}'s family on SleepyBabyy!`,
+      reply_to: 'support@sleepybabyy.com',
+      subject: `${inviterName} invited you to ${babyName}'s family on SleepyBabyy`,
+      headers: {
+        'List-Unsubscribe': '<mailto:support@sleepybabyy.com?subject=unsubscribe>',
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        'X-Entity-Ref-ID': invitationId,
+      },
+      text: plainText,
       html: `
         <!DOCTYPE html>
         <html>
