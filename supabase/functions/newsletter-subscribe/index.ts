@@ -31,7 +31,7 @@ function isValidEmail(email: string): boolean {
   return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 }
 
-const welcomeEmailHtml = (email: string) => `
+const welcomeEmailHtml = (email: string, unsubscribeUrl: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
