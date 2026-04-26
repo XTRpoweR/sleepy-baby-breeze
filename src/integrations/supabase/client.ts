@@ -3,7 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
 const SUPABASE_URL = "https://wjxxgccfazpkdfzbcgen.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqeHhnY2NmYXpwa2RmemJjZ2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3NDIyNDUsImV4cCI6MjA2NzMxODI0NX0.dfYtSo4xFI80fZjHUFE_p3a6J3QwkX90UiTzHc_Y7iQ";
+// Updated to new Publishable Key (replaces legacy anon key)
+// The legacy anon key has been disabled and rotated for security
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_3OLGcN0_5nUptZYrxi3tDQ_DwW0OpNO";
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
