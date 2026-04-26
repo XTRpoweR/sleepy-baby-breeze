@@ -15,6 +15,8 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
+import { NewsletterManagerDialog } from '@/components/NewsletterManagerDialog';
+import { Mail } from 'lucide-react';
 
 interface UnifiedDashboardProps {
   user: any;
@@ -73,6 +75,7 @@ export const UnifiedDashboard = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
 
   const handlePullToRefresh = async () => {
     setIsRefreshing(true);
@@ -251,6 +254,19 @@ export const UnifiedDashboard = ({
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Newsletter pill — small, attractive, non-intrusive */}
+        <div className="max-w-4xl mx-auto mb-8 flex justify-center">
+          <button
+            onClick={() => setNewsletterOpen(true)}
+            className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 text-white px-5 py-2.5 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/35 hover:scale-105 active:scale-95 transition-all duration-300 touch-manipulation"
+          >
+            <span className="bg-white/20 rounded-full p-1.5 group-hover:rotate-12 transition-transform duration-300">
+              <Mail className="h-4 w-4" />
+            </span>
+            <span className="text-sm font-semibold whitespace-nowrap">Get sleep tips by email</span>
+          </button>
         </div>
 
         {/* Secondary Features Grid */}
@@ -460,6 +476,7 @@ export const UnifiedDashboard = ({
         )}
 
       </div>
+      <NewsletterManagerDialog open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
   );
 };
