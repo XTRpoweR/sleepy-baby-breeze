@@ -423,20 +423,35 @@ export const DirectInvitationAccept = () => {
     );
   }
 
-  if (!invitation) {
+  if (!invitation || invalidReason) {
+    const reasonMessage =
+      invalidReason === 'expired'
+        ? 'This invitation has expired. Please ask the sender to send you a new invitation.'
+        : invalidReason === 'cancelled'
+        ? 'This invitation was cancelled by the sender. Please ask them to send you a new one.'
+        : invalidReason === 'declined'
+        ? 'This invitation was previously declined. Ask the sender to invite you again if you want to join.'
+        : 'This invitation link is invalid or no longer exists. Make sure you opened the most recent invitation email.';
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-center flex items-center justify-center space-x-2">
               <XCircle className="h-6 w-6 text-red-600" />
-              <span>Invalid Invitation</span>
+              <span>
+                {invalidReason === 'expired'
+                  ? 'Invitation Expired'
+                  : invalidReason === 'cancelled'
+                  ? 'Invitation Cancelled'
+                  : invalidReason === 'declined'
+                  ? 'Invitation Declined'
+                  : 'Invalid Invitation'}
+              </span>
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="text-gray-600 mb-4">
-              This invitation link is invalid, expired, or has already been used.
-            </p>
+            <p className="text-gray-600 mb-4">{reasonMessage}</p>
             <Button onClick={() => navigate('/')} variant="outline">
               Go Home
             </Button>
