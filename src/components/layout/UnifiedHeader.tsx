@@ -276,6 +276,7 @@ export const UnifiedHeader = () => {
           <GraduationCap className="h-5 w-5" />
         </Button>
       </div>
+      <NewsletterManagerDialog open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </header>
   );
 };
