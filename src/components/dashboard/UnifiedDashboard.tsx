@@ -476,6 +476,7 @@ export const UnifiedDashboard = ({
         )}
 
       </div>
+      <NewsletterManagerDialog open={newsletterOpen} onOpenChange={setNewsletterOpen} />
     </div>
   );
 };
