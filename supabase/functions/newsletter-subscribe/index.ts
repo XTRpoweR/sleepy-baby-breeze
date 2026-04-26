@@ -236,13 +236,28 @@ const handler = async (req: Request): Promise<Response> => {
       if (insertError) throw insertError;
     }
 
+    // Fetch unsubscribe token for this subscriber
+    const { data: tokenRow } = await supabase
+      .from('newsletter_subscribers')
+      .select('unsubscribe_token')
+      .eq('email', sanitizedEmail)
+      .maybeSingle();
+
+    const unsubscribeUrl = tokenRow?.unsubscribe_token
+      ? `https://sleepybabyy.com/unsubscribe?token=${tokenRow.unsubscribe_token}`
+      : `https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(sanitizedEmail)}`;
+
     // Send welcome email (non-blocking)
     try {
       const result = await resend.emails.send({
         from: "SleepyBabyy <noreply@sleepybabyy.com>",
         to: [sanitizedEmail],
         subject: isReturning ? "Welcome back to SleepyBabyy 🌙" : "Welcome to SleepyBabyy 🌙",
-        html: welcomeEmailHtml(sanitizedEmail),
+        html: welcomeEmailHtml(sanitizedEmail, unsubscribeUrl),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       });
       console.log('Welcome email sent:', JSON.stringify(result));
     } catch (emailError) {
