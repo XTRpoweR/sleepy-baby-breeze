@@ -122,9 +122,12 @@ const welcomeEmailHtml = (email: string, unsubscribeUrl: string) => `
             <td style="padding:24px 32px 36px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="margin:0 0 8px;color:#475569;font-size:14px;">Sweet dreams ahead 💤</p>
               <p style="margin:0 0 16px;color:#0f172a;font-size:14px;font-weight:600;">— The SleepyBabyy Team</p>
-              <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;">
+              <p style="margin:0 0 12px;color:#94a3b8;font-size:12px;line-height:1.5;">
                 You're receiving this because you subscribed at <a href="https://sleepybabyy.com" style="color:#3b82f6;text-decoration:none;">sleepybabyy.com</a><br/>
                 Sent to ${email}
+              </p>
+              <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;">
+                Don't want these emails? <a href="${unsubscribeUrl}" style="color:#3b82f6;text-decoration:underline;">Unsubscribe instantly</a>.
               </p>
             </td>
           </tr>
