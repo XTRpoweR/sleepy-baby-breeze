@@ -1,5 +1,5 @@
 
-import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
 export class DatabaseService {
   constructor(private supabase: SupabaseClient) {}
