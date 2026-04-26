@@ -94,7 +94,7 @@ serve(async (req) => {
     });
 
     // Filter for active or trialing subscriptions
-    const activeSubscriptions = subscriptions.data.filter(sub => 
+    const activeSubscriptions = subscriptions.data.filter((sub: any) => 
       ['active', 'trialing'].includes(sub.status)
     );
 
