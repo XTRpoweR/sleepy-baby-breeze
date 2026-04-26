@@ -75,6 +75,7 @@ export const UnifiedDashboard = ({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
 
   const handlePullToRefresh = async () => {
     setIsRefreshing(true);
