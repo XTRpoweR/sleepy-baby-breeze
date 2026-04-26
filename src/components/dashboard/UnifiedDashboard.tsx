@@ -15,6 +15,8 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { QuickLogCard } from '@/components/quick-log/QuickLogCard';
 import { MobileProfileSelector } from '@/components/profiles/MobileProfileSelector';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
+import { NewsletterManagerDialog } from '@/components/NewsletterManagerDialog';
+import { Mail } from 'lucide-react';
 
 interface UnifiedDashboardProps {
   user: any;
