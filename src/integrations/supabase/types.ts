@@ -855,6 +855,21 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_invitation_by_token: {
+        Args: { token_param: string }
+        Returns: {
+          baby_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invitation_token: string
+          invited_by: string
+          permissions: Json
+          role: string
+          status: string
+        }[]
+      }
       get_user_subscription_tier: {
         Args: { user_uuid: string }
         Returns: string

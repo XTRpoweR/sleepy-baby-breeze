@@ -100,12 +100,10 @@ export const DirectInvitationAccept = () => {
     console.log('Fetching invitation with token:', token);
 
     try {
-      // Fetch invitation by token regardless of status to give precise feedback
-      const { data: anyInvitation, error: anyError } = await supabase
-        .from('family_invitations')
-        .select('*')
-        .eq('invitation_token', token)
-        .maybeSingle();
+      // Fetch invitation via secure RPC (token-gated, no public table access)
+      const { data: rpcRows, error: anyError } = await supabase
+        .rpc('get_invitation_by_token', { token_param: token });
+      const anyInvitation = Array.isArray(rpcRows) && rpcRows.length > 0 ? rpcRows[0] : null;
 
       if (anyError) {
         console.error('Error fetching invitation:', anyError);
