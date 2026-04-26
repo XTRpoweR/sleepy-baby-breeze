@@ -157,7 +157,7 @@ function safeTimestampToISO(timestamp: number | null | undefined): string | null
     
     return date.toISOString();
   } catch (error) {
-    console.error('Error converting timestamp to ISO:', { timestamp, error: error.message });
+    console.error('Error converting timestamp to ISO:', { timestamp, error: error instanceof Error ? error.message : String(error) });
     return null;
   }
 }
