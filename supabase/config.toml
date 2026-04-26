@@ -67,3 +67,9 @@ verify_jwt = true
 
 [functions.meta-capi]
 verify_jwt = false
+
+[functions.newsletter-subscribe]
+verify_jwt = false
+
+[functions.newsletter-unsubscribe]
+verify_jwt = false

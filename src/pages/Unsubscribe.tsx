@@ -16,39 +16,25 @@ const Unsubscribe = () => {
   const email = searchParams.get("email");
 
   const handleUnsubscribe = async () => {
-    if (!token) {
-      // Fallback: try to unsubscribe by email if no token
-      if (!email) {
-        setStatus("missing");
-        return;
-      }
-      setStatus("loading");
-      const { error } = await supabase
-        .from("newsletter_subscribers")
-        .update({ status: "unsubscribed" })
-        .eq("email", email)
-        .eq("status", "active");
-
-      if (error) {
-        setStatus("error");
-        setMessage("Unable to unsubscribe. Please contact support@sleepybabyy.com.");
-      } else {
-        setStatus("success");
-        setMessage("You have been successfully unsubscribed.");
-      }
+    if (!token && !email) {
+      setStatus("missing");
       return;
     }
 
     setStatus("loading");
-    const { data, error } = await supabase.rpc("safe_newsletter_unsubscribe", {
-      token_param: token,
+
+    const { data, error } = await supabase.functions.invoke("newsletter-unsubscribe", {
+      body: token ? { token } : { email },
     });
 
-    if (error || !data) {
+    if (error || !data?.success) {
       setStatus("error");
       setMessage(
         "This unsubscribe link is invalid or has already been used. If you continue to receive emails, contact support@sleepybabyy.com."
       );
+    } else if (data.alreadyUnsubscribed) {
+      setStatus("success");
+      setMessage("You have already been unsubscribed from SleepyBabyy emails.");
     } else {
       setStatus("success");
       setMessage("You have been successfully unsubscribed from SleepyBabyy emails.");

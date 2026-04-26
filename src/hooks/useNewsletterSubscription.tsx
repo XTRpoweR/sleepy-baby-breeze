@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import i18n from '@/i18n';
 
 export const useNewsletterSubscription = () => {
   const [isSubscribing, setIsSubscribing] = useState(false);
@@ -21,7 +22,7 @@ export const useNewsletterSubscription = () => {
     
     try {
       const { data, error } = await supabase.functions.invoke('newsletter-subscribe', {
-        body: { email: email.trim() }
+        body: { email: email.trim(), language: i18n.language || 'en' }
       });
 
       if (error) {
