@@ -67,6 +67,7 @@ export const DirectInvitationAccept = () => {
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [alreadyAccepted, setAlreadyAccepted] = useState(false);
+  const [invalidReason, setInvalidReason] = useState<'expired' | 'cancelled' | 'declined' | 'not_found' | null>(null);
 
   const token = searchParams.get('token');
   const success = searchParams.get('success');
@@ -99,32 +100,15 @@ export const DirectInvitationAccept = () => {
     console.log('Fetching invitation with token:', token);
 
     try {
-      // First try to get pending invitation
-      let { data: invitationData, error: invitationError } = await supabase
+      // Fetch invitation by token regardless of status to give precise feedback
+      const { data: anyInvitation, error: anyError } = await supabase
         .from('family_invitations')
         .select('*')
         .eq('invitation_token', token)
-        .eq('status', 'pending')
-        .gt('expires_at', new Date().toISOString())
         .maybeSingle();
 
-      // If no pending invitation, check for accepted one
-      if (!invitationData && !invitationError) {
-        const { data: acceptedInvitation, error: acceptedError } = await supabase
-          .from('family_invitations')
-          .select('*')
-          .eq('invitation_token', token)
-          .eq('status', 'accepted')
-          .maybeSingle();
-
-        if (acceptedInvitation && !acceptedError) {
-          setAlreadyAccepted(true);
-          invitationData = acceptedInvitation;
-        }
-      }
-
-      if (invitationError) {
-        console.error('Error fetching invitation:', invitationError);
+      if (anyError) {
+        console.error('Error fetching invitation:', anyError);
         toast({
           title: "Error",
           description: "Failed to load invitation details.",
@@ -134,10 +118,32 @@ export const DirectInvitationAccept = () => {
         return;
       }
 
-      if (!invitationData) {
-        console.log('No valid invitation found for token');
+      if (!anyInvitation) {
+        console.log('No invitation found for token');
+        setInvalidReason('not_found');
         setLoading(false);
         return;
+      }
+
+      let invitationData = anyInvitation;
+
+      // Determine status / validity
+      if (anyInvitation.status === 'accepted') {
+        setAlreadyAccepted(true);
+      } else if (anyInvitation.status === 'cancelled') {
+        setInvalidReason('cancelled');
+        setLoading(false);
+        return;
+      } else if (anyInvitation.status === 'declined') {
+        setInvalidReason('declined');
+        setLoading(false);
+        return;
+      } else if (anyInvitation.status === 'pending') {
+        if (new Date(anyInvitation.expires_at) <= new Date()) {
+          setInvalidReason('expired');
+          setLoading(false);
+          return;
+        }
       }
 
       // Get baby and inviter names with separate queries
