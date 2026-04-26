@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.safe_newsletter_unsubscribe(uuid);
