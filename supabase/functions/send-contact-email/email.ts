@@ -1,6 +1,26 @@
-import { Resend } from "npm:resend@4.0.0";
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+async function sendResendEmail(payload: Record<string, unknown>) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Resend API error ${res.status}: ${errText}`);
+  }
+  return await res.json();
+}
+
+const resend = {
+  emails: {
+    send: (payload: Record<string, unknown>) => sendResendEmail(payload),
+  },
+};
 
 export class EmailService {
   async sendContactEmail(formData: { name: string; email: string; subject: string; message: string; category?: string }) {
