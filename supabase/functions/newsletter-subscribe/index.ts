@@ -31,7 +31,7 @@ function isValidEmail(email: string): boolean {
   return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 }
 
-const welcomeEmailHtml = (email: string) => `
+const welcomeEmailHtml = (email: string, unsubscribeUrl: string) => `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,9 +122,12 @@ const welcomeEmailHtml = (email: string) => `
             <td style="padding:24px 32px 36px;background-color:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
               <p style="margin:0 0 8px;color:#475569;font-size:14px;">Sweet dreams ahead 💤</p>
               <p style="margin:0 0 16px;color:#0f172a;font-size:14px;font-weight:600;">— The SleepyBabyy Team</p>
-              <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;">
+              <p style="margin:0 0 12px;color:#94a3b8;font-size:12px;line-height:1.5;">
                 You're receiving this because you subscribed at <a href="https://sleepybabyy.com" style="color:#3b82f6;text-decoration:none;">sleepybabyy.com</a><br/>
                 Sent to ${email}
+              </p>
+              <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;">
+                Don't want these emails? <a href="${unsubscribeUrl}" style="color:#3b82f6;text-decoration:underline;">Unsubscribe instantly</a>.
               </p>
             </td>
           </tr>
@@ -233,13 +236,28 @@ const handler = async (req: Request): Promise<Response> => {
       if (insertError) throw insertError;
     }
 
+    // Fetch unsubscribe token for this subscriber
+    const { data: tokenRow } = await supabase
+      .from('newsletter_subscribers')
+      .select('unsubscribe_token')
+      .eq('email', sanitizedEmail)
+      .maybeSingle();
+
+    const unsubscribeUrl = tokenRow?.unsubscribe_token
+      ? `https://sleepybabyy.com/unsubscribe?token=${tokenRow.unsubscribe_token}`
+      : `https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(sanitizedEmail)}`;
+
     // Send welcome email (non-blocking)
     try {
       const result = await resend.emails.send({
         from: "SleepyBabyy <noreply@sleepybabyy.com>",
         to: [sanitizedEmail],
         subject: isReturning ? "Welcome back to SleepyBabyy 🌙" : "Welcome to SleepyBabyy 🌙",
-        html: welcomeEmailHtml(sanitizedEmail),
+        html: welcomeEmailHtml(sanitizedEmail, unsubscribeUrl),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       });
       console.log('Welcome email sent:', JSON.stringify(result));
     } catch (emailError) {
