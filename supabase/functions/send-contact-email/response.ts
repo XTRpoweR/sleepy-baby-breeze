@@ -1,7 +1,7 @@
 
 import { corsHeaders } from './types.ts';
 
-export function createSuccessResponse(message: string, warning?: string): Response {
+export function createSuccessResponse(message: string, extraHeaders?: Record<string, string>, warning?: string): Response {
   const responseData: any = { 
     success: true, 
     message 
@@ -13,11 +13,11 @@ export function createSuccessResponse(message: string, warning?: string): Respon
 
   return new Response(JSON.stringify(responseData), {
     status: 200,
-    headers: { "Content-Type": "application/json", ...corsHeaders },
+    headers: { "Content-Type": "application/json", ...corsHeaders, ...(extraHeaders || {}) },
   });
 }
 
-export function createErrorResponse(message: string, details?: string, status: number = 500): Response {
+export function createErrorResponse(message: string, status: number = 500, extraHeaders?: Record<string, string>, details?: string): Response {
   const responseData: any = { 
     error: "Failed to send message", 
     message 
@@ -29,7 +29,7 @@ export function createErrorResponse(message: string, details?: string, status: n
 
   return new Response(JSON.stringify(responseData), {
     status,
-    headers: { "Content-Type": "application/json", ...corsHeaders },
+    headers: { "Content-Type": "application/json", ...corsHeaders, ...(extraHeaders || {}) },
   });
 }
 
