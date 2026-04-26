@@ -20,14 +20,17 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { LanguageSelector } from '@/components/LanguageSelector';
+import { NewsletterManagerDialog } from '@/components/NewsletterManagerDialog';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Mail } from 'lucide-react';
 
 export const MobileHeader = () => {
   const { user, signOut } = useAuth();
   const { isPremium, loading } = useSubscription();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [newsletterOpen, setNewsletterOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
