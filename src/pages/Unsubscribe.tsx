@@ -1,28 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, XCircle, Loader2, Mail } from "lucide-react";
 
-type Status = "idle" | "loading" | "success" | "error" | "missing";
+type Status = "loading" | "success" | "error" | "missing";
 
 const Unsubscribe = () => {
   const [searchParams] = useSearchParams();
-  const [status, setStatus] = useState<Status>("idle");
+  const [status, setStatus] = useState<Status>("loading");
   const [message, setMessage] = useState<string>("");
+  const hasRunRef = useRef(false);
 
   const token = searchParams.get("token");
   const email = searchParams.get("email");
 
-  const handleUnsubscribe = async () => {
-    if (!token && !email) {
-      setStatus("missing");
-      return;
-    }
-
+  const runUnsubscribe = async () => {
     setStatus("loading");
-
     const { data, error } = await supabase.functions.invoke("newsletter-unsubscribe", {
       body: token ? { token } : { email },
     });
@@ -42,9 +37,14 @@ const Unsubscribe = () => {
   };
 
   useEffect(() => {
+    if (hasRunRef.current) return;
+    hasRunRef.current = true;
+
     if (!token && !email) {
       setStatus("missing");
+      return;
     }
+    runUnsubscribe();
   }, [token, email]);
 
   return (
@@ -56,23 +56,10 @@ const Unsubscribe = () => {
           </div>
           <CardTitle>Unsubscribe from SleepyBabyy</CardTitle>
           <CardDescription>
-            We're sorry to see you go. Confirm below to stop receiving emails.
+            We're sorry to see you go.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {status === "idle" && (
-            <>
-              {email && (
-                <p className="text-sm text-muted-foreground text-center">
-                  Email: <span className="font-medium text-foreground">{email}</span>
-                </p>
-              )}
-              <Button onClick={handleUnsubscribe} className="w-full" variant="destructive">
-                Confirm Unsubscribe
-              </Button>
-            </>
-          )}
-
           {status === "loading" && (
             <div className="flex flex-col items-center gap-2 py-4">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -91,6 +78,9 @@ const Unsubscribe = () => {
             <div className="flex flex-col items-center gap-3 py-4 text-center">
               <XCircle className="w-12 h-12 text-destructive" />
               <p className="text-sm text-foreground">{message}</p>
+              <Button onClick={runUnsubscribe} variant="outline" size="sm">
+                Try again
+              </Button>
             </div>
           )}
 
