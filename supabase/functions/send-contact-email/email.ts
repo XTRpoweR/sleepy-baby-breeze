@@ -15,7 +15,7 @@ export class EmailService {
         from: "SleepyBabyy Support <support@sleepybabyy.com>",
         to: ["support@sleepybabyy.com"],
         subject: `Contact: ${formData.subject}`,
-        reply_to: formData.email,
+        replyTo: formData.email,
         headers: {
           'X-Entity-Ref-ID': messageId,
           'List-Unsubscribe': '<mailto:support@sleepybabyy.com?subject=unsubscribe>',
@@ -87,7 +87,7 @@ https://sleepybabyy.com`,
         from: "SleepyBabyy Support <support@sleepybabyy.com>",
         to: [formData.email],
         subject: `We received your message - ${formData.subject}`,
-        reply_to: "support@sleepybabyy.com",
+        replyTo: "support@sleepybabyy.com",
         headers: {
           'X-Entity-Ref-ID': `${messageId}-confirm`,
           'List-Unsubscribe': `<mailto:support@sleepybabyy.com?subject=unsubscribe>, <https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(formData.email)}>`,
