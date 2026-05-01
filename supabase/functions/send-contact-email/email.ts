@@ -2,6 +2,201 @@ import { Resend } from "npm:resend@4.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
+// Build branded support team email
+function buildSupportEmail(formData: { name: string; email: string; subject: string; message: string; category?: string }, safeMessage: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Contact Message - SleepyBabyy</title>
+<style>
+  body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; }
+  table, td { border-collapse: collapse; }
+  img { border: 0; max-width: 100%; }
+  * { box-sizing: border-box; }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#FAF7F2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#FAF7F2;">
+  <tr>
+    <td align="center" style="padding:40px 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;table-layout:fixed;">
+        <tr>
+          <td style="padding:24px 32px;">
+            <img src="https://sleepybabyy.com/logo.png" alt="SleepyBabyy" width="200" style="display:block;max-width:200px;">
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px 32px 32px;">
+            <table role="presentation" width="100%" style="background:#FFFFFF;border-radius:20px;box-shadow:0 4px 20px rgba(124,58,237,0.08);">
+              <tr>
+                <td align="center" style="padding:40px;">
+                  <div style="font-size:56px;line-height:1;margin-bottom:20px;">📩</div>
+                  <h1 style="margin:0 0 16px 0;font-family:Georgia,serif;font-size:30px;font-weight:700;line-height:38px;color:#1F2937;">
+                    New Contact Message
+                  </h1>
+                  <p style="margin:0;font-size:16px;line-height:26px;color:#6B7280;">
+                    From: ${formData.name}
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px;">
+            <table role="presentation" width="100%" style="background:#F3F4F6;border-radius:12px;padding:0;">
+              <tr>
+                <td style="padding:20px;">
+                  <table role="presentation" width="100%" style="font-size:14px;">
+                    <tr><td style="padding:6px 0;color:#6B7280;width:90px;">From:</td><td style="padding:6px 0;color:#1F2937;font-weight:600;">${formData.name}</td></tr>
+                    <tr><td style="padding:6px 0;color:#6B7280;">Email:</td><td style="padding:6px 0;"><a href="mailto:${formData.email}" style="color:#7C3AED;text-decoration:none;font-weight:600;">${formData.email}</a></td></tr>
+                    ${formData.category ? `<tr><td style="padding:6px 0;color:#6B7280;">Category:</td><td style="padding:6px 0;color:#1F2937;">${formData.category}</td></tr>` : ''}
+                    <tr><td style="padding:6px 0;color:#6B7280;">Subject:</td><td style="padding:6px 0;color:#1F2937;font-weight:600;">${formData.subject}</td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+            <table role="presentation" width="100%" style="margin:20px 0;background:linear-gradient(135deg,#FBCFE8 0%,#C4B5FD 100%);border-radius:16px;">
+              <tr>
+                <td style="padding:24px;">
+                  <p style="margin:0 0 12px 0;font-size:13px;font-weight:600;color:#7C3AED;text-transform:uppercase;letter-spacing:1.5px;">
+                    💬 User Message
+                  </p>
+                  <p style="margin:0;font-size:14px;line-height:22px;color:#1F2937;white-space:pre-wrap;">${safeMessage}</p>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:20px 0 0 0;font-size:14px;color:#6B7280;">
+              ↩️ Reply directly to this email to respond to <strong style="color:#1F2937;">${formData.name}</strong>.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding:32px;">
+            <p style="margin:0;font-size:12px;color:#9CA3AF;">
+              <a href="https://sleepybabyy.com" style="color:#7C3AED;text-decoration:none;font-weight:600;">🌙 sleepybabyy.com</a>
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
+}
+
+// Build branded user confirmation email
+function buildUserConfirmationEmail(formData: { name: string; email: string; subject: string; message: string; category?: string }, safeMessage: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>We received your message - SleepyBabyy</title>
+<style>
+  body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; }
+  table, td { border-collapse: collapse; }
+  img { border: 0; max-width: 100%; }
+  @media only screen and (max-width: 600px) {
+    .container { width: 100% !important; padding: 12px !important; }
+    .hero-card { padding: 28px 20px !important; }
+    .headline { font-size: 24px !important; line-height: 32px !important; }
+  }
+  * { box-sizing: border-box; }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#FAF7F2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#FAF7F2;">
+  <tr>
+    <td align="center" style="padding:40px 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="container" style="max-width:600px;width:100%;table-layout:fixed;">
+        <tr>
+          <td style="padding:24px 32px;">
+            <img src="https://sleepybabyy.com/logo.png" alt="SleepyBabyy" width="200" style="display:block;max-width:200px;">
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px 32px 32px;">
+            <table role="presentation" width="100%" style="background:#FFFFFF;border-radius:20px;box-shadow:0 4px 20px rgba(124,58,237,0.08);">
+              <tr>
+                <td align="center" class="hero-card" style="padding:40px;">
+                  <div style="font-size:56px;line-height:1;margin-bottom:20px;">✅</div>
+                  <h1 class="headline" style="margin:0 0 16px 0;font-family:Georgia,serif;font-size:30px;font-weight:700;line-height:38px;color:#1F2937;">
+                    Message received!
+                  </h1>
+                  <p style="margin:0;font-size:16px;line-height:26px;color:#6B7280;">
+                    We'll reply within 24 hours
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px;">
+            <p style="margin:0 0 20px 0;font-size:16px;line-height:26px;color:#1F2937;">
+              Hi ${formData.name}! 👋
+            </p>
+            <p style="margin:0 0 20px 0;font-size:16px;line-height:26px;color:#1F2937;">
+              Thank you for contacting <strong style="color:#7C3AED;">SleepyBabyy</strong>. We've received your message and a member of our support team will reply within 24 hours.
+            </p>
+            <table role="presentation" width="100%" style="margin:24px 0;background:#F3F4F6;border-radius:12px;">
+              <tr>
+                <td style="padding:20px;">
+                  <p style="margin:0 0 8px 0;font-size:13px;font-weight:600;color:#7C3AED;text-transform:uppercase;letter-spacing:1.5px;">
+                    📝 Your Message
+                  </p>
+                  <p style="margin:0 0 8px 0;font-size:14px;color:#1F2937;"><strong>Subject:</strong> ${formData.subject}</p>
+                  ${formData.category ? `<p style="margin:0 0 8px 0;font-size:14px;color:#1F2937;"><strong>Category:</strong> ${formData.category}</p>` : ''}
+                  <p style="margin:8px 0 0 0;font-size:14px;line-height:22px;color:#1F2937;white-space:pre-wrap;">${safeMessage}</p>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:24px 0;font-size:16px;line-height:26px;color:#1F2937;">
+              Need quick answers? Visit our <a href="https://sleepybabyy.com/help" style="color:#7C3AED;text-decoration:none;font-weight:600;">Help Center</a> for instant support. 💡
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 32px 24px 32px;">
+            <p style="margin:0;font-size:16px;line-height:24px;color:#1F2937;">
+              Sweet dreams 🌙<br>
+              <strong style="color:#7C3AED;">The SleepyBabyy Team</strong>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding:24px 32px 32px 32px;">
+            <a href="https://www.facebook.com/share/17HFMh4CNE/?mibextid=LQQJ4d" style="text-decoration:none;display:inline-block;margin-bottom:20px;">
+              <div style="width:40px;height:40px;background:#1E3A8A;border-radius:50%;text-align:center;line-height:40px;color:#FFFFFF;font-size:18px;font-weight:700;">f</div>
+            </a>
+            <p style="margin:0 0 12px 0;font-size:13px;line-height:20px;color:#6B7280;">
+              <a href="https://sleepybabyy.com/help" style="color:#6B7280;text-decoration:none;">Help</a>
+              <span style="color:#D1D5DB;margin:0 8px;">·</span>
+              <a href="https://sleepybabyy.com/privacy" style="color:#6B7280;text-decoration:none;">Privacy</a>
+            </p>
+            <p style="margin:0 0 8px 0;font-size:12px;color:#9CA3AF;">
+              <a href="https://sleepybabyy.com" style="color:#7C3AED;text-decoration:none;font-weight:600;">🌙 sleepybabyy.com</a>
+            </p>
+            <p style="margin:0 0 8px 0;font-size:11px;color:#9CA3AF;">
+              You received this email because you contacted us through sleepybabyy.com.
+            </p>
+            <p style="margin:0;font-size:11px;color:#9CA3AF;">
+              © 2026 SleepyBabyy. All rights reserved.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
+}
+
 export class EmailService {
   async sendContactEmail(formData: { name: string; email: string; subject: string; message: string; category?: string }) {
     console.log('Sending contact email');
@@ -30,56 +225,11 @@ ${formData.message}
 
 ---
 Reply directly to this email to respond to ${formData.name}.
+
 SleepyBabyy Support Team
 https://sleepybabyy.com`,
-        html: `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>New Contact Message</title></head>
-<body style="margin:0;padding:0;background-color:#f6f8fb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#1f2937;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f8fb;padding:24px 12px;">
-    <tr><td align="center">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
-        <!-- Logo Header -->
-        <tr>
-          <td style="background-color:#ffffff;padding:24px 24px 16px;border-bottom:1px solid #f1f5f9;text-align:center;">
-            <img src="https://sleepybabyy.com/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy" style="height:40px;width:auto;" />
-          </td>
-        </tr>
-        <tr>
-          <td style="background-color:#eef4ff;padding:20px 24px;border-bottom:1px solid #e5e7eb;">
-            <p style="margin:0;font-size:18px;font-weight:600;color:#1e40af;">📩 New Contact Message</p>
-            <p style="margin:4px 0 0;font-size:13px;color:#64748b;">SleepyBabyy Support Inbox</p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:24px;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">
-              <tr><td style="padding:6px 0;color:#64748b;width:90px;">From:</td><td style="padding:6px 0;color:#0f172a;font-weight:500;">${formData.name}</td></tr>
-              <tr><td style="padding:6px 0;color:#64748b;">Email:</td><td style="padding:6px 0;"><a href="mailto:${formData.email}" style="color:#2563eb;text-decoration:none;">${formData.email}</a></td></tr>
-              ${formData.category ? `<tr><td style="padding:6px 0;color:#64748b;">Category:</td><td style="padding:6px 0;color:#0f172a;">${formData.category}</td></tr>` : ''}
-              <tr><td style="padding:6px 0;color:#64748b;">Subject:</td><td style="padding:6px 0;color:#0f172a;font-weight:500;">${formData.subject}</td></tr>
-            </table>
-
-            <div style="margin-top:20px;padding:16px 18px;background-color:#f0f7ff;border-left:4px solid #3b82f6;border-radius:8px;">
-              <p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#1e40af;text-transform:uppercase;letter-spacing:0.5px;">User Message</p>
-              <p style="margin:0;font-size:14px;line-height:1.6;color:#1f2937;white-space:pre-wrap;">${safeMessage}</p>
-            </div>
-
-            <p style="margin:20px 0 0;font-size:13px;color:#64748b;">↩️ Reply directly to this email to respond to <strong style="color:#0f172a;">${formData.name}</strong>.</p>
-          </td>
-        </tr>
-        <tr>
-          <td style="background-color:#fafafa;padding:14px 24px;border-top:1px solid #e5e7eb;text-align:center;">
-            <p style="margin:0;font-size:12px;color:#94a3b8;">SleepyBabyy Support · <a href="https://sleepybabyy.com" style="color:#94a3b8;text-decoration:none;">sleepybabyy.com</a></p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`,
+        html: buildSupportEmail(formData, safeMessage),
       });
-
       console.log("Support email sent successfully:", supportEmailResponse);
 
       // ===== Confirmation Email to User =====
@@ -111,61 +261,10 @@ https://sleepybabyy.com
 ---
 You received this email because you contacted us through sleepybabyy.com.
 To unsubscribe: https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(formData.email)}`,
-        html: `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>We received your message</title></head>
-<body style="margin:0;padding:0;background-color:#f6f8fb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#1f2937;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f6f8fb;padding:24px 12px;">
-    <tr><td align="center">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background-color:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
-        <!-- Logo Header -->
-        <tr>
-          <td style="background-color:#ffffff;padding:24px 24px 16px;border-bottom:1px solid #f1f5f9;text-align:center;">
-            <img src="https://sleepybabyy.com/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy" style="height:40px;width:auto;" />
-          </td>
-        </tr>
-        <tr>
-          <td style="background-color:#ecfdf5;padding:20px 24px;border-bottom:1px solid #e5e7eb;">
-            <p style="margin:0;font-size:18px;font-weight:600;color:#047857;">✅ We received your message</p>
-            <p style="margin:4px 0 0;font-size:13px;color:#64748b;">A member of our team will reply within 24 hours.</p>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:24px;">
-            <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#1f2937;">Hi <strong>${formData.name}</strong>,</p>
-            <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#475569;">Thank you for contacting <strong style="color:#0f172a;">SleepyBabyy</strong>. We've received your message and will get back to you as soon as possible.</p>
-
-            <div style="margin:20px 0;padding:16px 18px;background-color:#f0f7ff;border-left:4px solid #3b82f6;border-radius:8px;">
-              <p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#1e40af;text-transform:uppercase;letter-spacing:0.5px;">👤 Your Message</p>
-              <p style="margin:0 0 6px;font-size:13px;color:#475569;"><strong style="color:#0f172a;">Subject:</strong> ${formData.subject}</p>
-              ${formData.category ? `<p style="margin:0 0 6px;font-size:13px;color:#475569;"><strong style="color:#0f172a;">Category:</strong> ${formData.category}</p>` : ''}
-              <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#1f2937;white-space:pre-wrap;">${safeMessage}</p>
-            </div>
-
-            <div style="margin:20px 0;padding:16px 18px;background-color:#ecfdf5;border-left:4px solid #10b981;border-radius:8px;">
-              <p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#047857;text-transform:uppercase;letter-spacing:0.5px;">💬 Support Team Response</p>
-              <p style="margin:0;font-size:14px;line-height:1.6;color:#475569;">Our team is reviewing your message and will reply directly to this email thread within <strong style="color:#0f172a;">24 hours</strong>.</p>
-            </div>
-
-            <p style="margin:24px 0 0;font-size:14px;line-height:1.6;color:#475569;">Need quick answers? Visit our <a href="https://sleepybabyy.com/help" style="color:#2563eb;text-decoration:none;font-weight:500;">Help Center</a>.</p>
-
-            <p style="margin:20px 0 0;font-size:14px;color:#475569;">Best regards,<br><strong style="color:#0f172a;">The SleepyBabyy Support Team</strong></p>
-          </td>
-        </tr>
-        <tr>
-          <td style="background-color:#fafafa;padding:16px 24px;border-top:1px solid #e5e7eb;text-align:center;">
-            <p style="margin:0 0 6px;font-size:12px;color:#94a3b8;"><a href="https://sleepybabyy.com" style="color:#94a3b8;text-decoration:none;">sleepybabyy.com</a> · <a href="mailto:support@sleepybabyy.com" style="color:#94a3b8;text-decoration:none;">support@sleepybabyy.com</a></p>
-            <p style="margin:0;font-size:11px;color:#cbd5e1;">You received this email because you contacted us through sleepybabyy.com. <a href="https://sleepybabyy.com/unsubscribe?email=${encodeURIComponent(formData.email)}" style="color:#94a3b8;">Unsubscribe</a></p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`,
+        html: buildUserConfirmationEmail(formData, safeMessage),
       });
-
       console.log("User confirmation email sent:", userEmailResponse);
+
       return { success: true };
     } catch (error) {
       console.error("Email sending failed:", error);
