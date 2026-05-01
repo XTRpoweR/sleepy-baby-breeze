@@ -166,21 +166,13 @@ function buildInvitationEmail(params: {
         <tr>
           <td align="center" style="padding:8px 32px 32px 32px;">
             <!--[if mso]>
-            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${invitationLink}" style="height:60px;v-text-anchor:middle;width:280px;" arcsize="50%" stroke="f" fillcolor="#793BED">
+            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${invitationLink}" style="height:64px;v-text-anchor:middle;width:300px;" arcsize="50%" stroke="f" fillcolor="#793BED">
               <w:anchorlock/>
               <center style="color:#FFFFFF;font-family:Arial,sans-serif;font-size:18px;font-weight:bold;">Accept Invitation</center>
             </v:roundrect>
             <![endif]-->
             <!--[if !mso]><!-->
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
-              <tr>
-                <td align="center" bgcolor="#793BED" style="border-radius:100px;background-color:#793BED;background-image:linear-gradient(135deg,#793BED 0%,#9B27B0 50%,#EC4699 100%);box-shadow:0 10px 30px rgba(121,59,237,0.4);">
-                  <a href="${invitationLink}" class="cta-btn" style="display:inline-block;padding:20px 56px;font-size:18px;font-weight:700;color:#FFFFFF !important;text-decoration:none;border-radius:100px;letter-spacing:0.5px;font-family:Arial,sans-serif;mso-padding-alt:0;text-align:center;">
-                    <span style="color:#FFFFFF !important;font-weight:700;">Accept Invitation →</span>
-                  </a>
-                </td>
-              </tr>
-            </table>
+            <a href="${invitationLink}" style="background-color:#793BED;background:#793BED;background-image:linear-gradient(135deg,#793BED 0%,#9B27B0 50%,#EC4699 100%);border-radius:100px;color:#FFFFFF;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:bold;line-height:64px;text-align:center;text-decoration:none;width:300px;-webkit-text-size-adjust:none;mso-hide:all;box-shadow:0 10px 30px rgba(121,59,237,0.4);">Accept Invitation &rarr;</a>
             <!--<![endif]-->
             <p style="margin:16px 0 0 0;font-size:13px;color:#6B7280;">
               This invitation will expire in 7 days
