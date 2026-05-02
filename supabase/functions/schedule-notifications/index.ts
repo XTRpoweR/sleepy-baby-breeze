@@ -2,7 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
 }
 
 const MAX_HOURS_SINCE_ACTIVITY = 24;
@@ -11,6 +11,18 @@ const COOLDOWN_MULTIPLIER = 1; // cooldown = feeding_interval * this
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
+  }
+
+  // Authenticate via shared CRON_SECRET (Authorization: Bearer <secret> or x-cron-secret header)
+  const cronSecret = Deno.env.get('CRON_SECRET');
+  const authHeader = req.headers.get('Authorization') || '';
+  const headerSecret = req.headers.get('x-cron-secret') || '';
+  const bearerSecret = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  if (!cronSecret || (bearerSecret !== cronSecret && headerSecret !== cronSecret)) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -229,7 +241,7 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in schedule-notifications:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: 'Internal error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

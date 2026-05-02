@@ -71,8 +71,8 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ success: true }), { status: 200, headers: corsHeaders });
   } catch (err) {
-    console.log("Delete account error", err);
-    return new Response(JSON.stringify({ error: "Server error: " + err }), {
+    console.error("Delete account error", err);
+    return new Response(JSON.stringify({ error: "An error occurred. Please contact support." }), {
       status: 500,
       headers: corsHeaders,
     });
