@@ -24,6 +24,8 @@ const AdminNewsletter = () => {
   const [loading, setLoading] = useState(true);
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
+  const [ctaText, setCtaText] = useState('');
+  const [ctaUrl, setCtaUrl] = useState('');
   const [testEmail, setTestEmail] = useState('');
   const [sending, setSending] = useState(false);
 
