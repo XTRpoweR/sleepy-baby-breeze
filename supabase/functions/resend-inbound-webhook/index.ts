@@ -46,15 +46,26 @@ function extractThreadIdToken(subject: string): string | null {
   return m ? m[1].toLowerCase() : null;
 }
 
-function extractEmailAddress(s: string): string {
+function extractEmailAddress(s: any): string {
   if (!s) return '';
-  const m = s.match(/<([^>]+)>/);
-  return (m ? m[1] : s).trim().toLowerCase();
+  // Resend may send `from` as string or as { email, name }
+  if (typeof s === 'object') {
+    if (s.email) return String(s.email).trim().toLowerCase();
+    if (Array.isArray(s) && s[0]?.email) return String(s[0].email).trim().toLowerCase();
+  }
+  const str = String(s);
+  const m = str.match(/<([^>]+)>/);
+  return (m ? m[1] : str).trim().toLowerCase();
 }
 
-function extractName(s: string): string | null {
+function extractName(s: any): string | null {
   if (!s) return null;
-  const m = s.match(/^\s*"?([^"<]+?)"?\s*</);
+  if (typeof s === 'object') {
+    if (s.name) return String(s.name);
+    if (Array.isArray(s) && s[0]?.name) return String(s[0].name);
+  }
+  const str = String(s);
+  const m = str.match(/^\s*"?([^"<]+?)"?\s*</);
   return m ? m[1].trim() : null;
 }
 
@@ -77,52 +88,21 @@ serve(async (req) => {
     }
 
     const data = payload.data || {};
-    const emailId: string = data.email_id;
-    const fromRaw: string = data.from || '';
-    const subject: string = data.subject || '';
+    const emailId: string = data.email_id || data.id || '';
 
-    if (!emailId) {
-      console.error('[resend-inbound] No email_id in payload');
-      return new Response(JSON.stringify({ error: 'No email_id' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Fetch the actual email content from Resend API
-    const resendApiKey = Deno.env.get('RESEND_API_KEY');
-    if (!resendApiKey) {
-      return new Response(JSON.stringify({ error: 'RESEND_API_KEY not set' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    console.log('[resend-inbound] Fetching email content for', emailId);
-    const fetchResp = await fetch(`https://api.resend.com/emails/received/${emailId}`, {
-      headers: { 'Authorization': `Bearer ${resendApiKey}` },
-    });
-
-    if (!fetchResp.ok) {
-      const errText = await fetchResp.text();
-      console.error('[resend-inbound] Failed to fetch email:', fetchResp.status, errText);
-      return new Response(JSON.stringify({ error: 'Failed to fetch email content' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const email = await fetchResp.json();
-    const text: string = email.text || '';
-    const html: string = email.html || '';
-    const fullFrom: string = email.from || fromRaw;
-    const fullSubject: string = email.subject || subject;
+    // Use webhook payload directly — it contains text/html/from/subject
+    const text: string = data.text || '';
+    const html: string = data.html || '';
+    const fullFrom: any = data.from || '';
+    const fullSubject: string = data.subject || '';
 
     const senderEmail = extractEmailAddress(fullFrom);
     const senderName = extractName(fullFrom);
 
+    console.log('[resend-inbound] from:', senderEmail, 'subject:', fullSubject, 'has_text:', !!text, 'has_html:', !!html);
+
     if (!senderEmail) {
-      console.error('[resend-inbound] No sender email found');
+      console.error('[resend-inbound] No sender email found in payload', JSON.stringify(data).slice(0, 500));
       return new Response(JSON.stringify({ error: 'No sender' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -164,7 +144,7 @@ serve(async (req) => {
       threadId = crypto.randomUUID();
     }
 
-    const cleanSubject = fullSubject.replace(/\s*\[#[a-f0-9]{8}\]\s*/i, '').trim() || '(no subject)';
+    const cleanSubject = (fullSubject || '').replace(/\s*\[#[a-f0-9]{8}\]\s*/i, '').trim() || '(no subject)';
 
     const { error } = await supabase.from('contact_messages').insert({
       thread_id: threadId,
@@ -174,7 +154,7 @@ serve(async (req) => {
       subject: cleanSubject,
       message_body: cleanBody,
       status: 'unread',
-      resend_email_id: emailId,
+      resend_email_id: emailId || null,
     });
 
     if (error) {
