@@ -35,12 +35,23 @@ interface CapiPayload {
   user_data?: {
     email?: string;
     external_id?: string;
+    phone?: string;
+    first_name?: string;
+    last_name?: string;
+    city?: string;
+    country?: string;
+    fb_login_id?: string;
     client_user_agent?: string;
     fbp?: string; // _fbp cookie
     fbc?: string; // _fbc cookie
   };
   custom_data?: Record<string, unknown>;
 }
+
+// Normalize phone: digits only (Meta hashes E.164-ish digits)
+const normPhone = (p: string): string => p.replace(/[^\d]/g, "");
+// Normalize name/city/country: lowercase, trimmed, alpha only for country (ISO-2 lowercased)
+const normText = (s: string): string => s.trim().toLowerCase();
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -68,13 +79,20 @@ Deno.serve(async (req) => {
     const xff = req.headers.get("x-forwarded-for") ?? "";
     const clientIp = xff.split(",")[0]?.trim() || undefined;
 
+    const u = body.user_data ?? {};
     const ud: Record<string, unknown> = {};
-    if (body.user_data?.email) ud.em = [await sha256Hex(body.user_data.email)];
-    if (body.user_data?.external_id) ud.external_id = [await sha256Hex(body.user_data.external_id)];
-    if (body.user_data?.client_user_agent) ud.client_user_agent = body.user_data.client_user_agent;
+    if (u.email) ud.em = [await sha256Hex(u.email)];
+    if (u.phone) ud.ph = [await sha256Hex(normPhone(u.phone))];
+    if (u.first_name) ud.fn = [await sha256Hex(normText(u.first_name))];
+    if (u.last_name) ud.ln = [await sha256Hex(normText(u.last_name))];
+    if (u.city) ud.ct = [await sha256Hex(normText(u.city).replace(/\s+/g, ""))];
+    if (u.country) ud.country = [await sha256Hex(normText(u.country))];
+    if (u.external_id) ud.external_id = [await sha256Hex(u.external_id)];
+    if (u.fb_login_id) ud.fb_login_id = u.fb_login_id;
+    if (u.client_user_agent) ud.client_user_agent = u.client_user_agent;
     if (clientIp) ud.client_ip_address = clientIp;
-    if (body.user_data?.fbp) ud.fbp = body.user_data.fbp;
-    if (body.user_data?.fbc) ud.fbc = body.user_data.fbc;
+    if (u.fbp) ud.fbp = u.fbp;
+    if (u.fbc) ud.fbc = u.fbc;
 
     const payload = {
       data: [
