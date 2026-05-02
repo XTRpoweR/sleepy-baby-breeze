@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { MessageSquare, Mail, BarChart3, Users, ArrowLeft } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -12,6 +12,7 @@ interface AdminLayoutProps {
 export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { isAdmin, loading } = useIsAdmin();
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -19,6 +20,34 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
       navigate('/', { replace: true });
     }
   }, [isAdmin, loading, navigate]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const loadUnread = async () => {
+      const { count } = await supabase
+        .from('contact_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('direction', 'inbound')
+        .eq('status', 'unread');
+      setUnreadCount(count || 0);
+    };
+
+    loadUnread();
+
+    const channel = supabase
+      .channel('admin-unread-messages')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'contact_messages' },
+        () => loadUnread()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isAdmin]);
 
   if (loading) {
     return (
@@ -31,10 +60,10 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   if (!isAdmin) return null;
 
   const navItems = [
-    { to: '/admin/messages', icon: MessageSquare, label: 'Messages', enabled: true },
-    { to: '/admin/newsletter', icon: Mail, label: 'Newsletter', enabled: true },
-    { to: '/admin/analytics', icon: BarChart3, label: 'Analytics', enabled: true },
-    { to: '/admin/users', icon: Users, label: 'Users', enabled: true },
+    { to: '/admin/messages', icon: MessageSquare, label: 'Messages', enabled: true, badge: unreadCount },
+    { to: '/admin/newsletter', icon: Mail, label: 'Newsletter', enabled: true, badge: 0 },
+    { to: '/admin/analytics', icon: BarChart3, label: 'Analytics', enabled: true, badge: 0 },
+    { to: '/admin/users', icon: Users, label: 'Users', enabled: true, badge: 0 },
   ];
 
   return (
@@ -61,7 +90,12 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                 }
               >
                 <item.icon className="h-4 w-4" />
-                <span className="text-sm">{item.label}</span>
+                <span className="text-sm flex-1">{item.label}</span>
+                {item.badge > 0 && (
+                  <span className="min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center shadow-md">
+                    {item.badge > 99 ? '99+' : item.badge}
+                  </span>
+                )}
               </NavLink>
             ) : (
               <div key={item.label} className="flex items-center gap-3 px-3 py-2.5 rounded-lg opacity-50 cursor-not-allowed">
