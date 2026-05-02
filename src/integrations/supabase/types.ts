@@ -396,6 +396,117 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_events: {
+        Row: {
+          capi_error: string | null
+          capi_response: Json | null
+          capi_sent: boolean | null
+          capi_sent_at: string | null
+          client_user_agent: string | null
+          content_category: string | null
+          content_ids: string[] | null
+          content_name: string | null
+          created_at: string | null
+          currency: string | null
+          email: string | null
+          email_hash: string | null
+          event_id: string | null
+          event_name: string
+          event_source: string | null
+          external_id: string | null
+          fbc: string | null
+          fbclid: string | null
+          fbp: string | null
+          gclid: string | null
+          id: string
+          ip_address: unknown
+          page_referrer: string | null
+          page_url: string | null
+          phone_hash: string | null
+          raw_payload: Json | null
+          user_agent: string | null
+          user_id: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          value: number | null
+        }
+        Insert: {
+          capi_error?: string | null
+          capi_response?: Json | null
+          capi_sent?: boolean | null
+          capi_sent_at?: string | null
+          client_user_agent?: string | null
+          content_category?: string | null
+          content_ids?: string[] | null
+          content_name?: string | null
+          created_at?: string | null
+          currency?: string | null
+          email?: string | null
+          email_hash?: string | null
+          event_id?: string | null
+          event_name: string
+          event_source?: string | null
+          external_id?: string | null
+          fbc?: string | null
+          fbclid?: string | null
+          fbp?: string | null
+          gclid?: string | null
+          id?: string
+          ip_address?: unknown
+          page_referrer?: string | null
+          page_url?: string | null
+          phone_hash?: string | null
+          raw_payload?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          value?: number | null
+        }
+        Update: {
+          capi_error?: string | null
+          capi_response?: Json | null
+          capi_sent?: boolean | null
+          capi_sent_at?: string | null
+          client_user_agent?: string | null
+          content_category?: string | null
+          content_ids?: string[] | null
+          content_name?: string | null
+          created_at?: string | null
+          currency?: string | null
+          email?: string | null
+          email_hash?: string | null
+          event_id?: string | null
+          event_name?: string
+          event_source?: string | null
+          external_id?: string | null
+          fbc?: string | null
+          fbclid?: string | null
+          fbp?: string | null
+          gclid?: string | null
+          id?: string
+          ip_address?: unknown
+          page_referrer?: string | null
+          page_url?: string | null
+          phone_hash?: string | null
+          raw_payload?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
       message_participants: {
         Row: {
           created_at: string
@@ -880,7 +991,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      marketing_funnel_summary: {
+        Row: {
+          avg_value: number | null
+          event_count: number | null
+          event_date: string | null
+          event_name: string | null
+          total_value: number | null
+          unique_users: number | null
+          utm_campaign: string | null
+          utm_source: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_get_analytics: { Args: never; Returns: Json }
@@ -993,6 +1116,18 @@ export type Database = {
       set_active_profile: {
         Args: { profile_id: string; user_id_param: string }
         Returns: undefined
+      }
+      track_marketing_event: {
+        Args: {
+          p_content_name?: string
+          p_currency?: string
+          p_email?: string
+          p_event_name: string
+          p_metadata?: Json
+          p_user_id?: string
+          p_value?: number
+        }
+        Returns: string
       }
     }
     Enums: {
