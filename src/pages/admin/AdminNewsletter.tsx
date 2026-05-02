@@ -23,7 +23,9 @@ const AdminNewsletter = () => {
   const [subs, setSubs] = useState<Sub[]>([]);
   const [loading, setLoading] = useState(true);
   const [subject, setSubject] = useState('');
+  const [subtitle, setSubtitle] = useState('');
   const [body, setBody] = useState('');
+  const [tip, setTip] = useState('');
   const [ctaText, setCtaText] = useState('');
   const [ctaUrl, setCtaUrl] = useState('');
   const [testEmail, setTestEmail] = useState('');
