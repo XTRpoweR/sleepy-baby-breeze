@@ -8,21 +8,53 @@ const corsHeaders = {
 
 function cleanReplyText(text: string): string {
   if (!text) return '';
-  let t = text.replace(/\r\n/g, '\n');
+  let t = text
+    .replace(/\r\n/g, '\n')
+    .replace(/\u00ad/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '');
+
+  // Some mail clients include our HTML email template/CSS in the plain-text reply.
+  // Strip that quoted template noise before saving the customer's message.
+  const templateMarkers = [
+    /Reply from SleepyBabyy Support/i,
+    /A reply from our team/i,
+    /Reply directly to this email/i,
+    /Sweet dreams\s*🌙/i,
+    /The SleepyBabyy Support Team/i,
+    /sleepybabyy\.com/i,
+  ];
+  for (const re of templateMarkers) {
+    const m = t.match(re);
+    if (m?.index !== undefined) {
+      t = t.slice(0, m.index);
+      break;
+    }
+  }
+
   const markers = [
-    /\n\s*On .+ wrote:\s*\n/i,
-    /\n-{2,}\s*Original Message\s*-{2,}/i,
-    /\n_{5,}\s*\n/,
-    /\nFrom: .+\nSent: .+/i,
-    /\n\s*>.*$/s,
+    /(^|\n)\s*On .+ wrote:\s*\n/i,
+    /(^|\n)-{2,}\s*Original Message\s*-{2,}/i,
+    /(^|\n)_{5,}\s*\n/,
+    /(^|\n)From: .+\nSent: .+/i,
+    /(^|\n)\s*>.*$/s,
   ];
   for (const re of markers) {
     const m = t.match(re);
-    if (m && m.index !== undefined && m.index > 0) {
+    if (m && m.index !== undefined) {
       t = t.slice(0, m.index);
+      break;
     }
   }
-  return t.trim();
+
+  return t
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line && line !== '|' && line !== '>' && !/^\|+$/.test(line))
+    .filter((line) => !/^#?yiv[a-z0-9_-]+/i.test(line))
+    .filter((line) => !/[{}]/.test(line))
+    .filter((line) => !/(border-collapse|padding|margin|font-size|line-height|max-width|@media|background-color)/i.test(line))
+    .join('\n')
+    .trim();
 }
 
 function htmlToText(html: string): string {
