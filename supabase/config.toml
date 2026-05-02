@@ -77,3 +77,6 @@ verify_jwt = false
 [functions.send-support-reply]
 verify_jwt = true
 
+[functions.send-newsletter-broadcast]
+verify_jwt = true
+
