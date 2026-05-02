@@ -192,6 +192,65 @@ export type Database = {
           },
         ]
       }
+      contact_messages: {
+        Row: {
+          category: string | null
+          created_at: string
+          direction: string
+          id: string
+          message_body: string
+          parent_message_id: string | null
+          replied_by: string | null
+          resend_email_id: string | null
+          sender_email: string
+          sender_name: string | null
+          status: string
+          subject: string | null
+          thread_id: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          direction: string
+          id?: string
+          message_body: string
+          parent_message_id?: string | null
+          replied_by?: string | null
+          resend_email_id?: string | null
+          sender_email: string
+          sender_name?: string | null
+          status?: string
+          subject?: string | null
+          thread_id: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          direction?: string
+          id?: string
+          message_body?: string
+          parent_message_id?: string | null
+          replied_by?: string | null
+          resend_email_id?: string | null
+          sender_email?: string
+          sender_name?: string | null
+          status?: string
+          subject?: string | null
+          thread_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_messages_parent_message_id_fkey"
+            columns: ["parent_message_id"]
+            isOneToOne: false
+            referencedRelation: "contact_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_invitations: {
         Row: {
           baby_id: string
@@ -475,6 +534,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          is_admin: boolean
           updated_at: string | null
         }
         Insert: {
@@ -482,6 +542,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          is_admin?: boolean
           updated_at?: string | null
         }
         Update: {
@@ -489,6 +550,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          is_admin?: boolean
           updated_at?: string | null
         }
         Relationships: []
@@ -882,6 +944,7 @@ export type Database = {
         Args: { current_session_id?: string; user_uuid: string }
         Returns: number
       }
+      is_admin: { Args: never; Returns: boolean }
       is_baby_owner: {
         Args: { baby_uuid: string; user_uuid: string }
         Returns: boolean
