@@ -63,8 +63,8 @@ const AdminNewsletter = () => {
 
       const { data, error } = await supabase.functions.invoke('send-newsletter-broadcast', {
         body: test
-          ? { subject, body, test_email: testEmail, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined }
-          : { subject, body, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined },
+          ? { subject, subtitle, body, tip, test_email: testEmail, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined }
+          : { subject, subtitle, body, tip, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined },
         headers: { Authorization: `Bearer ${token}` },
       });
       if (error || (data as any)?.error) throw new Error((data as any)?.detail || (data as any)?.error || error?.message);
@@ -73,7 +73,9 @@ const AdminNewsletter = () => {
       } else {
         toast.success(`Sent to ${(data as any).sent} of ${(data as any).total} subscribers`);
         setSubject('');
+        setSubtitle('');
         setBody('');
+        setTip('');
         setCtaText('');
         setCtaUrl('');
       }
