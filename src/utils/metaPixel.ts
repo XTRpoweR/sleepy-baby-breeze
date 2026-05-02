@@ -27,6 +27,7 @@ type StandardEvent =
   | 'InitiateCheckout'
   | 'AddPaymentInfo'
   | 'Subscribe'
+  | 'StartTrial'
   | 'Purchase'
   | 'Search'
   | 'AddToCart'
