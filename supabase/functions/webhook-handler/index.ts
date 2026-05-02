@@ -597,6 +597,14 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
     const contentName = tierContentName(tier);
     const value = tierValue(tier);
 
+    // Advanced matching from Stripe customer_details
+    const cd = session.customer_details || {};
+    const { first_name, last_name } = splitName(cd.name);
+    const phone = cd.phone || null;
+    const city = cd.address?.city || null;
+    const country = cd.address?.country || null;
+    const { fbc, fbp } = await getLastClickIds(supabase, userId);
+
     // Subscribe event
     await sendCapiEvent(supabase, {
       event_name: 'Subscribe',
@@ -606,6 +614,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
       value,
       currency: 'USD',
       content_name: contentName,
+      first_name, last_name, phone, city, country, fbc, fbp,
       custom_data: {
         stripe_session_id: session.id,
         stripe_customer_id: customerId,
@@ -622,6 +631,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
         value: 0,
         currency: 'USD',
         content_name: contentName,
+        first_name, last_name, phone, city, country, fbc, fbp,
         custom_data: {
           predicted_ltv: 79.90,
           stripe_session_id: session.id,
