@@ -117,12 +117,20 @@ const AdminNewsletter = () => {
             <h2 className="font-semibold">Compose broadcast</h2>
           </div>
           <div>
-            <Label htmlFor="subject">Subject</Label>
+            <Label htmlFor="subject">Title</Label>
             <Input id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="A new feature you'll love..." className="mt-1" />
           </div>
           <div>
-            <Label htmlFor="body">Body (plain text — line breaks preserved)</Label>
-            <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="mt-1" placeholder="Hi there 👋&#10;&#10;We just shipped..." />
+            <Label htmlFor="subtitle">Subtitle (optional)</Label>
+            <Input id="subtitle" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="This week's update" className="mt-1" />
+          </div>
+          <div>
+            <Label htmlFor="body">Body (Markdown supported: **bold**, *italic*, [link](url), - lists)</Label>
+            <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="mt-1" placeholder="We just shipped **a new feature**...&#10;&#10;Check it out: [link](https://sleepybabyy.com)" />
+          </div>
+          <div>
+            <Label htmlFor="tip">Quick Tip / Quote (optional)</Label>
+            <Textarea id="tip" value={tip} onChange={(e) => setTip(e.target.value)} rows={2} className="mt-1" placeholder="A consistent bedtime routine helps babies sleep better." />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
