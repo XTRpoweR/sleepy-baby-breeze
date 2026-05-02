@@ -13,6 +13,7 @@ import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { UnifiedHeader } from '@/components/layout/UnifiedHeader';
 import { UnifiedDashboard } from '@/components/dashboard/UnifiedDashboard';
 import { fbqTrack } from '@/utils/metaPixel';
+import { buildMetaUserData } from '@/utils/metaUserData';
 
 const Dashboard = () => {
   const {
