@@ -24,6 +24,8 @@ const AdminNewsletter = () => {
   const [loading, setLoading] = useState(true);
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
+  const [ctaText, setCtaText] = useState('');
+  const [ctaUrl, setCtaUrl] = useState('');
   const [testEmail, setTestEmail] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -58,7 +60,9 @@ const AdminNewsletter = () => {
       }
 
       const { data, error } = await supabase.functions.invoke('send-newsletter-broadcast', {
-        body: test ? { subject, body, test_email: testEmail } : { subject, body },
+        body: test
+          ? { subject, body, test_email: testEmail, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined }
+          : { subject, body, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined },
         headers: { Authorization: `Bearer ${token}` },
       });
       if (error || (data as any)?.error) throw new Error((data as any)?.detail || (data as any)?.error || error?.message);
@@ -68,6 +72,8 @@ const AdminNewsletter = () => {
         toast.success(`Sent to ${(data as any).sent} of ${(data as any).total} subscribers`);
         setSubject('');
         setBody('');
+        setCtaText('');
+        setCtaUrl('');
       }
     } catch (e: any) {
       toast.error(e.message || 'Failed to send');
@@ -113,6 +119,16 @@ const AdminNewsletter = () => {
           <div>
             <Label htmlFor="body">Body (plain text — line breaks preserved)</Label>
             <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="mt-1" placeholder="Hi there 👋&#10;&#10;We just shipped..." />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="cta_text">CTA button text (optional)</Label>
+              <Input id="cta_text" value={ctaText} onChange={(e) => setCtaText(e.target.value)} placeholder="Read more" className="mt-1" />
+            </div>
+            <div>
+              <Label htmlFor="cta_url">CTA button URL (optional)</Label>
+              <Input id="cta_url" type="url" value={ctaUrl} onChange={(e) => setCtaUrl(e.target.value)} placeholder="https://sleepybabyy.com/..." className="mt-1" />
+            </div>
           </div>
           <div className="flex flex-col md:flex-row md:items-end gap-3 pt-2 border-t">
             <div className="flex-1">

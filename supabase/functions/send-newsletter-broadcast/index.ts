@@ -7,32 +7,169 @@ const corsHeaders = {
 };
 
 function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function buildEmail(subject: string, bodyText: string, unsubscribeToken: string): string {
-  const safeBody = escapeHtml(bodyText).replace(/\n/g, '<br>');
-  const unsubUrl = `https://sleepybabyy.com/unsubscribe?token=${unsubscribeToken}`;
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#FAF7F2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAF7F2;">
-<tr><td align="center" style="padding:40px 20px;">
-<table role="presentation" width="600" style="max-width:600px;width:100%;background:#fff;border-radius:20px;box-shadow:0 4px 20px rgba(124,58,237,0.08);">
-<tr><td style="padding:32px;"><img src="https://sleepybabyy.com/logo.png" alt="SleepyBabyy" width="180" style="display:block;max-width:180px;"></td></tr>
-<tr><td style="padding:0 32px 32px 32px;">
-<h1 style="margin:0 0 20px 0;font-family:Georgia,serif;font-size:26px;color:#1F2937;">${escapeHtml(subject)}</h1>
-<div style="font-size:15px;line-height:25px;color:#374151;">${safeBody}</div>
-</td></tr>
-<tr><td align="center" style="padding:24px 32px 32px 32px;border-top:1px solid #F3F4F6;">
-<p style="margin:0 0 8px 0;font-size:12px;color:#9CA3AF;">
-<a href="https://sleepybabyy.com" style="color:#7C3AED;text-decoration:none;font-weight:600;">🌙 sleepybabyy.com</a>
-</p>
-<p style="margin:0 0 8px 0;font-size:11px;color:#9CA3AF;">
-<a href="${unsubUrl}" style="color:#9CA3AF;text-decoration:underline;">Unsubscribe</a>
-</p>
-<p style="margin:0;font-size:11px;color:#9CA3AF;">© 2026 SleepyBabyy</p>
-</td></tr>
-</table></td></tr></table></body></html>`;
+function buildNewsletterEmail(params: {
+  subject: string;
+  body: string;
+  ctaText?: string;
+  ctaUrl?: string;
+  userName?: string;
+  unsubscribeUrl: string;
+}): string {
+  const { subject, body, ctaText, ctaUrl, userName, unsubscribeUrl } = params;
+  const safeSubject = escapeHtml(subject);
+  const safeBody = escapeHtml(body).replace(/\n/g, '<br>');
+  const greeting = userName && userName.trim() ? escapeHtml(userName.trim()) : 'there';
+  const hasCta = ctaText && ctaUrl && /^https?:\/\//i.test(ctaUrl);
+  const safeCtaText = hasCta ? escapeHtml(ctaText!) : '';
+  const safeCtaUrl = hasCta ? ctaUrl! : '';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="x-apple-disable-message-reformatting">
+<title>${safeSubject} - SleepyBabyy</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<![endif]-->
+<style>
+  body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; }
+  img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; max-width: 100%; }
+  a { text-decoration: none; }
+  @media only screen and (max-width: 600px) {
+    .container { width: 100% !important; padding: 12px !important; max-width: 100% !important; }
+    .hero-card { padding: 28px 20px !important; }
+    .headline { font-size: 24px !important; line-height: 32px !important; }
+    .cta-btn { padding: 14px 32px !important; font-size: 15px !important; }
+  }
+  * { box-sizing: border-box; }
+  table { table-layout: fixed; max-width: 100%; }
+  td, p, h1, h2, span, div {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#FAF7F2;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#FAF7F2;">
+  <tr>
+    <td align="center" style="padding:40px 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" class="container" style="max-width:600px;width:100%;table-layout:fixed;">
+
+        <!-- Header with Logo -->
+        <tr>
+          <td style="padding:24px 32px;">
+            <img src="https://sleepybabyy.com/logo.png" alt="SleepyBabyy" width="200" style="display:block;max-width:200px;width:200px;height:auto;border:0;">
+          </td>
+        </tr>
+
+        <!-- Hero Card -->
+        <tr>
+          <td style="padding:0 32px 32px 32px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFFFFF;border-radius:20px;box-shadow:0 4px 20px rgba(124,58,237,0.08);">
+              <tr>
+                <td align="center" class="hero-card" style="padding:40px 40px 32px 40px;">
+                  <div style="font-size:56px;line-height:1;margin-bottom:20px;">🌙</div>
+                  <h1 class="headline" style="margin:0 0 16px 0;font-family:Georgia,serif;font-size:30px;font-weight:700;line-height:38px;color:#1F2937;letter-spacing:-0.5px;">
+                    ${safeSubject}
+                  </h1>
+                  <p style="margin:0;font-size:16px;line-height:26px;color:#6B7280;font-weight:400;">
+                    News and updates from the SleepyBabyy team
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Content -->
+        <tr>
+          <td style="padding:0 32px;">
+            <p style="margin:0 0 20px 0;font-size:16px;line-height:26px;color:#1F2937;">
+              Hi ${greeting} 👋
+            </p>
+            <div style="margin:0 0 20px 0;font-size:16px;line-height:26px;color:#1F2937;">
+              ${safeBody}
+            </div>
+          </td>
+        </tr>
+
+        ${hasCta ? `
+        <!-- CTA Button -->
+        <tr>
+          <td align="center" style="padding:8px 32px 32px 32px;text-align:center;">
+            <!--[if mso]>
+            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${safeCtaUrl}" style="height:64px;v-text-anchor:middle;width:300px;" arcsize="50%" stroke="f" fillcolor="#793BED">
+              <w:anchorlock/>
+              <center style="color:#FFFFFF;font-family:Arial,sans-serif;font-size:18px;font-weight:bold;">${safeCtaText}</center>
+            </v:roundrect>
+            <![endif]-->
+            <!--[if !mso]><!-->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;">
+              <tr>
+                <td align="center" style="text-align:center;">
+                  <a href="${safeCtaUrl}" style="background-color:#793BED;background:#793BED;background-image:linear-gradient(135deg,#793BED 0%,#9B27B0 50%,#EC4699 100%);border-radius:100px;color:#FFFFFF;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:bold;line-height:64px;text-align:center;text-decoration:none;width:300px;-webkit-text-size-adjust:none;mso-hide:all;box-shadow:0 10px 30px rgba(121,59,237,0.4);">${safeCtaText} &rarr;</a>
+                </td>
+              </tr>
+            </table>
+            <!--<![endif]-->
+          </td>
+        </tr>
+        ` : ''}
+
+        <!-- Divider -->
+        <tr>
+          <td style="padding:0 32px;">
+            <div style="height:1px;background:linear-gradient(90deg,transparent,#E5E7EB,transparent);"></div>
+          </td>
+        </tr>
+
+        <!-- Signature -->
+        <tr>
+          <td style="padding:24px 32px;">
+            <p style="margin:0;font-size:16px;line-height:24px;color:#1F2937;">
+              Sweet dreams 🌙<br>
+              <strong style="color:#7C3AED;">The SleepyBabyy Team</strong>
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td align="center" style="padding:24px 32px 32px 32px;">
+            <a href="https://www.facebook.com/share/17HFMh4CNE/?mibextid=LQQJ4d" style="text-decoration:none;display:inline-block;margin-bottom:20px;">
+              <div style="width:40px;height:40px;background:#1E3A8A;border-radius:50%;text-align:center;line-height:40px;color:#FFFFFF;font-size:18px;font-weight:700;">f</div>
+            </a>
+            <p style="margin:0 0 12px 0;font-size:13px;line-height:20px;color:#6B7280;">
+              <a href="https://sleepybabyy.com/help" style="color:#6B7280;text-decoration:none;">Help</a>
+              <span style="color:#D1D5DB;margin:0 8px;">·</span>
+              <a href="https://sleepybabyy.com/privacy" style="color:#6B7280;text-decoration:none;">Privacy</a>
+              <span style="color:#D1D5DB;margin:0 8px;">·</span>
+              <a href="${unsubscribeUrl}" style="color:#6B7280;text-decoration:underline;">Unsubscribe</a>
+            </p>
+            <p style="margin:0 0 8px 0;font-size:12px;color:#9CA3AF;">
+              <a href="https://sleepybabyy.com" style="color:#7C3AED;text-decoration:none;font-weight:600;">🌙 sleepybabyy.com</a>
+            </p>
+            <p style="margin:0;font-size:11px;color:#9CA3AF;">
+              © 2026 SleepyBabyy. All rights reserved.<br>
+              You're receiving this because you subscribed to SleepyBabyy updates.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
 }
 
 serve(async (req) => {
@@ -59,7 +196,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const { subject, body, test_email } = await req.json();
+    const { subject, body, test_email, cta_text, cta_url } = await req.json();
     if (!subject || !body || typeof subject !== 'string' || typeof body !== 'string') {
       return new Response(JSON.stringify({ error: 'subject and body required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
@@ -67,16 +204,25 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Content too long' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Test send: just send to single email
+    const ctaText = typeof cta_text === 'string' ? cta_text.slice(0, 50) : undefined;
+    const ctaUrl = typeof cta_url === 'string' ? cta_url.slice(0, 500) : undefined;
+
+    // Test send
     if (test_email) {
-      const html = buildEmail(subject, body, 'test-token');
+      const unsubUrl = `https://sleepybabyy.com/unsubscribe?token=test-token`;
+      const html = buildNewsletterEmail({ subject, body, ctaText, ctaUrl, unsubscribeUrl: unsubUrl });
       const resp = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: 'SleepyBabyy <support@sleepybabyy.com>',
           to: [test_email],
+          reply_to: 'support@sleepybabyy.com',
           subject: `[TEST] ${subject}`,
+          headers: {
+            'List-Unsubscribe': `<${unsubUrl}>, <mailto:support@sleepybabyy.com?subject=unsubscribe>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
           html,
         }),
       });
@@ -96,22 +242,26 @@ serve(async (req) => {
 
     let sent = 0;
     let failed = 0;
-    // Send in small batches to avoid overwhelming Resend (rate limit ~10/sec on free)
     for (const sub of subs || []) {
       try {
-        const html = buildEmail(subject, body, sub.unsubscribe_token);
+        const unsubUrl = `https://sleepybabyy.com/unsubscribe?token=${sub.unsubscribe_token}`;
+        const html = buildNewsletterEmail({ subject, body, ctaText, ctaUrl, unsubscribeUrl: unsubUrl });
         const resp = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             from: 'SleepyBabyy <support@sleepybabyy.com>',
             to: [sub.email],
+            reply_to: 'support@sleepybabyy.com',
             subject,
+            headers: {
+              'List-Unsubscribe': `<${unsubUrl}>, <mailto:support@sleepybabyy.com?subject=unsubscribe>`,
+              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            },
             html,
           }),
         });
         if (resp.ok) sent++; else failed++;
-        // Throttle slightly
         await new Promise(r => setTimeout(r, 120));
       } catch {
         failed++;
