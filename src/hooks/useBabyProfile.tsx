@@ -205,7 +205,7 @@ export const useBabyProfile = () => {
 
       console.log('Subscription data:', subscriptionData);
       
-      const isBasicUser = !subscriptionData || subscriptionData.subscription_tier === 'basic';
+      const isBasicUser = !subscriptionData || (subscriptionData.subscription_tier === 'basic' || subscriptionData.subscription_tier === 'free');
       console.log('Is basic user:', isBasicUser);
       
       // Fixed logic: Allow first profile for basic users (0 profiles is allowed, 1+ is blocked)
