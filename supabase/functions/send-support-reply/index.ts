@@ -120,8 +120,10 @@ serve(async (req) => {
   }
 
   try {
+    console.log('[send-support-reply] Request received');
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
+      console.error('[send-support-reply] Missing auth header');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
