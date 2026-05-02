@@ -138,16 +138,20 @@ serve(async (req) => {
     const token = authHeader.substring(7);
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
+      console.error('[send-support-reply] Auth error:', authError);
       return new Response(JSON.stringify({ error: 'Invalid token' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    console.log('[send-support-reply] Authenticated user:', user.id);
 
     // Verify admin
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)
       .maybeSingle();
+    if (profileError) console.error('[send-support-reply] Profile error:', profileError);
     if (!profile?.is_admin) {
+      console.error('[send-support-reply] Not admin. profile=', profile);
       return new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
