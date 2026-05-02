@@ -419,6 +419,8 @@ async function sendCapiEvent(
     country?: string | null;
     fbc?: string | null;
     fbp?: string | null;
+    client_user_agent?: string | null;
+    event_source_url?: string | null;
   },
 ) {
   const token =
@@ -442,11 +444,14 @@ async function sendCapiEvent(
   if (opts.country) user_data.country = [await sha256Hex(normText(opts.country))];
   if (opts.fbc) user_data.fbc = opts.fbc;
   if (opts.fbp) user_data.fbp = opts.fbp;
+  if (opts.client_user_agent) user_data.client_user_agent = opts.client_user_agent;
 
   const custom_data: Record<string, unknown> = { ...(opts.custom_data || {}) };
   if (opts.value !== undefined) custom_data.value = opts.value;
   if (opts.currency) custom_data.currency = opts.currency;
   if (opts.content_name) custom_data.content_name = opts.content_name;
+
+  const event_source_url = opts.event_source_url || 'https://sleepybabyy.com/dashboard';
 
   let capi_sent = false;
   let capi_error: string | null = null;
@@ -463,6 +468,7 @@ async function sendCapiEvent(
               event_name: opts.event_name,
               event_time: Math.floor(Date.now() / 1000),
               event_id,
+              event_source_url,
               action_source: 'website',
               user_data,
               custom_data,
