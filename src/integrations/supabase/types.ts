@@ -883,6 +883,35 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_get_analytics: { Args: never; Returns: Json }
+      admin_list_newsletter_subscribers: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          language: string
+          status: string
+          subscribed_at: string
+        }[]
+      }
+      admin_list_users: {
+        Args: never
+        Returns: {
+          baby_count: number
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_admin: boolean
+          subscription_status: string
+          subscription_tier: string
+        }[]
+      }
+      admin_set_user_admin: {
+        Args: { make_admin: boolean; target_user_id: string }
+        Returns: undefined
+      }
       can_access_baby: {
         Args: { baby_uuid: string; user_uuid: string }
         Returns: boolean

@@ -32,9 +32,9 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const navItems = [
     { to: '/admin/messages', icon: MessageSquare, label: 'Messages', enabled: true },
-    { to: '#', icon: Mail, label: 'Newsletter', enabled: false },
-    { to: '#', icon: BarChart3, label: 'Analytics', enabled: false },
-    { to: '#', icon: Users, label: 'Users', enabled: false },
+    { to: '/admin/newsletter', icon: Mail, label: 'Newsletter', enabled: true },
+    { to: '/admin/analytics', icon: BarChart3, label: 'Analytics', enabled: true },
+    { to: '/admin/users', icon: Users, label: 'Users', enabled: true },
   ];
 
   return (
