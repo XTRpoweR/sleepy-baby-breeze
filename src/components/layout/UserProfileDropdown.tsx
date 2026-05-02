@@ -1,6 +1,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,13 +21,15 @@ import {
   Settings,
   Bell,
   Shield,
-  ChevronDown
+  ChevronDown,
+  ShieldCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const UserProfileDropdown = () => {
   const { user, signOut } = useAuth();
   const { isPremium, loading } = useSubscription();
+  const { isAdmin } = useIsAdmin();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -100,6 +103,16 @@ export const UserProfileDropdown = () => {
           <Settings className="h-4 w-4 mr-2" />
           <span>Account Settings</span>
         </DropdownMenuItem>
+        
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate('/admin/messages')} className="cursor-pointer">
+              <ShieldCheck className="h-4 w-4 mr-2 text-purple-600" />
+              <span className="font-medium">Admin Dashboard</span>
+            </DropdownMenuItem>
+          </>
+        )}
         
         <DropdownMenuSeparator />
         
