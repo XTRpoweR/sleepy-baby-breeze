@@ -252,6 +252,12 @@ serve(async (req) => {
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(supabase, event);
         break;
+      case 'checkout.session.completed':
+        await handleCheckoutCompleted(supabase, event);
+        break;
+      case 'invoice.payment_succeeded':
+        await handleInvoicePaymentSucceeded(supabase, event);
+        break;
       default:
         console.log('Unhandled event type:', event.type);
     }
