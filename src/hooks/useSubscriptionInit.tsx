@@ -27,8 +27,10 @@ export const useSubscriptionInit = () => {
             .insert({
               user_id: user.id,
               email: user.email,
-              subscription_tier: 'basic',
-              status: 'active',
+              subscription_tier: 'free',
+              status: 'free',
+              is_trial: false,
+              billing_cycle: 'monthly',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             });
