@@ -50,10 +50,18 @@ const AdminNewsletter = () => {
 
     setSending(true);
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+
+      if (!token) {
+        throw new Error('Please sign in again before sending.');
+      }
+
       const { data, error } = await supabase.functions.invoke('send-newsletter-broadcast', {
         body: test ? { subject, body, test_email: testEmail } : { subject, body },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (error || (data as any)?.error) throw new Error((data as any)?.error || error?.message);
+      if (error || (data as any)?.error) throw new Error((data as any)?.detail || (data as any)?.error || error?.message);
       if (test) {
         toast.success(`Test sent to ${testEmail}`);
       } else {
