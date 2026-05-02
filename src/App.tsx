@@ -50,6 +50,9 @@ const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const ChatAssistant = lazy(() => import("./components/chat/ChatAssistant"));
 const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
 const AdminThread = lazy(() => import("./pages/admin/AdminThread"));
+const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 
 // Create queryClient outside of component to avoid recreation on each render
 const queryClient = new QueryClient({
@@ -126,6 +129,9 @@ const App: React.FC = () => {
                       <Route path="/admin" element={<Navigate to="/admin/messages" replace />} />
                       <Route path="/admin/messages" element={<AdminMessages />} />
                       <Route path="/admin/messages/:threadId" element={<AdminThread />} />
+                      <Route path="/admin/newsletter" element={<AdminNewsletter />} />
+                      <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                      <Route path="/admin/users" element={<AdminUsers />} />
                       <Route path="/404" element={<NotFound />} />
                       <Route path="*" element={<Navigate to="/404" replace />} />
                     </Routes>
