@@ -23,7 +23,9 @@ const AdminNewsletter = () => {
   const [subs, setSubs] = useState<Sub[]>([]);
   const [loading, setLoading] = useState(true);
   const [subject, setSubject] = useState('');
+  const [subtitle, setSubtitle] = useState('');
   const [body, setBody] = useState('');
+  const [tip, setTip] = useState('');
   const [ctaText, setCtaText] = useState('');
   const [ctaUrl, setCtaUrl] = useState('');
   const [testEmail, setTestEmail] = useState('');
@@ -61,8 +63,8 @@ const AdminNewsletter = () => {
 
       const { data, error } = await supabase.functions.invoke('send-newsletter-broadcast', {
         body: test
-          ? { subject, body, test_email: testEmail, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined }
-          : { subject, body, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined },
+          ? { subject, subtitle, body, tip, test_email: testEmail, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined }
+          : { subject, subtitle, body, tip, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined },
         headers: { Authorization: `Bearer ${token}` },
       });
       if (error || (data as any)?.error) throw new Error((data as any)?.detail || (data as any)?.error || error?.message);
@@ -71,7 +73,9 @@ const AdminNewsletter = () => {
       } else {
         toast.success(`Sent to ${(data as any).sent} of ${(data as any).total} subscribers`);
         setSubject('');
+        setSubtitle('');
         setBody('');
+        setTip('');
         setCtaText('');
         setCtaUrl('');
       }
@@ -113,12 +117,20 @@ const AdminNewsletter = () => {
             <h2 className="font-semibold">Compose broadcast</h2>
           </div>
           <div>
-            <Label htmlFor="subject">Subject</Label>
+            <Label htmlFor="subject">Title</Label>
             <Input id="subject" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="A new feature you'll love..." className="mt-1" />
           </div>
           <div>
-            <Label htmlFor="body">Body (plain text — line breaks preserved)</Label>
-            <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="mt-1" placeholder="Hi there 👋&#10;&#10;We just shipped..." />
+            <Label htmlFor="subtitle">Subtitle (optional)</Label>
+            <Input id="subtitle" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} placeholder="This week's update" className="mt-1" />
+          </div>
+          <div>
+            <Label htmlFor="body">Body (Markdown supported: **bold**, *italic*, [link](url), - lists)</Label>
+            <Textarea id="body" value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="mt-1" placeholder="We just shipped **a new feature**...&#10;&#10;Check it out: [link](https://sleepybabyy.com)" />
+          </div>
+          <div>
+            <Label htmlFor="tip">Quick Tip / Quote (optional)</Label>
+            <Textarea id="tip" value={tip} onChange={(e) => setTip(e.target.value)} rows={2} className="mt-1" placeholder="A consistent bedtime routine helps babies sleep better." />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>

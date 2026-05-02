@@ -10,21 +10,66 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// Minimal safe markdown -> HTML (bold, italic, links, line breaks, lists)
+function renderMarkdown(input: string): string {
+  // Escape first
+  let s = escapeHtml(input);
+
+  // Links: [text](https://url)
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_m, text, url) => {
+    return `<a href="${url}" style="color:#7C3AED;text-decoration:underline;">${text}</a>`;
+  });
+
+  // Bold **text**
+  s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  // Italic *text* (single asterisk, not part of **)
+  s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+
+  // Simple bullet lists: lines starting with "- " grouped
+  const lines = s.split('\n');
+  const out: string[] = [];
+  let inList = false;
+  for (const ln of lines) {
+    if (/^\s*-\s+/.test(ln)) {
+      if (!inList) { out.push('<ul style="margin:0 0 16px 0;padding-left:22px;color:#1F2937;">'); inList = true; }
+      out.push(`<li style="margin:0 0 6px 0;">${ln.replace(/^\s*-\s+/, '')}</li>`);
+    } else {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(ln);
+    }
+  }
+  if (inList) out.push('</ul>');
+  s = out.join('\n');
+
+  // Newlines -> <br> (but not right after block tags)
+  s = s.replace(/\n{2,}/g, '</p><p style="margin:0 0 16px 0;font-size:16px;line-height:26px;color:#1F2937;">');
+  s = s.replace(/\n/g, '<br>');
+  s = `<p style="margin:0 0 16px 0;font-size:16px;line-height:26px;color:#1F2937;">${s}</p>`;
+  // Clean empty <p>
+  s = s.replace(/<p[^>]*><\/p>/g, '');
+  return s;
+}
+
 function buildNewsletterEmail(params: {
-  subject: string;
+  title: string;
+  subtitle?: string;
   body: string;
+  tip?: string;
   ctaText?: string;
   ctaUrl?: string;
   userName?: string;
   unsubscribeUrl: string;
 }): string {
-  const { subject, body, ctaText, ctaUrl, userName, unsubscribeUrl } = params;
-  const safeSubject = escapeHtml(subject);
-  const safeBody = escapeHtml(body).replace(/\n/g, '<br>');
+  const { title, subtitle, body, tip, ctaText, ctaUrl, userName, unsubscribeUrl } = params;
+  const safeTitle = escapeHtml(title);
+  const safeSubtitle = subtitle && subtitle.trim() ? escapeHtml(subtitle.trim()) : "This week's update";
+  const bodyHtml = renderMarkdown(body);
   const greeting = userName && userName.trim() ? escapeHtml(userName.trim()) : 'there';
   const hasCta = ctaText && ctaUrl && /^https?:\/\//i.test(ctaUrl);
   const safeCtaText = hasCta ? escapeHtml(ctaText!) : '';
   const safeCtaUrl = hasCta ? ctaUrl! : '';
+  const hasTip = tip && tip.trim().length > 0;
+  const safeTip = hasTip ? escapeHtml(tip!.trim()) : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -32,7 +77,7 @@ function buildNewsletterEmail(params: {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="x-apple-disable-message-reformatting">
-<title>${safeSubject} - SleepyBabyy</title>
+<title>${safeTitle} - SleepyBabyy</title>
 <!--[if mso]>
 <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
 <![endif]-->
@@ -76,12 +121,15 @@ function buildNewsletterEmail(params: {
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FFFFFF;border-radius:20px;box-shadow:0 4px 20px rgba(124,58,237,0.08);">
               <tr>
                 <td align="center" class="hero-card" style="padding:40px 40px 32px 40px;">
-                  <div style="font-size:56px;line-height:1;margin-bottom:20px;">🌙</div>
-                  <h1 class="headline" style="margin:0 0 16px 0;font-family:Georgia,serif;font-size:30px;font-weight:700;line-height:38px;color:#1F2937;letter-spacing:-0.5px;">
-                    ${safeSubject}
+                  <div style="font-size:56px;line-height:1;margin-bottom:16px;">📰</div>
+                  <p style="margin:0 0 12px 0;font-size:13px;font-weight:600;letter-spacing:1.5px;color:#7C3AED;text-transform:uppercase;">
+                    ✦ SleepyBabyy Newsletter
+                  </p>
+                  <h1 class="headline" style="margin:0 0 12px 0;font-family:Georgia,serif;font-size:30px;font-weight:700;line-height:38px;color:#1F2937;letter-spacing:-0.5px;">
+                    ${safeTitle}
                   </h1>
                   <p style="margin:0;font-size:16px;line-height:26px;color:#6B7280;font-weight:400;">
-                    News and updates from the SleepyBabyy team
+                    ${safeSubtitle}
                   </p>
                 </td>
               </tr>
@@ -89,17 +137,41 @@ function buildNewsletterEmail(params: {
           </td>
         </tr>
 
+        <!-- Greeting -->
+        <tr>
+          <td style="padding:0 32px;">
+            <p style="margin:0 0 16px 0;font-size:18px;line-height:26px;color:#1F2937;font-weight:600;">
+              Hi ${greeting}! 👋
+            </p>
+          </td>
+        </tr>
+
         <!-- Content -->
         <tr>
           <td style="padding:0 32px;">
-            <p style="margin:0 0 20px 0;font-size:16px;line-height:26px;color:#1F2937;">
-              Hi ${greeting} 👋
-            </p>
-            <div style="margin:0 0 20px 0;font-size:16px;line-height:26px;color:#1F2937;">
-              ${safeBody}
-            </div>
+            ${bodyHtml}
           </td>
         </tr>
+
+        ${hasTip ? `
+        <!-- Quick Tip -->
+        <tr>
+          <td style="padding:8px 32px 24px 32px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:linear-gradient(135deg,#FEF3FF 0%,#F3E8FF 100%);border-radius:14px;border-left:4px solid #7C3AED;">
+              <tr>
+                <td style="padding:18px 22px;">
+                  <p style="margin:0 0 6px 0;font-size:13px;font-weight:700;color:#7C3AED;letter-spacing:0.5px;">
+                    💡 QUICK TIP
+                  </p>
+                  <p style="margin:0;font-size:15px;line-height:24px;color:#4B5563;font-style:italic;">
+                    "${safeTip}"
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        ` : ''}
 
         ${hasCta ? `
         <!-- CTA Button -->
@@ -196,7 +268,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const { subject, body, test_email, cta_text, cta_url } = await req.json();
+    const { subject, body, test_email, cta_text, cta_url, subtitle, tip } = await req.json();
     if (!subject || !body || typeof subject !== 'string' || typeof body !== 'string') {
       return new Response(JSON.stringify({ error: 'subject and body required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
@@ -206,11 +278,27 @@ serve(async (req) => {
 
     const ctaText = typeof cta_text === 'string' ? cta_text.slice(0, 50) : undefined;
     const ctaUrl = typeof cta_url === 'string' ? cta_url.slice(0, 500) : undefined;
+    const subtitleStr = typeof subtitle === 'string' ? subtitle.slice(0, 200) : undefined;
+    const tipStr = typeof tip === 'string' ? tip.slice(0, 500) : undefined;
+
+    // Helper: lookup name from profiles by email
+    async function getName(email: string): Promise<string | undefined> {
+      const { data } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('email', email)
+        .maybeSingle();
+      const full = data?.full_name?.trim();
+      if (!full) return undefined;
+      // Use first name only for friendlier greeting
+      return full.split(/\s+/)[0];
+    }
 
     // Test send
     if (test_email) {
       const unsubUrl = `https://sleepybabyy.com/unsubscribe?token=test-token`;
-      const html = buildNewsletterEmail({ subject, body, ctaText, ctaUrl, unsubscribeUrl: unsubUrl });
+      const userName = await getName(test_email);
+      const html = buildNewsletterEmail({ title: subject, subtitle: subtitleStr, body, tip: tipStr, ctaText, ctaUrl, userName, unsubscribeUrl: unsubUrl });
       const resp = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
@@ -245,7 +333,8 @@ serve(async (req) => {
     for (const sub of subs || []) {
       try {
         const unsubUrl = `https://sleepybabyy.com/unsubscribe?token=${sub.unsubscribe_token}`;
-        const html = buildNewsletterEmail({ subject, body, ctaText, ctaUrl, unsubscribeUrl: unsubUrl });
+        const userName = await getName(sub.email);
+        const html = buildNewsletterEmail({ title: subject, subtitle: subtitleStr, body, tip: tipStr, ctaText, ctaUrl, userName, unsubscribeUrl: unsubUrl });
         const resp = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
