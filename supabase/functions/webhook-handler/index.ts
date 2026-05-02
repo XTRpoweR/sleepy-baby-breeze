@@ -258,6 +258,9 @@ serve(async (req) => {
       case 'invoice.payment_succeeded':
         await handleInvoicePaymentSucceeded(supabase, event);
         break;
+      case 'invoice.payment_failed':
+        await handleInvoicePaymentFailed(supabase, event);
+        break;
       default:
         console.log('Unhandled event type:', event.type);
     }
