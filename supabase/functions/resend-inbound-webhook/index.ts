@@ -90,11 +90,36 @@ serve(async (req) => {
     const data = payload.data || {};
     const emailId: string = data.email_id || data.id || '';
 
-    // Use webhook payload directly — it contains text/html/from/subject
-    const text: string = data.text || '';
-    const html: string = data.html || '';
-    const fullFrom: any = data.from || '';
-    const fullSubject: string = data.subject || '';
+    // Webhook payload usually doesn't include body — fetch full email from Resend API
+    let text: string = data.text || '';
+    let html: string = data.html || '';
+    let fullFrom: any = data.from || '';
+    let fullSubject: string = data.subject || '';
+
+    if (emailId && (!text && !html)) {
+      const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+      if (RESEND_API_KEY) {
+        try {
+          const r = await fetch(`https://api.resend.com/emails/receiving/${emailId}`, {
+            headers: { Authorization: `Bearer ${RESEND_API_KEY}` },
+          });
+          if (r.ok) {
+            const fetched = await r.json();
+            text = fetched.text || text;
+            html = fetched.html || html;
+            fullFrom = fetched.from || fullFrom;
+            fullSubject = fetched.subject || fullSubject;
+            console.log('[resend-inbound] fetched body, has_text:', !!text, 'has_html:', !!html);
+          } else {
+            console.error('[resend-inbound] fetch email failed:', r.status, await r.text());
+          }
+        } catch (e) {
+          console.error('[resend-inbound] fetch error:', e);
+        }
+      } else {
+        console.error('[resend-inbound] RESEND_API_KEY not set');
+      }
+    }
 
     const senderEmail = extractEmailAddress(fullFrom);
     const senderName = extractName(fullFrom);
