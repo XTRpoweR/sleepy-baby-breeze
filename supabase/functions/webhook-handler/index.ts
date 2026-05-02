@@ -325,13 +325,20 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
     // Safely convert timestamps
     const currentPeriodStart = safeTimestampToISO(subscription.current_period_start);
     const currentPeriodEnd = safeTimestampToISO(subscription.current_period_end);
+    const trialStart = safeTimestampToISO(subscription.trial_start);
+    const trialEnd = safeTimestampToISO(subscription.trial_end);
+    const isTrial = subscription.status === 'trialing' || (!!trialEnd && new Date(trialEnd).getTime() > Date.now());
 
-    const subscriptionData = {
+    const subscriptionData: Record<string, unknown> = {
       stripe_subscription_id: subscription.id,
       status: subscription.status,
       current_period_start: currentPeriodStart,
       current_period_end: currentPeriodEnd,
       subscription_tier: subscriptionTier,
+      is_trial: isTrial,
+      trial_start: trialStart,
+      trial_end: trialEnd,
+      billing_cycle: subscriptionTier === 'premium_annual' ? 'annual' : subscriptionTier === 'premium_quarterly' ? 'quarterly' : 'monthly',
       updated_at: new Date().toISOString()
     };
 
@@ -347,7 +354,7 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
       throw error;
     }
 
-    console.log('Subscription updated successfully', { customerId, subscriptionTier, status: subscription.status });
+    console.log('Subscription updated successfully', { customerId, subscriptionTier, status: subscription.status, isTrial });
   } catch (error) {
     console.error('Error in handleSubscriptionUpdate:', error);
     throw error;
