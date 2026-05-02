@@ -193,7 +193,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'SleepyBabyy <support@sleepybabyy.com>',
         to: [recipient_email],
-        reply_to: 'support@sleepybabyy.com',
+        reply_to: 'support@beliastuak.resend.app',
         subject: replySubject,
         text: plainText,
         html,
