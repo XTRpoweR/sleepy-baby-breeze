@@ -419,6 +419,8 @@ async function sendCapiEvent(
     country?: string | null;
     fbc?: string | null;
     fbp?: string | null;
+    client_user_agent?: string | null;
+    event_source_url?: string | null;
   },
 ) {
   const token =
@@ -442,11 +444,14 @@ async function sendCapiEvent(
   if (opts.country) user_data.country = [await sha256Hex(normText(opts.country))];
   if (opts.fbc) user_data.fbc = opts.fbc;
   if (opts.fbp) user_data.fbp = opts.fbp;
+  if (opts.client_user_agent) user_data.client_user_agent = opts.client_user_agent;
 
   const custom_data: Record<string, unknown> = { ...(opts.custom_data || {}) };
   if (opts.value !== undefined) custom_data.value = opts.value;
   if (opts.currency) custom_data.currency = opts.currency;
   if (opts.content_name) custom_data.content_name = opts.content_name;
+
+  const event_source_url = opts.event_source_url || 'https://sleepybabyy.com/dashboard';
 
   let capi_sent = false;
   let capi_error: string | null = null;
@@ -463,6 +468,7 @@ async function sendCapiEvent(
               event_name: opts.event_name,
               event_time: Math.floor(Date.now() / 1000),
               event_id,
+              event_source_url,
               action_source: 'website',
               user_data,
               custom_data,
@@ -518,27 +524,33 @@ async function sendCapiEvent(
 async function getLastClickIds(
   supabase: any,
   userId: string | null,
-): Promise<{ fbc: string | null; fbp: string | null }> {
-  if (!userId) return { fbc: null, fbp: null };
+): Promise<{ fbc: string | null; fbp: string | null; client_user_agent: string | null; event_source_url: string | null }> {
+  if (!userId) return { fbc: null, fbp: null, client_user_agent: null, event_source_url: null };
   try {
     const { data } = await supabase
       .from('marketing_events')
-      .select('raw_payload')
+      .select('raw_payload, client_user_agent, page_url')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(20);
-    if (!data) return { fbc: null, fbp: null };
+    if (!data) return { fbc: null, fbp: null, client_user_agent: null, event_source_url: null };
     let fbc: string | null = null;
     let fbp: string | null = null;
+    let client_user_agent: string | null = null;
+    let event_source_url: string | null = null;
     for (const row of data) {
       const rp = (row?.raw_payload || {}) as Record<string, unknown>;
       if (!fbc && typeof rp.fbc === 'string') fbc = rp.fbc as string;
       if (!fbp && typeof rp.fbp === 'string') fbp = rp.fbp as string;
-      if (fbc && fbp) break;
+      if (!client_user_agent && typeof row?.client_user_agent === 'string') client_user_agent = row.client_user_agent;
+      if (!client_user_agent && typeof rp.client_user_agent === 'string') client_user_agent = rp.client_user_agent as string;
+      if (!event_source_url && typeof row?.page_url === 'string') event_source_url = row.page_url;
+      if (!event_source_url && typeof rp.event_source_url === 'string') event_source_url = rp.event_source_url as string;
+      if (fbc && fbp && client_user_agent && event_source_url) break;
     }
-    return { fbc, fbp };
+    return { fbc, fbp, client_user_agent, event_source_url };
   } catch {
-    return { fbc: null, fbp: null };
+    return { fbc: null, fbp: null, client_user_agent: null, event_source_url: null };
   }
 }
 
@@ -603,7 +615,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
     const phone = cd.phone || null;
     const city = cd.address?.city || null;
     const country = cd.address?.country || null;
-    const { fbc, fbp } = await getLastClickIds(supabase, userId);
+    const { fbc, fbp, client_user_agent, event_source_url } = await getLastClickIds(supabase, userId);
 
     // Subscribe event
     await sendCapiEvent(supabase, {
@@ -615,9 +627,12 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
       currency: 'USD',
       content_name: contentName,
       first_name, last_name, phone, city, country, fbc, fbp,
+      client_user_agent,
+      event_source_url,
       custom_data: {
         stripe_session_id: session.id,
         stripe_customer_id: customerId,
+        subscription_id: session.subscription || null,
       },
     });
 
@@ -632,9 +647,12 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
         currency: 'USD',
         content_name: contentName,
         first_name, last_name, phone, city, country, fbc, fbp,
+        client_user_agent,
+        event_source_url,
         custom_data: {
           predicted_ltv: 79.90,
           stripe_session_id: session.id,
+          subscription_id: session.subscription || null,
         },
       });
     }
@@ -675,7 +693,8 @@ async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
     }
 
     // Click-attribution lookup so server-side Purchase keeps fbc/fbp chain
-    const { fbc, fbp } = await getLastClickIds(supabase, userId);
+    const { fbc, fbp, client_user_agent, event_source_url } = await getLastClickIds(supabase, userId);
+    const subscriptionId = invoice.subscription || null;
 
     await sendCapiEvent(supabase, {
       event_name: 'Purchase',
@@ -686,9 +705,13 @@ async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
       currency,
       content_name: tierContentName(tier),
       fbc, fbp,
+      client_user_agent,
+      event_source_url,
       custom_data: {
         stripe_invoice_id: invoice.id,
         stripe_customer_id: customerId,
+        stripe_subscription_id: subscriptionId,
+        subscription_id: subscriptionId,
         billing_reason: billingReason,
       },
     });

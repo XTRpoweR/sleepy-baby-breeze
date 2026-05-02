@@ -110,9 +110,10 @@ export const fbqTrack = (
   event: StandardEvent,
   params?: Record<string, unknown>,
   userData?: UserData,
+  customEventId?: string,
 ): void => {
   if (!hasMarketingConsent()) return;
-  const eventID = generateEventId();
+  const eventID = customEventId || generateEventId();
   try {
     if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
       if (params && Object.keys(params).length > 0) {

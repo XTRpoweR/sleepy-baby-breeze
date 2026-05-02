@@ -109,12 +109,14 @@ serve(async (req) => {
     }
 
     const origin = req.headers.get("origin") || "https://sleepybabyy.com";
+    const clientUserAgent = req.headers.get("user-agent") || null;
+    const eventSourceUrl = req.headers.get("referer") || `${origin}/pricing`;
 
     const sessionParams: any = {
       customer: customerId,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      success_url: `${origin}/dashboard?success=true`,
+      success_url: `${origin}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/dashboard?canceled=true`,
       metadata: { user_id: user.id, plan_key: pricingPlan },
       allow_promotion_codes: true,
@@ -127,6 +129,28 @@ serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create(sessionParams);
     logStep("Checkout session created", { sessionId: session.id });
+
+    // Log InitiateCheckout marketing event with client_user_agent + event_source_url
+    // so server-side conversion events (Subscribe/StartTrial/Purchase) can replay them.
+    try {
+      await supabaseAdmin.from("marketing_events").insert({
+        event_name: "InitiateCheckout",
+        event_id: `ic_${session.id}`,
+        event_source: "create_checkout",
+        user_id: user.id,
+        email: user.email,
+        client_user_agent: clientUserAgent,
+        page_url: eventSourceUrl,
+        raw_payload: {
+          stripe_session_id: session.id,
+          plan_key: pricingPlan,
+          client_user_agent: clientUserAgent,
+          event_source_url: eventSourceUrl,
+        } as any,
+      });
+    } catch (e) {
+      console.error("[CREATE-CHECKOUT] Failed to log marketing_event", (e as Error).message);
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

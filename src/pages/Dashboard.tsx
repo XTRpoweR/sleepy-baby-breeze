@@ -70,27 +70,73 @@ const Dashboard = () => {
       console.log('Payment successful, checking subscription...');
       checkSubscription();
 
-      // Meta Pixel: fire Purchase + Subscribe on successful Stripe redirect.
-      // Value/currency are best-effort defaults (USD billing per create-checkout).
-      // We don't yet know monthly vs annual here, so report a conservative value.
+      const sessionId = urlParams.get('session_id');
+      const metaUser = buildMetaUserData(user);
+
+      // Fire Subscribe immediately (deduped server-side via `sub_${session.id}`)
       try {
-        const metaUser = buildMetaUserData(user);
-        fbqTrack('Subscribe', {
-          content_category: 'subscription',
-          content_name: 'sleepybabyy_premium',
-          currency: 'USD',
-          value: 7.99,
-        }, metaUser);
-        fbqTrack('Purchase', {
-          content_category: 'subscription',
-          content_name: 'sleepybabyy_premium',
-          content_type: 'product',
-          currency: 'USD',
-          value: 7.99,
-        }, metaUser);
+        fbqTrack(
+          'Subscribe',
+          {
+            content_category: 'subscription',
+            content_name: 'sleepybabyy_premium',
+            currency: 'USD',
+            value: 7.99,
+          },
+          metaUser,
+          sessionId ? `sub_${sessionId}` : undefined,
+        );
       } catch {
-        // never let analytics block the flow
+        /* never let analytics block flow */
       }
+
+      // Resolve the actual invoice id so browser-side Purchase event_id
+      // matches the server-side `purchase_${invoice.id}` for Meta dedupe.
+      (async () => {
+        try {
+          let purchaseEventId: string | undefined;
+          let value = 7.99;
+          let currency = 'USD';
+          if (sessionId) {
+            const { supabase } = await import('@/integrations/supabase/client');
+            const { data } = await supabase.functions.invoke('get-checkout-purchase', {
+              body: { session_id: sessionId },
+            });
+            if (data?.invoice_id) {
+              purchaseEventId = `purchase_${data.invoice_id}`;
+              if (typeof data.amount_paid === 'number' && data.amount_paid > 0) value = data.amount_paid;
+              if (typeof data.currency === 'string') currency = data.currency;
+            }
+          }
+          fbqTrack(
+            'Purchase',
+            {
+              content_category: 'subscription',
+              content_name: 'sleepybabyy_premium',
+              content_type: 'product',
+              currency,
+              value,
+            },
+            metaUser,
+            purchaseEventId,
+          );
+        } catch {
+          // Fallback: fire without deterministic id rather than miss the event
+          try {
+            fbqTrack(
+              'Purchase',
+              {
+                content_category: 'subscription',
+                content_name: 'sleepybabyy_premium',
+                content_type: 'product',
+                currency: 'USD',
+                value: 7.99,
+              },
+              metaUser,
+            );
+          } catch { /* swallow */ }
+        }
+      })();
 
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
