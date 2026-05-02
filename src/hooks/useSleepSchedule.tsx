@@ -42,7 +42,13 @@ export const useSleepSchedule = (babyId: string | null) => {
           console.log('Sleep schedule realtime event:', payload.eventType, payload);
           
           if (payload.eventType === 'INSERT') {
-            setSchedules((current) => [payload.new as SavedSleepSchedule, ...current]);
+            const newSchedule = payload.new as SavedSleepSchedule;
+            setSchedules((current) => {
+              if (current.some((schedule) => schedule.id === newSchedule.id)) {
+                return current;
+              }
+              return [newSchedule, ...current];
+            });
           } else if (payload.eventType === 'UPDATE') {
             setSchedules((current) =>
               current.map((schedule) =>
@@ -85,7 +91,10 @@ export const useSleepSchedule = (babyId: string | null) => {
         });
       } else {
         console.log('Successfully fetched sleep schedules:', data?.length || 0);
-        setSchedules(data || []);
+        const uniqueSchedules = Array.from(
+          new Map((data || []).map((schedule) => [schedule.id, schedule])).values()
+        );
+        setSchedules(uniqueSchedules);
       }
     } catch (error) {
       console.error('Unexpected error fetching sleep schedules:', error);
@@ -136,12 +145,17 @@ export const useSleepSchedule = (babyId: string | null) => {
       }
 
       console.log('Successfully saved sleep schedule:', data.id);
+      setSchedules((current) => {
+        if (current.some((schedule) => schedule.id === data.id)) {
+          return current;
+        }
+        return [data, ...current];
+      });
       toast({
         title: "Success!",
         description: "Sleep schedule saved successfully",
       });
 
-      fetchSleepSchedules();
       return data;
     } catch (error) {
       console.error('Unexpected error saving sleep schedule:', error);

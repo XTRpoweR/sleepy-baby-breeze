@@ -134,7 +134,6 @@ const SleepSchedule = () => {
     const saved = await saveSleepSchedule(data, recommendation);
     if (saved) {
       setSavedSchedule(saved);
-      refetch();
     }
   };
 
