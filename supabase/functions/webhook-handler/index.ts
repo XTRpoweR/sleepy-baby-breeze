@@ -358,6 +358,21 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
     }
 
     console.log('Subscription updated successfully', { customerId, subscriptionTier, status: subscription.status, isTrial });
+
+    // Send trial-started email on first creation only
+    if (event.type === 'customer.subscription.created' && isTrial) {
+      const recipient = existingSubscription.email;
+      if (recipient) {
+        const fullName = await getProfileName(supabase, existingSubscription.user_id);
+        await sendSubscriptionEmail(supabase, {
+          type: 'trial_started',
+          to: recipient,
+          name: fullName,
+          tier: subscriptionTier,
+          trial_end: trialEnd,
+        });
+      }
+    }
   } catch (error) {
     console.error('Error in handleSubscriptionUpdate:', error);
     throw error;
@@ -371,9 +386,16 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
 
     console.log('Processing subscription deletion:', { subscriptionId: subscription.id, customerId });
 
+    // Fetch user info BEFORE update for email
+    const { data: existingSub } = await supabase
+      .from('subscriptions')
+      .select('user_id, email, subscription_tier, current_period_end')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle();
+
     const { error } = await supabase
       .from('subscriptions')
-      .update({ 
+      .update({
         status: 'cancelled',
         updated_at: new Date().toISOString()
       })
@@ -385,6 +407,17 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
     }
 
     console.log('Subscription cancelled successfully');
+
+    if (existingSub?.email) {
+      const fullName = await getProfileName(supabase, existingSub.user_id);
+      await sendSubscriptionEmail(supabase, {
+        type: 'subscription_cancelled',
+        to: existingSub.email,
+        name: fullName,
+        tier: existingSub.subscription_tier,
+        period_end: existingSub.current_period_end,
+      });
+    }
   } catch (error) {
     console.error('Error in handleSubscriptionDeleted:', error);
     throw error;
