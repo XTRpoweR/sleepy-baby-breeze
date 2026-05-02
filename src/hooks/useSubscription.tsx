@@ -270,7 +270,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       }, { email: user?.email, external_id: user?.id });
 
       // StartTrial: every checkout includes trial_period_days: 7
-      fbqTrack('StartTrial' as any, {
+      fbqTrack('StartTrial', {
         content_category: 'subscription',
         content_name: planContentName,
         content_ids: [planContentName],
