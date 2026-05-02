@@ -753,7 +753,90 @@ async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
     });
 
     console.log('invoice.payment_succeeded processed', { invoiceId: invoice.id, amountPaid, currency });
+
+    // Send payment-succeeded email
+    if (email) {
+      const fullName = await getProfileName(supabase, userId);
+      const periodEnd = safeTimestampToISO(invoice.lines?.data?.[0]?.period?.end);
+      await sendSubscriptionEmail(supabase, {
+        type: 'payment_succeeded',
+        to: email,
+        name: fullName,
+        tier,
+        amount: amountPaid,
+        currency,
+        invoice_url: invoice.hosted_invoice_url || null,
+        period_end: periodEnd,
+      });
+    }
   } catch (error) {
     console.error('Error in handleInvoicePaymentSucceeded:', error);
   }
 }
+
+async function handleInvoicePaymentFailed(supabase: any, event: any) {
+  try {
+    const invoice = event.data.object;
+    const customerId = invoice.customer;
+    const email = invoice.customer_email || null;
+
+    let userId: string | null = null;
+    let tier: string | null = null;
+    if (customerId) {
+      const { data: sub } = await supabase
+        .from('subscriptions')
+        .select('user_id, subscription_tier')
+        .eq('stripe_customer_id', customerId)
+        .maybeSingle();
+      if (sub) {
+        userId = sub.user_id;
+        tier = sub.subscription_tier;
+      }
+    }
+
+    if (email) {
+      const fullName = await getProfileName(supabase, userId);
+      await sendSubscriptionEmail(supabase, {
+        type: 'payment_failed',
+        to: email,
+        name: fullName,
+        tier,
+      });
+    }
+
+    console.log('invoice.payment_failed processed', { invoiceId: invoice.id, customerId });
+  } catch (error) {
+    console.error('Error in handleInvoicePaymentFailed:', error);
+  }
+}
+
+// ===== Email helpers =====
+async function getProfileName(supabase: any, userId: string | null): Promise<string | null> {
+  if (!userId) return null;
+  try {
+    const { data } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', userId)
+      .maybeSingle();
+    return data?.full_name || null;
+  } catch {
+    return null;
+  }
+}
+
+async function sendSubscriptionEmail(supabase: any, payload: Record<string, unknown>): Promise<void> {
+  try {
+    const { error } = await supabase.functions.invoke('send-subscription-email', {
+      body: payload,
+    });
+    if (error) {
+      console.error('send-subscription-email invoke error', error);
+    } else {
+      console.log('Subscription email queued', { type: payload.type, to: payload.to });
+    }
+  } catch (e) {
+    console.error('sendSubscriptionEmail exception', (e as Error).message);
+  }
+}
+
