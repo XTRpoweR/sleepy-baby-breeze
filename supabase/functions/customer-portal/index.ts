@@ -83,10 +83,7 @@ serve(async (req) => {
       userFriendlyMessage = "No subscription found. Please subscribe to a plan first before accessing the customer portal.";
     }
     
-    return new Response(JSON.stringify({ 
-      error: userFriendlyMessage,
-      details: errorMessage 
-    }), {
+    return new Response(JSON.stringify({ error: userFriendlyMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
