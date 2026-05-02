@@ -411,6 +411,14 @@ async function sendCapiEvent(
     currency?: string;
     content_name?: string;
     custom_data?: Record<string, unknown>;
+    // Advanced matching (raw — hashed below)
+    phone?: string | null;
+    first_name?: string | null;
+    last_name?: string | null;
+    city?: string | null;
+    country?: string | null;
+    fbc?: string | null;
+    fbp?: string | null;
   },
 ) {
   const token =
@@ -421,9 +429,19 @@ async function sendCapiEvent(
   const event_id = opts.event_id || crypto.randomUUID();
   const email_hash = opts.email ? await sha256Hex(opts.email) : null;
 
+  const normPhone = (p: string) => p.replace(/[^\d]/g, '');
+  const normText = (s: string) => s.trim().toLowerCase();
+
   const user_data: Record<string, unknown> = {};
   if (email_hash) user_data.em = [email_hash];
   if (opts.user_id) user_data.external_id = [await sha256Hex(opts.user_id)];
+  if (opts.phone) user_data.ph = [await sha256Hex(normPhone(opts.phone))];
+  if (opts.first_name) user_data.fn = [await sha256Hex(normText(opts.first_name))];
+  if (opts.last_name) user_data.ln = [await sha256Hex(normText(opts.last_name))];
+  if (opts.city) user_data.ct = [await sha256Hex(normText(opts.city).replace(/\s+/g, ''))];
+  if (opts.country) user_data.country = [await sha256Hex(normText(opts.country))];
+  if (opts.fbc) user_data.fbc = opts.fbc;
+  if (opts.fbp) user_data.fbp = opts.fbp;
 
   const custom_data: Record<string, unknown> = { ...(opts.custom_data || {}) };
   if (opts.value !== undefined) custom_data.value = opts.value;
@@ -485,13 +503,51 @@ async function sendCapiEvent(
       capi_sent_at: capi_sent ? new Date().toISOString() : null,
       capi_error,
       capi_response: capi_response as any,
-      raw_payload: custom_data as any,
+      raw_payload: { ...custom_data, fbc: opts.fbc || null, fbp: opts.fbp || null } as any,
     });
   } catch (e) {
     console.error('Failed to log marketing_event', (e as Error).message);
   }
 
   return { event_id, capi_sent };
+}
+
+// Pull last-known fbc/fbp for a user from prior browser-side marketing_events
+// so server-side conversions (Subscribe, StartTrial, Purchase) keep their
+// click-attribution chain intact.
+async function getLastClickIds(
+  supabase: any,
+  userId: string | null,
+): Promise<{ fbc: string | null; fbp: string | null }> {
+  if (!userId) return { fbc: null, fbp: null };
+  try {
+    const { data } = await supabase
+      .from('marketing_events')
+      .select('raw_payload')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(20);
+    if (!data) return { fbc: null, fbp: null };
+    let fbc: string | null = null;
+    let fbp: string | null = null;
+    for (const row of data) {
+      const rp = (row?.raw_payload || {}) as Record<string, unknown>;
+      if (!fbc && typeof rp.fbc === 'string') fbc = rp.fbc as string;
+      if (!fbp && typeof rp.fbp === 'string') fbp = rp.fbp as string;
+      if (fbc && fbp) break;
+    }
+    return { fbc, fbp };
+  } catch {
+    return { fbc: null, fbp: null };
+  }
+}
+
+// Split "First Last Name" → { first_name, last_name }
+function splitName(full: string | null | undefined): { first_name: string | null; last_name: string | null } {
+  if (!full) return { first_name: null, last_name: null };
+  const parts = full.trim().split(/\s+/);
+  if (parts.length === 1) return { first_name: parts[0], last_name: null };
+  return { first_name: parts[0], last_name: parts.slice(1).join(' ') };
 }
 
 function tierContentName(tier: string | null | undefined): string {
@@ -541,6 +597,14 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
     const contentName = tierContentName(tier);
     const value = tierValue(tier);
 
+    // Advanced matching from Stripe customer_details
+    const cd = session.customer_details || {};
+    const { first_name, last_name } = splitName(cd.name);
+    const phone = cd.phone || null;
+    const city = cd.address?.city || null;
+    const country = cd.address?.country || null;
+    const { fbc, fbp } = await getLastClickIds(supabase, userId);
+
     // Subscribe event
     await sendCapiEvent(supabase, {
       event_name: 'Subscribe',
@@ -550,6 +614,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
       value,
       currency: 'USD',
       content_name: contentName,
+      first_name, last_name, phone, city, country, fbc, fbp,
       custom_data: {
         stripe_session_id: session.id,
         stripe_customer_id: customerId,
@@ -566,6 +631,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
         value: 0,
         currency: 'USD',
         content_name: contentName,
+        first_name, last_name, phone, city, country, fbc, fbp,
         custom_data: {
           predicted_ltv: 79.90,
           stripe_session_id: session.id,
@@ -608,6 +674,9 @@ async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
       }
     }
 
+    // Click-attribution lookup so server-side Purchase keeps fbc/fbp chain
+    const { fbc, fbp } = await getLastClickIds(supabase, userId);
+
     await sendCapiEvent(supabase, {
       event_name: 'Purchase',
       event_id: `purchase_${invoice.id}`,
@@ -616,6 +685,7 @@ async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
       value: amountPaid,
       currency,
       content_name: tierContentName(tier),
+      fbc, fbp,
       custom_data: {
         stripe_invoice_id: invoice.id,
         stripe_customer_id: customerId,

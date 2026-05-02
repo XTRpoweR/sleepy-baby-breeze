@@ -80,9 +80,15 @@ const Auth = () => {
           });
         } else {
           // Meta Pixel: successful registration
+          const nameParts = fullName.trim().split(/\s+/);
           fbqTrack('CompleteRegistration', {
             content_name: 'sleepybabyy_signup',
             status: data.user && !data.session ? 'pending_verification' : 'active',
+          }, {
+            email: email.trim(),
+            external_id: data.user?.id,
+            first_name: nameParts[0],
+            last_name: nameParts.length > 1 ? nameParts.slice(1).join(' ') : undefined,
           });
           if (data.user && !data.session) {
             toast({ title: "Account created", description: "Please check your email to verify your account." });

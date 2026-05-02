@@ -13,6 +13,7 @@ import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { UnifiedHeader } from '@/components/layout/UnifiedHeader';
 import { UnifiedDashboard } from '@/components/dashboard/UnifiedDashboard';
 import { fbqTrack } from '@/utils/metaPixel';
+import { buildMetaUserData } from '@/utils/metaUserData';
 
 const Dashboard = () => {
   const {
@@ -73,19 +74,20 @@ const Dashboard = () => {
       // Value/currency are best-effort defaults (USD billing per create-checkout).
       // We don't yet know monthly vs annual here, so report a conservative value.
       try {
+        const metaUser = buildMetaUserData(user);
         fbqTrack('Subscribe', {
           content_category: 'subscription',
           content_name: 'sleepybabyy_premium',
           currency: 'USD',
           value: 7.99,
-        });
+        }, metaUser);
         fbqTrack('Purchase', {
           content_category: 'subscription',
           content_name: 'sleepybabyy_premium',
           content_type: 'product',
           currency: 'USD',
           value: 7.99,
-        });
+        }, metaUser);
       } catch {
         // never let analytics block the flow
       }

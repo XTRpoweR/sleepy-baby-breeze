@@ -1,10 +1,14 @@
 /**
  * Meta Pixel (Facebook Pixel) + Conversions API (CAPI) helper utilities.
  *
- * - Browser pixel script + initial PageView is loaded inline in `index.html`.
+ * - Browser pixel script + initial PageView is loaded post-consent in
+ *   `src/utils/consentManager.ts`.
  * - Every event fired through these helpers is ALSO relayed server-side to
  *   Meta's Conversions API via the `meta-capi` edge function, using a shared
  *   `event_id` so Meta can deduplicate browser + server events.
+ * - Forwards full advanced-matching parameters (em, ph, fn, ln, ct, country,
+ *   external_id, fb_login_id) when available — server hashes PII before
+ *   sending to Meta.
  *
  * IMPORTANT: These helpers must NEVER throw or block business logic.
  *            All calls are wrapped in try/catch and a typeof check.
@@ -12,6 +16,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { hasMarketingConsent } from '@/utils/consentManager';
+import { getFbc, getFbp } from '@/utils/fbTracking';
 
 declare global {
   interface Window {
@@ -36,24 +41,17 @@ type StandardEvent =
 
 interface UserData {
   email?: string;
-  external_id?: string; // typically a hashed-by-server user id
+  external_id?: string; // typically the Supabase user id; server hashes it
+  phone?: string;
+  first_name?: string;
+  last_name?: string;
+  city?: string;
+  country?: string;
+  fb_login_id?: string;
 }
-
-const getCookie = (name: string): string | undefined => {
-  try {
-    if (typeof document === 'undefined') return undefined;
-    const match = document.cookie.match(
-      new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'),
-    );
-    return match ? decodeURIComponent(match[1]) : undefined;
-  } catch {
-    return undefined;
-  }
-};
 
 const generateEventId = (): string => {
   try {
-    // crypto.randomUUID is available in all modern browsers
     if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
       return crypto.randomUUID();
     }
@@ -71,6 +69,8 @@ const relayToCapi = (
 ): void => {
   try {
     if (typeof window === 'undefined') return;
+    const fbc = getFbc();
+    const fbp = getFbp();
     const payload = {
       event_name,
       event_id,
@@ -79,13 +79,18 @@ const relayToCapi = (
       user_data: {
         email: user_data?.email,
         external_id: user_data?.external_id,
+        phone: user_data?.phone,
+        first_name: user_data?.first_name,
+        last_name: user_data?.last_name,
+        city: user_data?.city,
+        country: user_data?.country,
+        fb_login_id: user_data?.fb_login_id,
         client_user_agent: navigator.userAgent,
-        fbp: getCookie('_fbp'),
-        fbc: getCookie('_fbc'),
+        fbp,
+        fbc,
       },
       custom_data: params ?? {},
     };
-    // Fire-and-forget; never await, never throw
     void supabase.functions.invoke('meta-capi', { body: payload }).catch(() => {});
   } catch {
     // Never let analytics break the app
@@ -97,19 +102,19 @@ const relayToCapi = (
  * via Conversions API with a shared event_id for deduplication.
  *
  * Pass `userData` when known (e.g. after login or checkout) for better match
- * quality.
+ * quality. The browser pixel only consumes email/external_id directly; the
+ * full advanced-matching set is forwarded server-side via CAPI where Meta
+ * can hash and match it.
  */
 export const fbqTrack = (
   event: StandardEvent,
   params?: Record<string, unknown>,
   userData?: UserData,
 ): void => {
-  // GDPR/ePrivacy: do nothing until the user has granted marketing consent.
   if (!hasMarketingConsent()) return;
   const eventID = generateEventId();
   try {
     if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
-      // Passing { eventID } enables browser/server dedupe in Meta
       if (params && Object.keys(params).length > 0) {
         window.fbq('track', event, params, { eventID });
       } else {
@@ -119,7 +124,6 @@ export const fbqTrack = (
   } catch {
     // Never let analytics break the app
   }
-  // Always relay server-side, even if the browser pixel was blocked
   relayToCapi(event, params, eventID, userData);
 };
 
