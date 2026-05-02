@@ -175,6 +175,7 @@ serve(async (req) => {
     });
     const plainText = `Hi ${recipient_name || 'there'},\n\n${reply_message}\n\n— The SleepyBabyy Support Team\nhttps://sleepybabyy.com`;
 
+    console.log('[send-support-reply] Sending to Resend:', recipient_email);
     const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -182,7 +183,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'SleepyBabyy Support <support@sleepybabyy.com>',
+        from: 'SleepyBabyy <support@sleepybabyy.com>',
         to: [recipient_email],
         reply_to: 'support@sleepybabyy.com',
         subject: replySubject,
@@ -193,10 +194,11 @@ serve(async (req) => {
 
     if (!resp.ok) {
       const errText = await resp.text();
-      console.error('Resend error:', resp.status, errText);
-      return new Response(JSON.stringify({ error: 'Failed to send email' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      console.error('[send-support-reply] Resend error:', resp.status, errText);
+      return new Response(JSON.stringify({ error: `Email send failed: ${errText}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
     const result = await resp.json();
+    console.log('[send-support-reply] Email sent:', result.id);
 
     // Save outbound message
     await supabase.from('contact_messages').insert({
