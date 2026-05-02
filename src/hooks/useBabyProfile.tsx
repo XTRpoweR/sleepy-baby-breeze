@@ -18,6 +18,7 @@ interface BabyProfile {
 }
 
 const ACTIVE_PROFILE_KEY = 'babytrack_active_profile_id';
+let lastSuccessfulProfileLoadUserId: string | null = null;
 
 export const useBabyProfile = () => {
   const { user } = useAuth();
@@ -39,11 +40,12 @@ export const useBabyProfile = () => {
 
       if (ownedError) {
         console.error('Error fetching owned profiles:', ownedError);
-        // Only show error toast on initial load when we have no profiles yet.
-        // Silently ignore transient refetch failures (e.g. after PDF download,
-        // window focus, or realtime reconnect) so we don't spam the user.
+        // Multiple components can mount useBabyProfile at once. Once any instance
+        // has loaded profiles successfully for this user, later transient refetch
+        // failures (PDF download/focus/realtime reconnect) should not show a red toast.
+        const hasSuccessfulLoadForUser = lastSuccessfulProfileLoadUserId === user.id;
         setProfiles((prev) => {
-          if (prev.length === 0) {
+          if (!hasSuccessfulLoadForUser && prev.length === 0) {
             toast({
               title: "Error",
               description: "Failed to load baby profiles",
@@ -55,6 +57,8 @@ export const useBabyProfile = () => {
         setLoading(false);
         return;
       }
+
+      lastSuccessfulProfileLoadUserId = user.id;
 
       // Fetch shared profiles
       const { data: familyMembers, error: familyError } = await supabase
