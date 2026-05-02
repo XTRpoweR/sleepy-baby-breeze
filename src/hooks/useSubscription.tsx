@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { fbqTrack } from '@/utils/metaPixel';
+import { buildMetaUserData } from '@/utils/metaUserData';
 
 interface SubscriptionContextType {
   subscriptionTier: 'free' | 'basic' | 'premium' | 'premium_quarterly' | 'premium_annual';
