@@ -63,20 +63,20 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     
     if (customers.data.length === 0) {
-      logStep("No customer found, updating basic subscription");
+      logStep("No customer found, updating to free subscription");
       await supabaseClient.from("subscriptions").upsert({
         user_id: user.id,
         email: user.email,
         stripe_customer_id: null,
         stripe_subscription_id: null,
-        subscription_tier: 'basic',
-        status: 'active',
+        subscription_tier: 'free',
+        status: 'free',
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' });
       
       return new Response(JSON.stringify({ 
-        subscription_tier: 'basic',
-        status: 'active',
+        subscription_tier: 'free',
+        status: 'free',
         current_period_end: null 
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
