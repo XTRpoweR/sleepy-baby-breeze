@@ -348,7 +348,7 @@ export const SmartNotifications = () => {
           <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-1">
             {t('notifications.reminderTypes')}
           </h3>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {categories.map((cat) => {
               const Icon = cat.icon;
               return (

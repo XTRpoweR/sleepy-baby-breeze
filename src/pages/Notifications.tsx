@@ -35,7 +35,7 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-lg mx-auto px-4 py-6">
+      <div className="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto px-4 md:px-6 py-6 md:py-10">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <Button 
