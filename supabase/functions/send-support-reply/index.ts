@@ -172,7 +172,10 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Invalid email' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const replySubject = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
+    // Embed thread_id token in subject so inbound replies can be routed back to this thread
+    const threadToken = `[#${String(thread_id).slice(0, 8)}]`;
+    const baseSubject = subject.startsWith('Re:') ? subject : `Re: ${subject}`;
+    const replySubject = baseSubject.includes(threadToken) ? baseSubject : `${baseSubject} ${threadToken}`;
     const html = buildReplyEmail({
       recipientName: recipient_name || 'there',
       replyMessage: reply_message,
