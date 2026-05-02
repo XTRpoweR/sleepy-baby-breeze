@@ -262,6 +262,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         pricingPlan === 'annual' ? 'premium_annual' :
         pricingPlan === 'quarterly' ? 'premium_quarterly' :
         'premium_monthly';
+      const metaUser = buildMetaUserData(user);
       fbqTrack('InitiateCheckout', {
         content_category: 'subscription',
         content_name: planContentName,
@@ -269,7 +270,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         num_items: 1,
         value: checkoutValue,
         currency: 'USD',
-      }, { email: user?.email, external_id: user?.id });
+      }, metaUser);
 
       // StartTrial: every checkout includes trial_period_days: 7
       fbqTrack('StartTrial', {
@@ -279,7 +280,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         value: 0,
         currency: 'USD',
         predicted_ltv: 79.90,
-      }, { email: user?.email, external_id: user?.id });
+      }, metaUser);
 
       window.location.href = data.url;
     } catch (error: any) {
