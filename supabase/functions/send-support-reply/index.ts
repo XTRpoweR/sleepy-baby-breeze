@@ -120,8 +120,10 @@ serve(async (req) => {
   }
 
   try {
+    console.log('[send-support-reply] Request received');
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
+      console.error('[send-support-reply] Missing auth header');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
@@ -136,16 +138,20 @@ serve(async (req) => {
     const token = authHeader.substring(7);
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
+      console.error('[send-support-reply] Auth error:', authError);
       return new Response(JSON.stringify({ error: 'Invalid token' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    console.log('[send-support-reply] Authenticated user:', user.id);
 
     // Verify admin
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)
       .maybeSingle();
+    if (profileError) console.error('[send-support-reply] Profile error:', profileError);
     if (!profile?.is_admin) {
+      console.error('[send-support-reply] Not admin. profile=', profile);
       return new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
@@ -169,6 +175,7 @@ serve(async (req) => {
     });
     const plainText = `Hi ${recipient_name || 'there'},\n\n${reply_message}\n\n— The SleepyBabyy Support Team\nhttps://sleepybabyy.com`;
 
+    console.log('[send-support-reply] Sending to Resend:', recipient_email);
     const resp = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -176,7 +183,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'SleepyBabyy Support <support@sleepybabyy.com>',
+        from: 'SleepyBabyy <support@sleepybabyy.com>',
         to: [recipient_email],
         reply_to: 'support@sleepybabyy.com',
         subject: replySubject,
@@ -187,10 +194,11 @@ serve(async (req) => {
 
     if (!resp.ok) {
       const errText = await resp.text();
-      console.error('Resend error:', resp.status, errText);
-      return new Response(JSON.stringify({ error: 'Failed to send email' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      console.error('[send-support-reply] Resend error:', resp.status, errText);
+      return new Response(JSON.stringify({ error: `Email send failed: ${errText}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
     const result = await resp.json();
+    console.log('[send-support-reply] Email sent:', result.id);
 
     // Save outbound message
     await supabase.from('contact_messages').insert({
