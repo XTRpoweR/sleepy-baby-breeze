@@ -252,6 +252,12 @@ serve(async (req) => {
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(supabase, event);
         break;
+      case 'checkout.session.completed':
+        await handleCheckoutCompleted(supabase, event);
+        break;
+      case 'invoice.payment_succeeded':
+        await handleInvoicePaymentSucceeded(supabase, event);
+        break;
       default:
         console.log('Unhandled event type:', event.type);
     }
@@ -319,13 +325,20 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
     // Safely convert timestamps
     const currentPeriodStart = safeTimestampToISO(subscription.current_period_start);
     const currentPeriodEnd = safeTimestampToISO(subscription.current_period_end);
+    const trialStart = safeTimestampToISO(subscription.trial_start);
+    const trialEnd = safeTimestampToISO(subscription.trial_end);
+    const isTrial = subscription.status === 'trialing' || (!!trialEnd && new Date(trialEnd).getTime() > Date.now());
 
-    const subscriptionData = {
+    const subscriptionData: Record<string, unknown> = {
       stripe_subscription_id: subscription.id,
       status: subscription.status,
       current_period_start: currentPeriodStart,
       current_period_end: currentPeriodEnd,
       subscription_tier: subscriptionTier,
+      is_trial: isTrial,
+      trial_start: trialStart,
+      trial_end: trialEnd,
+      billing_cycle: subscriptionTier === 'premium_annual' ? 'annual' : subscriptionTier === 'premium_quarterly' ? 'quarterly' : 'monthly',
       updated_at: new Date().toISOString()
     };
 
@@ -341,7 +354,7 @@ async function handleSubscriptionUpdate(supabase: any, event: any) {
       throw error;
     }
 
-    console.log('Subscription updated successfully', { customerId, subscriptionTier, status: subscription.status });
+    console.log('Subscription updated successfully', { customerId, subscriptionTier, status: subscription.status, isTrial });
   } catch (error) {
     console.error('Error in handleSubscriptionUpdate:', error);
     throw error;
@@ -372,5 +385,246 @@ async function handleSubscriptionDeleted(supabase: any, event: any) {
   } catch (error) {
     console.error('Error in handleSubscriptionDeleted:', error);
     throw error;
+  }
+}
+
+// ===== Meta Conversions API helpers =====
+const META_PIXEL_ID = '956706330308177';
+const META_GRAPH_URL = `https://graph.facebook.com/v19.0/${META_PIXEL_ID}/events`;
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input.trim().toLowerCase());
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function sendCapiEvent(
+  supabase: any,
+  opts: {
+    event_name: string;
+    event_id?: string;
+    email?: string | null;
+    user_id?: string | null;
+    value?: number;
+    currency?: string;
+    content_name?: string;
+    custom_data?: Record<string, unknown>;
+  },
+) {
+  const token =
+    Deno.env.get('META_CONVERSIONS_API_TOKEN') ||
+    Deno.env.get('META_CAPI_ACCESS_TOKEN') ||
+    '';
+
+  const event_id = opts.event_id || crypto.randomUUID();
+  const email_hash = opts.email ? await sha256Hex(opts.email) : null;
+
+  const user_data: Record<string, unknown> = {};
+  if (email_hash) user_data.em = [email_hash];
+  if (opts.user_id) user_data.external_id = [await sha256Hex(opts.user_id)];
+
+  const custom_data: Record<string, unknown> = { ...(opts.custom_data || {}) };
+  if (opts.value !== undefined) custom_data.value = opts.value;
+  if (opts.currency) custom_data.currency = opts.currency;
+  if (opts.content_name) custom_data.content_name = opts.content_name;
+
+  let capi_sent = false;
+  let capi_error: string | null = null;
+  let capi_response: unknown = null;
+
+  if (token) {
+    try {
+      const res = await fetch(`${META_GRAPH_URL}?access_token=${encodeURIComponent(token)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          data: [
+            {
+              event_name: opts.event_name,
+              event_time: Math.floor(Date.now() / 1000),
+              event_id,
+              action_source: 'website',
+              user_data,
+              custom_data,
+            },
+          ],
+        }),
+      });
+      const text = await res.text();
+      capi_response = (() => { try { return JSON.parse(text); } catch { return text; } })();
+      if (res.ok) {
+        capi_sent = true;
+      } else {
+        capi_error = `HTTP ${res.status}: ${text}`;
+        console.error('Meta CAPI error', capi_error);
+      }
+    } catch (e) {
+      capi_error = (e as Error).message;
+      console.error('Meta CAPI exception', capi_error);
+    }
+  } else {
+    capi_error = 'META_CONVERSIONS_API_TOKEN not configured';
+    console.error(capi_error);
+  }
+
+  // Log to marketing_events
+  try {
+    await supabase.from('marketing_events').insert({
+      event_name: opts.event_name,
+      event_id,
+      event_source: 'stripe_webhook',
+      user_id: opts.user_id || null,
+      email: opts.email || null,
+      email_hash,
+      value: opts.value ?? null,
+      currency: opts.currency || 'USD',
+      content_name: opts.content_name || null,
+      capi_sent,
+      capi_sent_at: capi_sent ? new Date().toISOString() : null,
+      capi_error,
+      capi_response: capi_response as any,
+      raw_payload: custom_data as any,
+    });
+  } catch (e) {
+    console.error('Failed to log marketing_event', (e as Error).message);
+  }
+
+  return { event_id, capi_sent };
+}
+
+function tierContentName(tier: string | null | undefined): string {
+  if (tier === 'premium_annual') return 'premium_annual';
+  if (tier === 'premium_quarterly') return 'premium_quarterly';
+  return 'premium_monthly';
+}
+
+function tierValue(tier: string | null | undefined): number {
+  if (tier === 'premium_annual') return 69.99;
+  if (tier === 'premium_quarterly') return 19.99;
+  return 7.99;
+}
+
+async function handleCheckoutCompleted(supabase: any, event: any) {
+  try {
+    const session = event.data.object;
+    const customerId = session.customer;
+    const email = session.customer_details?.email || session.customer_email || null;
+    const userIdMeta = session.metadata?.user_id || null;
+
+    // Look up subscription record (may not exist yet — webhook order is not guaranteed)
+    let userId: string | null = userIdMeta;
+    let tier: string | null = null;
+    let isTrial = false;
+
+    if (customerId) {
+      const { data: sub } = await supabase
+        .from('subscriptions')
+        .select('user_id, email, subscription_tier, is_trial, status')
+        .eq('stripe_customer_id', customerId)
+        .maybeSingle();
+      if (sub) {
+        userId = userId || sub.user_id;
+        tier = sub.subscription_tier;
+        isTrial = !!sub.is_trial || sub.status === 'trialing';
+      }
+    }
+
+    // Fallback: derive from session
+    if (!tier) tier = session.metadata?.plan_key
+      ? (session.metadata.plan_key === 'annual' ? 'premium_annual'
+        : session.metadata.plan_key === 'quarterly' ? 'premium_quarterly'
+        : 'premium')
+      : 'premium';
+
+    const contentName = tierContentName(tier);
+    const value = tierValue(tier);
+
+    // Subscribe event
+    await sendCapiEvent(supabase, {
+      event_name: 'Subscribe',
+      event_id: `sub_${session.id}`,
+      email,
+      user_id: userId,
+      value,
+      currency: 'USD',
+      content_name: contentName,
+      custom_data: {
+        stripe_session_id: session.id,
+        stripe_customer_id: customerId,
+      },
+    });
+
+    // StartTrial event (checkout sessions are created with trial_period_days: 7)
+    if (isTrial || session.subscription) {
+      await sendCapiEvent(supabase, {
+        event_name: 'StartTrial',
+        event_id: `trial_${session.id}`,
+        email,
+        user_id: userId,
+        value: 0,
+        currency: 'USD',
+        content_name: contentName,
+        custom_data: {
+          predicted_ltv: 79.90,
+          stripe_session_id: session.id,
+        },
+      });
+    }
+
+    console.log('checkout.session.completed processed', { sessionId: session.id, customerId, tier });
+  } catch (error) {
+    console.error('Error in handleCheckoutCompleted:', error);
+  }
+}
+
+async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
+  try {
+    const invoice = event.data.object;
+    const customerId = invoice.customer;
+    const billingReason = invoice.billing_reason; // subscription_create, subscription_cycle, etc.
+    const amountPaid = (invoice.amount_paid || 0) / 100;
+    const currency = (invoice.currency || 'usd').toUpperCase();
+    const email = invoice.customer_email || null;
+
+    // Skip $0 invoices (trial start invoice)
+    if (amountPaid <= 0) {
+      console.log('Skipping Purchase for $0 invoice', { invoiceId: invoice.id, billingReason });
+      return;
+    }
+
+    let userId: string | null = null;
+    let tier: string | null = null;
+    if (customerId) {
+      const { data: sub } = await supabase
+        .from('subscriptions')
+        .select('user_id, subscription_tier')
+        .eq('stripe_customer_id', customerId)
+        .maybeSingle();
+      if (sub) {
+        userId = sub.user_id;
+        tier = sub.subscription_tier;
+      }
+    }
+
+    await sendCapiEvent(supabase, {
+      event_name: 'Purchase',
+      event_id: `purchase_${invoice.id}`,
+      email,
+      user_id: userId,
+      value: amountPaid,
+      currency,
+      content_name: tierContentName(tier),
+      custom_data: {
+        stripe_invoice_id: invoice.id,
+        stripe_customer_id: customerId,
+        billing_reason: billingReason,
+      },
+    });
+
+    console.log('invoice.payment_succeeded processed', { invoiceId: invoice.id, amountPaid, currency });
+  } catch (error) {
+    console.error('Error in handleInvoicePaymentSucceeded:', error);
   }
 }
