@@ -6,17 +6,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, svix-id, svix-timestamp, svix-signature',
 };
 
-// Strip quoted reply / signature from inbound text
 function cleanReplyText(text: string): string {
   if (!text) return '';
   let t = text.replace(/\r\n/g, '\n');
-  // Cut at common reply markers
   const markers = [
     /\n\s*On .+ wrote:\s*\n/i,
     /\n-{2,}\s*Original Message\s*-{2,}/i,
     /\n_{5,}\s*\n/,
-    /\n>{1,}.*$/s,
     /\nFrom: .+\nSent: .+/i,
+    /\n\s*>.*$/s,
   ];
   for (const re of markers) {
     const m = t.match(re);
@@ -70,40 +68,79 @@ serve(async (req) => {
 
   try {
     const payload = await req.json();
-    console.log('[resend-inbound] payload type:', payload?.type);
+    console.log('[resend-inbound] event type:', payload?.type);
 
-    // Resend inbound webhook structure: { type: "email.received", data: { from, to, subject, html, text, headers, ... } }
-    const data = payload?.data || payload;
-    const fromRaw: string = data.from || data.From || '';
-    const toRaw: string = Array.isArray(data.to) ? data.to[0] : (data.to || data.To || '');
-    const subject: string = data.subject || data.Subject || '';
-    const text: string = data.text || (data.html ? htmlToText(data.html) : '');
-    const html: string = data.html || '';
+    if (payload?.type !== 'email.received') {
+      return new Response(JSON.stringify({ ok: true, ignored: payload?.type }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    const senderEmail = extractEmailAddress(fromRaw);
-    const senderName = extractName(fromRaw);
+    const data = payload.data || {};
+    const emailId: string = data.email_id;
+    const fromRaw: string = data.from || '';
+    const subject: string = data.subject || '';
+
+    if (!emailId) {
+      console.error('[resend-inbound] No email_id in payload');
+      return new Response(JSON.stringify({ error: 'No email_id' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Fetch the actual email content from Resend API
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    if (!resendApiKey) {
+      return new Response(JSON.stringify({ error: 'RESEND_API_KEY not set' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('[resend-inbound] Fetching email content for', emailId);
+    const fetchResp = await fetch(`https://api.resend.com/emails/received/${emailId}`, {
+      headers: { 'Authorization': `Bearer ${resendApiKey}` },
+    });
+
+    if (!fetchResp.ok) {
+      const errText = await fetchResp.text();
+      console.error('[resend-inbound] Failed to fetch email:', fetchResp.status, errText);
+      return new Response(JSON.stringify({ error: 'Failed to fetch email content' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const email = await fetchResp.json();
+    const text: string = email.text || '';
+    const html: string = email.html || '';
+    const fullFrom: string = email.from || fromRaw;
+    const fullSubject: string = email.subject || subject;
+
+    const senderEmail = extractEmailAddress(fullFrom);
+    const senderName = extractName(fullFrom);
 
     if (!senderEmail) {
       console.error('[resend-inbound] No sender email found');
-      return new Response(JSON.stringify({ error: 'No sender' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'No sender' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const cleanBody = cleanReplyText(text) || htmlToText(html).slice(0, 5000);
-    if (!cleanBody) {
-      console.warn('[resend-inbound] Empty body, ignoring');
-      return new Response(JSON.stringify({ ok: true, skipped: 'empty' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
+    const cleanBody = cleanReplyText(text) || cleanReplyText(htmlToText(html)) || '(empty message)';
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     );
 
-    // Try to find the thread:
-    // 1) by token in subject [#xxxxxxxx]
+    // Find the thread:
+    // 1) by [#xxxxxxxx] token in subject
     // 2) by latest thread for this sender_email
     let threadId: string | null = null;
-    const token = extractThreadIdToken(subject);
+    const token = extractThreadIdToken(fullSubject);
     if (token) {
       const { data: match } = await supabase
         .from('contact_messages')
@@ -124,11 +161,10 @@ serve(async (req) => {
       if (existing?.thread_id) threadId = existing.thread_id;
     }
     if (!threadId) {
-      // brand new thread
       threadId = crypto.randomUUID();
     }
 
-    const cleanSubject = subject.replace(/\s*\[#[a-f0-9]{8}\]\s*/i, '').trim() || '(no subject)';
+    const cleanSubject = fullSubject.replace(/\s*\[#[a-f0-9]{8}\]\s*/i, '').trim() || '(no subject)';
 
     const { error } = await supabase.from('contact_messages').insert({
       thread_id: threadId,
@@ -138,11 +174,15 @@ serve(async (req) => {
       subject: cleanSubject,
       message_body: cleanBody,
       status: 'unread',
+      resend_email_id: emailId,
     });
 
     if (error) {
       console.error('[resend-inbound] insert error:', error);
-      return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     console.log('[resend-inbound] Saved reply from', senderEmail, 'thread:', threadId);
@@ -151,6 +191,9 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error('[resend-inbound] error:', e);
-    return new Response(JSON.stringify({ error: 'Internal error' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: String(e) }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });
