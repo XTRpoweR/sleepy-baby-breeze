@@ -60,7 +60,9 @@ const AdminNewsletter = () => {
       }
 
       const { data, error } = await supabase.functions.invoke('send-newsletter-broadcast', {
-        body: test ? { subject, body, test_email: testEmail } : { subject, body },
+        body: test
+          ? { subject, body, test_email: testEmail, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined }
+          : { subject, body, cta_text: ctaText || undefined, cta_url: ctaUrl || undefined },
         headers: { Authorization: `Bearer ${token}` },
       });
       if (error || (data as any)?.error) throw new Error((data as any)?.detail || (data as any)?.error || error?.message);
@@ -70,6 +72,8 @@ const AdminNewsletter = () => {
         toast.success(`Sent to ${(data as any).sent} of ${(data as any).total} subscribers`);
         setSubject('');
         setBody('');
+        setCtaText('');
+        setCtaUrl('');
       }
     } catch (e: any) {
       toast.error(e.message || 'Failed to send');
