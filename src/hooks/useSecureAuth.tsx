@@ -123,7 +123,7 @@ export const useSecureAuth = (): AuthContextType => {
           data: {
             full_name: fullName.trim(),
           },
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth?redirect=%2Fdashboard`,
         },
       });
 

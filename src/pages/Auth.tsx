@@ -66,8 +66,8 @@ const Auth = () => {
           options: {
             data: { full_name: fullName.trim() },
             emailRedirectTo: redirectTo
-              ? `${window.location.origin}${redirectTo}`
-              : `${window.location.origin}/dashboard`,
+              ? `${window.location.origin}/auth?redirect=${encodeURIComponent(redirectTo)}`
+              : `${window.location.origin}/auth?redirect=%2Fdashboard`,
           },
         });
         if (error) {
