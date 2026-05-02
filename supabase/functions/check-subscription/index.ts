@@ -98,8 +98,8 @@ serve(async (req) => {
       ['active', 'trialing'].includes(sub.status)
     );
 
-    let subscriptionTier = 'basic';
-    let subscriptionStatus = 'active';
+    let subscriptionTier = 'free';
+    let subscriptionStatus = 'free';
     let currentPeriodEnd = null;
     let stripeSubscriptionId = null;
     let currentPeriodStart = null;
