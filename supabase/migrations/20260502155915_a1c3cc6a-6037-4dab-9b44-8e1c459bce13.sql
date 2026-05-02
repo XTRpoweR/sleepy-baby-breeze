@@ -1,0 +1,2 @@
+ALTER FUNCTION public.track_marketing_event(text, uuid, text, numeric, text, text, jsonb) SET search_path = public, extensions;
+ALTER FUNCTION public.on_user_registered() SET search_path = public, extensions;
