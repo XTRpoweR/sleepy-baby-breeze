@@ -39,10 +39,18 @@ export const useBabyProfile = () => {
 
       if (ownedError) {
         console.error('Error fetching owned profiles:', ownedError);
-        toast({
-          title: "Error",
-          description: "Failed to load baby profiles",
-          variant: "destructive",
+        // Only show error toast on initial load when we have no profiles yet.
+        // Silently ignore transient refetch failures (e.g. after PDF download,
+        // window focus, or realtime reconnect) so we don't spam the user.
+        setProfiles((prev) => {
+          if (prev.length === 0) {
+            toast({
+              title: "Error",
+              description: "Failed to load baby profiles",
+              variant: "destructive",
+            });
+          }
+          return prev;
         });
         setLoading(false);
         return;
