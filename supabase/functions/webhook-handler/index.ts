@@ -524,27 +524,33 @@ async function sendCapiEvent(
 async function getLastClickIds(
   supabase: any,
   userId: string | null,
-): Promise<{ fbc: string | null; fbp: string | null }> {
-  if (!userId) return { fbc: null, fbp: null };
+): Promise<{ fbc: string | null; fbp: string | null; client_user_agent: string | null; event_source_url: string | null }> {
+  if (!userId) return { fbc: null, fbp: null, client_user_agent: null, event_source_url: null };
   try {
     const { data } = await supabase
       .from('marketing_events')
-      .select('raw_payload')
+      .select('raw_payload, client_user_agent, page_url')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(20);
-    if (!data) return { fbc: null, fbp: null };
+    if (!data) return { fbc: null, fbp: null, client_user_agent: null, event_source_url: null };
     let fbc: string | null = null;
     let fbp: string | null = null;
+    let client_user_agent: string | null = null;
+    let event_source_url: string | null = null;
     for (const row of data) {
       const rp = (row?.raw_payload || {}) as Record<string, unknown>;
       if (!fbc && typeof rp.fbc === 'string') fbc = rp.fbc as string;
       if (!fbp && typeof rp.fbp === 'string') fbp = rp.fbp as string;
-      if (fbc && fbp) break;
+      if (!client_user_agent && typeof row?.client_user_agent === 'string') client_user_agent = row.client_user_agent;
+      if (!client_user_agent && typeof rp.client_user_agent === 'string') client_user_agent = rp.client_user_agent as string;
+      if (!event_source_url && typeof row?.page_url === 'string') event_source_url = row.page_url;
+      if (!event_source_url && typeof rp.event_source_url === 'string') event_source_url = rp.event_source_url as string;
+      if (fbc && fbp && client_user_agent && event_source_url) break;
     }
-    return { fbc, fbp };
+    return { fbc, fbp, client_user_agent, event_source_url };
   } catch {
-    return { fbc: null, fbp: null };
+    return { fbc: null, fbp: null, client_user_agent: null, event_source_url: null };
   }
 }
 
