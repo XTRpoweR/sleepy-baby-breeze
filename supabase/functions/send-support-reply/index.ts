@@ -136,7 +136,12 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, serviceKey);
     const token = authHeader.substring(7);
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    // Use anon client with the user's JWT to identify the caller
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const userClient = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+    const { data: { user }, error: authError } = await userClient.auth.getUser();
     if (authError || !user) {
       console.error('[send-support-reply] Auth error:', authError);
       return new Response(JSON.stringify({ error: 'Invalid token' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
