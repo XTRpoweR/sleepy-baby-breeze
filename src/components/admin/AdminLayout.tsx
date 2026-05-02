@@ -71,10 +71,18 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Sidebar */}
       <aside className="w-full md:w-64 md:min-h-screen bg-gradient-to-b from-purple-600 to-pink-600 text-white p-4 md:p-6 md:flex md:flex-col">
         <div className="flex items-center gap-3 mb-6">
-          <img src="/logo.png" alt="SleepyBabyy" className="w-10 h-10 rounded-lg bg-white/10 p-1" />
+          <div className="w-12 h-12 rounded-xl bg-white shadow-md flex items-center justify-center flex-shrink-0 overflow-hidden">
+            <img
+              src="/logo.png"
+              alt="SleepyBabyy"
+              className="w-full h-full object-contain p-1"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
           <div>
             <h2 className="font-bold text-lg leading-tight">Admin</h2>
-            <p className="text-xs text-white/70">SleepyBabyy</p>
+            <p className="text-xs text-white/80">SleepyBabyy</p>
           </div>
         </div>
         <nav className="space-y-1 flex-1">
