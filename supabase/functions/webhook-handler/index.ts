@@ -615,7 +615,7 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
     const phone = cd.phone || null;
     const city = cd.address?.city || null;
     const country = cd.address?.country || null;
-    const { fbc, fbp } = await getLastClickIds(supabase, userId);
+    const { fbc, fbp, client_user_agent, event_source_url } = await getLastClickIds(supabase, userId);
 
     // Subscribe event
     await sendCapiEvent(supabase, {
@@ -627,9 +627,12 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
       currency: 'USD',
       content_name: contentName,
       first_name, last_name, phone, city, country, fbc, fbp,
+      client_user_agent,
+      event_source_url,
       custom_data: {
         stripe_session_id: session.id,
         stripe_customer_id: customerId,
+        subscription_id: session.subscription || null,
       },
     });
 
@@ -644,9 +647,12 @@ async function handleCheckoutCompleted(supabase: any, event: any) {
         currency: 'USD',
         content_name: contentName,
         first_name, last_name, phone, city, country, fbc, fbp,
+        client_user_agent,
+        event_source_url,
         custom_data: {
           predicted_ltv: 79.90,
           stripe_session_id: session.id,
+          subscription_id: session.subscription || null,
         },
       });
     }
