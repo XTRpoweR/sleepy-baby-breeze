@@ -6,7 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { fbqTrack } from '@/utils/metaPixel';
 
 interface SubscriptionContextType {
-  subscriptionTier: 'basic' | 'premium' | 'premium_quarterly' | 'premium_annual';
+  subscriptionTier: 'free' | 'basic' | 'premium' | 'premium_quarterly' | 'premium_annual';
   status: string;
   currentPeriodEnd: string | null;
   loading: boolean;
@@ -40,7 +40,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const { user, session, loading: authLoading, refreshSession } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [subscriptionTier, setSubscriptionTier] = useState<'basic' | 'premium' | 'premium_quarterly' | 'premium_annual'>('basic');
+  const [subscriptionTier, setSubscriptionTier] = useState<'free' | 'basic' | 'premium' | 'premium_quarterly' | 'premium_annual'>('free');
   const [status, setStatus] = useState('active');
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,8 +72,10 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
             .insert({
               user_id: user.id,
               email: user.email,
-              subscription_tier: 'basic',
-              status: 'active',
+              subscription_tier: 'free',
+              status: 'free',
+              is_trial: false,
+              billing_cycle: 'monthly',
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             });
@@ -135,7 +137,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       if (!accessToken) {
         console.error('No valid access token available');
         // Fallback to basic subscription for new users
-        setSubscriptionTier('basic');
+        setSubscriptionTier('free');
         setStatus('active');
         setCurrentPeriodEnd(null);
         setIsTrial(false);
@@ -152,7 +154,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       if (error) {
         console.error('Error checking subscription:', error);
         // Fallback to basic subscription
-        setSubscriptionTier('basic');
+        setSubscriptionTier('free');
         setStatus('active');
         setCurrentPeriodEnd(null);
         setIsTrial(false);
@@ -161,7 +163,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       }
 
       console.log('Subscription data received:', data);
-      setSubscriptionTier(data.subscription_tier || 'basic');
+      setSubscriptionTier(data.subscription_tier || 'free');
       setStatus(data.status || 'active');
       setCurrentPeriodEnd(data.current_period_end);
       setIsTrial(data.is_trial || false);
@@ -169,7 +171,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     } catch (error) {
       console.error('Error checking subscription:', error);
       // Fallback to basic subscription
-      setSubscriptionTier('basic');
+      setSubscriptionTier('free');
       setStatus('active');
       setCurrentPeriodEnd(null);
       setIsTrial(false);
@@ -390,7 +392,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       checkSubscription();
     } else if (!authLoading && !user) {
       setLoading(false);
-      setSubscriptionTier('basic');
+      setSubscriptionTier('free');
       setStatus('active');
       setCurrentPeriodEnd(null);
       setIsTrial(false);
@@ -401,7 +403,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const isPremium = subscriptionTier === 'premium' || subscriptionTier === 'premium_quarterly' || subscriptionTier === 'premium_annual';
   const isPremiumQuarterly = subscriptionTier === 'premium_quarterly';
   const isPremiumAnnual = subscriptionTier === 'premium_annual';
-  const isBasic = subscriptionTier === 'basic';
+  const isBasic = (subscriptionTier === 'basic' || subscriptionTier === 'free');
 
   const upgrading = upgradingMonthly || upgradingQuarterly || upgradingAnnual;
 
