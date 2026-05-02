@@ -146,11 +146,12 @@ export const useActivityLogs = (babyId: string) => {
             ...payload.new,
             activity_type: payload.new.activity_type as 'sleep' | 'feeding' | 'diaper' | 'custom'
           } as ActivityLog;
-          setLogs((currentLogs) => [newLog, ...currentLogs]);
-          
-          toast({
-            title: "Activity Added",
-            description: "New activity logged by a family member",
+          setLogs((currentLogs) => {
+            // Prevent duplicates: skip if this log id already exists
+            if (currentLogs.some((log) => log.id === newLog.id)) {
+              return currentLogs;
+            }
+            return [newLog, ...currentLogs];
           });
         }
       )
