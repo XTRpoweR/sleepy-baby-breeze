@@ -111,12 +111,34 @@ serve(async (req) => {
       }
     }
 
-    // Store the query in database
+    // Store the query in database (legacy)
     await dbService.storeUserQuery({
       user_id: userId,
       email: email,
       message_text: `Subject: ${subject}${category ? `\nCategory: ${category}` : ''}\n\n${message}`
     });
+
+    // Save inbound contact message for admin dashboard
+    try {
+      const threadId = crypto.randomUUID();
+      const { error: insertError } = await supabase
+        .from('contact_messages')
+        .insert({
+          thread_id: threadId,
+          direction: 'inbound',
+          sender_name: name,
+          sender_email: email,
+          subject: subject,
+          message_body: message,
+          category: category || null,
+          status: 'unread',
+        });
+      if (insertError) {
+        console.error('Failed to save contact_message:', insertError);
+      }
+    } catch (e) {
+      console.error('Error saving contact_message:', e);
+    }
 
     // Send email
     await emailService.sendContactEmail({
