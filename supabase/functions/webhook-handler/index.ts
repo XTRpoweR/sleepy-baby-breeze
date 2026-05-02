@@ -693,7 +693,8 @@ async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
     }
 
     // Click-attribution lookup so server-side Purchase keeps fbc/fbp chain
-    const { fbc, fbp } = await getLastClickIds(supabase, userId);
+    const { fbc, fbp, client_user_agent, event_source_url } = await getLastClickIds(supabase, userId);
+    const subscriptionId = invoice.subscription || null;
 
     await sendCapiEvent(supabase, {
       event_name: 'Purchase',
@@ -704,9 +705,13 @@ async function handleInvoicePaymentSucceeded(supabase: any, event: any) {
       currency,
       content_name: tierContentName(tier),
       fbc, fbp,
+      client_user_agent,
+      event_source_url,
       custom_data: {
         stripe_invoice_id: invoice.id,
         stripe_customer_id: customerId,
+        stripe_subscription_id: subscriptionId,
+        subscription_id: subscriptionId,
         billing_reason: billingReason,
       },
     });
