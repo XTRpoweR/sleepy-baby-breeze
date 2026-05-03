@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { useNewsletterSubscription } from '@/hooks/useNewsletterSubscription';
+import { fbqTrack } from '@/utils/metaPixel';
 
 interface NewsletterSubscriptionProps {
   className?: string;
@@ -20,6 +21,13 @@ export const NewsletterSubscription = ({ className = "" }: NewsletterSubscriptio
 
     const success = await subscribe(email);
     if (success) {
+      try {
+        fbqTrack(
+          'Lead',
+          { content_name: 'Newsletter Subscription', currency: 'USD', value: 0 },
+          { email },
+        );
+      } catch { /* never break UX */ }
       setEmail(''); // Clear the form on success
     }
   };
