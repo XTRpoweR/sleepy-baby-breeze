@@ -40,18 +40,6 @@ const resources = {
   },
 };
 
-const RTL_LANGS = ['ar', 'he', 'fa', 'ur'];
-
-const applyHtmlLangDir = (lng: string) => {
-  if (typeof document === 'undefined') return;
-  const base = (lng || 'en').split('-')[0];
-  document.documentElement.lang = base;
-  document.documentElement.dir = RTL_LANGS.includes(base) ? 'rtl' : 'ltr';
-};
-
-i18n.on('languageChanged', applyHtmlLangDir);
-i18n.on('initialized', () => applyHtmlLangDir(i18n.language));
-
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
