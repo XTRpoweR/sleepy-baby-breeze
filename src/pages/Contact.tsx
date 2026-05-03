@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
+import { fbqTrack } from '@/utils/metaPixel';
 
 const Contact = () => {
   const navigate = useNavigate();
@@ -60,6 +61,21 @@ const Contact = () => {
       }
 
       console.log('Contact form submitted successfully:', data);
+      try {
+        const [first_name, ...rest] = (formData.name || '').trim().split(/\s+/);
+        fbqTrack(
+          'Contact',
+          {
+            content_name: formData.subject || 'Contact Form',
+            content_category: formData.category || undefined,
+          },
+          {
+            email: formData.email,
+            first_name: first_name || undefined,
+            last_name: rest.join(' ') || undefined,
+          },
+        );
+      } catch { /* never break UX */ }
       setIsSubmitted(true);
       
       toast({

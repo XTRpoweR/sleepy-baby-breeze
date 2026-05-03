@@ -11,6 +11,7 @@ import { CookieConsentBanner } from "@/components/cookies/CookieConsentBanner";
 import { CookieSettingsButton } from "@/components/cookies/CookieSettingsButton";
 import { preloadCriticalResources } from "@/utils/performanceUtils";
 import { usePageViewTracking } from "@/hooks/usePageViewTracking";
+import { captureUtmParams } from "@/utils/utmCapture";
 
 // Eager-load the landing page so the first paint is instant
 import Index from "./pages/Index";
@@ -82,6 +83,8 @@ const App: React.FC = () => {
   useEffect(() => {
     // Initialize performance optimizations
     preloadCriticalResources();
+    // Capture UTM/fbclid/gclid on landing for attribution
+    captureUtmParams();
   }, []);
 
   return (
