@@ -2,6 +2,8 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { applyMetaAdvancedMatching } from '@/utils/metaPixel';
+import { buildMetaUserData } from '@/utils/metaUserData';
 
 interface AuthContextType {
   user: User | null;
@@ -76,7 +78,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Handle the session and user state
         setSession(session);
         setUser(session?.user ?? null);
-        
+
+        // Push Advanced Matching params to Meta Pixel for higher EMQ
+        if (session?.user) {
+          const ud = buildMetaUserData(session.user);
+          if (ud) applyMetaAdvancedMatching(ud);
+        }
+
         // Only set loading to false after we've processed the auth change
         if (event !== 'INITIAL_SESSION') {
           setLoading(false);
