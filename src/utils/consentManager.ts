@@ -119,35 +119,52 @@ export const initConsentMode = (): void => {
   });
 };
 
-const loadMetaPixel = (): void => {
+/**
+ * Load the Meta Pixel script. We always inject the script (even when marketing
+ * consent is denied) so Meta can receive *consent-aware* signals — this
+ * powers Modeled Conversions / Conversions Modeling and dramatically improves
+ * attribution under GDPR. Without consent we immediately call
+ * `fbq('consent', 'revoke')` so Meta only receives anonymous, non-PII pings
+ * (no cookies, no advanced matching) until the user accepts.
+ */
+const loadMetaPixel = (granted: boolean): void => {
   if (typeof window === 'undefined') return;
-  if (window.__sleepybabyy_pixel_loaded) return;
-  // Standard Meta Pixel loader
-  /* eslint-disable */
-  (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
-    if (f.fbq) return;
-    n = f.fbq = function () {
-      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-    };
-    if (!f._fbq) f._fbq = n;
-    n.push = n;
-    n.loaded = !0;
-    n.version = '2.0';
-    n.queue = [];
-    t = b.createElement(e);
-    t.async = !0;
-    t.src = v;
-    s = b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t, s);
-  })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-  /* eslint-enable */
-  try {
-    window.fbq?.('init', META_PIXEL_ID);
-    window.fbq?.('track', 'PageView');
-  } catch {
-    /* ignore */
+  if (!window.__sleepybabyy_pixel_loaded) {
+    /* eslint-disable */
+    (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
+      if (f.fbq) return;
+      n = f.fbq = function () {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      if (!f._fbq) f._fbq = n;
+      n.push = n;
+      n.loaded = !0;
+      n.version = '2.0';
+      n.queue = [];
+      t = b.createElement(e);
+      t.async = !0;
+      t.src = v;
+      s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s);
+    })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    /* eslint-enable */
+    try {
+      // Default to revoked so the very first call is anonymous if consent missing
+      window.fbq?.('consent', granted ? 'grant' : 'revoke');
+      window.fbq?.('init', META_PIXEL_ID);
+      window.fbq?.('track', 'PageView');
+    } catch {
+      /* ignore */
+    }
+    window.__sleepybabyy_pixel_loaded = true;
+  } else {
+    // Already loaded — just toggle consent state
+    try {
+      window.fbq?.('consent', granted ? 'grant' : 'revoke');
+    } catch {
+      /* ignore */
+    }
   }
-  window.__sleepybabyy_pixel_loaded = true;
 };
 
 /**
@@ -170,9 +187,10 @@ export const applyConsent = (state: ConsentState): void => {
     /* ignore */
   }
 
-  if (state.marketing) {
-    loadMetaPixel();
-  }
+  // Always load the Pixel — pass current consent so it sends granted or
+  // revoked (anonymous) signals accordingly. This enables Meta's Modeled
+  // Conversions to keep attribution alive even when the user declines cookies.
+  loadMetaPixel(state.marketing);
 };
 
 export const hasMarketingConsent = (): boolean => {
