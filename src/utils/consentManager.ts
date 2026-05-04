@@ -127,7 +127,7 @@ export const initConsentMode = (): void => {
  * `fbq('consent', 'revoke')` so Meta only receives anonymous, non-PII pings
  * (no cookies, no advanced matching) until the user accepts.
  */
-const loadMetaPixel = (granted: boolean): void => {
+export const loadMetaPixel = (granted: boolean): void => {
   if (typeof window === 'undefined') return;
   if (!window.__sleepybabyy_pixel_loaded) {
     /* eslint-disable */
