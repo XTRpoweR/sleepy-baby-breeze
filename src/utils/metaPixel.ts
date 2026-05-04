@@ -61,6 +61,36 @@ const generateEventId = (): string => {
   return `evt_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 };
 
+const META_PIXEL_ID = '956706330308177';
+let advancedMatchingApplied = false;
+
+/**
+ * Re-initialize the Meta Pixel with Advanced Matching parameters
+ * (em/fn/ln/external_id). Meta hashes them client-side. Call once after the
+ * user logs in / signs up to dramatically improve EMQ for browser events.
+ * Idempotent — only applies the first time per page load.
+ */
+export const applyMetaAdvancedMatching = (userData: UserData): void => {
+  try {
+    if (advancedMatchingApplied) return;
+    if (!hasMarketingConsent()) return;
+    if (typeof window === 'undefined' || typeof window.fbq !== 'function') return;
+    const am: Record<string, string> = {};
+    if (userData.email) am.em = userData.email.trim().toLowerCase();
+    if (userData.first_name) am.fn = userData.first_name.trim().toLowerCase();
+    if (userData.last_name) am.ln = userData.last_name.trim().toLowerCase();
+    if (userData.phone) am.ph = userData.phone.replace(/[^\d]/g, '');
+    if (userData.city) am.ct = userData.city.trim().toLowerCase().replace(/\s+/g, '');
+    if (userData.country) am.country = userData.country.trim().toLowerCase();
+    if (userData.external_id) am.external_id = userData.external_id;
+    if (Object.keys(am).length === 0) return;
+    window.fbq('init', META_PIXEL_ID, am);
+    advancedMatchingApplied = true;
+  } catch {
+    /* never break the app */
+  }
+};
+
 const relayToCapi = (
   event_name: string,
   params: Record<string, unknown> | undefined,
