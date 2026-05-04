@@ -60,6 +60,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log('Initial session retrieved:', session?.user?.email || 'No session');
           setSession(session);
           setUser(session?.user ?? null);
+          if (session?.user) {
+            const ud = buildMetaUserData(session.user);
+            if (ud) applyMetaAdvancedMatching(ud);
+          }
         }
       } catch (error) {
         console.error('Failed to get initial session:', error);
