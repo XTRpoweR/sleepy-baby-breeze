@@ -110,6 +110,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 .catch((err) => console.warn('location tracking skipped', err));
             }, 1500);
           }
+        }
+
 
         // Only set loading to false after we've processed the auth change
         if (event !== 'INITIAL_SESSION') {
