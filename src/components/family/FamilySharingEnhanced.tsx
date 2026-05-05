@@ -42,6 +42,7 @@ export const FamilySharingEnhanced = ({ babyId }: FamilySharingEnhancedProps) =>
     inviteFamilyMember,
     removeFamilyMember,
     cancelInvitation,
+    resendInvitationEmail,
     refetch
   } = useFamilyMembers(babyId);
 
