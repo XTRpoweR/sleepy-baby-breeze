@@ -34,7 +34,7 @@ export const InvitationManagement = ({
   const [showLinkDialog, setShowLinkDialog] = useState(false);
 
   const getInvitationLink = (invitation: FamilyInvitation) => {
-    return `${window.location.origin}/invitation/accept?token=${invitation.invitation_token}`;
+    return `${window.location.origin}/invitation?token=${invitation.invitation_token}`;
   };
 
   const copyInvitationLink = async (invitation: FamilyInvitation) => {
