@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Card } from '@/components/ui/card';
-import { Moon, Baby, Sparkles, PartyPopper, Users, ArrowRight } from 'lucide-react';
+import { Baby, Sparkles, PartyPopper, Users, ArrowRight, Copy } from 'lucide-react';
 
 type StepKey = 'welcome' | 'baby' | 'tour' | 'activity' | 'family' | 'success';
 const STEPS: StepKey[] = ['welcome', 'baby', 'tour', 'activity', 'family', 'success'];
@@ -42,6 +42,7 @@ export default function Onboarding() {
   // Family invite
   const [inviteEmail, setInviteEmail] = useState('');
   const [sendingInvite, setSendingInvite] = useState(false);
+  const [manualInviteLink, setManualInviteLink] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -162,20 +163,54 @@ export default function Onboarding() {
     }
     setSendingInvite(true);
     try {
-      await supabase.from('family_invitations').insert({
+      const normalizedEmail = inviteEmail.trim().toLowerCase();
+      const { data: invitation, error: invitationError } = await supabase.from('family_invitations').insert({
         baby_id: babyId,
-        email: inviteEmail.trim().toLowerCase(),
+        email: normalizedEmail,
         role: 'caregiver',
         invited_by: user!.id,
-      } as never);
-      toast({ title: 'Invitation sent!' });
+      } as never).select('id, invitation_token').single();
+
+      if (invitationError) throw invitationError;
+
+      const invitationLink = `${window.location.origin}/invitation?token=${invitation.invitation_token}`;
+      setManualInviteLink(invitationLink);
+
+      const { error: emailError } = await supabase.functions.invoke('send-invitation-email', {
+        body: {
+          invitationId: invitation.id,
+          email: normalizedEmail,
+          babyName: name.trim() || 'Baby',
+          inviterName: user?.user_metadata?.full_name || user?.email || 'Someone',
+          role: 'caregiver',
+          invitationToken: invitation.invitation_token,
+        },
+      });
+
+      if (emailError) {
+        console.error('Invitation email failed:', emailError);
+        toast({
+          title: 'Invitation link created',
+          description: 'Email could not be delivered. Please copy and share the invitation link below.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      toast({ title: 'Invitation sent!', description: `We sent the invitation to ${normalizedEmail}.` });
+      goNext();
     } catch (e) {
       console.error(e);
-      toast({ title: 'Could not send invite — you can do this later', variant: 'destructive' });
+      toast({ title: 'Could not create invitation — you can do this later', variant: 'destructive' });
     } finally {
       setSendingInvite(false);
-      goNext();
     }
+  };
+
+  const copyManualInviteLink = async () => {
+    if (!manualInviteLink) return;
+    await navigator.clipboard.writeText(manualInviteLink);
+    toast({ title: 'Invitation link copied' });
   };
 
   const step = STEPS[stepIndex];
@@ -377,6 +412,20 @@ export default function Onboarding() {
                   Maybe later
                 </Button>
               </div>
+              {manualInviteLink && (
+                <div className="space-y-2 rounded-lg border border-border bg-muted/40 p-3">
+                  <p className="text-sm font-medium">Email delivery failed. Share this link instead:</p>
+                  <div className="flex gap-2">
+                    <Input value={manualInviteLink} readOnly className="text-xs" />
+                    <Button type="button" variant="outline" size="icon" onClick={copyManualInviteLink}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <Button onClick={goNext} className="w-full" variant="secondary">
+                    Continue
+                  </Button>
+                </div>
+              )}
               <p className="text-xs text-center text-muted-foreground">
                 ✓ You're all set either way!
               </p>

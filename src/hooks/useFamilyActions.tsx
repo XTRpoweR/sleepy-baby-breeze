@@ -168,11 +168,12 @@ export const useFamilyActions = (
 
         console.log('Email function response:', { emailResult, emailError });
 
-        if (emailError) {
+        if (emailError || emailResult?.success === false) {
+          const message = emailError?.message || emailResult?.error || 'unknown';
           console.error('Error sending email:', emailError);
           toast({
             title: "Invitation created — email failed",
-            description: `Email error: ${emailError.message || 'unknown'}. Use "Copy Link" to share manually.`,
+            description: `Email error: ${message}. Use "Copy Link" to share manually.`,
             variant: "destructive",
           });
         } else {
@@ -341,10 +342,11 @@ export const useFamilyActions = (
 
       console.log('Resend email response:', { emailResult, emailError });
 
-      if (emailError) {
+      if (emailError || emailResult?.success === false) {
+        const message = emailError?.message || emailResult?.error || 'Unknown error';
         toast({
           title: "Email failed",
-          description: `${emailError.message || 'Unknown error'}. Use "Copy Link" to share manually.`,
+          description: `${message}. Use "Copy Link" to share manually.`,
           variant: "destructive",
         });
         return false;

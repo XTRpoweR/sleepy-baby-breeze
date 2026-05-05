@@ -3,12 +3,20 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Content-Security-Policy': 'default-src \'self\'',
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'X-XSS-Protection': '1; mode=block',
   'Referrer-Policy': 'strict-origin-when-cross-origin'
+};
+
+const jsonResponse = (body: Record<string, unknown>, status = 200) => {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
 };
 
 // Rate limiting store
@@ -249,32 +257,32 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405, headers: corsHeaders });
+    return jsonResponse({ success: false, error: 'Method not allowed' }, 405);
   }
   try {
     // Rate limiting
     const clientIP = req.headers.get('x-forwarded-for') || 'unknown';
     if (!checkRateLimit(clientIP)) {
-      return new Response('Rate limit exceeded', { status: 429, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Rate limit exceeded' }, 429);
     }
     // Verify authentication
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return new Response('Unauthorized', { status: 401, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Unauthorized' }, 401);
     }
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
     if (!resendApiKey) {
       console.error('RESEND_API_KEY not configured');
-      return new Response('Email service not configured', { status: 500, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Email service is not configured' }, 500);
     }
     const supabase = createClient(supabaseUrl, supabaseKey);
     // Get and validate user
     const token = authHeader.substring(7);
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
-      return new Response('Invalid token', { status: 401, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Invalid token' }, 401);
     }
     // Parse and sanitize request body
     let body;
@@ -285,17 +293,17 @@ serve(async (req) => {
       }
       body = sanitizeInput(JSON.parse(rawBody));
     } catch (error) {
-      return new Response('Invalid request body', { status: 400, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Invalid request body' }, 400);
     }
     const { invitationId, email, babyName, inviterName, role, invitationToken } = body;
     // Validate required fields
     if (!invitationId || !email || !babyName || !inviterName || !role || !invitationToken) {
-      return new Response('Missing required fields', { status: 400, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Missing required fields' }, 400);
     }
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return new Response('Invalid email format', { status: 400, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Invalid email format' }, 400);
     }
     // Verify the invitation exists and belongs to the user
     const { data: invitation, error: invitationError } = await supabase
@@ -306,7 +314,7 @@ serve(async (req) => {
       .eq('status', 'pending')
       .single();
     if (invitationError || !invitation) {
-      return new Response('Invitation not found or unauthorized', { status: 404, headers: corsHeaders });
+      return jsonResponse({ success: false, error: 'Invitation not found or unauthorized' }, 404);
     }
     // Create invitation link
     const baseUrl = 'https://sleepybabyy.com';
@@ -340,15 +348,17 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Failed to send email:', response.status, errorText);
-      throw new Error('Failed to send email');
+      return jsonResponse({
+        success: false,
+        error: 'Email provider rejected the invitation email',
+        details: errorText,
+      }, 502);
     }
     const result = await response.json();
     console.log('Email sent successfully:', result.id);
-    return new Response(JSON.stringify({ success: true, emailId: result.id }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ success: true, emailId: result.id });
   } catch (error) {
     console.error('Error sending invitation email:', error);
-    return new Response('Failed to send invitation email', { status: 500, headers: corsHeaders });
+    return jsonResponse({ success: false, error: error?.message || 'Failed to send invitation email' }, 500);
   }
 });
