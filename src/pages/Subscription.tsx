@@ -26,6 +26,7 @@ import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { fbqTrack } from '@/utils/metaPixel';
+import { buildMetaUserData } from '@/utils/metaUserData';
 
 const Subscription = () => {
   const { user, loading, signOut } = useAuth();
@@ -46,8 +47,8 @@ const Subscription = () => {
       content_category: 'subscription',
       content_name: 'subscription_page',
       content_ids: ['premium_monthly', 'premium_quarterly', 'premium_annual'],
-    });
-  }, []);
+    }, buildMetaUserData(user));
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
