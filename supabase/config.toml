@@ -102,4 +102,7 @@ verify_jwt = false
 [functions.send-welcome-email]
 verify_jwt = false
 
+[functions.track-user-location]
+verify_jwt = true
+
 

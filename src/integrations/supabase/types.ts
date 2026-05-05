@@ -1025,11 +1025,16 @@ export type Database = {
         Args: never
         Returns: {
           baby_count: number
+          city: string
+          country: string
+          country_code: string
           created_at: string
           email: string
           full_name: string
           id: string
           is_admin: boolean
+          last_active_at: string
+          plan_label: string
           subscription_status: string
           subscription_tier: string
         }[]
