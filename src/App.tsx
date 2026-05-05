@@ -54,6 +54,8 @@ const AdminThread = lazy(() => import("./pages/admin/AdminThread"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+import { OnboardingGate } from "./components/onboarding/OnboardingGate";
 
 // Create queryClient outside of component to avoid recreation on each render
 const queryClient = new QueryClient({
@@ -95,6 +97,7 @@ const App: React.FC = () => {
             <SubscriptionProvider>
               <CookieConsentProvider>
                 <PixelRouteTracker />
+                <OnboardingGate />
                 <div className="min-h-screen bg-background font-sans antialiased">
                   <Suspense fallback={<RouteFallback />}>
                     <Routes>
@@ -103,6 +106,7 @@ const App: React.FC = () => {
                       <Route path="/reset-password" element={<EnhancedPasswordReset />} />
                       <Route path="/security" element={<AccountSecurity />} />
                       <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/onboarding" element={<Onboarding />} />
                       <Route path="/track" element={<TrackActivity />} />
                       <Route path="/reports" element={<Reports />} />
                       <Route path="/sleep-schedule" element={<SleepSchedule />} />
