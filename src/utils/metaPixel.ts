@@ -105,6 +105,7 @@ const relayToCapi = (
       event_name,
       event_id,
       event_source_url: window.location.href,
+      event_referrer: document.referrer || undefined,
       action_source: 'website' as const,
       user_data: {
         email: user_data?.email,
