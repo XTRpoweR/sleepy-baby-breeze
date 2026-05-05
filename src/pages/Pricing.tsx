@@ -13,6 +13,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { useGeoCurrency } from "@/hooks/useGeoCurrency";
 import { Check, X, Crown, Baby, Star, Users, BarChart3, Shield, Clock, Heart, ArrowLeft, Zap } from "lucide-react";
 import { fbqTrack } from "@/utils/metaPixel";
+import { buildMetaUserData } from "@/utils/metaUserData";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
 
 const Pricing = () => {
@@ -29,8 +30,8 @@ const Pricing = () => {
       content_category: 'pricing',
       content_name: 'pricing_page',
       content_ids: ['premium_monthly', 'premium_quarterly', 'premium_annual'],
-    });
-  }, []);
+    }, buildMetaUserData(user));
+  }, [user]);
 
   const handleGetStarted = () => {
     if (user) navigate('/dashboard');
