@@ -46,14 +46,30 @@ export const OnboardingGate = () => {
       return;
     }
     let active = true;
+    const createdAt = user.created_at ? new Date(user.created_at).getTime() : 0;
+    const isRecentlyCreatedUser = createdAt > Date.now() - 24 * 60 * 60 * 1000;
+
     (async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('onboarding_completed')
-        .eq('id', user.id)
-        .maybeSingle();
+      let data: { onboarding_completed: boolean } | null = null;
+      let error: unknown = null;
+
+      // New signups can hit protected routes before the profile trigger is visible to RLS.
+      // Retry briefly so the onboarding redirect does not get skipped on first login.
+      for (let attempt = 0; attempt < 4; attempt += 1) {
+        const result = await supabase
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        data = result.data;
+        error = result.error;
+        if (data || error || !isRecentlyCreatedUser) break;
+        await new Promise((resolve) => setTimeout(resolve, 350));
+      }
+
       if (!active) return;
-      if (!error && data && data.onboarding_completed === false) {
+      if (!error && ((data && data.onboarding_completed === false) || (!data && isRecentlyCreatedUser))) {
         navigate('/onboarding', { replace: true });
       }
       setChecked(true);
