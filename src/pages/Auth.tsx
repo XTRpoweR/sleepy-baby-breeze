@@ -303,7 +303,7 @@ const Auth = () => {
           </span>
           <span className="auth-trust-badge">
             <Heart className="h-3.5 w-3.5" style={{ color: 'hsl(330, 75%, 60%)' }} />
-            Trusted by 10,000+ families
+            Built by parents, for parents
           </span>
           <span className="auth-trust-badge">
             <Sparkles className="h-3.5 w-3.5" style={{ color: 'hsl(38, 92%, 50%)' }} />

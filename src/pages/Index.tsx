@@ -228,7 +228,7 @@ const Index = () => {
     colorScheme: 'blue',
     category: 'CORE FEATURE',
     badge: 'POPULAR',
-    metric: 'Used by 10,000+ families',
+    metric: 'Built by parents, for parents',
     image: trackEverythingImg
   }, {
     icon: Calendar,
@@ -400,7 +400,7 @@ const Index = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
               <span className="text-xs sm:text-sm font-semibold text-gray-700">
-                <span className="text-gradient">10,000+</span> happy families · 4.9 ★
+                🔒 <span className="text-gradient">Privacy First</span> · Free Forever Plan
               </span>
             </div>
           </div>
@@ -468,9 +468,9 @@ const Index = () => {
           {/* Stats bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto mt-12 sm:mt-16 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             {[
-              { value: '10K+', label: 'Happy Families', icon: Heart },
-              { value: '2M+', label: 'Sleep Sessions', icon: Moon },
-              { value: '4.9★', label: 'App Rating', icon: Star },
+              { value: '🔒', label: 'Privacy First', icon: Heart },
+              { value: '🆓', label: 'Free Forever Plan', icon: Moon },
+              { value: '💳', label: 'No Card Required', icon: Star },
               { value: '8', label: 'Languages', icon: Globe },
             ].map((stat, i) => (
               <div key={i} className="text-center p-4 rounded-2xl bg-white/60 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 hover:scale-105 duration-300">
@@ -508,9 +508,9 @@ const Index = () => {
 
             {/* Trust strip */}
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-xs sm:text-sm text-gray-500">
-              <div className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-pink-500" /> <span className="font-medium">10,000+ families</span></div>
+              <div className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-pink-500" /> <span className="font-medium">Built by parents</span></div>
               <span className="text-gray-300">•</span>
-              <div className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" /> <span className="font-medium">4.9 rating</span></div>
+              <div className="inline-flex items-center gap-1.5"><Star className="h-3.5 w-3.5 text-yellow-400 fill-yellow-400" /> <span className="font-medium">Free forever plan</span></div>
               <span className="text-gray-300">•</span>
               <div className="inline-flex items-center gap-1.5"><Globe className="h-3.5 w-3.5 text-blue-500" /> <span className="font-medium">8 languages</span></div>
             </div>
@@ -552,10 +552,9 @@ const Index = () => {
                       ))}
                     </div>
                     <div className="text-xs text-white/90">
-                      <div className="font-semibold">Joined by 10,000+ parents</div>
+                      <div className="font-semibold">Built by parents, for parents</div>
                       <div className="flex items-center gap-1 text-white/70">
-                        {[1,2,3,4,5].map(s => <Star key={s} className="h-3 w-3 fill-yellow-300 text-yellow-300" />)}
-                        <span className="ml-1">4.9 average</span>
+                        <span>🔒 Privacy First · 🆓 Free Forever</span>
                       </div>
                     </div>
                   </div>
@@ -794,14 +793,14 @@ const Index = () => {
           <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 border border-yellow-300 mb-4">
               <Star className="h-3.5 w-3.5 text-yellow-600 fill-yellow-500" />
-              <span className="text-xs font-bold text-yellow-700 tracking-wider uppercase">4.9 / 5 from 10,000+ reviews</span>
+              <span className="text-xs font-bold text-yellow-700 tracking-wider uppercase">Real stories from real parents</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight leading-[1.1]">
               Loved by parents
               <span className="text-shimmer block mt-2">around the world</span>
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 font-light leading-relaxed">
-              Join thousands of families who've found their way to better sleep.
+              Join families who've found their way to better sleep.
             </p>
           </div>
         </div>
