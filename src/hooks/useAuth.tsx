@@ -87,6 +87,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (session?.user) {
           const ud = buildMetaUserData(session.user);
           if (ud) applyMetaAdvancedMatching(ud);
+
+          // Send welcome email once, after email is confirmed
+          if (event === 'SIGNED_IN' && session.user.email_confirmed_at && session.user.email) {
+            const lang = (typeof navigator !== 'undefined' ? navigator.language.split('-')[0] : 'en');
+            setTimeout(() => {
+              supabase.functions.invoke('send-welcome-email', {
+                body: {
+                  user_id: session.user.id,
+                  email: session.user.email,
+                  name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
+                  language: lang,
+                },
+              }).catch((err) => console.warn('welcome email skipped', err));
+            }, 0);
+          }
         }
 
         // Only set loading to false after we've processed the auth change

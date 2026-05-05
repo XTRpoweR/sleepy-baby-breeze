@@ -99,4 +99,7 @@ verify_jwt = false
 [functions.send-capi-event]
 verify_jwt = false
 
+[functions.send-welcome-email]
+verify_jwt = false
+
 
