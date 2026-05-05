@@ -102,7 +102,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               }).catch((err) => console.warn('welcome email skipped', err));
             }, 0);
           }
-        }
+
+          // Track user geo location (debounced server-side, max 1/day per user)
+          if (event === 'SIGNED_IN') {
+            setTimeout(() => {
+              supabase.functions.invoke('track-user-location', { body: {} })
+                .catch((err) => console.warn('location tracking skipped', err));
+            }, 1500);
+          }
 
         // Only set loading to false after we've processed the auth change
         if (event !== 'INITIAL_SESSION') {
