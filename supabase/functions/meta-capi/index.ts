@@ -31,6 +31,7 @@ interface CapiPayload {
   event_name: string;
   event_id?: string;
   event_source_url?: string;
+  event_referrer?: string;
   action_source?: "website" | "email" | "app" | "phone_call" | "chat" | "physical_store" | "system_generated" | "other";
   user_data?: {
     email?: string;
