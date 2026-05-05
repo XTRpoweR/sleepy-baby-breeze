@@ -42,6 +42,7 @@ export const FamilySharingEnhanced = ({ babyId }: FamilySharingEnhancedProps) =>
     inviteFamilyMember,
     removeFamilyMember,
     cancelInvitation,
+    resendInvitationEmail,
     refetch
   } = useFamilyMembers(babyId);
 
@@ -100,17 +101,7 @@ export const FamilySharingEnhanced = ({ babyId }: FamilySharingEnhancedProps) =>
   };
 
   const handleResendInvitation = async (invitationId: string): Promise<boolean> => {
-    try {
-      // Find the invitation to resend
-      const invitation = invitations.find(inv => inv.id === invitationId);
-      if (!invitation) return false;
-
-      const success = await inviteFamilyMember(invitation.email, invitation.role);
-      return success;
-    } catch (error) {
-      console.error('Error resending invitation:', error);
-      return false;
-    }
+    return await resendInvitationEmail(invitationId);
   };
 
   if (loading) {

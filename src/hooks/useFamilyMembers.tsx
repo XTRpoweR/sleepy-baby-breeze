@@ -7,7 +7,7 @@ import { useFamilyActions } from './useFamilyActions';
 export const useFamilyMembers = (babyId: string | null) => {
   const { ownerCheck, checkOwnerPermission } = useOwnerPermission(babyId);
   const { members, invitations, loading, fetchFamilyMembers, refreshFamilyData } = useFamilyData(babyId, checkOwnerPermission);
-  const { inviteFamilyMember, removeFamilyMember, cancelInvitation } = useFamilyActions(babyId, checkOwnerPermission, refreshFamilyData);
+  const { inviteFamilyMember, removeFamilyMember, cancelInvitation, resendInvitationEmail } = useFamilyActions(babyId, checkOwnerPermission, refreshFamilyData);
 
   useEffect(() => {
     fetchFamilyMembers();
@@ -20,6 +20,7 @@ export const useFamilyMembers = (babyId: string | null) => {
     inviteFamilyMember,
     removeFamilyMember,
     cancelInvitation,
+    resendInvitationEmail,
     refetch: fetchFamilyMembers,
     refreshFamilyData,
     ownerCheck
