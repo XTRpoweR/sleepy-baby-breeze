@@ -15,11 +15,11 @@ const STEPS: StepKey[] = ['welcome', 'baby', 'tour', 'activity', 'family', 'succ
 
 const trackEvent = async (name: string, metadata: Record<string, unknown> = {}) => {
   try {
-    await supabase.from('marketing_events').insert({
+    await supabase.from('marketing_events').insert([{
       event_name: name,
       page_url: typeof window !== 'undefined' ? window.location.href : null,
-      raw_payload: metadata,
-    });
+      raw_payload: metadata as never,
+    }] as never);
   } catch (e) {
     console.warn('marketing event skipped', e);
   }
