@@ -646,6 +646,10 @@ export type Database = {
           full_name: string | null
           id: string
           is_admin: boolean
+          onboarding_completed: boolean
+          onboarding_completed_at: string | null
+          onboarding_started_at: string | null
+          onboarding_step: number
           updated_at: string | null
           welcome_email_sent_at: string | null
         }
@@ -655,6 +659,10 @@ export type Database = {
           full_name?: string | null
           id: string
           is_admin?: boolean
+          onboarding_completed?: boolean
+          onboarding_completed_at?: string | null
+          onboarding_started_at?: string | null
+          onboarding_step?: number
           updated_at?: string | null
           welcome_email_sent_at?: string | null
         }
@@ -664,6 +672,10 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_admin?: boolean
+          onboarding_completed?: boolean
+          onboarding_completed_at?: string | null
+          onboarding_started_at?: string | null
+          onboarding_step?: number
           updated_at?: string | null
           welcome_email_sent_at?: string | null
         }
