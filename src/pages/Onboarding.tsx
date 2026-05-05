@@ -412,6 +412,20 @@ export default function Onboarding() {
                   Maybe later
                 </Button>
               </div>
+              {manualInviteLink && (
+                <div className="space-y-2 rounded-lg border border-border bg-muted/40 p-3">
+                  <p className="text-sm font-medium">Email delivery failed. Share this link instead:</p>
+                  <div className="flex gap-2">
+                    <Input value={manualInviteLink} readOnly className="text-xs" />
+                    <Button type="button" variant="outline" size="icon" onClick={copyManualInviteLink}>
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <Button onClick={goNext} className="w-full" variant="secondary">
+                    Continue
+                  </Button>
+                </div>
+              )}
               <p className="text-xs text-center text-muted-foreground">
                 ✓ You're all set either way!
               </p>
