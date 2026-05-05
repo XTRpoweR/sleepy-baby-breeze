@@ -95,6 +95,11 @@ Deno.serve(async (req) => {
     if (u.fbp) ud.fbp = u.fbp;
     if (u.fbc) ud.fbc = u.fbc;
 
+    const customData: Record<string, unknown> = { ...(body.custom_data ?? {}) };
+    if (body.event_referrer && customData.event_referrer == null) {
+      customData.event_referrer = body.event_referrer;
+    }
+
     const payload = {
       data: [
         {
@@ -104,7 +109,7 @@ Deno.serve(async (req) => {
           event_source_url: body.event_source_url,
           action_source: body.action_source ?? "website",
           user_data: ud,
-          custom_data: body.custom_data ?? {},
+          custom_data: customData,
         },
       ],
     };
