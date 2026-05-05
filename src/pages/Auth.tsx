@@ -94,6 +94,7 @@ const Auth = () => {
             toast({ title: "Account created", description: "Please check your email to verify your account." });
           } else {
             toast({ title: "Welcome!", description: "Account created and signed in!" });
+            navigate('/onboarding', { replace: true });
           }
         }
       }
