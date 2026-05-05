@@ -297,9 +297,73 @@ export const useFamilyActions = (
     }
   }, [user, checkOwnerPermission, refreshFamilyData, toast]);
 
+  const resendInvitationEmail = useCallback(async (invitationId: string) => {
+    if (!user || !babyId) return false;
+
+    try {
+      const { data: invitation, error: invError } = await supabase
+        .from('family_invitations')
+        .select('*')
+        .eq('id', invitationId)
+        .maybeSingle();
+
+      if (invError || !invitation) {
+        toast({ title: "Error", description: "Invitation not found", variant: "destructive" });
+        return false;
+      }
+
+      // Extend expiry if expired
+      if (new Date(invitation.expires_at) < new Date()) {
+        await supabase
+          .from('family_invitations')
+          .update({
+            status: 'pending',
+            expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          })
+          .eq('id', invitationId);
+      }
+
+      const { data: babyProfile } = await supabase
+        .from('baby_profiles').select('name').eq('id', invitation.baby_id).maybeSingle();
+      const { data: userProfile } = await supabase
+        .from('profiles').select('full_name').eq('id', user.id).maybeSingle();
+
+      const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invitation-email', {
+        body: {
+          invitationId: invitation.id,
+          email: invitation.email,
+          babyName: securityUtils.sanitizeUserContent(babyProfile?.name || 'Baby'),
+          inviterName: securityUtils.sanitizeUserContent(userProfile?.full_name || user.email || 'Someone'),
+          role: invitation.role,
+          invitationToken: invitation.invitation_token,
+        },
+      });
+
+      console.log('Resend email response:', { emailResult, emailError });
+
+      if (emailError) {
+        toast({
+          title: "Email failed",
+          description: `${emailError.message || 'Unknown error'}. Use "Copy Link" to share manually.`,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      toast({ title: "Invitation resent!", description: `Email sent to ${invitation.email}.` });
+      await refreshFamilyData();
+      return true;
+    } catch (error: any) {
+      console.error('Error resending invitation:', error);
+      toast({ title: "Error", description: error?.message || 'Failed to resend', variant: "destructive" });
+      return false;
+    }
+  }, [user, babyId, refreshFamilyData, toast]);
+
   return {
     inviteFamilyMember,
     removeFamilyMember,
-    cancelInvitation
+    cancelInvitation,
+    resendInvitationEmail,
   };
 };
