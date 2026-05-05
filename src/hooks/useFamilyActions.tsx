@@ -155,7 +155,7 @@ export const useFamilyActions = (
       console.log('Invitation created:', data);
 
       try {
-        const { error: emailError } = await supabase.functions.invoke('send-invitation-email', {
+        const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invitation-email', {
           body: {
             invitationId: data.id,
             email: normalizedEmail,
@@ -166,12 +166,14 @@ export const useFamilyActions = (
           }
         });
 
+        console.log('Email function response:', { emailResult, emailError });
+
         if (emailError) {
           console.error('Error sending email:', emailError);
           toast({
-            title: "Invitation created but email failed",
-            description: "The invitation was created but the email could not be sent. You can share the invitation link manually.",
-            variant: "default",
+            title: "Invitation created — email failed",
+            description: `Email error: ${emailError.message || 'unknown'}. Use "Copy Link" to share manually.`,
+            variant: "destructive",
           });
         } else {
           toast({
@@ -179,12 +181,12 @@ export const useFamilyActions = (
             description: `Family invitation sent to ${normalizedEmail}. They have 7 days to accept.`,
           });
         }
-      } catch (emailError) {
+      } catch (emailError: any) {
         console.error('Error calling email function:', emailError);
         toast({
-          title: "Invitation created",
-          description: "The invitation was created. You can share the invitation link manually.",
-          variant: "default",
+          title: "Invitation created — email failed",
+          description: `${emailError?.message || 'Unknown error'}. Use "Copy Link" to share manually.`,
+          variant: "destructive",
         });
       }
 
