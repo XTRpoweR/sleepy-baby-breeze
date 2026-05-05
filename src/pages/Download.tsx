@@ -75,8 +75,7 @@ const Download = () => {
                   App Store
                 </Button>
                 <div className="flex items-center justify-center space-x-1 mt-4 text-sm text-gray-500">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span>4.8 • iOS 14.0+</span>
+                  <span>iOS 14.0+</span>
                 </div>
               </CardContent>
             </Card>
@@ -92,8 +91,7 @@ const Download = () => {
                   Google Play
                 </Button>
                 <div className="flex items-center justify-center space-x-1 mt-4 text-sm text-gray-500">
-                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  <span>4.9 • Android 8.0+</span>
+                  <span>Android 8.0+</span>
                 </div>
               </CardContent>
             </Card>

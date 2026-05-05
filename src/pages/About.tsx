@@ -154,25 +154,25 @@ const About = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Our Impact
+              What We Stand For
             </h2>
             <p className="text-base sm:text-lg lg:text-xl text-gray-600">
-              Real results from real families
+              Honest, privacy-first tools for modern families
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-600 mb-2">50K+</div>
-              <div className="text-sm sm:text-base text-gray-600">Families helped</div>
+              <div className="text-3xl sm:text-4xl mb-2">🔒</div>
+              <div className="text-sm sm:text-base text-gray-600">Privacy First</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-green-600 mb-2">2M+</div>
-              <div className="text-sm sm:text-base text-gray-600">Sleep sessions tracked</div>
+              <div className="text-3xl sm:text-4xl mb-2">🆓</div>
+              <div className="text-sm sm:text-base text-gray-600">Free Forever Plan</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-600 mb-2">4.9★</div>
-              <div className="text-sm sm:text-base text-gray-600">Average app rating</div>
+              <div className="text-3xl sm:text-4xl mb-2">👨‍👩‍👧</div>
+              <div className="text-sm sm:text-base text-gray-600">Family Sharing</div>
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-orange-600 mb-2">8</div>
