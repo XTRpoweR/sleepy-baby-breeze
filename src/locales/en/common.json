@@ -682,11 +682,11 @@
     }
   },
   "cookies": {
-    "bannerTitle": "We value your privacy",
-    "bannerBody": "We use cookies to keep SleepyBabyy running, understand how it is used, and personalize your experience. You can accept all, reject non-essential ones, or customize your choices.",
+    "bannerTitle": "A little note for new parents",
+    "bannerBody": "We use cookies only to improve your experience and share helpful, personalized content for new parents — nothing more.",
     "learnMore": "Learn more",
-    "acceptAll": "Accept all",
-    "rejectAll": "Reject all",
+    "acceptAll": "Sounds good",
+    "rejectAll": "Only essentials",
     "customize": "Customize",
     "saveChoices": "Save my choices",
     "prefsTitle": "Cookie preferences",

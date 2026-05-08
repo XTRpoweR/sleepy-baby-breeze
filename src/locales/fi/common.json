@@ -682,11 +682,11 @@
     }
   },
   "cookies": {
-    "bannerTitle": "Arvostamme yksityisyyttäsi",
-    "bannerBody": "Käytämme evästeitä SleepyBabyy:n toimintaan, käytön ymmärtämiseen ja kokemuksesi mukauttamiseen. Voit hyväksyä kaikki, hylätä ei-välttämättömät tai mukauttaa valintojasi.",
+    "bannerTitle": "Pieni viesti uusille vanhemmille",
+    "bannerBody": "Käytämme evästeitä vain parantaaksemme kokemustasi ja tarjotaksemme hyödyllistä, personoitua sisältöä uusille vanhemmille — ei muuta.",
     "learnMore": "Lue lisää",
-    "acceptAll": "Hyväksy kaikki",
-    "rejectAll": "Hylkää kaikki",
+    "acceptAll": "Kuulostaa hyvältä",
+    "rejectAll": "Vain välttämättömät",
     "customize": "Mukauta",
     "saveChoices": "Tallenna valintani",
     "prefsTitle": "Evästeasetukset",
