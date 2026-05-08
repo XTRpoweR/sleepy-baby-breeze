@@ -18,15 +18,15 @@ export const CookiePreferencesDialog: React.FC = () => {
   const { preferencesOpen, closePreferences, consent, savePreferences, acceptAll, rejectAll } =
     useCookieConsent();
 
-  const [analytics, setAnalytics] = useState(consent?.analytics ?? false);
-  const [marketing, setMarketing] = useState(consent?.marketing ?? false);
-  const [functional, setFunctional] = useState(consent?.functional ?? false);
+  const [analytics, setAnalytics] = useState(consent?.analytics ?? true);
+  const [marketing, setMarketing] = useState(consent?.marketing ?? true);
+  const [functional, setFunctional] = useState(consent?.functional ?? true);
 
   useEffect(() => {
     if (preferencesOpen) {
-      setAnalytics(consent?.analytics ?? false);
-      setMarketing(consent?.marketing ?? false);
-      setFunctional(consent?.functional ?? false);
+      setAnalytics(consent?.analytics ?? true);
+      setMarketing(consent?.marketing ?? true);
+      setFunctional(consent?.functional ?? true);
     }
   }, [preferencesOpen, consent]);
 
