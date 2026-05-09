@@ -107,6 +107,7 @@ serve(async (req) => {
     let trialStart = null;
     let trialEnd = null;
     let billingCycle = 'monthly';
+    let cancelAtPeriodEnd = false;
 
     if (activeSubscriptions.length > 0) {
       const subscription = activeSubscriptions[0];
@@ -131,6 +132,7 @@ serve(async (req) => {
       currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString();
       currentPeriodStart = new Date(subscription.current_period_start * 1000).toISOString();
       stripeSubscriptionId = subscription.id;
+      cancelAtPeriodEnd = !!subscription.cancel_at_period_end;
       
       // Check for trial period
       if (subscription.status === 'trialing') {
@@ -178,7 +180,9 @@ serve(async (req) => {
       status: subscriptionStatus,
       current_period_end: currentPeriodEnd,
       is_trial: isTrial,
-      trial_end: trialEnd
+      trial_end: trialEnd,
+      cancel_at_period_end: cancelAtPeriodEnd,
+      billing_cycle: billingCycle,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
