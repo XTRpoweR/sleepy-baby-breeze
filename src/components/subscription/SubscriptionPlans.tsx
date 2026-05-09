@@ -59,11 +59,24 @@ export const SubscriptionPlans = () => {
   ];
 
   const isCurrentPlan = (plan: 'basic' | PlanKey) => {
-    if (plan === 'basic') return subscriptionTier === 'basic';
+    if (plan === 'basic') return subscriptionTier === 'basic' || subscriptionTier === 'free';
     if (plan === 'monthly') return subscriptionTier === 'premium';
     if (plan === 'quarterly') return subscriptionTier === 'premium_quarterly';
     if (plan === 'annual') return subscriptionTier === 'premium_annual';
     return false;
+  };
+
+  // Numeric rank for upgrade/downgrade detection
+  const tierRank: Record<string, number> = {
+    free: 0, basic: 0, premium: 1, premium_quarterly: 2, premium_annual: 3,
+  };
+  const planRank: Record<PlanKey, number> = { monthly: 1, quarterly: 2, annual: 3 };
+  const currentRank = tierRank[subscriptionTier] ?? 0;
+  const getCtaLabel = (plan: PlanKey): string => {
+    if (isCurrentPlan(plan)) return t('pricing.cta.currentPlan');
+    if (currentRank === 0) return t('pricing.cta.startFreeTrial');
+    if (planRank[plan] > currentRank) return t('subscription.plans.ctaUpgrade');
+    return t('subscription.plans.ctaDowngrade');
   };
 
   const PRICES = { monthly: 7.99, quarterly: 19.99, annual: 69.99 };
