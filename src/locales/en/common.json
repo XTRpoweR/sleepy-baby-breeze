@@ -708,7 +708,57 @@
       "marketing": {
         "title": "Marketing",
         "desc": "Used to measure the effectiveness of our ads (Meta Pixel) and personalize what you see."
-      }
+    }
+  },
+  "subscription": {
+    "pageTitle": "Subscription & Billing",
+    "pageSubtitle": "Manage your plan, payments, and billing preferences in one place.",
+    "backToDashboard": "Back to Dashboard",
+    "current": {
+      "title": "Your current plan",
+      "free": "Free plan",
+      "freeDesc": "You're on the free plan. Upgrade to unlock all premium features.",
+      "renews": "Renews on",
+      "endsOn": "Access ends on",
+      "trialBadge": "Free trial",
+      "trialDaysLeft": "{{days}} days left in your trial",
+      "activeBadge": "Active",
+      "cancelledBadge": "Cancelled",
+      "billingMonthly": "Billed monthly",
+      "billingQuarterly": "Billed every 3 months",
+      "billingYearly": "Billed yearly",
+      "manage": "Manage billing",
+      "cancel": "Cancel subscription",
+      "reactivate": "Reactivate subscription",
+      "upgrade": "Upgrade plan",
+      "cancelledTitle": "Your subscription is cancelled",
+      "cancelledBody": "You'll keep premium access until {{date}}. Reactivate any time before then to continue without interruption."
+    },
+    "cancelDialog": {
+      "title": "Cancel your subscription?",
+      "body": "You'll keep premium access until the end of your current billing period ({{date}}). After that, you'll move to the free plan. You can resubscribe any time.",
+      "keep": "Keep my plan",
+      "continue": "Continue to cancel"
+    },
+    "refund": {
+      "title": "14-Day Money-Back Guarantee",
+      "subtitle": "Try SleepyBabyy Premium risk-free. If you're not completely satisfied, request a full refund within 14 days — no questions asked.",
+      "noQuestions": "No questions asked",
+      "fullRefund": "Full refund",
+      "cancelAnytime": "Cancel anytime",
+      "howTitle": "How to request a refund",
+      "howStep1": "Open Manage billing and request a refund directly, or",
+      "howStep2": "Email us at support@sleepybabyy.com within 14 days of your charge.",
+      "requestButton": "Request a refund",
+      "emailSubject": "Refund request",
+      "emailBody": "Hi SleepyBabyy team,%0D%0A%0D%0AI'd like to request a refund for my subscription.%0D%0A%0D%0AAccount email: %0D%0AReason (optional): %0D%0A%0D%0AThanks!"
+    },
+    "plans": {
+      "currentPlanBadge": "Your current plan",
+      "ctaUpgrade": "Upgrade to this plan",
+      "ctaDowngrade": "Switch to this plan",
+      "downgradeNote": "Takes effect at the end of your current billing period."
     }
   }
+}
 }

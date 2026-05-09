@@ -1,46 +1,26 @@
-
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Moon, 
-  User,
-  LogOut,
-  Crown,
-  Settings,
-  ArrowLeft,
-  Check,
-  Star,
-  Shield,
-  Zap,
-  Users,
-  Calendar,
-  BarChart3
-} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Moon, ArrowLeft, Check, Shield, Mail, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubscription } from '@/hooks/useSubscription';
-import { LanguageSelector } from '@/components/LanguageSelector';
 import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
+import { CurrentSubscriptionCard } from '@/components/subscription/CurrentSubscriptionCard';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { fbqTrack } from '@/utils/metaPixel';
 import { buildMetaUserData } from '@/utils/metaUserData';
 
 const Subscription = () => {
-  const { user, loading, signOut } = useAuth();
-  const { subscriptionTier, isPremium, openCustomerPortal } = useSubscription();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
+    if (!loading && !user) navigate('/auth');
   }, [user, loading, navigate]);
 
-  // Meta Pixel: viewing subscription/upgrade page
   useEffect(() => {
     fbqTrack('ViewContent', {
       content_type: 'product_group',
@@ -50,250 +30,141 @@ const Subscription = () => {
     }, buildMetaUserData(user));
   }, [user]);
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
-  const handleManageSubscription = () => {
-    openCustomerPortal();
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">
-          <Moon className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600 text-sm sm:text-base">{t('common.loading')}</p>
+          <Moon className="h-10 w-10 text-primary mx-auto mb-4 animate-spin" />
+          <p className="text-muted-foreground text-sm">{t('common.loading')}</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
-  const features = [
-    {
-      icon: Shield,
-      title: "Secure & Private",
-      description: "Your baby's data is encrypted and secure with bank-level security."
-    },
-    {
-      icon: Zap,
-      title: "Real-time Sync",
-      description: "Data syncs instantly across all your devices and family members."
-    },
-    {
-      icon: Users,
-      title: "Family Collaboration",
-      description: "Share tracking with partners, grandparents, and caregivers seamlessly."
-    },
-    {
-      icon: BarChart3,
-      title: "Advanced Analytics",
-      description: "Get detailed insights and patterns to optimize your baby's routine."
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah M.",
-      role: "Mom of 2",
-      content: "The premium features helped us understand our baby's sleep patterns so much better!",
-      rating: 5
-    },
-    {
-      name: "David & Lisa",
-      role: "New Parents",
-      content: "Family sharing is a game-changer. Both grandparents can help track feeding times.",
-      rating: 5
-    }
-  ];
+  const refundMailto = `mailto:support@sleepybabyy.com?subject=${encodeURIComponent(t('subscription.refund.emailSubject'))}&body=${t('subscription.refund.emailBody')}`;
 
   const faqs = [
-    {
-      question: "Can I cancel anytime?",
-      answer: "Yes! You can cancel your subscription at any time through the customer portal. No questions asked."
-    },
-    {
-      question: "What happens to my data if I downgrade?",
-      answer: "Your data is always safe. You'll keep access to basic features and recent activity history."
-    },
-    {
-      question: "Do you offer refunds?",
-      answer: "We offer a 7-day free trial and a 15-day money-back guarantee for your peace of mind."
-    },
-    {
-      question: "How many family members can I add?",
-      answer: "Premium plans include unlimited family member access with full collaboration features."
-    }
+    { question: 'Can I cancel anytime?', answer: 'Yes. Cancel from the "Manage billing" button above. You keep premium access until the end of your billing period.' },
+    { question: 'What happens when I downgrade?', answer: 'Your data stays safe. Downgrades take effect at the end of your current billing period.' },
+    { question: 'Do you offer refunds?', answer: 'Yes — full refund within 14 days, no questions asked. Use the Request a refund button below.' },
+    { question: 'How many family members can I add?', answer: 'Premium plans include unlimited family member access with full collaboration features.' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Headers */}
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
       <DesktopHeader />
       <MobileHeader />
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
-        {/* Page Header */}
-        <div className="mb-6 lg:mb-8">
-          <Button 
-            variant="ghost" 
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
+        {/* Page header */}
+        <div className="mb-6">
+          <Button
+            variant="ghost"
             onClick={() => navigate('/dashboard')}
-            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
+            className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
+            size="sm"
           >
-            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>Back to Dashboard</span>
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            {t('subscription.backToDashboard')}
           </Button>
-          
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-                Choose Your Plan
-              </h1>
-              <p className="text-gray-600 text-sm sm:text-base lg:text-xl max-w-3xl">
-                Get the most out of your baby tracking experience with features designed for modern families.
-              </p>
-            </div>
-            
-            {/* Subscription Status & Language - Mobile */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-              {/* Subscription Status */}
-              <div className="flex items-center space-x-2">
-                {isPremium ? (
-                  <div className="flex items-center space-x-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
-                    <Crown className="h-4 w-4" />
-                    <span>Premium</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                    <User className="h-4 w-4" />
-                    <span>Basic</span>
-                  </div>
-                )}
-                {isPremium && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleManageSubscription}
-                    className="flex items-center space-x-1"
-                  >
-                    <Settings className="h-4 w-4" />
-                    <span>Manage</span>
-                  </Button>
-                )}
-              </div>
 
-              {/* Mobile Language Selector */}
-              <div className="sm:hidden">
-                <LanguageSelector />
-              </div>
-            </div>
-          </div>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
+            {t('subscription.pageTitle')}
+          </h1>
+          <p className="mt-2 text-muted-foreground text-sm sm:text-base max-w-2xl">
+            {t('subscription.pageSubtitle')}
+          </p>
         </div>
 
-        {/* Subscription Plans */}
-        <div className="mb-12 lg:mb-16">
+        {/* Current subscription status */}
+        <div className="mb-10">
+          <CurrentSubscriptionCard />
+        </div>
+
+        {/* Plans */}
+        <section id="plans-section" className="mb-12 scroll-mt-20">
           <SubscriptionPlans />
-        </div>
+        </section>
 
-        {/* Features Section */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8 lg:mb-12">
-            Why Families Love SleepyBaby Premium
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              return (
-                <Card key={index} className="text-center border-0 shadow-lg">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="bg-blue-100 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                      <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{feature.title}</h3>
-                    <p className="text-xs sm:text-sm text-gray-600">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
+        {/* Refund / Money-Back */}
+        <section className="mb-12">
+          <Card className="border-border bg-card overflow-hidden">
+            <div className="absolute" />
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                <div className="flex-shrink-0 rounded-xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 p-3">
+                  <Shield className="h-7 w-7" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+                    {t('subscription.refund.title')}
+                  </h2>
+                  <p className="mt-2 text-sm sm:text-base text-muted-foreground">
+                    {t('subscription.refund.subtitle')}
+                  </p>
 
-        {/* Testimonials */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8 lg:mb-12">
-            What Parents Say
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex space-x-1 mb-3 sm:mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm text-muted-foreground">
+                    {[
+                      t('subscription.refund.noQuestions'),
+                      t('subscription.refund.fullRefund'),
+                      t('subscription.refund.cancelAnytime'),
+                    ].map((item) => (
+                      <div key={item} className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                        <span>{item}</span>
+                      </div>
                     ))}
                   </div>
-                  <p className="text-gray-600 mb-3 sm:mb-4 italic text-sm sm:text-base">"{testimonial.content}"</p>
-                  <div>
-                    <div className="font-semibold text-gray-900 text-sm sm:text-base">{testimonial.name}</div>
-                    <div className="text-xs sm:text-sm text-gray-500">{testimonial.role}</div>
+
+                  <div className="mt-5 rounded-lg bg-muted/50 p-4 text-sm">
+                    <p className="font-semibold text-foreground mb-2">
+                      {t('subscription.refund.howTitle')}
+                    </p>
+                    <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                      <li>{t('subscription.refund.howStep1')}</li>
+                      <li>{t('subscription.refund.howStep2')}</li>
+                    </ol>
                   </div>
+
+                  <div className="mt-5">
+                    <Button asChild variant="outline">
+                      <a href={refundMailto}>
+                        <Mail className="h-4 w-4 mr-2" />
+                        {t('subscription.refund.requestButton')}
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* FAQ */}
+        <section className="mb-8">
+          <div className="flex items-center gap-2 mb-5">
+            <HelpCircle className="h-5 w-5 text-primary" />
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              Frequently asked questions
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {faqs.map((faq, i) => (
+              <Card key={i} className="border-border bg-card">
+                <CardContent className="p-5">
+                  <h3 className="font-semibold text-foreground mb-1.5 text-sm sm:text-base">
+                    {faq.question}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {faq.answer}
+                  </p>
                 </CardContent>
               </Card>
             ))}
           </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-8 lg:mb-12">
-            Frequently Asked Questions
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-            {faqs.map((faq, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg">{faq.question}</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-gray-600 text-sm sm:text-base">{faq.answer}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Money Back Guarantee */}
-        <div className="text-center bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl p-6 sm:p-8">
-          <div className="flex justify-center mb-3 sm:mb-4">
-            <div className="bg-green-100 rounded-full p-2 sm:p-3">
-              <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
-            </div>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">15-Day Money-Back Guarantee</h3>
-          <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">
-            Try SleepyBabyy Premium risk-free. If you're not completely satisfied, we'll refund your money within 15 days.
-          </p>
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 text-sm text-gray-600">
-            <div className="flex items-center justify-center space-x-1">
-              <Check className="h-4 w-4 text-green-500" />
-              <span>No questions asked</span>
-            </div>
-            <div className="flex items-center justify-center space-x-1">
-              <Check className="h-4 w-4 text-green-500" />
-              <span>Full refund</span>
-            </div>
-            <div className="flex items-center justify-center space-x-1">
-              <Check className="h-4 w-4 text-green-500" />
-              <span>Cancel anytime</span>
-            </div>
-          </div>
-        </div>
+        </section>
       </main>
     </div>
   );

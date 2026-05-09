@@ -53,12 +53,35 @@ serve(async (req) => {
 
     // Get the origin for the return URL
     const origin = req.headers.get("origin") || "http://localhost:3000";
-    
-    // Create the portal session following Stripe's best practices
-    const portalSession = await stripe.billingPortal.sessions.create({
+
+    // Optional flow (e.g. cancel) from request body
+    let flow: string | null = null;
+    try {
+      if (req.method === "POST") {
+        const body = await req.json().catch(() => ({}));
+        if (body && typeof body.flow === "string") flow = body.flow;
+      }
+    } catch (_) { /* ignore */ }
+
+    const sessionParams: any = {
       customer: customerId,
-      return_url: `${origin}/dashboard`,
-    });
+      return_url: `${origin}/subscription`,
+    };
+
+    if (flow === "cancel") {
+      // Find an active sub to cancel
+      const subs = await stripe.subscriptions.list({ customer: customerId, status: "all", limit: 5 });
+      const activeSub = subs.data.find((s: any) => ["active", "trialing", "past_due"].includes(s.status));
+      if (activeSub) {
+        sessionParams.flow_data = {
+          type: "subscription_cancel",
+          subscription_cancel: { subscription: activeSub.id },
+          after_completion: { type: "redirect", redirect: { return_url: `${origin}/subscription` } },
+        };
+      }
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create(sessionParams);
 
     logStep("Customer portal session created", { 
       sessionId: portalSession.id, 

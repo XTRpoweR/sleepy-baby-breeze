@@ -17,7 +17,7 @@ interface SubscriptionContextType {
   upgradingAnnual: boolean;
   checkSubscription: () => Promise<void>;
   createCheckout: (pricingPlan?: 'monthly' | 'quarterly' | 'annual') => Promise<void>;
-  openCustomerPortal: () => Promise<void>;
+  openCustomerPortal: (flow?: 'cancel') => Promise<void>;
   isPremium: boolean;
   isPremiumQuarterly: boolean;
   isPremiumAnnual: boolean;
@@ -25,6 +25,8 @@ interface SubscriptionContextType {
   isTrial: boolean;
   trialEnd: string | null;
   trialDaysLeft: number | null;
+  cancelAtPeriodEnd: boolean;
+  billingCycle: string | null;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -50,6 +52,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   const [upgradingAnnual, setUpgradingAnnual] = useState(false);
   const [isTrial, setIsTrial] = useState(false);
   const [trialEnd, setTrialEnd] = useState<string | null>(null);
+  const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState(false);
+  const [billingCycle, setBillingCycle] = useState<string | null>(null);
 
   // Initialize subscription record for new users
   useEffect(() => {
@@ -169,6 +173,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       setCurrentPeriodEnd(data.current_period_end);
       setIsTrial(data.is_trial || false);
       setTrialEnd(data.trial_end);
+      setCancelAtPeriodEnd(!!data.cancel_at_period_end);
+      setBillingCycle(data.billing_cycle || null);
     } catch (error) {
       console.error('Error checking subscription:', error);
       // Fallback to basic subscription
@@ -296,11 +302,11 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const openCustomerPortal = async () => {
+  const openCustomerPortal = async (flow?: 'cancel') => {
     if (!user) return;
 
     try {
-      console.log('Opening customer portal...');
+      console.log('Opening customer portal...', { flow });
 
       const accessToken = await ensureValidSession();
       if (!accessToken) {
@@ -316,6 +322,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        body: flow ? { flow } : {},
       });
 
       if (error) {
@@ -431,6 +438,8 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
       isTrial,
       trialEnd,
       trialDaysLeft,
+      cancelAtPeriodEnd,
+      billingCycle,
     }}>
       {children}
     </SubscriptionContext.Provider>
