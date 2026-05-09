@@ -168,7 +168,7 @@ export const SubscriptionPlans = () => {
           features={premiumFeatures}
           loading={upgradingMonthly}
           onClick={() => handleUpgrade('monthly')}
-          ctaLabel={user ? t('pricing.cta.startFreeTrial') : t('pricing.cta.startFreeTrial')}
+          ctaLabel={getCtaLabel('monthly')}
           isUSD={isUSD}
           currencyLoading={currencyLoading}
           delay="100ms"
@@ -192,7 +192,7 @@ export const SubscriptionPlans = () => {
           features={premiumFeatures}
           loading={upgradingQuarterly}
           onClick={() => handleUpgrade('quarterly')}
-          ctaLabel={t('pricing.cta.startFreeTrial')}
+          ctaLabel={getCtaLabel('quarterly')}
           isUSD={isUSD}
           currencyLoading={currencyLoading}
           delay="200ms"
@@ -216,7 +216,7 @@ export const SubscriptionPlans = () => {
           features={premiumFeatures}
           loading={upgradingAnnual}
           onClick={() => handleUpgrade('annual')}
-          ctaLabel={t('pricing.cta.startFreeTrial')}
+          ctaLabel={getCtaLabel('annual')}
           isUSD={isUSD}
           currencyLoading={currencyLoading}
           delay="300ms"
