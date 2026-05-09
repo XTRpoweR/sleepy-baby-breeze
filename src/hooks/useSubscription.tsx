@@ -17,7 +17,7 @@ interface SubscriptionContextType {
   upgradingAnnual: boolean;
   checkSubscription: () => Promise<void>;
   createCheckout: (pricingPlan?: 'monthly' | 'quarterly' | 'annual') => Promise<void>;
-  openCustomerPortal: () => Promise<void>;
+  openCustomerPortal: (flow?: 'cancel') => Promise<void>;
   isPremium: boolean;
   isPremiumQuarterly: boolean;
   isPremiumAnnual: boolean;
@@ -302,11 +302,11 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const openCustomerPortal = async () => {
+  const openCustomerPortal = async (flow?: 'cancel') => {
     if (!user) return;
 
     try {
-      console.log('Opening customer portal...');
+      console.log('Opening customer portal...', { flow });
 
       const accessToken = await ensureValidSession();
       if (!accessToken) {
@@ -322,6 +322,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
+        body: flow ? { flow } : {},
       });
 
       if (error) {
