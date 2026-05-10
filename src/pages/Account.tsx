@@ -28,6 +28,7 @@ import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader,
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CurrentSubscriptionCard } from '@/components/subscription/CurrentSubscriptionCard';
 import { Info } from 'lucide-react';
 
 const Account = () => {
@@ -364,124 +365,28 @@ const Account = () => {
               <Alert className="border-blue-200 bg-blue-50">
                 <Info className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-800">
-                  You are currently a viewer in a family sharing setup. Subscription management is only available to account owners. 
+                  You are currently a viewer in a family sharing setup. Subscription management is only available to account owners.
                   Contact the baby's owner if you need changes to the subscription.
                 </AlertDescription>
               </Alert>
             )}
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Crown className="h-5 w-5 text-orange-600" />
-                  <span>Current Subscription</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <div className="flex items-center space-x-2 mb-1">
-                      {isPremium ? (
-                        <>
-                          <Crown className="h-4 w-4 text-orange-600" />
-                          <span className="font-medium text-orange-800">Premium Plan</span>
-                        </>
-                      ) : (
-                        <>
-                          <User className="h-4 w-4 text-gray-600" />
-                          <span className="font-medium text-gray-700">Basic Plan</span>
-                        </>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Status: <span className="capitalize">{status}</span>
-                    </p>
-                    {currentPeriodEnd && (
-                      <p className="text-sm text-gray-600">
-                        {isPremium ? 'Renews' : 'Expires'} on: {formatDate(currentPeriodEnd)}
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-gray-900">
-                      {isPremium ? 'Premium' : 'Free'}
-                    </div>
-                  </div>
-                </div>
 
-                {!isViewerOnly && (
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    {!isPremium && (
-                      <Button 
-                        onClick={handleUpgrade}
-                        disabled={upgrading}
-                        className="bg-orange-600 hover:bg-orange-700 flex items-center space-x-2"
-                      >
-                        <Crown className="h-4 w-4" />
-                        <span>{upgrading ? 'Processing...' : 'Upgrade to Premium'}</span>
-                      </Button>
-                    )}
-                    
-                    {isPremium && (
-                      <Button 
-                        variant="outline"
-                        onClick={handleManageSubscription}
-                        className="flex items-center space-x-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
-                      >
-                        <AlertTriangle className="h-4 w-4" />
-                        <span>Cancel Subscription</span>
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <CurrentSubscriptionCard />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Plan Features</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Basic Plan (Free)</h4>
-                    <ul className="space-y-2 text-sm">
-                      <li className="flex items-center space-x-2">
-                        <Check className="h-3 w-3 text-green-500" />
-                        <span>1 baby profile</span>
-                      </li>
-                      <li className="flex items-center space-x-2">
-                        <Check className="h-3 w-3 text-green-500" />
-                        <span>Basic activity tracking</span>
-                      </li>
-                      <li className="flex items-center space-x-2">
-                        <Check className="h-3 w-3 text-green-500" />
-                        <span>Simple reports</span>
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-orange-600 mb-3">Premium Plan (from $7.99/mo)</h4>
-                    <ul className="space-y-2 text-sm">
-                      <li className="flex items-center space-x-2">
-                        <Check className="h-3 w-3 text-green-500" />
-                        <span>Unlimited baby profiles</span>
-                      </li>
-                      <li className="flex items-center space-x-2">
-                        <Check className="h-3 w-3 text-green-500" />
-                        <span>Advanced analytics</span>
-                      </li>
-                      <li className="flex items-center space-x-2">
-                        <Check className="h-3 w-3 text-green-500" />
-                        <span>Family sharing</span>
-                      </li>
-                      <li className="flex items-center space-x-2">
-                        <Check className="h-3 w-3 text-green-500" />
-                        <span>Data export</span>
-                      </li>
-                    </ul>
-                  </div>
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+              <CardContent className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
+                    <Crown className="h-5 w-5 text-primary" />
+                    Manage plans, upgrades & refunds
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Compare plans, upgrade or downgrade, and request a refund (within 14 days) on the full subscription page.
+                  </p>
                 </div>
+                <Button onClick={() => navigate('/subscription')} className="shrink-0">
+                  Open subscription page
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
