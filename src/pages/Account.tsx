@@ -28,6 +28,7 @@ import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader,
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CurrentSubscriptionCard } from '@/components/subscription/CurrentSubscriptionCard';
 import { Info } from 'lucide-react';
 
 const Account = () => {
