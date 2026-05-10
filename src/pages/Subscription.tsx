@@ -11,11 +11,19 @@ import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { fbqTrack } from '@/utils/metaPixel';
 import { buildMetaUserData } from '@/utils/metaUserData';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const Subscription = () => {
   const { user, loading } = useAuth();
+  const { checkSubscription } = useSubscription();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  // Always refresh subscription state when landing on this page (e.g., returning from Stripe)
+  useEffect(() => {
+    if (user) checkSubscription();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   useEffect(() => {
     if (!loading && !user) navigate('/auth');
