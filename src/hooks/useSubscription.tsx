@@ -395,6 +395,44 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
+  // Auto-refresh subscription when user returns to the tab (e.g., from Stripe portal)
+  useEffect(() => {
+    if (!user) return;
+    const onFocus = () => { checkSubscription(); };
+    const onVisibility = () => { if (document.visibilityState === 'visible') checkSubscription(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [user]);
+
+  // Toast when cancellation is detected
+  const [prevCancelFlag, setPrevCancelFlag] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (loading) return;
+    if (prevCancelFlag === null) {
+      setPrevCancelFlag(cancelAtPeriodEnd);
+      return;
+    }
+    if (!prevCancelFlag && cancelAtPeriodEnd) {
+      toast({
+        title: 'Subscription canceled',
+        description: currentPeriodEnd
+          ? `Your subscription will remain active until ${new Date(currentPeriodEnd).toLocaleDateString()}. A confirmation has been sent to your email.`
+          : 'A confirmation has been sent to your email.',
+      });
+    }
+    if (prevCancelFlag && !cancelAtPeriodEnd) {
+      toast({
+        title: 'Subscription reactivated',
+        description: 'Welcome back! Your subscription is active again.',
+      });
+    }
+    setPrevCancelFlag(cancelAtPeriodEnd);
+  }, [cancelAtPeriodEnd, loading]);
+
   // Check subscription on auth state change
   useEffect(() => {
     if (!authLoading && user) {
