@@ -210,6 +210,36 @@ const StartFree: React.FC = () => {
   const [billing, setBilling] = useState<"yearly" | "monthly">("yearly");
 
   useEffect(() => {
+    document.title = "Start Your Free 7-Day Trial | SleepyBabyy";
+    const setMeta = (attr: "name" | "property", key: string, content: string) => {
+      let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.setAttribute("content", content);
+    };
+    setMeta("name", "description", "Track your baby's sleep, decode wake windows, and get the rest you both deserve. Start your free 7-day trial — no credit card required.");
+    setMeta("property", "og:title", "Better nights start with us — SleepyBabyy");
+    setMeta("property", "og:description", "Free 7-day trial. Track sleep, understand wake windows, finally rest.");
+    setMeta("property", "og:type", "website");
+    setMeta("property", "og:url", "https://sleepybabyy.com/start-free");
+    setMeta("name", "twitter:card", "summary_large_image");
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
+    canonical.href = "https://sleepybabyy.com/start-free";
+
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: "SleepyBabyy",
+      description: "Baby sleep tracking app with smart insights, wake window guidance, and family sharing.",
+      brand: { "@type": "Brand", name: "SleepyBabyy" },
+      offers: { "@type": "AggregateOffer", priceCurrency: "USD", lowPrice: "0", highPrice: "7.99", offerCount: "4" },
+      aggregateRating: { "@type": "AggregateRating", ratingValue: "4.9", reviewCount: "1000" },
+    };
+    const ldId = "start-free-ld-json";
+    let ld = document.getElementById(ldId) as HTMLScriptElement | null;
+    if (!ld) { ld = document.createElement("script"); ld.id = ldId; ld.type = "application/ld+json"; document.head.appendChild(ld); }
+    ld.textContent = JSON.stringify(schema);
+
     try {
       fbqTrack("ViewContent", { content_name: "start-free-landing", content_category: "landing-page" });
       if (typeof window !== "undefined" && (window as any).gtag) {
