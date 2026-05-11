@@ -68,6 +68,11 @@ export const UnifiedHeader = () => {
     setIsOpen(false);
   };
 
+  const handleSubscription = () => {
+    navigate('/subscription');
+    setIsOpen(false);
+  };
+
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100">
       <div className="flex justify-between items-center h-16 px-4 lg:px-8 max-w-7xl mx-auto">
