@@ -295,21 +295,6 @@ const StartFree: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white text-[#1A1A2E]" style={{ scrollBehavior: "smooth" }}>
-      <Helmet>
-        <title>Start Your Free 7-Day Trial | SleepyBabyy</title>
-        <meta
-          name="description"
-          content="Track your baby's sleep, decode wake windows, and get the rest you both deserve. Start your free 7-day trial — no credit card required."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://sleepybabyy.com/start-free" />
-        <meta property="og:title" content="Better nights start with us — SleepyBabyy" />
-        <meta property="og:description" content="Free 7-day trial. Track sleep, understand wake windows, finally rest." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://sleepybabyy.com/start-free" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <script type="application/ld+json">{JSON.stringify(schema)}</script>
-      </Helmet>
 
       {/* HERO */}
       <section
