@@ -103,6 +103,7 @@ const App: React.FC = () => {
                   <Suspense fallback={<RouteFallback />}>
                     <Routes>
                       <Route path="/" element={<Index />} />
+                      <Route path="/start-free" element={<StartFree />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/reset-password" element={<EnhancedPasswordReset />} />
                       <Route path="/security" element={<AccountSecurity />} />
