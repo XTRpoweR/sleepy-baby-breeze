@@ -68,6 +68,11 @@ export const UnifiedHeader = () => {
     setIsOpen(false);
   };
 
+  const handleSubscription = () => {
+    navigate('/subscription');
+    setIsOpen(false);
+  };
+
   return (
     <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100">
       <div className="flex justify-between items-center h-16 px-4 lg:px-8 max-w-7xl mx-auto">
@@ -127,6 +132,19 @@ export const UnifiedHeader = () => {
                     <div className="flex-1 text-left">
                       <div className="text-sm font-medium text-foreground">{t('menu.accountSettings')}</div>
                       <div className="text-xs text-muted-foreground">{t('menu.accountSettingsDesc')}</div>
+                    </div>
+                  </button>
+
+                  <button 
+                    onClick={handleSubscription}
+                    className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
+                  >
+                    <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
+                      <Crown className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <div className="text-sm font-medium text-foreground">{t('menu.subscription', 'Subscription')}</div>
+                      <div className="text-xs text-muted-foreground">{t('menu.subscriptionDesc', 'Manage your plan & billing')}</div>
                     </div>
                   </button>
 
