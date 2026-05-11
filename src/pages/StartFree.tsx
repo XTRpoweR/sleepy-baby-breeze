@@ -303,25 +303,7 @@ const StartFree: React.FC = () => {
 
   const plans = billing === "yearly" ? yearlyPlans : monthlyPlans;
 
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: "SleepyBabyy",
-    description: "Baby sleep tracking app with smart insights, wake window guidance, and family sharing.",
-    brand: { "@type": "Brand", name: "SleepyBabyy" },
-    offers: {
-      "@type": "AggregateOffer",
-      priceCurrency: "USD",
-      lowPrice: "0",
-      highPrice: "7.99",
-      offerCount: "4",
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "1000",
-    },
-  };
+
 
   return (
     <div className="min-h-screen bg-white text-[#1A1A2E]" style={{ scrollBehavior: "smooth" }}>
