@@ -55,6 +55,7 @@ const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
+const StartFree = lazy(() => import("./pages/StartFree"));
 import { OnboardingGate } from "./components/onboarding/OnboardingGate";
 
 // Create queryClient outside of component to avoid recreation on each render
@@ -102,6 +103,7 @@ const App: React.FC = () => {
                   <Suspense fallback={<RouteFallback />}>
                     <Routes>
                       <Route path="/" element={<Index />} />
+                      <Route path="/start-free" element={<StartFree />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/reset-password" element={<EnhancedPasswordReset />} />
                       <Route path="/security" element={<AccountSecurity />} />
