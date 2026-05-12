@@ -10,6 +10,13 @@ import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState, useEffect, useRef, useCallback } from "react";
 import CountUp from "@/components/CountUp";
 import { useCookieConsent } from "@/hooks/useCookieConsent";
+import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+import { Marquee } from "@/components/landing/Marquee";
+import { PainPoints } from "@/components/landing/PainPoints";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { MoneyBackGuarantee } from "@/components/landing/MoneyBackGuarantee";
+import { FAQ } from "@/components/landing/FAQ";
+import { StickyMobileCTA } from "@/components/landing/StickyMobileCTA";
 
 // Import feature images
 import trackEverythingImg from "@/assets/features/track-everything.png";
