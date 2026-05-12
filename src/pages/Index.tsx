@@ -912,7 +912,8 @@ const Index = () => {
             <p className="text-xs sm:text-sm">{t('footer.copyright')}</p>
           </div>
         </div>
-      </footer>
-    </div>;
+     </footer>
+     <StickyMobileCTA />
+   </div>;
 };
 export default Index;
