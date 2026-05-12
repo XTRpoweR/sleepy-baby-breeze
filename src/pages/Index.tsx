@@ -491,6 +491,10 @@ const Index = () => {
         </div>
       </section>
 
+      <Marquee />
+      <PainPoints />
+      <HowItWorks />
+
       {/* Features Section — Bento grid with premium animations */}
       <section id="features" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white via-purple-50/30 to-white overflow-hidden">
         <div className="aurora-blob aurora-1 w-[500px] h-[500px] -top-32 -left-20 opacity-40" aria-hidden="true" />
