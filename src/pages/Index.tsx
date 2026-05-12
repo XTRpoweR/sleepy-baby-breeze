@@ -10,6 +10,13 @@ import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState, useEffect, useRef, useCallback } from "react";
 import CountUp from "@/components/CountUp";
 import { useCookieConsent } from "@/hooks/useCookieConsent";
+import { AnnouncementBar } from "@/components/landing/AnnouncementBar";
+import { Marquee } from "@/components/landing/Marquee";
+import { PainPoints } from "@/components/landing/PainPoints";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { MoneyBackGuarantee } from "@/components/landing/MoneyBackGuarantee";
+import { FAQ } from "@/components/landing/FAQ";
+import { StickyMobileCTA } from "@/components/landing/StickyMobileCTA";
 
 // Import feature images
 import trackEverythingImg from "@/assets/features/track-everything.png";
@@ -200,7 +207,7 @@ const Index = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/auth?mode=signup');
     }
   };
   const handleScrollToPricing = () => {
@@ -289,6 +296,7 @@ const Index = () => {
     rating: 5
   }], []);
   return <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
+      <AnnouncementBar />
       {/* Navigation — Glass Aurora Header */}
       <nav className="glass-header sticky top-0 z-50 animate-fade-in safe-area-top">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
@@ -482,6 +490,10 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <Marquee />
+      <PainPoints />
+      <HowItWorks />
 
       {/* Features Section — Bento grid with premium animations */}
       <section id="features" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white via-purple-50/30 to-white overflow-hidden">
@@ -787,6 +799,8 @@ const Index = () => {
         </div>
       </section>
 
+      <MoneyBackGuarantee />
+
       {/* Testimonials Section — Marquee scrolling */}
       <section id="testimonials" className="relative py-16 sm:py-20 md:py-28 px-3 sm:px-4 md:px-6 lg:px-8 bg-gradient-to-b from-white via-purple-50/30 to-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
@@ -816,6 +830,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <FAQ />
 
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 gradient-dynamic">
@@ -896,7 +912,8 @@ const Index = () => {
             <p className="text-xs sm:text-sm">{t('footer.copyright')}</p>
           </div>
         </div>
-      </footer>
-    </div>;
+     </footer>
+     <StickyMobileCTA />
+   </div>;
 };
 export default Index;
