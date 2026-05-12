@@ -207,7 +207,7 @@ const Index = () => {
     if (user) {
       navigate('/dashboard');
     } else {
-      navigate('/auth');
+      navigate('/auth?mode=signup');
     }
   };
   const handleScrollToPricing = () => {
