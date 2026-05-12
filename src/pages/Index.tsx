@@ -296,6 +296,7 @@ const Index = () => {
     rating: 5
   }], []);
   return <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
+      <AnnouncementBar />
       {/* Navigation — Glass Aurora Header */}
       <nav className="glass-header sticky top-0 z-50 animate-fade-in safe-area-top">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
