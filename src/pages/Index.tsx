@@ -831,6 +831,8 @@ const Index = () => {
         </div>
       </section>
 
+      <FAQ />
+
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 px-3 sm:px-4 md:px-6 lg:px-8 gradient-dynamic">
         <div className="max-w-4xl mx-auto text-center animate-fade-in-up">
