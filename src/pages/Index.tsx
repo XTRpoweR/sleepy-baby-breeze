@@ -449,9 +449,9 @@ const Index = () => {
                 {t('hero.startTracking')}
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-1 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full border-2 border-primary/30 hover:bg-primary/5 hover:border-primary transition-all duration-300 hover:scale-105 font-semibold text-primary touch-target w-full sm:w-auto bg-white/70 backdrop-blur-sm" onClick={handleScrollToFeatures}>
-                <Play className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                {t('hero.exploreFeatures')}
+              <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full border-2 border-primary/30 hover:bg-primary/5 hover:border-primary transition-all duration-300 hover:scale-105 font-semibold text-primary touch-target w-full sm:w-auto bg-white/70 backdrop-blur-sm group" onClick={handleGetStarted}>
+                Start Your 7-Day Free Trial
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-600">
@@ -913,7 +913,7 @@ const Index = () => {
           </div>
         </div>
      </footer>
-     <StickyMobileCTA />
+     
    </div>;
 };
 export default Index;
