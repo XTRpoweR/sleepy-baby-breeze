@@ -449,9 +449,11 @@ const Index = () => {
                 {t('hero.startTracking')}
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-1 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full border-2 border-primary/30 hover:bg-primary/5 hover:border-primary transition-all duration-300 hover:scale-105 font-semibold text-primary touch-target w-full sm:w-auto bg-white/70 backdrop-blur-sm group" onClick={handleGetStarted}>
-                Start Your 7-Day Free Trial
-                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <Button size="lg" className="relative overflow-hidden text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full font-bold text-white border-0 shadow-xl shadow-fuchsia-500/40 hover:shadow-2xl hover:shadow-fuchsia-500/60 hover:scale-105 transition-all duration-300 touch-target w-full sm:w-auto group gradient-dynamic btn-glow" onClick={handleGetStarted}>
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform relative" />
+                <span className="relative">Start Your 7-Day Free Trial</span>
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2 group-hover:translate-x-1 transition-transform relative" />
               </Button>
             </div>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-600">
