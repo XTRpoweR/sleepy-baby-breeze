@@ -443,16 +443,11 @@ const Index = () => {
             <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-8">
               {t('hero.subtitleExtra')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-6">
-              <Button size="lg" className="gradient-dynamic btn-glow text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl font-bold text-white border-0 touch-target w-full sm:w-auto group" onClick={handleGetStarted}>
-                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform" />
-                {t('hero.startTracking')}
-                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-1 group-hover:translate-x-1 transition-transform" />
-              </Button>
+            <div className="flex justify-center items-center mb-6">
               <Button size="lg" className="relative overflow-hidden text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full font-bold text-white border-0 shadow-xl shadow-fuchsia-500/40 hover:shadow-2xl hover:shadow-fuchsia-500/60 hover:scale-105 transition-all duration-300 touch-target w-full sm:w-auto group gradient-dynamic btn-glow" onClick={handleGetStarted}>
                 <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform relative" />
-                <span className="relative">Start Your 7-Day Free Trial</span>
+                <span className="relative">Start Free Today</span>
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2 group-hover:translate-x-1 transition-transform relative" />
               </Button>
             </div>
