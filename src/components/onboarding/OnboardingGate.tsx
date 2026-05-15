@@ -16,6 +16,7 @@ export const OnboardingGate = () => {
   // Routes where we never force the redirect (the onboarding page itself, auth, public marketing pages)
   const PUBLIC_PATHS = [
     '/',
+    '/lp',
     '/auth',
     '/onboarding',
     '/reset-password',
