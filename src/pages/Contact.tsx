@@ -8,10 +8,11 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { ArrowLeft, Mail, MessageCircle, Clock, Send, HelpCircle, Users, Briefcase, CheckCircle, User, LogOut } from "lucide-react";
+import { ArrowLeft, Mail, MessageCircle, Clock, Send, HelpCircle, Users, Briefcase, CheckCircle, User, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { fbqTrack } from '@/utils/metaPixel';
@@ -21,6 +22,7 @@ const Contact = () => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const { user, signOut } = useAuth();
+  const goBack = useSmartBack(user ? '/dashboard' : '/');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -117,7 +119,14 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50/40 to-indigo-50">
+      {/* Decorative blurred blobs */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-pink-300/20 blur-3xl" />
+        <div className="absolute top-1/3 -right-32 w-[28rem] h-[28rem] rounded-full bg-purple-300/20 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-indigo-300/20 blur-3xl" />
+      </div>
+
       {/* Conditional Navigation */}
       {user ? (
         <>
@@ -125,18 +134,18 @@ const Contact = () => {
           <MobileHeader />
         </>
       ) : (
-        <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
+        <nav className="bg-white/70 backdrop-blur-md border-b border-white/60 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-2 sm:space-x-4">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3">
+                <Button variant="ghost" size="sm" onClick={goBack} className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3">
                   <ArrowLeft className="h-4 w-4" />
                   <span className="hidden sm:inline">Back</span>
                 </Button>
                 <div className="flex items-center space-x-2">
-                  <img 
-                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                    alt="SleepyBabyy Logo" 
+                  <img
+                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
+                    alt="SleepyBabyy Logo"
                     className="h-8 w-8 sm:h-10 sm:w-10"
                   />
                   <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
@@ -161,15 +170,36 @@ const Contact = () => {
         </nav>
       )}
 
+      {/* Back button for logged-in users (matches Memories / Reports / FamilySharing) */}
+      {user && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={goBack}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
+          </Button>
+        </div>
+      )}
+
       {/* Hero Section */}
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-sm border border-pink-200/60 text-pink-700 text-xs sm:text-sm font-medium mb-5 shadow-sm">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>We reply within 24 hours</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
             Get in Touch
-            <span className="text-blue-600 block">We're Here to Help</span>
+            <span className="block mt-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+              We're Here to Help
+            </span>
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-2 sm:px-0">
-            Have questions about SleepyBabyy? Need support with your account? 
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-2 leading-relaxed px-2 sm:px-0 max-w-2xl mx-auto">
+            Have questions about SleepyBabyy? Need support with your account?
             Want to share feedback? We'd love to hear from you.
           </p>
         </div>
@@ -181,7 +211,8 @@ const Contact = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12">
             {/* Contact Form */}
             <div className="lg:col-span-2 order-2 lg:order-1">
-              <Card className="border-0 shadow-xl">
+              <Card className="border border-white/60 shadow-xl shadow-purple-500/5 bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden">
+                <div className="h-1.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
                 <CardHeader className="p-4 sm:p-6">
                   <CardTitle className="text-xl sm:text-2xl">
                     {isSubmitted ? (
@@ -280,10 +311,10 @@ const Contact = () => {
                         />
                       </div>
 
-                      <Button 
-                        type="submit" 
-                        size="lg" 
-                        className="w-full bg-blue-600 hover:bg-blue-700 touch-target"
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300 hover:scale-[1.02] touch-target"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
@@ -327,31 +358,37 @@ const Contact = () => {
             {/* Contact Information */}
             <div className="space-y-6 sm:space-y-8 order-1 lg:order-2">
               {/* Contact Methods */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader className="p-4 sm:p-6">
-                  <CardTitle className="text-lg sm:text-xl">Contact Information</CardTitle>
+              <Card className="border border-white/60 shadow-lg shadow-pink-500/5 bg-white/80 backdrop-blur-sm rounded-2xl">
+                <CardHeader className="p-4 sm:p-6 pb-3">
+                  <CardTitle className="text-lg sm:text-xl bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">Contact Information</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 pt-0 space-y-4 sm:space-y-6">
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-blue-600 flex-shrink-0" />
-                    <div>
-                      <div className="font-medium text-sm sm:text-base">Email</div>
+                <CardContent className="p-4 sm:p-6 pt-0 space-y-4">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-pink-50 to-pink-50/40 hover:from-pink-100/80 hover:to-pink-100/40 transition-colors">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-pink-400 to-pink-500 flex items-center justify-center shadow-sm shadow-pink-500/30 flex-shrink-0">
+                      <Mail className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm sm:text-base text-gray-900">Email</div>
                       <div className="text-xs sm:text-sm text-gray-600 break-all">support@sleepybabyy.com</div>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <MessageCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                    <div>
-                      <div className="font-medium text-sm sm:text-base">Live Chat</div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-50 to-purple-50/40 hover:from-purple-100/80 hover:to-purple-100/40 transition-colors">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-400 to-purple-500 flex items-center justify-center shadow-sm shadow-purple-500/30 flex-shrink-0">
+                      <MessageCircle className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm sm:text-base text-gray-900">Live Chat</div>
                       <div className="text-xs sm:text-sm text-gray-600">Available in the app</div>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-3">
-                    <Clock className="h-5 w-5 text-purple-600 flex-shrink-0" />
-                    <div>
-                      <div className="font-medium text-sm sm:text-base">Response Time</div>
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-indigo-50 to-indigo-50/40 hover:from-indigo-100/80 hover:to-indigo-100/40 transition-colors">
+                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-500 flex items-center justify-center shadow-sm shadow-indigo-500/30 flex-shrink-0">
+                      <Clock className="h-5 w-5 text-white" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="font-semibold text-sm sm:text-base text-gray-900">Response Time</div>
                       <div className="text-xs sm:text-sm text-gray-600">Within 24 hours</div>
                     </div>
                   </div>
@@ -359,35 +396,47 @@ const Contact = () => {
               </Card>
 
               {/* Quick Links */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader className="p-4 sm:p-6">
-                  <CardTitle className="text-lg sm:text-xl">Quick Help</CardTitle>
+              <Card className="border border-white/60 shadow-lg shadow-purple-500/5 bg-white/80 backdrop-blur-sm rounded-2xl">
+                <CardHeader className="p-4 sm:p-6 pb-3">
+                  <CardTitle className="text-lg sm:text-xl bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Quick Help</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 sm:p-6 pt-0 space-y-3 sm:space-y-4">
-                  <Button variant="outline" className="w-full justify-start touch-target text-sm" onClick={() => navigate('/help')}>
-                    <HelpCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+                <CardContent className="p-4 sm:p-6 pt-0 space-y-2.5">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start touch-target text-sm rounded-xl border-pink-200 hover:bg-pink-50 hover:border-pink-300 hover:text-pink-700 transition-all"
+                    onClick={() => navigate('/help')}
+                  >
+                    <HelpCircle className="h-4 w-4 mr-2 flex-shrink-0 text-pink-500" />
                     Help Center & FAQ
                   </Button>
-                  
-                  <Button variant="outline" className="w-full justify-start touch-target text-sm" onClick={() => navigate('/family')}>
-                    <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start touch-target text-sm rounded-xl border-purple-200 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700 transition-all"
+                    onClick={() => navigate('/family')}
+                  >
+                    <Users className="h-4 w-4 mr-2 flex-shrink-0 text-purple-500" />
                     Family Sharing Help
                   </Button>
-                  
-                  <Button variant="outline" className="w-full justify-start touch-target text-sm" onClick={() => navigate('/subscription')}>
-                    <Briefcase className="h-4 w-4 mr-2 flex-shrink-0" />
+
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start touch-target text-sm rounded-xl border-indigo-200 hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700 transition-all"
+                    onClick={() => navigate('/subscription')}
+                  >
+                    <Briefcase className="h-4 w-4 mr-2 flex-shrink-0 text-indigo-500" />
                     Subscription Support
                   </Button>
                 </CardContent>
               </Card>
 
               {/* Office Hours */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader className="p-4 sm:p-6">
-                  <CardTitle className="text-lg sm:text-xl">Support Hours</CardTitle>
+              <Card className="border border-white/60 shadow-lg shadow-indigo-500/5 bg-white/80 backdrop-blur-sm rounded-2xl">
+                <CardHeader className="p-4 sm:p-6 pb-3">
+                  <CardTitle className="text-lg sm:text-xl bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">Support Hours</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 sm:p-6 pt-0">
-                  <div className="space-y-2 text-xs sm:text-sm">
+                  <div className="space-y-2 text-xs sm:text-sm text-gray-700">
                     <div className="flex justify-between items-center">
                       <span>Monday - Friday</span>
                       <span className="font-medium text-right">9:00 AM - 6:00 PM EST</span>
@@ -398,15 +447,15 @@ const Contact = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Sunday</span>
-                      <span className="font-medium text-right">Closed</span>
+                      <span className="font-medium text-right text-gray-500">Closed</span>
                     </div>
                   </div>
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs sm:text-sm text-blue-800">
-                      Emergency support available 24/7 for Premium subscribers
+                  <div className="mt-4 p-3 rounded-xl bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-50 border border-purple-100">
+                    <p className="text-xs sm:text-sm text-purple-900 font-medium">
+                      ✨ Emergency support 24/7 for Premium subscribers
                     </p>
                     <div className="mt-2 flex items-center space-x-2">
-                      <span className="text-sm font-bold text-blue-800">Premium starts at $7.99/month</span>
+                      <span className="text-sm font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">Premium starts at $7.99/month</span>
                     </div>
                   </div>
                 </CardContent>
@@ -417,37 +466,44 @@ const Contact = () => {
       </section>
 
       {/* FAQ Preview */}
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-white/60 backdrop-blur-sm border-t border-white/60">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                Frequently Asked Questions
+              </span>
             </h2>
             <p className="text-sm sm:text-base text-gray-600 px-2 sm:px-0">
               Quick answers to common questions
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             {[
               {
                 question: "How do I add family members?",
-                answer: "Go to Family Sharing in your dashboard and send invitations via email. Family members can join with the invitation link."
+                answer: "Go to Family Sharing in your dashboard and send invitations via email. Family members can join with the invitation link.",
+                accent: "from-pink-400 to-pink-500"
               },
               {
                 question: "Can I export my data?",
-                answer: "Yes! Premium users can export all their data in CSV format from the Reports section."
+                answer: "Yes! Premium users can export all their data in CSV format from the Reports section.",
+                accent: "from-purple-400 to-purple-500"
               },
               {
                 question: "Is my baby's data secure?",
-                answer: "Absolutely. We use enterprise-grade encryption and never share personal data with third parties."
+                answer: "Absolutely. We use enterprise-grade encryption and never share personal data with third parties.",
+                accent: "from-indigo-400 to-indigo-500"
               },
               {
                 question: "How do I cancel my subscription?",
-                answer: "You can cancel anytime from your Account settings. Your data remains accessible until the end of your billing period."
+                answer: "You can cancel anytime from your Account settings. Your data remains accessible until the end of your billing period.",
+                accent: "from-pink-400 to-purple-500"
               }
             ].map((faq, index) => (
-              <Card key={index} className="border-0 shadow-sm">
+              <Card key={index} className="border border-white/60 shadow-md hover:shadow-lg bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden transition-all hover:-translate-y-0.5">
+                <div className={`h-1 bg-gradient-to-r ${faq.accent}`} />
                 <CardContent className="p-4 sm:p-6">
                   <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{faq.question}</h3>
                   <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{faq.answer}</p>
@@ -456,8 +512,12 @@ const Contact = () => {
             ))}
           </div>
 
-          <div className="text-center mt-6 sm:mt-8">
-            <Button onClick={() => navigate('/help')} variant="outline" size="lg" className="touch-target">
+          <div className="text-center mt-8 sm:mt-10">
+            <Button
+              onClick={() => navigate('/help')}
+              size="lg"
+              className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300 hover:scale-[1.02] touch-target rounded-full px-8"
+            >
               View All FAQs
             </Button>
           </div>

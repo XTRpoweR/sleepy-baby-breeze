@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Moon, ArrowLeft, Check, Shield, Mail, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
 import { CurrentSubscriptionCard } from '@/components/subscription/CurrentSubscriptionCard';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
@@ -17,6 +18,7 @@ const Subscription = () => {
   const { user, loading } = useAuth();
   const { checkSubscription } = useSubscription();
   const navigate = useNavigate();
+  const goBack = useSmartBack();
   const { t } = useTranslation();
 
   // Always refresh subscription state when landing on this page (e.g., returning from Stripe)
@@ -70,12 +72,12 @@ const Subscription = () => {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate('/dashboard')}
+            onClick={goBack}
             className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
             size="sm"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
-            {t('subscription.backToDashboard')}
+            {t('common.back', 'Back')}
           </Button>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight">

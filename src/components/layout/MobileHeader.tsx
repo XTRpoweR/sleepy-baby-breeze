@@ -63,11 +63,6 @@ export const MobileHeader = () => {
     setIsOpen(false);
   };
 
-  const handleSecurity = () => {
-    navigate('/security');
-    setIsOpen(false);
-  };
-
   const handleSubscription = () => {
     navigate('/subscription');
     setIsOpen(false);
@@ -148,20 +143,7 @@ export const MobileHeader = () => {
                     </div>
                   </button>
 
-                  <button 
-                    onClick={handleSecurity}
-                    className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
-                  >
-                    <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg p-2 shadow-sm group-hover:shadow-md transition-shadow">
-                      <Shield className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <div className="text-sm font-medium text-foreground">{t('menu.security')}</div>
-                      <div className="text-xs text-muted-foreground">{t('menu.securityDesc')}</div>
-                    </div>
-                  </button>
-
-                  <button 
+                  <button
                     onClick={handleNotifications}
                     className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/80 transition-all duration-200 group touch-manipulation"
                   >

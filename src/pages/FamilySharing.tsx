@@ -11,6 +11,7 @@ import {
   Users
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { FamilySharing as FamilySharingComponent } from '@/components/family/FamilySharing';
 import { BabyProfileSetup } from '@/components/tracking/BabyProfileSetup';
@@ -40,9 +41,7 @@ const FamilySharing = () => {
     navigate('/');
   };
 
-  const handleBack = () => {
-    navigate('/dashboard');
-  };
+  const handleBack = useSmartBack();
 
   if (loading || profileLoading) {
     return (

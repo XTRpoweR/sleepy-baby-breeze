@@ -45,7 +45,7 @@ const PediatricianReports = lazy(() => import("./pages/PediatricianReports"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-const AccountSecurity = lazy(() => import("./pages/AccountSecurity"));
+// AccountSecurity merged into /account?tab=security — keep import removed to avoid lazy chunk load
 const EnhancedPasswordReset = lazy(() => import("./components/auth/EnhancedPasswordReset"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const ChatAssistant = lazy(() => import("./components/chat/ChatAssistant"));
@@ -104,7 +104,7 @@ const App: React.FC = () => {
                       <Route path="/" element={<Index />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/reset-password" element={<EnhancedPasswordReset />} />
-                      <Route path="/security" element={<AccountSecurity />} />
+                      <Route path="/security" element={<Navigate to="/account?tab=security" replace />} />
                       <Route path="/dashboard" element={<Dashboard />} />
                       <Route path="/onboarding" element={<Onboarding />} />
                       <Route path="/track" element={<TrackActivity />} />
