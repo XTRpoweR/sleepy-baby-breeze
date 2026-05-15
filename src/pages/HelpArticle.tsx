@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -14,6 +15,7 @@ const HelpArticle = () => {
   const navigate = useNavigate();
   const { categoryName, articleId } = useParams();
   const { user } = useAuth();
+  const goBack = useSmartBack(categoryName ? `/help/category/${categoryName}` : '/help');
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -3764,14 +3766,14 @@ Your privacy and security are fundamental to SleepyBabyy's mission. These settin
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Navigation */}
         <div className="flex justify-between items-center mb-8">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => navigate(`/help/category/${categoryName}`)}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={goBack}
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to {categoryData.title}</span>
+            <span>Back</span>
           </Button>
         </div>
 
