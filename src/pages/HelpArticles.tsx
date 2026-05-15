@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -13,6 +14,7 @@ const HelpArticles = () => {
   const navigate = useNavigate();
   const { categoryName } = useParams();
   const { user } = useAuth();
+  const goBack = useSmartBack('/help');
 
   useEffect(() => {
     window.scrollTo({
@@ -299,11 +301,11 @@ const HelpArticles = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/help')}
+              onClick={goBack}
               className="flex items-center space-x-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>Back to Help Center</span>
+              <span>Back</span>
             </Button>
           </div>
 
