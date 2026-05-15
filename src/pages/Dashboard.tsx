@@ -73,6 +73,10 @@ const Dashboard = () => {
       const sessionId = urlParams.get('session_id');
       const metaUser = buildMetaUserData(user);
 
+      // Re-init Pixel with Advanced Matching (em/fn/ln/external_id) so the
+      // browser-side Purchase event carries hashed PII for higher EMQ.
+      if (metaUser) applyMetaAdvancedMatching(metaUser);
+
       // Fire Subscribe immediately (deduped server-side via `sub_${session.id}`)
       try {
         fbqTrack(
