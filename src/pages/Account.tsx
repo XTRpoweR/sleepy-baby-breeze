@@ -346,17 +346,22 @@ const Account = () => {
         title: "Account Deleted",
         description: "Your account and all data were deleted.",
       });
-      setTimeout(() => {
-        signOut();
-        window.location.href = "/";
-      }, 1500);
+
+      // Sign out IMMEDIATELY before any redirect logic runs.
+      // OnboardingGate watches the user object — if we leave the user
+      // signed in even briefly, it sees a logged-in user whose profile
+      // row no longer exists and force-redirects to /onboarding, which
+      // traps the user. Awaiting signOut clears the auth state first,
+      // then a hard reload to "/" wipes all in-memory state.
+      try { await signOut(); } catch { /* ignore — we're navigating away */ }
+      window.location.replace("/");
+      return;
     } catch (err: any) {
       toast({
         title: "Error",
         description: err.message || "Failed to delete account",
         variant: "destructive",
       });
-    } finally {
       setDeleting(false);
       setShowDeleteDialog(false);
       setDeleteConfirm("");
