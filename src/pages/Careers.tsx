@@ -1,362 +1,238 @@
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, Heart, Mail, Sparkles, Users, Coffee, Code } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useSmartBack } from "@/hooks/useSmartBack";
+import { DesktopHeader } from "@/components/layout/DesktopHeader";
+import { MobileHeader } from "@/components/layout/MobileHeader";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { 
-  Moon, 
-  ArrowLeft, 
-  MapPin, 
-  DollarSign, 
-  Clock, 
-  Users, 
-  Heart, 
-  Coffee,
-  Laptop,
-  Home,
-  Globe,
-  Award,
-  Zap,
-  Shield
-} from "lucide-react";
+
+const SUPPORT_EMAIL = "support@sleepybabyy.com";
 
 const Careers = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { user } = useAuth();
+  const goBack = useSmartBack(user ? "/dashboard" : "/");
 
-  const openPositions = [
-    {
-      title: "Senior React Developer",
-      department: "Engineering",
-      type: "Full-time",
-      location: "Remote",
-      salary: "$120k - $150k",
-      description: "Help build the future of baby tracking technology. We're looking for a passionate React developer to join our growing team."
-    },
-    {
-      title: "Pediatric Sleep Consultant",
-      department: "Product",
-      type: "Full-time",
-      location: "Remote",
-      salary: "$80k - $100k",
-      description: "Shape our sleep guidance features and content. Work directly with families to improve baby sleep outcomes."
-    },
-    {
-      title: "UX/UI Designer",
-      department: "Design",
-      type: "Full-time",
-      location: "San Francisco or Remote",
-      salary: "$100k - $130k",
-      description: "Design intuitive experiences for sleep-deprived parents. Create beautiful, functional interfaces that make tracking effortless."
-    },
-    {
-      title: "Customer Success Manager",
-      department: "Customer Experience",
-      type: "Full-time",
-      location: "Remote",
-      salary: "$70k - $90k",
-      description: "Be the voice of our users. Help families get the most out of SleepyBaby and drive product improvements."
-    },
-    {
-      title: "Data Scientist",
-      department: "Engineering",
-      type: "Full-time",
-      location: "Remote",
-      salary: "$130k - $160k",
-      description: "Unlock insights from sleep data to help families understand their baby's patterns and improve sleep outcomes."
-    },
-    {
-      title: "Content Marketing Manager",
-      department: "Marketing",
-      type: "Part-time",
-      location: "Remote",
-      salary: "$60k - $80k",
-      description: "Create compelling content that educates and supports parents. Build our brand as the trusted sleep resource."
-    }
-  ];
-
-  const benefits = [
-    {
-      icon: Home,
-      title: "Remote-First Culture",
-      description: "Work from anywhere in the world. We trust our team to do their best work wherever they're most productive."
-    },
-    {
-      icon: Heart,
-      title: "Parental Leave",
-      description: "Generous parental leave for all new parents, because we understand how important those early days are."
-    },
-    {
-      icon: Laptop,
-      title: "Top-Tier Equipment",
-      description: "Latest MacBook Pro, monitor, and any equipment you need to do your best work, shipped to your door."
-    },
-    {
-      icon: Coffee,
-      title: "Learning & Development",
-      description: "$2,000 annual budget for courses, conferences, books, and professional development."
-    },
-    {
-      icon: Shield,
-      title: "Health & Wellness",
-      description: "Comprehensive health insurance, dental, vision, and mental health support for you and your family."
-    },
-    {
-      icon: Globe,
-      title: "Flexible Schedule",
-      description: "Work when you're most productive. We care about results, not when you're online."
-    }
-  ];
-
-  const values = [
-    {
-      icon: Users,
-      title: "Family First",
-      description: "We're building for families, and we prioritize family time for our team members too."
-    },
-    {
-      icon: Heart,
-      title: "Empathy-Driven",
-      description: "Every decision is made with deep empathy for the parents using our product."
-    },
-    {
-      icon: Zap,
-      title: "Continuous Learning",
-      description: "We're always learning, growing, and improving both as individuals and as a company."
-    },
-    {
-      icon: Award,
-      title: "Excellence",
-      description: "We strive for excellence in everything we do, from code quality to customer support."
-    }
-  ];
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-2"
+    <div className="relative min-h-screen bg-gradient-to-br from-pink-50 via-purple-50/40 to-indigo-50 overflow-x-hidden">
+      {/* Decorative blurred blobs */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-24 -left-24 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-pink-300/25 blur-3xl" />
+        <div className="absolute top-1/3 -right-32 w-80 sm:w-[28rem] h-80 sm:h-[28rem] rounded-full bg-purple-300/25 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 w-72 h-72 rounded-full bg-indigo-300/20 blur-3xl" />
+      </div>
+
+      {/* Conditional Headers */}
+      {user ? (
+        <>
+          <DesktopHeader />
+          <MobileHeader />
+        </>
+      ) : (
+        <nav className="bg-white/70 backdrop-blur-md border-b border-white/60 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2"
+            >
+              <img
+                src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
+                alt="SleepyBabyy"
+                className="h-8 w-8 sm:h-9 sm:w-9"
+              />
+              <span className="text-base sm:text-lg font-bold text-gray-900">SleepyBabyy</span>
+            </button>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <LanguageSelector />
+              <Button
+                size="sm"
+                onClick={() => navigate("/auth")}
+                className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 rounded-full px-4 shadow-md shadow-purple-500/30"
               >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back</span>
+                Sign in
               </Button>
-              <div className="flex items-center space-x-2">
-                <Moon className="h-8 w-8 text-blue-600" />
-                <span className="text-xl font-semibold text-gray-900">{t('app.name')}</span>
+            </div>
+          </div>
+        </nav>
+      )}
+
+      {/* Back link */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={goBack}
+          className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Back</span>
+        </Button>
+      </div>
+
+      {/* Hero */}
+      <section className="relative px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-10 sm:pb-14">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-pink-200/60 text-pink-700 text-xs sm:text-sm font-medium shadow-sm mb-5">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Careers at SleepyBabyy</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4 sm:mb-5">
+            We're a{" "}
+            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+              small team
+            </span>{" "}
+            building thoughtfully
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            We aren't hiring right now — and we'd rather tell you that straight
+            than dress up the page with roles we can't fill yet. 🌙
+          </p>
+        </div>
+      </section>
+
+      {/* Honest content card */}
+      <section className="px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14">
+        <div className="max-w-3xl mx-auto">
+          <div className="relative rounded-3xl border border-white/60 bg-white/85 backdrop-blur-md shadow-2xl shadow-purple-500/10 overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
+
+            <div className="p-6 sm:p-10 space-y-8">
+              {/* Why this page exists */}
+              <div className="space-y-3">
+                <div className="inline-flex h-11 w-11 rounded-xl bg-gradient-to-br from-pink-400 to-purple-500 items-center justify-center shadow-md shadow-purple-500/20">
+                  <Heart className="h-5 w-5 text-white fill-white" />
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  Honest about where we are
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                  SleepyBabyy is a small product built by parents who got tired
+                  of guessing at 3 a.m. Today we're focused on shipping the best
+                  experience we can for the families already using us —
+                  not on growing the team.
+                </p>
+              </div>
+
+              {/* What we care about */}
+              <div className="space-y-4">
+                <h3 className="text-sm uppercase tracking-wider font-semibold text-gray-500">
+                  When we do hire, we'll care about:
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <ValueCard
+                    icon={Users}
+                    title="Parents first"
+                    desc="Care for the families using the product, not metrics on a dashboard."
+                    accent="from-pink-400 to-pink-500"
+                  />
+                  <ValueCard
+                    icon={Code}
+                    title="Craft &amp; calm"
+                    desc="We move at a sustainable pace and ship things we're proud of."
+                    accent="from-purple-400 to-purple-500"
+                  />
+                  <ValueCard
+                    icon={Coffee}
+                    title="Remote, asynchronous"
+                    desc="Work when you can think clearly, not by the clock."
+                    accent="from-indigo-400 to-indigo-500"
+                  />
+                  <ValueCard
+                    icon={Heart}
+                    title="Built by humans, for humans"
+                    desc="Empathy isn't a value, it's the job."
+                    accent="from-pink-400 to-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Stay in touch */}
+              <div className="rounded-2xl bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 border border-purple-100/60 p-5 sm:p-6">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-md shadow-purple-500/30">
+                    <Mail className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">
+                      Want to be remembered when we open roles?
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                      Drop us a short note — what you do, what excites you about
+                      SleepyBabyy, and how to reach you. We read every message.
+                    </p>
+                    <a
+                      href={`mailto:${SUPPORT_EMAIL}?subject=Future%20careers%20%E2%80%94%20introduction&body=Hi%20SleepyBabyy%20team%2C%0A%0AA%20bit%20about%20me%3A%0A%0AWhat%20excites%20me%20about%20what%20you%27re%20building%3A%0A%0AHow%20to%20reach%20me%3A%0A%0AThanks%21`}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white text-sm font-semibold shadow-md shadow-purple-500/30 hover:shadow-lg hover:scale-[1.02] transition-all touch-target"
+                    >
+                      <Mail className="h-4 w-4" />
+                      Email us — {SUPPORT_EMAIL}
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* What you can do now */}
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm uppercase tracking-wider font-semibold text-gray-500">
+                  In the meantime
+                </h3>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate("/about")}
+                    className="flex-1 rounded-full border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 hover:text-purple-700 transition-all touch-target"
+                  >
+                    Learn about us
+                  </Button>
+                  <Button
+                    onClick={() => navigate(user ? "/dashboard" : "/auth?mode=signup")}
+                    className="flex-1 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-md shadow-purple-500/30 hover:shadow-lg transition-all touch-target"
+                  >
+                    {user ? "Open your dashboard" : "Try SleepyBabyy free"}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <LanguageSelector />
-              <Button onClick={() => navigate('/contact')} variant="outline">
-                Questions?
-              </Button>
-            </div>
           </div>
-        </div>
-      </nav>
 
-      {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Join Our Mission
-            <span className="text-blue-600 block">Help Families Sleep Better</span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            We're building the future of family wellness, starting with better baby sleep. 
-            Join a passionate team of parents, engineers, and sleep experts who are making a real difference.
+          <p className="text-center text-xs text-gray-500 mt-6">
+            Thanks for reading this far. 💜 We promise we'll update this page
+            the moment that changes.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              View Open Positions
-            </Button>
-            <Button size="lg" variant="outline">
-              Learn About Our Culture
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Company Values */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Our Values
-            </h2>
-            <p className="text-xl text-gray-600">
-              The principles that guide how we work and what we build
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => {
-              const IconComponent = value.icon;
-              return (
-                <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <CardContent className="p-8">
-                    <IconComponent className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold mb-4">{value.title}</h3>
-                    <p className="text-gray-600">{value.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-purple-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why You'll Love Working Here
-            </h2>
-            <p className="text-xl text-gray-600">
-              We offer more than just a job – we provide a supportive environment where you can thrive
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((benefit, index) => {
-              const IconComponent = benefit.icon;
-              return (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <CardHeader>
-                    <IconComponent className="h-10 w-10 text-blue-600 mb-2" />
-                    <CardTitle className="text-xl">{benefit.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600">{benefit.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Open Positions */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Open Positions
-            </h2>
-            <p className="text-xl text-gray-600">
-              Join our growing team and help shape the future of family wellness
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            {openPositions.map((position, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-xl mb-2">{position.title}</CardTitle>
-                      <CardDescription className="text-lg mb-4">{position.description}</CardDescription>
-                    </div>
-                    <Button className="bg-blue-600 hover:bg-blue-700">
-                      Apply Now
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">{position.department}</Badge>
-                    <Badge variant="outline" className="flex items-center space-x-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{position.type}</span>
-                    </Badge>
-                    <Badge variant="outline" className="flex items-center space-x-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{position.location}</span>
-                    </Badge>
-                    <Badge variant="outline" className="flex items-center space-x-1">
-                      <DollarSign className="h-3 w-3" />
-                      <span>{position.salary}</span>
-                    </Badge>
-                  </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <p className="text-gray-600 mb-4">
-              Don't see a position that fits? We're always looking for talented people.
-            </p>
-            <Button variant="outline" size="lg" onClick={() => navigate('/contact')}>
-              Send Us Your Resume
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Application Process */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Our Hiring Process
-            </h2>
-            <p className="text-xl text-gray-600">
-              We believe in a transparent, respectful hiring process that works for everyone
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { step: "1", title: "Application", description: "Submit your resume and cover letter through our portal" },
-              { step: "2", title: "Phone Screen", description: "Brief call with our team to discuss your background and interest" },
-              { step: "3", title: "Technical Interview", description: "Role-specific interview to assess your skills and experience" },
-              { step: "4", title: "Team Meeting", description: "Meet the team you'll be working with and ask any questions" }
-            ].map((stage, index) => (
-              <Card key={index} className="text-center border-0 shadow-lg">
-                <CardContent className="p-8">
-                  <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
-                    {stage.step}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">{stage.title}</h3>
-                  <p className="text-gray-600">{stage.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Make a Difference?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Join a team that's passionate about helping families get better sleep. 
-            Your work will directly impact thousands of parents and babies worldwide.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
-              Browse Open Positions
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-              Learn More About Us
-            </Button>
-          </div>
         </div>
       </section>
     </div>
   );
 };
+
+function ValueCard({
+  icon: Icon,
+  title,
+  desc,
+  accent,
+}: {
+  icon: typeof Users;
+  title: string;
+  desc: string;
+  accent: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/60 bg-white/70 backdrop-blur-sm p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+      <div className={`inline-flex h-9 w-9 rounded-lg bg-gradient-to-br ${accent} items-center justify-center shadow-sm mb-3`}>
+        <Icon className="h-4 w-4 text-white" />
+      </div>
+      <h4 className="text-sm sm:text-base font-bold text-gray-900 mb-1">{title}</h4>
+      <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{desc}</p>
+    </div>
+  );
+}
 
 export default Careers;

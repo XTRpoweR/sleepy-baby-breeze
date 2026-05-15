@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
@@ -37,10 +38,7 @@ const Pricing = () => {
     if (user) navigate('/dashboard');
     else navigate('/auth');
   };
-  const handleBackNavigation = () => {
-    if (user) navigate('/dashboard');
-    else navigate('/');
-  };
+  const handleBackNavigation = useSmartBack(user ? '/dashboard' : '/');
   return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Conditional Navigation */}
       {user ? <>
@@ -94,9 +92,14 @@ const Pricing = () => {
       {/* Back Button */}
       <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
         <div className="max-w-6xl mx-auto">
-          <Button variant="ghost" onClick={handleBackNavigation} className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base">
-            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>{user ? t('navigation.backToDashboard') : 'Back to Home'}</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleBackNavigation}
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
           </Button>
         </div>
       </div>

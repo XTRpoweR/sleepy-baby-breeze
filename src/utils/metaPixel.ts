@@ -16,7 +16,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { hasMarketingConsent } from '@/utils/consentManager';
-import { getFbc, getFbp } from '@/utils/fbTracking';
+import { getFbc, getFbp, getAnonExternalId } from '@/utils/fbTracking';
 
 declare global {
   interface Window {
@@ -101,6 +101,10 @@ const relayToCapi = (
     if (typeof window === 'undefined') return;
     const fbc = getFbc();
     const fbp = getFbp();
+    // Always have an external_id — fall back to the stable anonymous browser
+    // ID when the caller didn't pass userData (guest Lead events, etc.). This
+    // is what raises Meta's "External ID coverage" to ~100%.
+    const externalId = user_data?.external_id || getAnonExternalId();
     const payload = {
       event_name,
       event_id,
@@ -109,7 +113,7 @@ const relayToCapi = (
       action_source: 'website' as const,
       user_data: {
         email: user_data?.email,
-        external_id: user_data?.external_id,
+        external_id: externalId,
         phone: user_data?.phone,
         first_name: user_data?.first_name,
         last_name: user_data?.last_name,

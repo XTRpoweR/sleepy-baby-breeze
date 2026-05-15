@@ -1,4 +1,5 @@
 import type { User } from '@supabase/supabase-js';
+import { getAnonExternalId } from '@/utils/fbTracking';
 
 interface MetaUserData {
   email?: string;
@@ -8,12 +9,20 @@ interface MetaUserData {
 }
 
 /**
- * Build the advanced-matching `userData` payload for Meta Pixel/CAPI from a
- * Supabase auth user. Splits `user_metadata.full_name` into first/last name
- * so Meta can hash and match (`fn`, `ln`).
+ * Build the advanced-matching `userData` payload for Meta Pixel/CAPI.
+ *
+ * - When a Supabase user is provided: uses their id as `external_id` and
+ *   splits `user_metadata.full_name` into `first_name` / `last_name` so Meta
+ *   can hash and match (`fn`, `ln`).
+ * - When no user is provided (guest / pre-login Lead events): falls back to
+ *   the stable anonymous browser ID so Meta still has a high-value match key
+ *   on every event. This raises External ID coverage to ~100%.
  */
 export const buildMetaUserData = (user: User | null | undefined): MetaUserData | undefined => {
-  if (!user) return undefined;
+  if (!user) {
+    const anonId = getAnonExternalId();
+    return anonId ? { external_id: anonId } : undefined;
+  }
   const data: MetaUserData = {
     email: user.email ?? undefined,
     external_id: user.id,
