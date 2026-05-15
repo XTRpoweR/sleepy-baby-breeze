@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { 
   ArrowLeft, 
@@ -22,6 +23,7 @@ const BlogArticle = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
   const { t } = useTranslation();
+  const goBack = useSmartBack('/blog');
 
   // Article data - in a real app, this would come from an API or database
   const articlesData = {
@@ -959,24 +961,13 @@ const BlogArticle = () => {
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/blog')}
-                className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">Back to Blog</span>
-              </Button>
-              <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" 
-                  alt="SleepyBabyy Logo" 
-                  className="h-8 w-8 sm:h-10 sm:w-10"
-                />
-                <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
-              </div>
+            <div className="flex items-center space-x-2">
+              <img
+                src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
+                alt="SleepyBabyy Logo"
+                className="h-8 w-8 sm:h-10 sm:w-10"
+              />
+              <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
             </div>
             <div className="hidden sm:block">
               <LanguageSelector />
@@ -984,6 +975,21 @@ const BlogArticle = () => {
           </div>
         </div>
       </nav>
+
+      {/* Back Button */}
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
+        <div className="max-w-4xl mx-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={goBack}
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
+          </Button>
+        </div>
+      </div>
 
       {/* Article Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">

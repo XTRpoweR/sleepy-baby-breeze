@@ -5,6 +5,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { NewsletterSubscription } from "@/components/NewsletterSubscription";
 import { ArrowLeft, Calendar, Clock, User, Baby, Heart, Lightbulb, Stethoscope, Users, BookOpen } from "lucide-react";
@@ -12,6 +14,8 @@ import { ArrowLeft, Calendar, Clock, User, Baby, Heart, Lightbulb, Stethoscope, 
 const Blog = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const goBack = useSmartBack(user ? '/dashboard' : '/');
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
@@ -114,15 +118,9 @@ const Blog = () => {
         <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-2 sm:space-x-4">
-                <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline">Back</span>
-                </Button>
-                <div className="flex items-center space-x-2">
-                  <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
-                  <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
-                </div>
+              <div className="flex items-center space-x-2">
+                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
+                <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
               </div>
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <div className="hidden sm:block">
@@ -136,6 +134,21 @@ const Blog = () => {
             </div>
           </div>
         </nav>
+
+        {/* Back Button */}
+        <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
+          <div className="max-w-7xl mx-auto">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={goBack}
+              className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back</span>
+            </Button>
+          </div>
+        </div>
 
         {/* Hero Section */}
         <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">

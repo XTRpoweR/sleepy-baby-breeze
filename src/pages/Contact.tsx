@@ -137,19 +137,13 @@ const Contact = () => {
         <nav className="bg-white/70 backdrop-blur-md border-b border-white/60 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-2 sm:space-x-4">
-                <Button variant="ghost" size="sm" onClick={goBack} className="flex items-center space-x-1 sm:space-x-2 p-2 sm:px-3">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline">Back</span>
-                </Button>
-                <div className="flex items-center space-x-2">
-                  <img
-                    src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
-                    alt="SleepyBabyy Logo"
-                    className="h-8 w-8 sm:h-10 sm:w-10"
-                  />
-                  <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
-                </div>
+              <div className="flex items-center space-x-2">
+                <img
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
+                  alt="SleepyBabyy Logo"
+                  className="h-8 w-8 sm:h-10 sm:w-10"
+                />
+                <span className="text-lg sm:text-xl font-semibold text-gray-900">{t('app.name')}</span>
               </div>
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <div className="hidden sm:block">
@@ -170,20 +164,20 @@ const Contact = () => {
         </nav>
       )}
 
-      {/* Back button for logged-in users (matches Memories / Reports / FamilySharing) */}
-      {user && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
+      {/* Back Button (below nav, matches About / Help Center pattern) */}
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
+        <div className="max-w-7xl mx-auto">
           <Button
             variant="ghost"
             size="sm"
             onClick={goBack}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Back</span>
           </Button>
         </div>
-      )}
+      </div>
 
       {/* Hero Section */}
       <section className="py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8">

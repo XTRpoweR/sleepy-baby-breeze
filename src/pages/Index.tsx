@@ -202,6 +202,8 @@ const Index = () => {
     toast
   } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [heroVideoPlaying, setHeroVideoPlaying] = useState(false);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
   const { openPreferences } = useCookieConsent();
   const handleGetStarted = () => {
     if (user) {
@@ -307,15 +309,9 @@ const Index = () => {
                 <span className="logo-glow" aria-hidden="true" />
                 <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="relative h-9 sm:h-10 w-auto transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]" loading="eager" width="40" height="40" />
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-purple-700 to-pink-600 bg-clip-text text-transparent">
-                  {t('app.name')}
-                </span>
-                <span className="relative hidden sm:flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-              </div>
+              <span className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 via-purple-700 to-pink-600 bg-clip-text text-transparent">
+                {t('app.name')}
+              </span>
             </div>
 
             {/* Desktop Navigation */}
@@ -385,36 +381,14 @@ const Index = () => {
         <Star className="absolute bottom-32 right-[10%] h-4 w-4 text-pink-400/50 sparkle hidden sm:block" style={{ animationDelay: '1.2s' }} aria-hidden="true" />
 
         <div className="max-w-7xl mx-auto relative z-10">
-          {/* Money-Back Guarantee Banner */}
-          <div className="flex justify-center mb-4 animate-fade-in-up">
-            <div className="group inline-flex items-center gap-2 sm:gap-2.5 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-50 border border-emerald-300/60 shadow-[0_4px_20px_-6px_rgba(16,185,129,0.35)] hover:shadow-[0_6px_24px_-4px_rgba(16,185,129,0.5)] hover:-translate-y-0.5 transition-all duration-300">
-              <span className="relative flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-600 shadow-sm shrink-0">
-                <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" strokeWidth={2.5} />
-              </span>
-              <span className="text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-700 to-green-700 bg-clip-text text-transparent whitespace-nowrap">
-                {t('hero.moneyBackTitle', '14-Day Money-Back Guarantee')}
-              </span>
-              <span className="hidden sm:inline text-xs text-emerald-700/70 font-medium border-l border-emerald-300/60 pl-2.5">
-                {t('hero.moneyBackSubtitle', 'Full refund, no questions asked')}
-              </span>
+          {/* Centered headline — clean, focused, no banner stack */}
+          <div className="text-center mb-10 sm:mb-12 animate-fade-in-up">
+            {/* Eyebrow — single, calm */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-pink-200/60 text-pink-700 text-xs sm:text-sm font-medium shadow-sm mb-6 sm:mb-8">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>For sleep-deprived parents</span>
             </div>
-          </div>
 
-          {/* Trust badge */}
-          <div className="flex justify-center mb-6 animate-fade-in-up" style={{ animationDelay: '0.05s' }}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 backdrop-blur-md border border-primary/20 shadow-sm">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-              </span>
-              <span className="text-xs sm:text-sm font-semibold text-gray-700">
-                🔒 <span className="text-gradient">Privacy First</span> · Free Forever Plan
-              </span>
-            </div>
-          </div>
-
-          {/* Centered headline with rotating word */}
-          <div className="text-center mb-10 sm:mb-14 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.05] tracking-tight mb-5 sm:mb-7">
               {t('hero.title')}
               <span className="text-shimmer block mt-2 sm:mt-3 font-black">
@@ -422,69 +396,80 @@ const Index = () => {
               </span>
             </h1>
 
-            {/* Modern static tagline */}
-            <div className="flex justify-center mb-6 sm:mb-8">
-              <div className="group relative inline-flex items-center gap-2.5 sm:gap-3 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-white/85 backdrop-blur-xl shadow-[0_8px_32px_-8px_hsl(var(--gradient-from)/0.35)] hover:shadow-[0_14px_44px_-10px_hsl(var(--gradient-via)/0.55)] transition-all duration-500 hover:-translate-y-0.5 tagline-border">
-                <span className="relative flex h-2.5 w-2.5 shrink-0">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-gradient-to-r from-fuchsia-500 to-violet-500 opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-gradient-to-r from-fuchsia-500 to-violet-500" />
-                </span>
-                <Sparkles className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-primary shrink-0 animate-spin-slow" />
-                <span className="text-sm sm:text-base md:text-lg font-bold tracking-tight bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent whitespace-nowrap">
-                  {t('hero.word1', 'Peaceful nights')}
-                </span>
-                <Heart className="h-4 w-4 sm:h-[18px] sm:w-[18px] text-pink-500 shrink-0 animate-pulse fill-pink-500/30" />
-              </div>
-            </div>
-
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light mb-3">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light mb-8 sm:mb-10">
               {t('hero.subtitle')}
             </p>
-            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-8">
-              {t('hero.subtitleExtra')}
-            </p>
-            <div className="flex justify-center items-center mb-6">
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center mb-6">
               <Button size="lg" className="relative overflow-hidden text-base sm:text-lg px-8 sm:px-10 py-6 sm:py-7 rounded-full font-bold text-white border-0 shadow-xl shadow-fuchsia-500/40 hover:shadow-2xl hover:shadow-fuchsia-500/60 hover:scale-105 transition-all duration-300 touch-target w-full sm:w-auto group gradient-dynamic btn-glow" onClick={handleGetStarted}>
                 <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                 <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:rotate-12 transition-transform relative" />
                 <span className="relative">Start Free Today</span>
                 <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2 group-hover:translate-x-1 transition-transform relative" />
               </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleScrollToPricing}
+                className="text-base sm:text-lg px-7 sm:px-8 py-6 sm:py-7 rounded-full font-semibold border-2 border-purple-200 bg-white/70 backdrop-blur-sm hover:bg-purple-50 hover:border-purple-400 transition-all duration-300 touch-target w-full sm:w-auto"
+              >
+                See pricing
+              </Button>
             </div>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-600">
+
+            <div className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-2 text-xs sm:text-sm text-gray-600">
               <div className="flex items-center gap-1.5"><CheckCircle className="h-3.5 w-3.5 text-green-500" /><span className="font-medium">Free forever plan</span></div>
               <div className="flex items-center gap-1.5"><Shield className="h-3.5 w-3.5 text-blue-500" /><span className="font-medium">{t('hero.noCreditCard')}</span></div>
+              <div className="flex items-center gap-1.5"><Award className="h-3.5 w-3.5 text-pink-500" /><span className="font-medium">14-day money-back</span></div>
               <div className="flex items-center gap-1.5"><Heart className="h-3.5 w-3.5 text-red-400" /><span className="font-medium">{t('hero.madeByParents')}</span></div>
             </div>
           </div>
 
-          {/* Video — large, centered, with floating effect */}
-          <div className="relative max-w-5xl mx-auto animate-scale-in float-gentle">
-            {/* Animated gradient border */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-pink-500 rounded-3xl blur-md opacity-60 gradient-dynamic" />
-            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
-              <video className="w-full h-auto block" autoPlay loop muted playsInline preload="auto" poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" width="1280" height="720">
-                <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
-                <img src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png" alt="SleepyBabyy demo" className="w-full h-auto" />
-              </video>
+          {/* Video — click-to-play poster for fast LCP on mobile */}
+          <div className="relative max-w-5xl mx-auto animate-scale-in">
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-pink-500 rounded-3xl blur-md opacity-40" />
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 bg-black">
+              {!heroVideoPlaying ? (
+                <button
+                  onClick={() => {
+                    setHeroVideoPlaying(true);
+                    setTimeout(() => heroVideoRef.current?.play().catch(() => {}), 50);
+                  }}
+                  aria-label="Play demo video"
+                  className="relative w-full block group"
+                >
+                  <img
+                    src="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
+                    alt="SleepyBabyy app demo"
+                    className="w-full h-auto block"
+                    width={1280}
+                    height={720}
+                    loading="eager"
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/15 group-hover:bg-black/25 transition-colors">
+                    <span className="flex h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-white/95 items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                      <Play className="h-7 w-7 sm:h-9 sm:w-9 text-purple-600 fill-purple-600 ml-1" />
+                    </span>
+                  </span>
+                  <span className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white text-xs font-medium">
+                    60 sec demo
+                  </span>
+                </button>
+              ) : (
+                <video
+                  ref={heroVideoRef}
+                  className="w-full h-auto block"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  poster="/lovable-uploads/6667cdc7-f4a7-4fad-9507-4f558fe9e8df.png"
+                >
+                  <source src="/SleepyBabyyDemo.mp4" type="video/mp4" />
+                </video>
+              )}
             </div>
           </div>
 
-          {/* Stats bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto mt-12 sm:mt-16 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-            {[
-              { value: '🔒', label: 'Privacy First', icon: Heart },
-              { value: '🆓', label: 'Free Forever Plan', icon: Moon },
-              { value: '💳', label: 'No Card Required', icon: Star },
-              { value: '8', label: 'Languages', icon: Globe },
-            ].map((stat, i) => (
-              <div key={i} className="text-center p-4 rounded-2xl bg-white/60 backdrop-blur-md border border-white/60 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 hover:scale-105 duration-300">
-                <stat.icon className="h-5 w-5 mx-auto mb-2 text-primary" />
-                <div className="text-2xl sm:text-3xl font-black text-gradient">{stat.value}</div>
-                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">{stat.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -858,58 +843,146 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 sm:py-12 px-3 sm:px-4 md:px-6 lg:px-8 safe-area-bottom">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <div className="space-y-3 sm:space-y-4 sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center space-x-2 group">
-                <img src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png" alt="SleepyBabyy Logo" className="h-6 sm:h-8 w-auto transition-transform duration-300 group-hover:scale-110" />
-                <span className="text-base sm:text-lg font-semibold tracking-tight">{t('app.name')}</span>
+      {/* Footer — Claude/Lovable-style: trust strip + multi-column links + legal bar */}
+      <footer className="bg-gray-950 text-gray-300 safe-area-bottom">
+        {/* Trust strip — the promises we don't make up: real and verifiable */}
+        <div className="border-b border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center flex-shrink-0">
+                  <Award className="h-4 w-4 text-white" strokeWidth={2.5} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-white leading-tight">14-day money-back</p>
+                  <p className="text-[11px] sm:text-xs text-gray-400 leading-tight mt-0.5">Full refund, no questions</p>
+                </div>
               </div>
-              <p className="text-sm sm:text-base text-gray-400 font-light leading-relaxed">
-                {t('footer.tagline')}
-              </p>
-            </div>
-            
-            <div className="space-y-3 sm:space-y-4">
-              <h3 className="font-semibold text-sm sm:text-base">{t('footer.product')}</h3>
-              <div className="space-y-2 text-gray-400 text-sm sm:text-base">
-                <Link to="/features" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('navigation.features')}</Link>
-                <Link to="/pricing" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.pricing')}</Link>
-                {/* Replace Download link with a button that shows "Coming Soon" */}
-                <button type="button" onClick={handleDownloadComingSoon} className="block w-full text-left text-gray-400 hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0 text-sm sm:text-base" style={{
-                font: 'inherit'
-              }}>
-                  {t('footer.download')}
-                </button>
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center flex-shrink-0">
+                  <Heart className="h-4 w-4 text-white fill-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-white leading-tight">Free forever plan</p>
+                  <p className="text-[11px] sm:text-xs text-gray-400 leading-tight mt-0.5">Core tracking stays free</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="space-y-3 sm:space-y-4">
-              <h3 className="font-semibold text-sm sm:text-base">{t('footer.support')}</h3>
-              <div className="space-y-2 text-gray-400 text-sm sm:text-base">
-                <Link to="/help" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.helpCenter')}</Link>
-                <Link to="/contact" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.contactUs')}</Link>
-                <Link to="/privacy" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.privacyPolicy')}</Link>
-                <button type="button" onClick={openPreferences} className="block text-left hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.cookieSettings', 'Cookie settings')}</button>
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                  <Shield className="h-4 w-4 text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-white leading-tight">Privacy first</p>
+                  <p className="text-[11px] sm:text-xs text-gray-400 leading-tight mt-0.5">Your data is never sold</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="space-y-3 sm:space-y-4">
-              <h3 className="font-semibold text-sm sm:text-base">{t('footer.company')}</h3>
-              <div className="space-y-2 text-gray-400 text-sm sm:text-base">
-                <Link to="/about" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.about')}</Link>
-                <Link to="/blog" className="block hover:text-white transition-colors duration-300 cursor-pointer">{t('footer.blog')}</Link>
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="h-4 w-4 text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-white leading-tight">Made by parents</p>
+                  <p className="text-[11px] sm:text-xs text-gray-400 leading-tight mt-0.5">Built for tired hands</p>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-gray-400">
-            <p className="text-xs sm:text-sm">{t('footer.copyright')}</p>
           </div>
         </div>
-     </footer>
+
+        {/* Main footer columns */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 sm:gap-10">
+            {/* Brand block — spans 2 cols on lg */}
+            <div className="col-span-2 lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/lovable-uploads/5e403470-892e-4e72-8a4e-faa117177a49.png"
+                  alt="SleepyBabyy Logo"
+                  className="h-9 w-auto"
+                  loading="lazy"
+                />
+                <span className="text-lg font-bold text-white tracking-tight">{t('app.name')}</span>
+              </div>
+              <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
+                {t('footer.tagline', 'Better sleep tracking for baby and you — built with love by parents.')}
+              </p>
+              <div className="flex items-center gap-2 pt-1">
+                <Globe className="h-4 w-4 text-gray-500" />
+                <span className="text-xs text-gray-500">Available in 8 languages</span>
+              </div>
+            </div>
+
+            {/* Features column */}
+            <div>
+              <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Features</h3>
+              <ul className="space-y-2.5 text-sm">
+                <li><Link to="/features" className="text-gray-400 hover:text-white transition-colors">Sleep tracking</Link></li>
+                <li><Link to="/features" className="text-gray-400 hover:text-white transition-colors">Pattern insights</Link></li>
+                <li><Link to="/features" className="text-gray-400 hover:text-white transition-colors">Sleep schedules</Link></li>
+                <li><Link to="/features" className="text-gray-400 hover:text-white transition-colors">Family sharing</Link></li>
+                <li><Link to="/features" className="text-gray-400 hover:text-white transition-colors">Photo memories</Link></li>
+                <li><Link to="/features" className="text-gray-400 hover:text-white transition-colors">White noise sounds</Link></li>
+              </ul>
+            </div>
+
+            {/* Product column */}
+            <div>
+              <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Product</h3>
+              <ul className="space-y-2.5 text-sm">
+                <li><Link to="/pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</Link></li>
+                <li>
+                  <button type="button" onClick={handleDownloadComingSoon} className="text-gray-400 hover:text-white transition-colors text-left">
+                    Download
+                  </button>
+                </li>
+                <li><a href="#features" className="text-gray-400 hover:text-white transition-colors">What's new</a></li>
+                <li><Link to="/tutorial" className="text-gray-400 hover:text-white transition-colors">Tutorial</Link></li>
+                <li><Link to="/auth" className="text-gray-400 hover:text-white transition-colors">Sign in</Link></li>
+                <li><Link to="/auth?mode=signup" className="text-gray-400 hover:text-white transition-colors">Get started</Link></li>
+              </ul>
+            </div>
+
+            {/* Resources column */}
+            <div>
+              <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Resources</h3>
+              <ul className="space-y-2.5 text-sm">
+                <li><Link to="/help" className="text-gray-400 hover:text-white transition-colors">Help Center</Link></li>
+                <li><Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link></li>
+                <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact us</Link></li>
+              </ul>
+            </div>
+
+            {/* Company column */}
+            <div>
+              <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">Company</h3>
+              <ul className="space-y-2.5 text-sm">
+                <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About us</Link></li>
+                <li><Link to="/careers" className="text-gray-400 hover:text-white transition-colors">Careers</Link></li>
+                <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Partnerships</Link></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Legal bar */}
+        <div className="border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <p className="text-xs sm:text-sm text-gray-500">
+              {t('footer.copyright', `© ${new Date().getFullYear()} SleepyBabyy. Made with 💜 by tired parents.`)}
+            </p>
+            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm">
+              <li><Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy</Link></li>
+              <li><Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">Terms</Link></li>
+              <li>
+                <button type="button" onClick={openPreferences} className="text-gray-400 hover:text-white transition-colors">
+                  {t('footer.cookieSettings', 'Cookie settings')}
+                </button>
+              </li>
+              <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Refund policy</Link></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
      
    </div>;
 };

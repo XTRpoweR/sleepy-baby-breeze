@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/hooks/useAuth";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { 
   Moon, 
@@ -21,6 +23,8 @@ import {
 const Download = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const goBack = useSmartBack(user ? '/dashboard' : '/');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -28,20 +32,9 @@ const Download = () => {
       <nav className="bg-white/80 backdrop-blur-sm border-b border-blue-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back</span>
-              </Button>
-              <div className="flex items-center space-x-2">
-                <Moon className="h-8 w-8 text-blue-600" />
-                <span className="text-xl font-semibold text-gray-900">{t('app.name')}</span>
-              </div>
+            <div className="flex items-center space-x-2">
+              <Moon className="h-8 w-8 text-blue-600" />
+              <span className="text-xl font-semibold text-gray-900">{t('app.name')}</span>
             </div>
             <div className="flex items-center space-x-4">
               <LanguageSelector />
@@ -49,6 +42,21 @@ const Download = () => {
           </div>
         </div>
       </nav>
+
+      {/* Back Button */}
+      <div className="px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
+        <div className="max-w-7xl mx-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={goBack}
+            className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 hover:bg-white/60 touch-target"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back</span>
+          </Button>
+        </div>
+      </div>
 
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
