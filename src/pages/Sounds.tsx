@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Volume2, ArrowLeft, Baby, Plus, BookOpen } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { ResponsiveSoundsLibrary } from '@/components/sounds/ResponsiveSoundsLibrary';
 import { SleepArticles } from '@/components/sleep-schedule/SleepArticles';
@@ -29,6 +30,7 @@ const Sounds = () => {
     loading: profileLoading
   } = useBabyProfile();
   const navigate = useNavigate();
+  const handleBackToDashboard = useSmartBack();
   const {
     t
   } = useTranslation();
@@ -43,10 +45,6 @@ const Sounds = () => {
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
-  };
-
-  const handleBackToDashboard = () => {
-    navigate('/dashboard');
   };
 
   const handleAddProfile = () => {

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useBabyMemories } from '@/hooks/useBabyMemories';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -16,6 +17,7 @@ import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 
 const Memories = () => {
   const navigate = useNavigate();
+  const goBack = useSmartBack();
   const { user, loading: authLoading } = useAuth();
   const { activeProfile } = useBabyProfile();
   const { isPremium } = useSubscription();
@@ -55,13 +57,13 @@ const Memories = () => {
         
         <main className="max-w-7xl mx-auto px-4 py-8">
           <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/dashboard')}
+            <Button
+              variant="ghost"
+              onClick={goBack}
               className="mb-4 hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+              Back
             </Button>
           </div>
 
@@ -93,13 +95,13 @@ const Memories = () => {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/dashboard')}
+          <Button
+            variant="ghost"
+            onClick={goBack}
             className="mb-4 hover:bg-primary/10"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
+            Back
           </Button>
           
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

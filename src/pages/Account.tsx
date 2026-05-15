@@ -1,30 +1,36 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  User, 
-  Crown, 
-  Settings, 
-  ArrowLeft, 
-  Save, 
+import {
+  User,
+  Crown,
+  Settings,
+  ArrowLeft,
+  Save,
   CreditCard,
   Calendar,
   AlertTriangle,
   Check,
-  Trash2
+  Trash2,
+  Shield,
+  KeyRound,
+  Download,
+  Loader2,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/use-toast';
 import { DesktopHeader } from '@/components/layout/DesktopHeader';
 import { MobileHeader } from '@/components/layout/MobileHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { generateUserDataPDF } from '@/utils/generateUserDataExport';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useProfilePermissions } from '@/hooks/useProfilePermissions';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -44,8 +50,24 @@ const Account = () => {
     openCustomerPortal
   } = useSubscription();
   const navigate = useNavigate();
+  const goBack = useSmartBack();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
   const { toast } = useToast();
+
+  const initialTab = (() => {
+    const raw = searchParams.get('tab');
+    return raw === 'subscription' || raw === 'security' ? raw : 'profile';
+  })();
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    const next = new URLSearchParams(searchParams);
+    if (value === 'profile') next.delete('tab');
+    else next.set('tab', value);
+    setSearchParams(next, { replace: true });
+  };
 
   const [profile, setProfile] = useState({
     full_name: '',
@@ -55,6 +77,11 @@ const Account = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [deleting, setDeleting] = useState(false);
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [exporting, setExporting] = useState(false);
   
   // Check user role and permissions
   const { activeProfile } = useBabyProfile();
@@ -196,6 +223,90 @@ const Account = () => {
     openCustomerPortal();
   };
 
+  const handleChangePassword = async () => {
+    if (newPassword.length < 8) {
+      toast({
+        title: "Password too short",
+        description: "Choose a password with at least 8 characters.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Passwords do not match",
+        description: "Please re-type the same password in both fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast({
+        title: "Password updated",
+        description: "Your password has been changed successfully.",
+      });
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to update password.",
+        variant: "destructive",
+      });
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    if (!user) return;
+    setExporting(true);
+    try {
+      let accessToken: string | undefined = session?.access_token;
+      if (!accessToken) {
+        const { data } = await supabase.auth.getSession();
+        accessToken = data.session?.access_token;
+      }
+      if (!accessToken) {
+        toast({
+          title: "Not Authenticated",
+          description: "Could not find your session. Please login again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const res = await fetch("https://wjxxgccfazpkdfzbcgen.functions.supabase.co/export-user-data", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Failed to export data" }));
+        throw new Error(err.error || "Failed to export data");
+      }
+
+      const data = await res.json();
+      generateUserDataPDF(data);
+
+      toast({
+        title: "Download started",
+        description: "Your data export PDF is being downloaded.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Failed to export your data.",
+        variant: "destructive",
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const handleDeleteAccount = async () => {
     if (!user) return;
     setDeleting(true);
@@ -280,13 +391,13 @@ const Account = () => {
       <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-8">
         {/* Page Header */}
         <div className="mb-6 lg:mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/dashboard')}
+          <Button
+            variant="ghost"
+            onClick={goBack}
             className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
           >
             <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            <span>Back to Dashboard</span>
+            <span>Back</span>
           </Button>
           
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
@@ -297,7 +408,7 @@ const Account = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="profile" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="profile" className="flex items-center space-x-2">
               <User className="h-4 w-4" />
@@ -307,9 +418,9 @@ const Account = () => {
               <Crown className="h-4 w-4" />
               <span>Subscription</span>
             </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center space-x-2 text-red-700">
-              <Trash2 className="h-4 w-4" />
-              <span>Security</span>
+            <TabsTrigger value="security" className="flex items-center space-x-2">
+              <Shield className="h-4 w-4" />
+              <span>Security & Privacy</span>
             </TabsTrigger>
           </TabsList>
 
@@ -391,18 +502,91 @@ const Account = () => {
             </Card>
           </TabsContent>
 
-          {/* Security Tab */}
+          {/* Security & Privacy Tab */}
           <TabsContent value="security" className="space-y-6">
+            {/* Change Password */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <KeyRound className="h-5 w-5 text-blue-600" />
+                  <span>Change Password</span>
+                </CardTitle>
+                <CardDescription>
+                  Choose a new password with at least 8 characters. You'll stay signed in on this device.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="new_password">New Password</Label>
+                    <Input
+                      id="new_password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="At least 8 characters"
+                      disabled={changingPassword}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm_password">Confirm New Password</Label>
+                    <Input
+                      id="confirm_password"
+                      type="password"
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Re-enter your new password"
+                      disabled={changingPassword}
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={changingPassword || !newPassword || !confirmPassword}
+                  className="flex items-center space-x-2"
+                >
+                  {changingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                  <span>{changingPassword ? 'Updating...' : 'Update Password'}</span>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Download My Data */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Download className="h-5 w-5 text-emerald-600" />
+                  <span>Download My Data</span>
+                </CardTitle>
+                <CardDescription>
+                  Get a friendly PDF summary of everything we store about you — baby profiles, activities, memories, subscriptions, and account history.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  onClick={handleExportData}
+                  disabled={exporting}
+                  variant="outline"
+                  className="flex items-center space-x-2"
+                >
+                  {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  <span>{exporting ? 'Preparing download...' : 'Download my data (PDF)'}</span>
+                </Button>
+              </CardContent>
+            </Card>
+
             {isViewerOnly && (
               <Alert className="border-amber-200 bg-amber-50">
                 <Info className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-amber-800">
-                  You are currently a viewer in a family sharing setup. Account deletion is not available to viewers. 
+                  You are currently a viewer in a family sharing setup. Account deletion is not available to viewers.
                   If you want to leave the family, contact the baby's owner to remove you from family sharing.
                 </AlertDescription>
               </Alert>
             )}
-            
+
             {!isViewerOnly && (
               <Card>
                 <CardHeader>

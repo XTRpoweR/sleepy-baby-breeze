@@ -11,6 +11,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { ReportsOverview } from '@/components/reports/ReportsOverview';
 import { SleepAnalytics } from '@/components/reports/SleepAnalytics';
@@ -45,9 +46,7 @@ const Reports = () => {
     navigate('/');
   };
 
-  const handleBackToDashboard = () => {
-    navigate('/dashboard');
-  };
+  const handleBackToDashboard = useSmartBack();
 
   if (loading || profileLoading) {
     return (

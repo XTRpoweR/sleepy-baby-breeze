@@ -12,6 +12,7 @@ import {
   Plus
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSleepSchedule } from '@/hooks/useSleepSchedule';
 import { SleepScheduleSetup } from '@/components/sleep-schedule/SleepScheduleSetup';
@@ -60,9 +61,7 @@ const SleepSchedule = () => {
     navigate('/');
   };
 
-  const handleBackToDashboard = () => {
-    navigate('/dashboard');
-  };
+  const handleBackToDashboard = useSmartBack();
 
   const handleAddProfile = () => {
     setShowProfileManagement(true);

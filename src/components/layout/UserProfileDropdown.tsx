@@ -46,10 +46,6 @@ export const UserProfileDropdown = () => {
     navigate('/notifications');
   };
 
-  const handleSecurity = () => {
-    navigate('/security');
-  };
-
   const userDisplayName = user?.user_metadata?.full_name || user?.email || 'User';
   const userInitials = userDisplayName
     .split(' ')
@@ -92,11 +88,6 @@ export const UserProfileDropdown = () => {
         <DropdownMenuItem onClick={handleNotifications} className="cursor-pointer">
           <Bell className="h-4 w-4 mr-2" />
           <span>{t('notifications.title')}</span>
-        </DropdownMenuItem>
-        
-        <DropdownMenuItem onClick={handleSecurity} className="cursor-pointer">
-          <Shield className="h-4 w-4 mr-2" />
-          <span>Security</span>
         </DropdownMenuItem>
         
         <DropdownMenuItem onClick={handleManageSubscription} className="cursor-pointer">

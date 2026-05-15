@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSmartBack } from "@/hooks/useSmartBack";
 import { useTranslation } from "react-i18next";
 import { DesktopHeader } from "@/components/layout/DesktopHeader";
 import { MobileHeader } from "@/components/layout/MobileHeader";
@@ -13,6 +14,7 @@ import { Clock, Calendar, Volume2, Users, BarChart3, Globe, Baby, Heart, CheckCi
 const Features = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const goBack = useSmartBack(user ? '/dashboard' : '/');
   const { t } = useTranslation();
 
   // Scroll to top when component mounts
@@ -103,7 +105,7 @@ const Features = () => {
           
           {/* Back Button for Mobile (authenticated users) */}
           <div className="lg:hidden bg-white/80 backdrop-blur-sm border-b border-blue-100 px-4 py-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" onClick={goBack} className="flex items-center space-x-2">
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Dashboard</span>
             </Button>

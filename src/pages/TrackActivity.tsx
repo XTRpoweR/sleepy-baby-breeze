@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -38,6 +39,7 @@ import { TranslationWrapper } from '@/components/TranslationWrapper';
 const TrackActivity = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const goBack = useSmartBack();
   const { activeProfile, profiles, loading: profileLoading, switching, createProfile } = useBabyProfile();
   const { logs, loading: logsLoading, deleteLog, updateLog, refetchLogs } = useActivityLogs(activeProfile?.id || '');
   const { permissions, role, loading: permissionsLoading } = useProfilePermissions(activeProfile?.id || null);
@@ -88,9 +90,9 @@ const TrackActivity = () => {
       <TranslationWrapper>
         <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
           <div className="max-w-2xl mx-auto px-4 py-4 sm:py-8">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/dashboard')}
+            <Button
+              variant="ghost"
+              onClick={goBack}
               className="mb-4 sm:mb-6 hover:bg-primary/10"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -111,9 +113,9 @@ const TrackActivity = () => {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
           <div className="flex-1">
               <div className="mb-4">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => navigate('/dashboard')}
+                <Button
+                  variant="ghost"
+                  onClick={goBack}
                   size={isMobile ? "sm" : "default"}
                   className="hover:bg-primary/10"
                 >

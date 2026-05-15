@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FileText, Baby, ArrowLeft, Clock, TrendingUp, BarChart3 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmartBack } from '@/hooks/useSmartBack';
 import { useBabyProfile } from '@/hooks/useBabyProfile';
 import { useSubscription } from '@/hooks/useSubscription';
 import { FeatureGate } from '@/components/subscription/FeatureGate';
@@ -39,7 +40,7 @@ const PediatricianReports = () => {
     }
   }, [user, loading, navigate]);
 
-  const handleBackToDashboard = () => navigate('/dashboard');
+  const handleBackToDashboard = useSmartBack();
 
   const rangeMap: Record<string, DateRangeOption> = {
     'comprehensive': 'last30Days',
