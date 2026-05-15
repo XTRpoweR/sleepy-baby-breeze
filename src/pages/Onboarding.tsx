@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Card } from '@/components/ui/card';
-import { Baby, Sparkles, PartyPopper, Users, ArrowRight, Copy } from 'lucide-react';
+import { Baby, Sparkles, Users, ArrowRight, Copy, Heart } from 'lucide-react';
 
 type StepKey = 'welcome' | 'baby' | 'tour' | 'activity' | 'family' | 'success';
 const STEPS: StepKey[] = ['welcome', 'baby', 'tour', 'activity', 'family', 'success'];
@@ -217,143 +217,180 @@ export default function Onboarding() {
   const progress = ((stepIndex + 1) / STEPS.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex flex-col">
+    <div className="relative min-h-screen bg-gradient-to-br from-pink-50 via-purple-50/40 to-indigo-50 flex flex-col overflow-hidden">
+      {/* Decorative gradient blobs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-80 sm:w-[28rem] h-80 sm:h-[28rem] rounded-full bg-pink-300/30 blur-3xl animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute top-1/3 -right-32 w-80 sm:w-[28rem] h-80 sm:h-[28rem] rounded-full bg-purple-300/30 blur-3xl animate-pulse" style={{ animationDuration: '10s', animationDelay: '1s' }} />
+        <div className="absolute bottom-0 left-1/4 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-indigo-300/25 blur-3xl animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }} />
+      </div>
+
+      {/* Floating decorative emojis (hidden on small screens to save space) */}
+      <div aria-hidden="true" className="pointer-events-none hidden sm:block">
+        <span className="absolute top-16 left-8 text-3xl animate-bounce" style={{ animationDuration: '3s' }}>🌙</span>
+        <span className="absolute top-24 right-12 text-2xl animate-pulse" style={{ animationDuration: '2.5s' }}>✨</span>
+        <span className="absolute top-1/2 left-6 text-2xl animate-bounce" style={{ animationDuration: '4s', animationDelay: '0.5s' }}>⭐</span>
+        <span className="absolute bottom-32 right-10 text-3xl animate-pulse" style={{ animationDuration: '3.5s' }}>☁️</span>
+        <span className="absolute bottom-20 left-12 text-2xl animate-bounce" style={{ animationDuration: '3.2s', animationDelay: '1s' }}>💫</span>
+      </div>
+
       {/* Header / progress */}
-      <div className="w-full max-w-xl mx-auto px-4 pt-6 sm:pt-10">
+      <div className="relative w-full max-w-xl mx-auto px-4 pt-6 sm:pt-10">
         {step !== 'welcome' && step !== 'success' && (
           <>
-            <div className="flex items-center justify-between mb-2 text-xs sm:text-sm text-muted-foreground">
-              <span>
+            <div className="flex items-center justify-between mb-2 text-xs sm:text-sm">
+              <span className="font-medium bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
                 Step {stepIndex} of {STEPS.length - 2}
               </span>
               <button
                 onClick={skipOnboarding}
-                className="hover:text-foreground transition-colors underline-offset-4 hover:underline"
+                className="text-gray-500 hover:text-gray-900 transition-colors underline-offset-4 hover:underline touch-target"
               >
                 Skip setup
               </button>
             </div>
-            <Progress value={progress} className="h-1.5" />
+            <div className="h-2 w-full rounded-full bg-white/60 overflow-hidden shadow-inner">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </>
         )}
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-4 py-8">
-        <Card className="w-full max-w-xl p-6 sm:p-10 shadow-xl border-white/60 bg-white/90 backdrop-blur-md">
+      <div className="relative flex-1 flex items-center justify-center px-4 py-8">
+        <Card
+          key={step}
+          className="relative w-full max-w-xl p-6 sm:p-10 shadow-2xl shadow-purple-500/10 border border-white/60 bg-white/85 backdrop-blur-md rounded-3xl overflow-hidden animate-fade-in-up"
+        >
+          {/* Gradient accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500" />
+
           {step === 'welcome' && (
-            <div className="text-center space-y-5">
-              <div className="text-6xl">🌙</div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Welcome to SleepyBabyy!</h1>
-              <p className="text-muted-foreground">
-                Let's set up better sleep for you and your baby.
-                <br />
-                Takes less than 2 minutes ✨
-              </p>
-              <Button size="lg" className="w-full sm:w-auto" onClick={goNext}>
-                Let's Start <ArrowRight className="ml-2 h-4 w-4" />
+            <div className="text-center space-y-6 pt-2">
+              <div className="relative inline-block">
+                <div className="text-6xl sm:text-7xl animate-bounce" style={{ animationDuration: '2.5s' }}>🌙</div>
+                <span className="absolute -top-2 -right-4 text-2xl animate-pulse">✨</span>
+                <span className="absolute -bottom-1 -left-3 text-xl animate-pulse" style={{ animationDelay: '0.5s' }}>⭐</span>
+              </div>
+              <div className="space-y-3">
+                <h1 className="text-2xl sm:text-4xl font-bold leading-tight">
+                  Welcome to{' '}
+                  <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                    SleepyBabyy!
+                  </span>
+                </h1>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                  Let's set up better sleep for you and your baby. 🍼
+                  <br />
+                  Takes less than 2 minutes ✨
+                </p>
+              </div>
+              <Button
+                size="lg"
+                onClick={goNext}
+                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300 hover:scale-[1.03] rounded-full px-8 py-6 text-base font-semibold"
+              >
+                Let's Start <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <div className="text-sm text-muted-foreground pt-4 space-y-1">
-                <p>You'll be able to:</p>
-                <p>✓ Track sleep & feeds</p>
-                <p>✓ See sleep patterns</p>
-                <p>✓ Share with family</p>
+              <div className="pt-4">
+                <p className="text-xs sm:text-sm text-gray-500 mb-3 font-medium">You'll be able to:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+                  <FeatureBadge emoji="😴" label="Track sleep & feeds" gradient="from-pink-100 to-pink-50" />
+                  <FeatureBadge emoji="📊" label="See sleep patterns" gradient="from-purple-100 to-purple-50" />
+                  <FeatureBadge emoji="👨‍👩‍👧" label="Share with family" gradient="from-indigo-100 to-indigo-50" />
+                </div>
               </div>
             </div>
           )}
 
           {step === 'baby' && (
-            <div className="space-y-5">
-              <div className="text-center">
-                <Baby className="h-12 w-12 mx-auto text-primary mb-2" />
-                <h2 className="text-2xl font-bold">Tell us about your baby</h2>
+            <div className="space-y-6 pt-2">
+              <div className="text-center space-y-2">
+                <div className="inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-500 items-center justify-center shadow-lg shadow-purple-500/30 animate-bounce" style={{ animationDuration: '2.5s' }}>
+                  <Baby className="h-9 w-9 text-white" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold">
+                  Tell us about your{' '}
+                  <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                    baby
+                  </span>{' '}
+                  👶
+                </h2>
+                <p className="text-sm text-gray-600">A few details so we can personalize the experience</p>
               </div>
               <div className="space-y-4">
-                <div>
-                  <Label htmlFor="baby-name">Baby's name</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="baby-name" className="text-sm font-medium text-gray-700">Baby's name 💝</Label>
                   <Input
                     id="baby-name"
                     placeholder="e.g. Emma"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     autoFocus
+                    className="rounded-xl border-purple-200/70 bg-white/70 focus-visible:ring-2 focus-visible:ring-purple-300 focus:border-purple-400 transition-all"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="birth-date">Birth date</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="birth-date" className="text-sm font-medium text-gray-700">Birth date 🎂</Label>
                   <Input
                     id="birth-date"
                     type="date"
                     value={birthDate}
                     max={new Date().toISOString().split('T')[0]}
                     onChange={(e) => setBirthDate(e.target.value)}
+                    className="rounded-xl border-purple-200/70 bg-white/70 focus-visible:ring-2 focus-visible:ring-purple-300 focus:border-purple-400 transition-all"
                   />
                 </div>
-                <div>
-                  <Label>Gender (optional)</Label>
-                  <div className="flex gap-2 mt-1">
-                    <Button
-                      type="button"
-                      variant={gender === 'girl' ? 'default' : 'outline'}
-                      onClick={() => setGender('girl')}
-                      className="flex-1"
-                    >
-                      👧 Girl
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={gender === 'boy' ? 'default' : 'outline'}
-                      onClick={() => setGender('boy')}
-                      className="flex-1"
-                    >
-                      👦 Boy
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={gender === null ? 'default' : 'outline'}
-                      onClick={() => setGender(null)}
-                      className="flex-1"
-                    >
-                      Skip
-                    </Button>
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-medium text-gray-700">Gender (optional)</Label>
+                  <div className="flex gap-2">
+                    <GenderButton emoji="👧" label="Girl" active={gender === 'girl'} onClick={() => setGender('girl')} activeGradient="from-pink-400 to-pink-500" />
+                    <GenderButton emoji="👦" label="Boy" active={gender === 'boy'} onClick={() => setGender('boy')} activeGradient="from-indigo-400 to-indigo-500" />
+                    <GenderButton emoji="—" label="Skip" active={gender === null} onClick={() => setGender(null)} activeGradient="from-gray-400 to-gray-500" />
                   </div>
                 </div>
               </div>
-              <Button onClick={saveBaby} disabled={savingBaby} className="w-full" size="lg">
-                {savingBaby ? 'Saving...' : 'Continue'} <ArrowRight className="ml-2 h-4 w-4" />
+              <Button
+                onClick={saveBaby}
+                disabled={savingBaby}
+                size="lg"
+                className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-lg shadow-purple-500/30 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] rounded-full py-6 text-base font-semibold disabled:opacity-60 disabled:hover:scale-100"
+              >
+                {savingBaby ? 'Saving... 💫' : 'Continue'} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
           )}
 
           {step === 'tour' && (
-            <div className="space-y-5 text-center">
-              <div className="text-5xl">🎬</div>
-              <h2 className="text-2xl font-bold">Quick tour</h2>
-              <p className="text-muted-foreground">Here's how easy tracking is:</p>
-              <div className="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl p-6 text-left space-y-3">
-                <div className="flex gap-3 items-start">
-                  <span className="text-2xl">😴</span>
-                  <p className="text-sm">
-                    <b>Tap the moon</b> when baby falls asleep
-                  </p>
-                </div>
-                <div className="flex gap-3 items-start">
-                  <span className="text-2xl">⏱️</span>
-                  <p className="text-sm">
-                    <b>Tap again</b> when they wake up
-                  </p>
-                </div>
-                <div className="flex gap-3 items-start">
-                  <span className="text-2xl">📊</span>
-                  <p className="text-sm">
-                    <b>We do the math</b> and show you patterns
-                  </p>
-                </div>
+            <div className="space-y-6 text-center pt-2">
+              <div className="relative inline-block">
+                <div className="text-6xl animate-bounce" style={{ animationDuration: '2.5s' }}>🎬</div>
+                <span className="absolute -top-2 -right-4 text-xl animate-pulse">✨</span>
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl sm:text-3xl font-bold">
+                  <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                    Quick tour
+                  </span>
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600">Tracking is as easy as 1-2-3 🌟</p>
+              </div>
+              <div className="space-y-3 text-left">
+                <TourStep number="1" emoji="😴" title="Tap the moon" desc="when baby falls asleep" gradient="from-pink-50 to-pink-100/50" iconBg="from-pink-400 to-pink-500" />
+                <TourStep number="2" emoji="⏰" title="Tap again" desc="when they wake up" gradient="from-purple-50 to-purple-100/50" iconBg="from-purple-400 to-purple-500" />
+                <TourStep number="3" emoji="📊" title="We do the math" desc="and reveal sleep patterns automatically" gradient="from-indigo-50 to-indigo-100/50" iconBg="from-indigo-400 to-indigo-500" />
               </div>
               <div className="flex flex-col gap-2">
-                <Button onClick={goNext} size="lg">
-                  Got it! <ArrowRight className="ml-2 h-4 w-4" />
+                <Button
+                  onClick={goNext}
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-lg shadow-purple-500/30 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] rounded-full py-6 text-base font-semibold"
+                >
+                  Got it! <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button onClick={goNext} variant="ghost">
+                <Button onClick={goNext} variant="ghost" className="text-gray-500 hover:text-gray-900 hover:bg-purple-50">
                   Skip tour
                 </Button>
               </div>
@@ -361,43 +398,68 @@ export default function Onboarding() {
           )}
 
           {step === 'activity' && (
-            <div className="space-y-5">
-              <div className="text-center">
-                <Sparkles className="h-12 w-12 mx-auto text-primary mb-2" />
-                <h2 className="text-2xl font-bold">Log your first activity!</h2>
-                <p className="text-muted-foreground mt-1">
-                  Pick what's happening right now:
+            <div className="space-y-6 pt-2">
+              <div className="text-center space-y-2">
+                <div className="relative inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-500 items-center justify-center shadow-lg shadow-purple-500/30">
+                  <Sparkles className="h-9 w-9 text-white animate-pulse" />
+                  <span className="absolute -top-2 -right-2 text-lg animate-bounce">✨</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold">
+                  Log your{' '}
+                  <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">first activity!</span>{' '}
+                  🎉
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Pick what's happening with {name.trim() || 'your baby'} right now:
                 </p>
               </div>
               <div className="grid gap-3">
-                <ActivityButton emoji="😴" label="Baby is sleeping" onClick={() => logFirstActivity('sleep')} />
-                <ActivityButton emoji="🍼" label="Just fed baby" onClick={() => logFirstActivity('feeding')} />
-                <ActivityButton emoji="😊" label="Baby is awake" onClick={() => logFirstActivity('awake')} />
-                <ActivityButton emoji="💩" label="Diaper change" onClick={() => logFirstActivity('diaper')} />
+                <ActivityButton emoji="😴" label="Baby is sleeping" hint="Tracks sleep start time" gradient="from-pink-50 to-pink-100/50" iconBg="from-pink-400 to-pink-500" onClick={() => logFirstActivity('sleep')} />
+                <ActivityButton emoji="🍼" label="Just fed baby" hint="Quick feeding log" gradient="from-purple-50 to-purple-100/50" iconBg="from-purple-400 to-purple-500" onClick={() => logFirstActivity('feeding')} />
+                <ActivityButton emoji="😊" label="Baby is awake" hint="Marks wake time" gradient="from-indigo-50 to-indigo-100/50" iconBg="from-indigo-400 to-indigo-500" onClick={() => logFirstActivity('awake')} />
+                <ActivityButton emoji="💩" label="Diaper change" hint="Diaper change log" gradient="from-pink-50 to-purple-50" iconBg="from-pink-400 to-purple-500" onClick={() => logFirstActivity('diaper')} />
               </div>
-              <Button onClick={goNext} variant="ghost" className="w-full">
+              <Button onClick={goNext} variant="ghost" className="w-full text-gray-500 hover:text-gray-900 hover:bg-purple-50">
                 I'll do this later
               </Button>
             </div>
           )}
 
           {step === 'family' && (
-            <div className="space-y-5">
-              <div className="text-center">
-                <Users className="h-12 w-12 mx-auto text-primary mb-2" />
-                <h2 className="text-2xl font-bold">Share with family</h2>
-                <p className="text-muted-foreground mt-1">
+            <div className="space-y-6 pt-2">
+              <div className="text-center space-y-2">
+                <div className="relative inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-500 items-center justify-center shadow-lg shadow-purple-500/30">
+                  <Users className="h-9 w-9 text-white" />
+                  <Heart className="absolute -top-2 -right-2 h-5 w-5 text-pink-500 fill-pink-500 animate-pulse" />
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold">
+                  Share with{' '}
+                  <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">family</span>{' '}
+                  💕
+                </h2>
+                <p className="text-sm text-gray-600">
                   Track together with your partner, grandparents, or caregivers
                 </p>
               </div>
-              <div>
-                <Label htmlFor="invite-email">Email (optional)</Label>
+              <div className="rounded-xl bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 border border-purple-100/60 p-4 space-y-3">
+                <div className="flex items-center justify-center gap-3 text-2xl">
+                  <span className="animate-bounce" style={{ animationDuration: '2s' }}>👨</span>
+                  <span className="text-pink-400">→</span>
+                  <span className="animate-bounce" style={{ animationDuration: '2s', animationDelay: '0.3s' }}>👩</span>
+                  <span className="text-pink-400">→</span>
+                  <span className="animate-bounce" style={{ animationDuration: '2s', animationDelay: '0.6s' }}>👴</span>
+                </div>
+                <p className="text-xs text-center text-gray-600">Everyone stays in sync, in real-time</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="invite-email" className="text-sm font-medium text-gray-700">Email (optional) 📧</Label>
                 <Input
                   id="invite-email"
                   type="email"
                   placeholder="partner@email.com"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
+                  className="rounded-xl border-purple-200/70 bg-white/70 focus-visible:ring-2 focus-visible:ring-purple-300 focus:border-purple-400 transition-all"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -405,44 +467,71 @@ export default function Onboarding() {
                   onClick={sendInvite}
                   disabled={sendingInvite || !inviteEmail.trim()}
                   size="lg"
+                  className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-lg shadow-purple-500/30 hover:shadow-xl transition-all duration-300 hover:scale-[1.02] rounded-full py-6 text-base font-semibold disabled:opacity-60 disabled:hover:scale-100"
                 >
-                  {sendingInvite ? 'Sending...' : 'Send Invite'}
+                  {sendingInvite ? 'Sending... 💌' : 'Send Invite 💌'}
                 </Button>
-                <Button onClick={goNext} variant="ghost">
+                <Button onClick={goNext} variant="ghost" className="text-gray-500 hover:text-gray-900 hover:bg-purple-50">
                   Maybe later
                 </Button>
               </div>
               {manualInviteLink && (
-                <div className="space-y-2 rounded-lg border border-border bg-muted/40 p-3">
-                  <p className="text-sm font-medium">Email delivery failed. Share this link instead:</p>
+                <div className="space-y-2 rounded-xl border border-purple-100 bg-gradient-to-br from-pink-50 to-purple-50 p-4">
+                  <p className="text-sm font-medium text-gray-700">Email delivery failed. Share this link instead:</p>
                   <div className="flex gap-2">
-                    <Input value={manualInviteLink} readOnly className="text-xs" />
-                    <Button type="button" variant="outline" size="icon" onClick={copyManualInviteLink}>
+                    <Input value={manualInviteLink} readOnly className="text-xs rounded-lg bg-white/80" />
+                    <Button type="button" variant="outline" size="icon" onClick={copyManualInviteLink} className="rounded-lg border-purple-200">
                       <Copy className="h-4 w-4" />
                     </Button>
                   </div>
-                  <Button onClick={goNext} className="w-full" variant="secondary">
+                  <Button onClick={goNext} className="w-full rounded-full" variant="secondary">
                     Continue
                   </Button>
                 </div>
               )}
-              <p className="text-xs text-center text-muted-foreground">
+              <p className="text-xs text-center text-gray-500">
                 ✓ You're all set either way!
               </p>
             </div>
           )}
 
           {step === 'success' && (
-            <div className="text-center space-y-5">
-              <PartyPopper className="h-16 w-16 mx-auto text-primary" />
-              <h2 className="text-3xl font-bold">You're all set! 🎉</h2>
-              <p className="text-muted-foreground">
-                Your dashboard is ready.
-                <br />
-                First insights will appear after 24 hours of tracking. 📊
-              </p>
-              <Button onClick={completeOnboarding} size="lg" className="w-full sm:w-auto">
-                Open Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+            <div className="text-center space-y-6 pt-2">
+              <div className="relative inline-block">
+                <div className="text-7xl sm:text-8xl animate-bounce" style={{ animationDuration: '1.5s' }}>🎉</div>
+                <span className="absolute -top-2 -left-6 text-3xl animate-pulse" style={{ animationDuration: '1.5s' }}>✨</span>
+                <span className="absolute -top-4 right-0 text-2xl animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.3s' }}>⭐</span>
+                <span className="absolute -bottom-2 -left-4 text-2xl animate-pulse" style={{ animationDuration: '1.8s', animationDelay: '0.6s' }}>💫</span>
+                <span className="absolute -bottom-1 -right-6 text-3xl animate-pulse" style={{ animationDuration: '2.2s', animationDelay: '0.9s' }}>🌟</span>
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-3xl sm:text-4xl font-bold leading-tight">
+                  You're all{' '}
+                  <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                    set!
+                  </span>
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                  Your dashboard is ready for {name.trim() || 'your baby'}. 🍼
+                  <br />
+                  First insights will appear after 24 hours of tracking. 📊
+                </p>
+              </div>
+              <div className="rounded-2xl bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 border border-purple-100/60 p-4 space-y-2 text-left">
+                <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-purple-500" />
+                  Pro tip:
+                </p>
+                <p className="text-xs sm:text-sm text-gray-600">
+                  Log every sleep & feed for the first few days — that's when the patterns become clearest!
+                </p>
+              </div>
+              <Button
+                onClick={completeOnboarding}
+                size="lg"
+                className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-lg shadow-purple-500/30 hover:shadow-xl transition-all duration-300 hover:scale-[1.03] rounded-full py-6 text-base font-semibold"
+              >
+                Open Dashboard <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
           )}
@@ -455,20 +544,98 @@ export default function Onboarding() {
 function ActivityButton({
   emoji,
   label,
+  hint,
+  gradient,
+  iconBg,
   onClick,
 }: {
   emoji: string;
   label: string;
+  hint?: string;
+  gradient: string;
+  iconBg: string;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:bg-accent hover:scale-[1.02] active:scale-[0.98] transition-all text-left"
+      className={`w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border border-white/60 bg-gradient-to-r ${gradient} hover:shadow-lg hover:shadow-purple-500/10 hover:-translate-y-0.5 hover:scale-[1.01] active:scale-[0.98] transition-all duration-300 text-left group touch-target`}
     >
-      <span className="text-3xl">{emoji}</span>
-      <span className="font-medium">{label}</span>
-      <ArrowRight className="ml-auto h-4 w-4 text-muted-foreground" />
+      <span className={`flex h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-gradient-to-br ${iconBg} items-center justify-center shadow-sm shadow-purple-500/20 flex-shrink-0 text-2xl sm:text-3xl group-hover:scale-110 transition-transform`}>
+        {emoji}
+      </span>
+      <span className="flex-1 min-w-0">
+        <span className="block text-sm sm:text-base font-semibold text-gray-900">{label}</span>
+        {hint && <span className="block text-xs text-gray-500">{hint}</span>}
+      </span>
+      <ArrowRight className="h-4 w-4 text-purple-500 group-hover:translate-x-1 transition-transform flex-shrink-0" />
     </button>
+  );
+}
+
+function FeatureBadge({ emoji, label, gradient }: { emoji: string; label: string; gradient: string }) {
+  return (
+    <div className={`flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-br ${gradient} border border-white/60 text-xs sm:text-sm text-gray-700 font-medium`}>
+      <span className="text-lg sm:text-xl">{emoji}</span>
+      <span className="leading-tight">{label}</span>
+    </div>
+  );
+}
+
+function GenderButton({
+  emoji,
+  label,
+  active,
+  activeGradient,
+  onClick,
+}: {
+  emoji: string;
+  label: string;
+  active: boolean;
+  activeGradient: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2.5 rounded-xl border transition-all duration-300 touch-target text-sm font-medium ${
+        active
+          ? `bg-gradient-to-br ${activeGradient} text-white border-transparent shadow-md scale-[1.02]`
+          : 'bg-white/70 text-gray-700 border-purple-200/70 hover:border-purple-400 hover:bg-purple-50'
+      }`}
+    >
+      <span className="text-lg">{emoji}</span>
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function TourStep({
+  number,
+  emoji,
+  title,
+  desc,
+  gradient,
+  iconBg,
+}: {
+  number: string;
+  emoji: string;
+  title: string;
+  desc: string;
+  gradient: string;
+  iconBg: string;
+}) {
+  return (
+    <div className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-gradient-to-r ${gradient} border border-white/60 shadow-sm`}>
+      <span className={`flex h-12 w-12 rounded-xl bg-gradient-to-br ${iconBg} items-center justify-center shadow-sm flex-shrink-0 text-2xl relative`}>
+        {emoji}
+        <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-white text-xs font-bold text-gray-700 flex items-center justify-center shadow-sm">{number}</span>
+      </span>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-gray-900">{title}</p>
+        <p className="text-xs text-gray-600">{desc}</p>
+      </div>
+    </div>
   );
 }
