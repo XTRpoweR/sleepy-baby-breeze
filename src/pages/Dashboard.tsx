@@ -12,7 +12,7 @@ import { NewUserOnboarding } from '@/components/onboarding/NewUserOnboarding';
 import { UpgradePrompt } from '@/components/subscription/UpgradePrompt';
 import { UnifiedHeader } from '@/components/layout/UnifiedHeader';
 import { UnifiedDashboard } from '@/components/dashboard/UnifiedDashboard';
-import { fbqTrack } from '@/utils/metaPixel';
+import { fbqTrack, applyMetaAdvancedMatching } from '@/utils/metaPixel';
 import { buildMetaUserData } from '@/utils/metaUserData';
 
 const Dashboard = () => {
@@ -72,6 +72,10 @@ const Dashboard = () => {
 
       const sessionId = urlParams.get('session_id');
       const metaUser = buildMetaUserData(user);
+
+      // Re-init Pixel with Advanced Matching (em/fn/ln/external_id) so the
+      // browser-side Purchase event carries hashed PII for higher EMQ.
+      if (metaUser) applyMetaAdvancedMatching(metaUser);
 
       // Fire Subscribe immediately (deduped server-side via `sub_${session.id}`)
       try {
