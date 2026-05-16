@@ -53,6 +53,8 @@ const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
 const AdminThread = lazy(() => import("./pages/admin/AdminThread"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminCampaigns = lazy(() => import("./pages/admin/AdminCampaigns"));
+const AdminCampaignDetail = lazy(() => import("./pages/admin/AdminCampaignDetail"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const LandingSleep = lazy(() => import("./pages/LandingSleep"));
@@ -148,6 +150,8 @@ const App: React.FC = () => {
                       <Route path="/admin/messages" element={<AdminMessages />} />
                       <Route path="/admin/messages/:threadId" element={<AdminThread />} />
                       <Route path="/admin/newsletter" element={<AdminNewsletter />} />
+                      <Route path="/admin/campaigns" element={<AdminCampaigns />} />
+                      <Route path="/admin/campaigns/:id" element={<AdminCampaignDetail />} />
                       <Route path="/admin/analytics" element={<AdminAnalytics />} />
                       <Route path="/admin/users" element={<AdminUsers />} />
                       <Route path="/404" element={<NotFound />} />

@@ -312,6 +312,7 @@ serve(async (req) => {
             'List-Unsubscribe': `<${unsubUrl}>, <mailto:support@sleepybabyy.com?subject=unsubscribe>`,
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
           },
+          tags: [{ name: 'type', value: 'test' }],
           html,
         }),
       });
@@ -319,6 +320,19 @@ serve(async (req) => {
         const t = await resp.text();
         return new Response(JSON.stringify({ error: 'Send failed', detail: t }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
+      // Record the test send so webhook events for it can be ignored properly
+      try {
+        const sendData = await resp.clone().json();
+        const emailId = sendData?.id ?? null;
+        if (emailId) {
+          await supabase.from('newsletter_sends').insert({
+            campaign_id: null,
+            recipient_email: test_email,
+            resend_email_id: emailId,
+            is_test: true,
+          });
+        }
+      } catch (e) { console.warn('[newsletter] test send record failed (non-blocking):', e); }
       return new Response(JSON.stringify({ success: true, test: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
@@ -329,6 +343,31 @@ serve(async (req) => {
       .eq('status', 'active');
     if (subsErr) throw subsErr;
 
+    // Best-effort: create a campaign record so we can track opens/clicks.
+    // If this fails the broadcast still goes out — tracking just won't be linked.
+    let campaignId: string | null = null;
+    try {
+      const { data: campaign, error: campaignErr } = await supabase
+        .from('newsletter_campaigns')
+        .insert({
+          subject,
+          subtitle: subtitleStr ?? null,
+          body,
+          tip: tipStr ?? null,
+          cta_text: ctaText ?? null,
+          cta_url: ctaUrl ?? null,
+          sent_by: user.id,
+          total_recipients: (subs || []).length,
+        })
+        .select('id')
+        .single();
+      if (campaignErr) {
+        console.warn('[newsletter] create campaign failed (non-blocking):', campaignErr);
+      } else if (campaign) {
+        campaignId = campaign.id as string;
+      }
+    } catch (e) { console.warn('[newsletter] create campaign exception (non-blocking):', e); }
+
     let sent = 0;
     let failed = 0;
     for (const sub of subs || []) {
@@ -336,6 +375,8 @@ serve(async (req) => {
         const unsubUrl = `https://sleepybabyy.com/unsubscribe?token=${sub.unsubscribe_token}`;
         const userName = await getName(sub.email);
         const html = buildNewsletterEmail({ title: subject, subtitle: subtitleStr, body, tip: tipStr, ctaText, ctaUrl, userName, unsubscribeUrl: unsubUrl });
+        const tags: { name: string; value: string }[] = [{ name: 'type', value: 'newsletter' }];
+        if (campaignId) tags.push({ name: 'campaign_id', value: campaignId });
         const resp = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
@@ -348,17 +389,38 @@ serve(async (req) => {
               'List-Unsubscribe': `<${unsubUrl}>, <mailto:support@sleepybabyy.com?subject=unsubscribe>`,
               'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
             },
+            tags,
             html,
           }),
         });
-        if (resp.ok) sent++; else failed++;
+        if (resp.ok) {
+          sent++;
+          // Best-effort: save the email_id so webhook events can match this campaign.
+          // Failure here doesn't affect the email being sent.
+          if (campaignId) {
+            try {
+              const sendData = await resp.clone().json();
+              const emailId = sendData?.id ?? null;
+              if (emailId) {
+                await supabase.from('newsletter_sends').insert({
+                  campaign_id: campaignId,
+                  recipient_email: sub.email,
+                  resend_email_id: emailId,
+                  is_test: false,
+                });
+              }
+            } catch (e) { console.warn('[newsletter] record send failed (non-blocking):', e); }
+          }
+        } else {
+          failed++;
+        }
         await new Promise(r => setTimeout(r, 120));
       } catch {
         failed++;
       }
     }
 
-    return new Response(JSON.stringify({ success: true, sent, failed, total: (subs || []).length }), {
+    return new Response(JSON.stringify({ success: true, sent, failed, total: (subs || []).length, campaign_id: campaignId }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
