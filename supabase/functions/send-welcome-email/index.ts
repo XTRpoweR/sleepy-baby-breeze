@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const FROM = 'SleepyBabyy Support <support@sleepybabyy.com>';
+const FROM = 'SleepyBabyy <noreply@sleepybabyy.com>';
 const SUPPORT = 'support@sleepybabyy.com';
 const SITE = 'https://sleepybabyy.com';
 const LOGO_URL = 'https://sleepybabyy.com/logo.png';
