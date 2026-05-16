@@ -70,7 +70,7 @@ const FeatureCard = memo(({
     <div
       ref={cardRef}
       onMouseMove={handleMouseMove}
-      className={`bento-card group relative rounded-3xl overflow-hidden animate-fade-in-up gpu-accelerated ${sizeClasses}`}
+      className={`bento-card group relative rounded-3xl overflow-hidden animate-fade-in-up ${sizeClasses}`}
       style={{ animationDelay: `${index * 90}ms` }}
     >
       {/* Animated rotating gradient border */}
@@ -176,7 +176,7 @@ const TestimonialCard = memo(({
 }: {
   testimonial: any;
   index: number;
-}) => <Card key={index} className="border-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-up gpu-accelerated" style={{
+}) => <Card key={index} className="border-0 shadow-lg transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 animate-fade-in-up" style={{
   animationDelay: `${index * 100}ms`
 }}>
     <CardContent className="p-4 sm:p-6 md:p-8">
@@ -310,7 +310,7 @@ const Index = () => {
     content: "I recommend this app to all my patients. The insights help parents make better sleep decisions for their babies.",
     rating: 5
   }], []);
-  return <div className="min-h-screen gradient-dynamic-slow font-sans gpu-accelerated">
+  return <div className="min-h-screen gradient-dynamic-slow font-sans">
       <AnnouncementBar />
       {/* Navigation — Glass Aurora Header */}
       <nav className="glass-header sticky top-0 z-50 animate-fade-in safe-area-top">
@@ -438,9 +438,15 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Video — click-to-play poster for fast LCP on mobile */}
-          <div className="relative max-w-5xl mx-auto animate-scale-in">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-pink-500 rounded-3xl blur-md opacity-40" />
+          {/* Video — click-to-play poster for fast LCP on mobile.
+              `isolation: isolate` + GPU transform stabilizes the layer so the
+              video doesn't pick up sub-pixel jitter from the page background. */}
+          <div
+            className="relative max-w-5xl mx-auto animate-scale-in"
+            style={{ isolation: 'isolate', transform: 'translate3d(0,0,0)' }}
+          >
+            {/* Gradient halo — hidden on small screens to avoid mobile compositor jitter */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-pink-500 rounded-3xl blur-md opacity-40 hidden sm:block" />
             <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 bg-black">
               {!heroVideoPlaying ? (
                 <button

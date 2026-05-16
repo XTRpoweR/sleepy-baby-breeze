@@ -179,12 +179,15 @@
       hsl(var(--gradient-via) / 0.08),
       hsl(var(--gradient-to) / 0.08)
     );
-    background-size: 200% 200%;
+    /* On mobile keep the gradient at 100% so it doesn't repaint when the
+       iOS address bar resizes the viewport (was a source of video jitter). */
+    background-size: 100% 100%;
   }
   /* Animate the gradient only on desktops + when user hasn't requested reduced motion.
      On mobile / accessibility mode, the gradient stays static — saves battery & CPU. */
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     .gradient-dynamic-slow {
+      background-size: 200% 200%;
       will-change: background-position;
       animation: gradient-shift 12s ease-in-out infinite;
     }
@@ -300,10 +303,11 @@
     box-shadow: 0 10px 25px hsl(var(--gradient-from) / 0.15);
   }
 
-  /* Hardware acceleration helpers */
+  /* Hardware acceleration helper — use sparingly on SMALL elements only.
+     Applying will-change:transform to large containers causes compositor
+     jitter (sub-pixel shaking of videos/images) on iOS Safari. */
   .gpu-accelerated {
     transform: translateZ(0);
-    will-change: transform;
   }
 
   .smooth-scroll {
