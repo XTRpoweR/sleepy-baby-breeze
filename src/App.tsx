@@ -56,6 +56,9 @@ const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const LandingSleep = lazy(() => import("./pages/LandingSleep"));
+const UpgradePreview = lazy(() => import("./pages/UpgradePreview"));
+const DashboardPreview = lazy(() => import("./pages/DashboardPreview"));
+const ProfileModalPreview = lazy(() => import("./pages/ProfileModalPreview"));
 import { OnboardingGate } from "./components/onboarding/OnboardingGate";
 
 // Create queryClient outside of component to avoid recreation on each render
@@ -68,10 +71,13 @@ const queryClient = new QueryClient({
   },
 });
 
-// Lightweight fallback while route chunks load
+// Lightweight fallback while route chunks load — uses brand-gradient background
+// so it feels like a continuation of the dashboard, not a separate "loading" screen.
 const RouteFallback: React.FC = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="h-10 w-10 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+  <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50/60 to-indigo-50 flex items-center justify-center">
+    <div className="flex flex-col items-center gap-3">
+      <div className="h-10 w-10 rounded-full border-2 border-purple-200 border-t-purple-500 animate-spin" />
+    </div>
   </div>
 );
 
@@ -104,6 +110,9 @@ const App: React.FC = () => {
                     <Routes>
                       <Route path="/" element={<Index />} />
                       <Route path="/lp/sleep" element={<LandingSleep />} />
+                      <Route path="/dev/upgrade-preview" element={<UpgradePreview />} />
+                      <Route path="/dev/dashboard-preview" element={<DashboardPreview />} />
+                      <Route path="/dev/profile-modal-preview" element={<ProfileModalPreview />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/reset-password" element={<EnhancedPasswordReset />} />
                       <Route path="/security" element={<Navigate to="/account?tab=security" replace />} />

@@ -69,7 +69,7 @@ export const MobileHeader = () => {
   };
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm border-b border-blue-100 lg:hidden">
+    <header className="bg-white/95 border-b border-white/60 lg:hidden sticky top-0 z-40">
       <div className="flex justify-between items-center h-16 px-4">
         {/* Hamburger Menu */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
