@@ -86,14 +86,22 @@ serve(async (req) => {
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
 
-    // Dedupe: only send once
-    const { data: prof } = await admin
+    // Atomic claim: only the first concurrent request gets a row back
+    const { data: claimed, error: claimErr } = await admin
       .from('profiles')
-      .select('welcome_email_sent_at')
+      .update({ welcome_email_sent_at: new Date().toISOString() })
       .eq('id', user_id)
-      .maybeSingle();
+      .is('welcome_email_sent_at', null)
+      .select('id');
 
-    if (prof?.welcome_email_sent_at) {
+    if (claimErr) {
+      console.error('claim error', claimErr);
+      return new Response(JSON.stringify({ error: 'claim_failed' }), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!claimed || claimed.length === 0) {
       return new Response(JSON.stringify({ ok: true, skipped: 'already_sent' }), {
         status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -113,12 +121,12 @@ serve(async (req) => {
     if (!res.ok) {
       const text = await res.text();
       console.error('Resend error', res.status, text);
+      // Roll back the claim so a retry can send
+      await admin.from('profiles').update({ welcome_email_sent_at: null }).eq('id', user_id);
       return new Response(JSON.stringify({ error: 'send_failed', details: text }), {
         status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    await admin.from('profiles').update({ welcome_email_sent_at: new Date().toISOString() }).eq('id', user_id);
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
