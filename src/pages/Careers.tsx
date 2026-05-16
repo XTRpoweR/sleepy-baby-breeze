@@ -168,12 +168,16 @@ const Careers = () => {
                     </p>
                     <a
                       href={`mailto:${SUPPORT_EMAIL}?subject=Future%20careers%20%E2%80%94%20introduction&body=Hi%20SleepyBabyy%20team%2C%0A%0AA%20bit%20about%20me%3A%0A%0AWhat%20excites%20me%20about%20what%20you%27re%20building%3A%0A%0AHow%20to%20reach%20me%3A%0A%0AThanks%21`}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white text-sm font-semibold shadow-md shadow-purple-500/30 hover:shadow-lg hover:scale-[1.02] transition-all touch-target"
+                      className="flex sm:inline-flex w-full sm:w-auto items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white text-sm font-semibold shadow-md shadow-purple-500/30 hover:shadow-lg hover:scale-[1.02] transition-all touch-target"
                     >
-                      <Mail className="h-4 w-4" />
-                      Email us — {SUPPORT_EMAIL}
-                      <ArrowRight className="h-4 w-4" />
+                      <Mail className="h-4 w-4 flex-shrink-0" />
+                      <span className="hidden sm:inline truncate">Email us — {SUPPORT_EMAIL}</span>
+                      <span className="sm:hidden">Email us</span>
+                      <ArrowRight className="h-4 w-4 flex-shrink-0" />
                     </a>
+                    <p className="sm:hidden text-xs text-gray-500 mt-2 break-all">
+                      {SUPPORT_EMAIL}
+                    </p>
                   </div>
                 </div>
               </div>
