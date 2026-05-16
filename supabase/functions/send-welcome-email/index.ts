@@ -38,8 +38,8 @@ function buildHtml(t: typeof T['en'], name: string) {
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f7fb;padding:32px 0;">
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;max-width:560px;width:100%;overflow:hidden;">
-        <tr><td style="background:linear-gradient(135deg,#7c3aed,#ec4899);padding:28px;text-align:center;color:#fff;">
-          <p style="margin:0;font-size:24px;font-weight:700;">SleepyBabyy 🌙</p>
+        <tr><td style="background:linear-gradient(135deg,#7c3aed,#ec4899);padding:28px;text-align:center;">
+          <img src="${LOGO_URL}" alt="SleepyBabyy" width="180" style="display:block;margin:0 auto;max-width:180px;height:auto;border:0;outline:none;text-decoration:none;">
         </td></tr>
         <tr><td style="padding:32px;text-align:${align};" dir="${t.dir}">
           <p style="margin:0 0 16px;font-size:20px;font-weight:600;">${t.hi(name)}</p>
