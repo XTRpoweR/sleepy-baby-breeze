@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { prefetchDashboardRoutes, prefetchRoute } from '@/utils/prefetchRoutes';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -77,6 +78,11 @@ export const UnifiedDashboard = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [newsletterOpen, setNewsletterOpen] = useState(false);
 
+  // Prefetch the most-used routes in the background once the dashboard mounts
+  useEffect(() => {
+    prefetchDashboardRoutes();
+  }, []);
+
   const handlePullToRefresh = async () => {
     setIsRefreshing(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -96,17 +102,25 @@ export const UnifiedDashboard = ({
   }
 
   return (
-    <div className="min-h-screen bg-soft gradient-dynamic-slow relative">
+    <div className="relative min-h-screen bg-gradient-to-br from-pink-50 via-purple-50/60 to-indigo-50 overflow-x-hidden">
+      {/* Decorative gradient blobs — fixed so they don't repaint on scroll */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-0 w-80 sm:w-[28rem] h-80 sm:h-[28rem] rounded-full bg-pink-300/40 blur-2xl" />
+        <div className="absolute top-40 right-0 w-80 sm:w-[28rem] h-80 sm:h-[28rem] rounded-full bg-purple-300/40 blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-80 sm:w-[28rem] h-80 sm:h-[28rem] rounded-full bg-indigo-300/30 blur-2xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.6),transparent_50%)]" />
+      </div>
+
       {/* Pull to refresh indicator */}
       {isRefreshing && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
           Refreshing...
         </div>
       )}
 
       {/* Main Content with pull-to-refresh */}
-      <div 
-        className="px-4 lg:px-8 pt-6 pb-24 max-w-7xl mx-auto"
+      <div
+        className="relative px-4 lg:px-8 pt-6 pb-24 max-w-7xl mx-auto"
         onTouchStart={(e) => {
           const startY = e.touches[0].clientY;
           const handleTouchMove = (moveE: TouchEvent) => {
@@ -125,7 +139,19 @@ export const UnifiedDashboard = ({
         <div className="relative">
           <div className="text-center mb-8">
             <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-2 leading-tight">
-              {userName ? t('dashboard.welcome', { name: userName }) : t('dashboard.welcomeFallback')}
+              {userName ? (() => {
+                const full = t('dashboard.welcome', { name: userName });
+                const [before, after = ''] = full.split(userName);
+                return (
+                  <>
+                    {before}
+                    <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                      {userName}
+                    </span>
+                    {after}
+                  </>
+                );
+              })() : t('dashboard.welcomeFallback')}
             </h1>
             <p className="text-muted-foreground text-base lg:text-lg mb-4">
               {t('dashboard.subtitle')}
@@ -135,23 +161,20 @@ export const UnifiedDashboard = ({
           {/* Profile Section */}
           {!isNewUser ? (
             <div className="mb-8">
-              <div className="text-center mb-4">
-                <h2 className="text-lg lg:text-xl font-semibold text-foreground mb-3">Active Profile</h2>
-                <div className="flex justify-center">
-                  <MobileProfileSelector 
-                    key={activeProfile?.id || 'no-profile'} 
-                    activeProfile={activeProfile} 
-                    switching={switching} 
-                    profiles={profiles} 
-                    switchProfile={switchProfile} 
-                  />
-                </div>
+              <div className="flex justify-center mb-4">
+                <MobileProfileSelector
+                  key={activeProfile?.id || 'no-profile'}
+                  activeProfile={activeProfile}
+                  switching={switching}
+                  profiles={profiles}
+                  switchProfile={switchProfile}
+                />
               </div>
               
               {!isPremium && profiles.length >= 1 && (
-                <div className="bg-warning/10 border border-warning/20 rounded-2xl p-3 mt-4 max-w-md mx-auto">
-                  <p className="text-sm text-warning text-center flex items-center justify-center">
-                    <Crown className="h-4 w-4 mr-2" />
+                <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-purple-200/60 rounded-2xl p-3 mt-4 max-w-md mx-auto">
+                  <p className="text-sm text-purple-700 text-center flex items-center justify-center gap-2 font-medium">
+                    <Crown className="h-4 w-4 text-purple-500" />
                     Upgrade to Premium for unlimited baby profiles
                   </p>
                 </div>
@@ -181,34 +204,41 @@ export const UnifiedDashboard = ({
           )}
         </div>
 
-        {/* Upgrade Banner for Basic Users */}
+        {/* Upgrade Banner — Liquid Glass Light (with gradient ring glow) */}
         {!isPremium && (
-          <Card className="mb-8 border-0 shadow-xl bg-gradient-to-r from-warning/10 to-warning/20 rounded-3xl overflow-hidden max-w-2xl mx-auto">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="bg-gradient-to-br from-warning/30 to-warning/50 rounded-full p-3 shadow-lg">
-                  <Sparkles className="h-6 w-6 text-warning" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-bold text-foreground mb-1">
-                    Unlock Premium
-                  </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Unlimited profiles, family sharing & more — from $7.99/month
+          <div className="mb-8 max-w-2xl mx-auto">
+            <div className="relative group">
+              {/* Outer gradient glow */}
+              <div className="absolute -inset-0.5 rounded-3xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 opacity-60 blur" />
+              <div className="relative bg-white/90 border border-white/90 rounded-3xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-2.5 shadow-lg shadow-purple-500/30 flex-shrink-0">
+                    <Sparkles className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-sm sm:text-base font-bold text-gray-900">Get Premium</h3>
+                      <span className="text-[9px] font-bold uppercase tracking-wider bg-gradient-to-r from-pink-500 to-purple-500 text-white px-1.5 py-0.5 rounded">
+                        7 days free
+                      </span>
+                    </div>
+                    <p className="text-[11px] sm:text-sm text-gray-600 truncate leading-snug">
+                      Unlimited profiles · family sharing · pediatrician reports
                     </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => navigate('/subscription')}
+                    className="flex-shrink-0 rounded-full font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-md shadow-purple-500/30 px-3 sm:px-4 h-9"
+                  >
+                    <span className="hidden sm:inline">Try free</span>
+                    <span className="sm:hidden">Try</span>
+                    <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                  </Button>
                 </div>
               </div>
-              <Button 
-                onClick={() => navigate('/subscription')} 
-                variant="warning" 
-                className="w-full mt-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300" 
-              >
-                <Crown className="h-4 w-4 mr-2" />
-                View Premium Plans
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Hero Actions - Primary Features */}
@@ -216,43 +246,53 @@ export const UnifiedDashboard = ({
           <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-4 text-center lg:text-left">Quick Actions</h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Track Activities - Hero Card */}
-            <Card 
-              className="border-0 shadow-xl bg-gradient-to-br from-info/10 to-info/20 rounded-3xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-2xl hover:shadow-info/25 hover:scale-105 hover:-translate-y-2 group"
+            {/* Track Activities - Polished Glass */}
+            <button
               onClick={onTrackActivity}
+              onPointerEnter={() => prefetchRoute('track')}
+              onTouchStart={() => prefetchRoute('track')}
+              className="relative text-left bg-white/85 border border-white/90 rounded-3xl p-6 lg:p-7 transition-transform hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] group"
+              style={{
+                boxShadow:
+                  '0 10px 30px -10px rgba(236, 72, 153, 0.18), 0 4px 12px -4px rgba(168, 85, 247, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)',
+              }}
             >
-              <CardContent className="p-6 lg:p-8">
-                <div className="flex items-center space-x-4">
-                  <div className="bg-gradient-to-br from-info/30 to-info/50 rounded-2xl p-4 shadow-lg transition-all duration-500 group-hover:shadow-info/40 group-hover:scale-110">
-                    <Activity className="h-8 w-8 text-info transition-transform duration-500 group-hover:rotate-12" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-foreground mb-1">{t('dashboard.trackActivities')}</h3>
-                    <p className="text-muted-foreground text-base">{t('dashboard.trackActivitiesDesc')}</p>
-                  </div>
-                  <ArrowRight className="h-6 w-6 text-muted-foreground" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent rounded-t-3xl" />
+              <div className="flex items-center space-x-4">
+                <div className="bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl p-3.5 shadow-lg shadow-pink-500/30 group-hover:scale-110 transition-transform">
+                  <Activity className="h-7 w-7 text-white" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">{t('dashboard.trackActivities')}</h3>
+                  <p className="text-gray-600 text-sm">{t('dashboard.trackActivitiesDesc')}</p>
+                </div>
+                <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-pink-500 group-hover:translate-x-0.5 transition-all" />
+              </div>
+            </button>
 
-            {/* Sleep Schedule - Hero Card */}
-            <Card 
-              className="border-0 shadow-xl bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-2xl hover:shadow-primary/25 hover:scale-105 hover:-translate-y-2 group"
+            {/* Sleep Schedule - Polished Glass */}
+            <button
               onClick={onSleepSchedule}
+              onPointerEnter={() => prefetchRoute('sleep')}
+              onTouchStart={() => prefetchRoute('sleep')}
+              className="relative text-left bg-white/85 border border-white/90 rounded-3xl p-6 lg:p-7 transition-transform hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] group"
+              style={{
+                boxShadow:
+                  '0 10px 30px -10px rgba(99, 102, 241, 0.18), 0 4px 12px -4px rgba(168, 85, 247, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)',
+              }}
             >
-              <CardContent className="p-6 lg:p-8">
-                <div className="flex items-center space-x-4">
-                  <div className="bg-gradient-to-br from-primary/30 to-primary/50 rounded-2xl p-4 shadow-lg transition-all duration-500 group-hover:shadow-primary/40 group-hover:scale-110">
-                    <Moon className="h-8 w-8 text-primary transition-transform duration-500 group-hover:rotate-12" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-foreground mb-1">{t('dashboard.sleepSchedule')}</h3>
-                    <p className="text-muted-foreground text-base">{t('dashboard.sleepScheduleDesc')}</p>
-                  </div>
-                  <ArrowRight className="h-6 w-6 text-muted-foreground" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent rounded-t-3xl" />
+              <div className="flex items-center space-x-4">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl p-3.5 shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform">
+                  <Moon className="h-7 w-7 text-white" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">{t('dashboard.sleepSchedule')}</h3>
+                  <p className="text-gray-600 text-sm">{t('dashboard.sleepScheduleDesc')}</p>
+                </div>
+                <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+              </div>
+            </button>
           </div>
         </div>
 
@@ -270,7 +310,7 @@ export const UnifiedDashboard = ({
         </div>
 
         {/* Secondary Features Grid */}
-        <div className="mb-8 max-w-6xl mx-auto">
+        <div className="mb-8 max-w-6xl mx-auto" style={{ contentVisibility: 'auto', containIntrinsicSize: '600px' }}>
           <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-4 text-center lg:text-left">More Features</h3>
           
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -279,198 +319,64 @@ export const UnifiedDashboard = ({
               <QuickLogCard />
             </div>
 
-            {/* Reports */}
-            <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-orange-200/50 hover:scale-105 hover:-translate-y-1 group"
+            <FeatureGlassCard
               onClick={onViewReports}
-            >
-              <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-orange-200 to-orange-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-orange-300/50 group-hover:scale-110">
-                  <BarChart3 className="h-6 w-6 lg:h-8 lg:w-8 text-orange-600 transition-transform duration-500 group-hover:rotate-6" />
-                </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.viewReports')}</h3>
-                <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.viewReportsDesc')}</p>
-              </CardContent>
-            </Card>
-
-            {/* Smart Notifications */}
-            <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-indigo-200/50 hover:scale-105 hover:-translate-y-1 group relative"
+              icon={<BarChart3 className="h-6 w-6 lg:h-7 lg:w-7 text-white" />}
+              title={t('dashboard.viewReports')}
+              subtitle={t('dashboard.viewReportsDesc')}
+              gradient="from-rose-500 to-pink-500"
+              shadowColor="rgba(236, 72, 153, 0.18)"
+              isPremium={false}
+            />
+            <FeatureGlassCard
               onClick={onNotifications}
-            >
-              <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-indigo-300/50 group-hover:scale-110">
-                  <Bell className="h-6 w-6 lg:h-8 lg:w-8 text-indigo-600 transition-transform duration-500 group-hover:animate-bounce" />
-                </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">Smart Notifications</h3>
-                <p className="text-xs lg:text-sm text-muted-foreground">Intelligent reminders</p>
-                {!isPremium && (
-                  <div className="absolute -top-1 -right-1 bg-warning rounded-full p-1">
-                    <Crown className="h-3 w-3 text-white" />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Memories */}
-            <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-pink-200/50 hover:scale-105 hover:-translate-y-1 group relative"
+              icon={<Bell className="h-6 w-6 lg:h-7 lg:w-7 text-white" />}
+              title="Smart Notifications"
+              subtitle="Intelligent reminders"
+              gradient="from-indigo-500 to-blue-500"
+              shadowColor="rgba(99, 102, 241, 0.18)"
+              isPremium={!isPremium}
+            />
+            <FeatureGlassCard
               onClick={onMemories}
-            >
-              <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-pink-200 to-pink-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-pink-300/50 group-hover:scale-110">
-                  <Camera className="h-6 w-6 lg:h-8 lg:w-8 text-pink-600 transition-transform duration-500 group-hover:rotate-12" />
-                </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">Photo & Memories</h3>
-                <p className="text-xs lg:text-sm text-muted-foreground">Capture moments</p>
-                {!isPremium && (
-                  <div className="absolute -top-1 -right-1 bg-warning rounded-full p-1">
-                    <Crown className="h-3 w-3 text-white" />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Family Sharing */}
-            <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-green-200/50 hover:scale-105 hover:-translate-y-1 group relative"
+              icon={<Camera className="h-6 w-6 lg:h-7 lg:w-7 text-white" />}
+              title="Photo & Memories"
+              subtitle="Capture moments"
+              gradient="from-pink-500 to-fuchsia-500"
+              shadowColor="rgba(236, 72, 153, 0.18)"
+              isPremium={!isPremium}
+            />
+            <FeatureGlassCard
               onClick={onFamilySharing}
-            >
-              <CardContent className="p-4 lg:p-6 text-center">
-                <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-green-300/50 group-hover:scale-110">
-                  <Users className="h-6 w-6 lg:h-8 lg:w-8 text-green-600 transition-transform duration-500 group-hover:scale-110" />
-                </div>
-                <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.familySharing')}</h3>
-                <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.familySharingDesc')}</p>
-                {!isPremium && (
-                  <div className="absolute -top-1 -right-1 bg-warning rounded-full p-1">
-                    <Crown className="h-3 w-3 text-white" />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Pediatrician Reports */}
-            <Card 
-              className="border-0 shadow-lg bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl cursor-pointer transform transition-all duration-500 active:scale-95 hover:shadow-xl hover:shadow-teal-200/50 hover:scale-105 hover:-translate-y-1 group relative col-span-2 lg:col-span-1"
+              icon={<Users className="h-6 w-6 lg:h-7 lg:w-7 text-white" />}
+              title={t('dashboard.familySharing')}
+              subtitle={t('dashboard.familySharingDesc')}
+              gradient="from-emerald-500 to-teal-500"
+              shadowColor="rgba(16, 185, 129, 0.18)"
+              isPremium={!isPremium}
+            />
+            <FeatureGlassCard
               onClick={onPediatricianReports}
-            >
-              <CardContent className="p-4 lg:p-6">
-                <div className="flex lg:flex-col lg:text-center items-center space-x-3 lg:space-x-0">
-                  <div className="bg-gradient-to-br from-teal-200 to-teal-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center flex-shrink-0 lg:mx-auto lg:mb-3 transition-all duration-500 group-hover:shadow-teal-300/50 group-hover:scale-110">
-                    <FileText className="h-6 w-6 lg:h-8 lg:w-8 text-teal-600 transition-transform duration-500 group-hover:rotate-6" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-foreground mb-1 text-sm lg:text-base">{t('dashboard.pediatricianReports')}</h3>
-                    <p className="text-xs lg:text-sm text-muted-foreground">{t('dashboard.pediatricianReportsDesc')}</p>
-                  </div>
-                  {!isPremium && (
-                    <div className="bg-warning rounded-full p-1 flex-shrink-0 lg:absolute lg:-top-1 lg:-right-1">
-                      <Crown className="h-3 w-3 text-white" />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+              icon={<FileText className="h-6 w-6 lg:h-7 lg:w-7 text-white" />}
+              title={t('dashboard.pediatricianReports')}
+              subtitle={t('dashboard.pediatricianReportsDesc')}
+              gradient="from-purple-500 to-violet-500"
+              shadowColor="rgba(168, 85, 247, 0.18)"
+              isPremium={!isPremium}
+              wideOnMobile
+            />
           </div>
         </div>
 
         {/* Enhanced Baby Insights */}
         {!isNewUser && (
-          <div className="mb-8 max-w-4xl mx-auto">
+          <div className="mb-8 max-w-4xl mx-auto" style={{ contentVisibility: 'auto', containIntrinsicSize: '300px' }}>
             <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-4 text-center lg:text-left">Weekly Insights</h3>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Weekly Average Sleep */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-indigo-200/50 hover:scale-105 hover:-translate-y-1 group">
-                <CardContent className="p-4 lg:p-6 text-center">
-                  {isDataLoading ? (
-                    <>
-                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
-                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
-                      <Skeleton className="h-4 w-12 mx-auto" />
-                    </>
-                  ) : (
-                    <>
-                      <div className="bg-gradient-to-br from-indigo-200 to-indigo-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3">
-                        <Moon className="h-6 w-6 lg:h-8 lg:w-8 text-indigo-600" />
-                      </div>
-                      <div className="text-lg lg:text-xl font-bold text-indigo-600 mb-1">
-                        {stats.weeklyAverageSleep}
-                      </div>
-                      <div className="text-xs lg:text-sm text-muted-foreground">Avg Sleep</div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-              
-              {/* Weekly Feedings */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-green-200/50 hover:scale-105 hover:-translate-y-1 group">
-                <CardContent className="p-4 lg:p-6 text-center">
-                  {isDataLoading ? (
-                    <>
-                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
-                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
-                      <Skeleton className="h-4 w-12 mx-auto" />
-                    </>
-                  ) : (
-                    <>
-                      <div className="bg-gradient-to-br from-green-200 to-green-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-green-300/50 group-hover:scale-110">
-                        <Milk className="h-6 w-6 lg:h-8 lg:w-8 text-green-600 transition-transform duration-500 group-hover:rotate-12" />
-                      </div>
-                      <div className="text-lg lg:text-xl font-bold text-green-600 mb-1">
-                        {stats.weeklyFeedings}
-                      </div>
-                      <div className="text-xs lg:text-sm text-muted-foreground">Feedings</div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Weekly Diaper Changes */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-amber-200/50 hover:scale-105 hover:-translate-y-1 group">
-                <CardContent className="p-4 lg:p-6 text-center">
-                  {isDataLoading ? (
-                    <>
-                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
-                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
-                      <Skeleton className="h-4 w-12 mx-auto" />
-                    </>
-                  ) : (
-                    <>
-                      <div className="bg-gradient-to-br from-amber-200 to-amber-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-amber-300/50 group-hover:scale-110">
-                        <Baby className="h-6 w-6 lg:h-8 lg:w-8 text-amber-600 transition-transform duration-500 group-hover:bounce" />
-                      </div>
-                      <div className="text-lg lg:text-xl font-bold text-amber-600 mb-1">
-                        {stats.weeklyDiaperChanges}
-                      </div>
-                      <div className="text-xs lg:text-sm text-muted-foreground">Diapers</div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Growth Trend */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl transform transition-all duration-500 hover:shadow-xl hover:shadow-purple-200/50 hover:scale-105 hover:-translate-y-1 group">
-                <CardContent className="p-4 lg:p-6 text-center">
-                  {isDataLoading ? (
-                    <>
-                      <Skeleton className="w-8 h-8 lg:w-12 lg:h-12 rounded-full mx-auto mb-3" />
-                      <Skeleton className="h-6 w-16 mx-auto mb-1" />
-                      <Skeleton className="h-4 w-12 mx-auto" />
-                    </>
-                  ) : (
-                    <>
-                      <div className="bg-gradient-to-br from-purple-200 to-purple-300 rounded-xl w-12 h-12 lg:w-16 lg:h-16 flex items-center justify-center mx-auto mb-3 transition-all duration-500 group-hover:shadow-purple-300/50 group-hover:scale-110">
-                        <TrendingUp className="h-6 w-6 lg:h-8 lg:w-8 text-purple-600 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12" />
-                      </div>
-                      <div className="text-lg lg:text-xl font-bold text-purple-600 mb-1">
-                        Steady
-                      </div>
-                      <div className="text-xs lg:text-sm text-muted-foreground">Growth</div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
+              <StatGlassCard isLoading={isDataLoading} icon={<Moon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />} value={stats.weeklyAverageSleep} label="Avg Sleep" gradient="from-indigo-500 to-purple-500" />
+              <StatGlassCard isLoading={isDataLoading} icon={<Milk className="h-5 w-5 lg:h-6 lg:w-6 text-white" />} value={stats.weeklyFeedings} label="Feedings" gradient="from-emerald-500 to-teal-500" />
+              <StatGlassCard isLoading={isDataLoading} icon={<Baby className="h-5 w-5 lg:h-6 lg:w-6 text-white" />} value={stats.weeklyDiaperChanges} label="Diapers" gradient="from-amber-500 to-orange-500" />
+              <StatGlassCard isLoading={isDataLoading} icon={<TrendingUp className="h-5 w-5 lg:h-6 lg:w-6 text-white" />} value="Steady" label="Growth" gradient="from-purple-500 to-fuchsia-500" />
             </div>
           </div>
         )}
@@ -480,3 +386,93 @@ export const UnifiedDashboard = ({
     </div>
   );
 };
+
+/**
+ * Liquid Glass Light feature card.
+ * Translucent white background, gradient icon, premium sparkle badge.
+ */
+const FeatureGlassCard = memo(function FeatureGlassCard({
+  onClick,
+  icon,
+  title,
+  subtitle,
+  gradient,
+  shadowColor,
+  isPremium,
+  wideOnMobile,
+}: {
+  onClick: () => void;
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  gradient: string;
+  shadowColor: string;
+  isPremium: boolean;
+  wideOnMobile?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative text-left bg-white/85 border border-white/90 rounded-3xl p-4 lg:p-6 transition-transform hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.98] group ${wideOnMobile ? 'col-span-2 lg:col-span-1' : ''}`}
+      style={{
+        boxShadow: `0 10px 30px -10px ${shadowColor}, 0 4px 12px -4px rgba(168, 85, 247, 0.1), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)`,
+      }}
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent rounded-t-3xl" />
+      {isPremium && (
+        <span className="absolute top-3 right-3 inline-flex items-center justify-center h-5 w-5 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 shadow-md ring-2 ring-white">
+          <Sparkles className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+        </span>
+      )}
+      <div className="text-center">
+        <div
+          className={`bg-gradient-to-br ${gradient} rounded-2xl w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center mx-auto mb-3 shadow-lg group-hover:scale-110 transition-transform`}
+        >
+          {icon}
+        </div>
+        <h3 className="font-bold text-gray-900 mb-1 text-sm lg:text-base">{title}</h3>
+        <p className="text-xs text-gray-600 leading-snug">{subtitle}</p>
+      </div>
+    </button>
+  );
+});
+
+const StatGlassCard = memo(function StatGlassCard({
+  isLoading,
+  icon,
+  value,
+  label,
+  gradient,
+}: {
+  isLoading: boolean;
+  icon: React.ReactNode;
+  value: string | number;
+  label: string;
+  gradient: string;
+}) {
+  return (
+    <div
+      className="relative bg-white/85 border border-white/90 rounded-3xl p-4 lg:p-5 text-center"
+      style={{
+        boxShadow: '0 8px 24px -8px rgba(168, 85, 247, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)',
+      }}
+    >
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent rounded-t-3xl" />
+      {isLoading ? (
+        <>
+          <Skeleton className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl mx-auto mb-3" />
+          <Skeleton className="h-5 w-16 mx-auto mb-1" />
+          <Skeleton className="h-3 w-12 mx-auto" />
+        </>
+      ) : (
+        <>
+          <div className={`bg-gradient-to-br ${gradient} rounded-2xl w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center mx-auto mb-3 shadow-md`}>
+            {icon}
+          </div>
+          <div className="text-lg lg:text-xl font-bold text-gray-900 mb-0.5">{value}</div>
+          <div className="text-xs text-gray-500">{label}</div>
+        </>
+      )}
+    </div>
+  );
+});

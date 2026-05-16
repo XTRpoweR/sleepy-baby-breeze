@@ -34,6 +34,7 @@ export const OnboardingGate = () => {
     '/getting-started',
     '/unsubscribe',
     '/invitation',
+    '/dev',
     '/404',
   ];
 
