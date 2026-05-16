@@ -183,13 +183,6 @@ const AdminNewsletter = () => {
       toast.error('No recipients selected');
       return;
     }
-    const confirmMsg =
-      mode === 'all'
-        ? `Send to all ${recipientCount} active subscribers?`
-        : mode === 'selected'
-          ? `Send to ${recipientCount} selected subscriber${recipientCount === 1 ? '' : 's'}?`
-          : `Send to ${recipientCount} custom email${recipientCount === 1 ? '' : 's'}?`;
-    if (!confirm(confirmMsg)) return;
 
     setSending(true);
     try {
