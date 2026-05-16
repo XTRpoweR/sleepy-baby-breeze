@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { SubscriptionPlans } from "@/components/subscription/SubscriptionPlans";
-import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X, ArrowRight, Sparkles, Moon, Sun, Award, TrendingUp, Shield, Zap } from "lucide-react";
+import { Clock, Calendar, Volume2, Users, BarChart3, Star, Heart, CheckCircle, Play, Globe, Check, Crown, Badge, Menu, X, ArrowRight, ArrowUp, Sparkles, Moon, Sun, Award, TrendingUp, Shield, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { memo, useMemo, useState, useEffect, useRef, useCallback } from "react";
 import CountUp from "@/components/CountUp";
@@ -203,8 +203,21 @@ const Index = () => {
   } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [heroVideoPlaying, setHeroVideoPlaying] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const { openPreferences } = useCookieConsent();
+
+  // Show "scroll to top" floating button once the user has scrolled past the fold
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const handleGetStarted = () => {
     if (user) {
       navigate('/dashboard');
@@ -983,7 +996,18 @@ const Index = () => {
           </div>
         </div>
       </footer>
-     
+
+      {/* Scroll-to-top floating button — shows after user scrolls past the fold */}
+      <button
+        type="button"
+        onClick={scrollToTop}
+        aria-label="Back to top"
+        className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-50 h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-500/40 hover:shadow-xl hover:shadow-purple-500/50 hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center ${
+          showScrollTop ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <ArrowUp className="h-5 w-5 sm:h-6 sm:w-6" />
+      </button>
    </div>;
 };
 export default Index;
