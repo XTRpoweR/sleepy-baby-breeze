@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Send, Download, Mail, CheckCircle2 } from 'lucide-react';
+import { Send, Download, Mail, CheckCircle2, BarChart3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
@@ -105,9 +106,16 @@ const AdminNewsletter = () => {
             <h1 className="text-2xl md:text-3xl font-bold">Newsletter</h1>
             <p className="text-sm text-muted-foreground mt-1">{activeCount} active · {subs.length} total subscribers</p>
           </div>
-          <Button variant="outline" onClick={exportCsv} disabled={subs.length === 0}>
-            <Download className="h-4 w-4 mr-2" /> Export CSV
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link to="/admin/campaigns">
+              <Button variant="outline" size="sm">
+                <BarChart3 className="h-4 w-4 mr-2" /> Campaigns
+              </Button>
+            </Link>
+            <Button variant="outline" size="sm" onClick={exportCsv} disabled={subs.length === 0}>
+              <Download className="h-4 w-4 mr-2" /> Export CSV
+            </Button>
+          </div>
         </div>
 
         {/* Composer */}
