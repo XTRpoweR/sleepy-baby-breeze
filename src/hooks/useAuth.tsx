@@ -90,17 +90,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
           // Send welcome email once, after email is confirmed
           if (event === 'SIGNED_IN' && session.user.email_confirmed_at && session.user.email) {
-            const lang = (typeof navigator !== 'undefined' ? navigator.language.split('-')[0] : 'en');
-            setTimeout(() => {
-              supabase.functions.invoke('send-welcome-email', {
-                body: {
-                  user_id: session.user.id,
-                  email: session.user.email,
-                  name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || null,
-                  language: lang,
-                },
-              }).catch((err) => console.warn('welcome email skipped', err));
-            }, 0);
+            const guardKey = `welcome_sent_${session.user.id}`;
+            const alreadySent = typeof sessionStorage !== 'undefined' && sessionStorage.getItem(guardKey);
+            if (!alreadySent) {
+              if (typeof sessionStorage !== 'undefined') sessionStorage.setItem(guardKey, '1');
+              // Use the app's selected language (i18next), not the browser locale
+              let lang = 'en';
+              try {
+                const i18nMod = await import('@/i18n');
+                lang = (i18nMod.default?.language || 'en').split('-')[0];
+              } catch {}
+              const userId = session.user.id;
+              const userEmail = session.user.email;
+              const userName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || null;
+              setTimeout(() => {
+                supabase.functions.invoke('send-welcome-email', {
+                  body: { user_id: userId, email: userEmail, name: userName, language: lang },
+                }).catch((err) => console.warn('welcome email skipped', err));
+              }, 0);
+            }
           }
 
           // Track user geo location (debounced server-side, max 1/day per user)
