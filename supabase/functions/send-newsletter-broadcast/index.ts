@@ -269,7 +269,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const { subject, body, test_email, cta_text, cta_url, subtitle, tip } = await req.json();
+    const { subject, body, test_email, cta_text, cta_url, subtitle, tip, mode, selected_emails, custom_emails } = await req.json();
     if (!subject || !body || typeof subject !== 'string' || typeof body !== 'string') {
       return new Response(JSON.stringify({ error: 'subject and body required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
@@ -336,12 +336,63 @@ serve(async (req) => {
       return new Response(JSON.stringify({ success: true, test: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Broadcast
-    const { data: subs, error: subsErr } = await supabase
-      .from('newsletter_subscribers')
-      .select('email, unsubscribe_token')
-      .eq('status', 'active');
-    if (subsErr) throw subsErr;
+    // Build recipients list based on mode
+    // - 'all' (default for backward compat): every active subscriber
+    // - 'selected': only subscribers whose email is in selected_emails (must be active)
+    // - 'custom': arbitrary emails (may or may not be subscribers)
+    type Recipient = { email: string; unsubscribe_token: string | null };
+    let subs: Recipient[] = [];
+    const sendMode = typeof mode === 'string' ? mode : 'all';
+
+    if (sendMode === 'custom' && Array.isArray(custom_emails) && custom_emails.length > 0) {
+      // Sanitize + dedupe; keep only valid-looking emails (server-side trust boundary)
+      const clean = Array.from(new Set(
+        custom_emails
+          .filter((e: unknown): e is string => typeof e === 'string')
+          .map((e: string) => e.trim().toLowerCase())
+          .filter((e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))
+      )).slice(0, 500); // hard cap
+
+      // Look up unsubscribe_tokens for any that happen to be existing subscribers
+      const { data: existingSubs } = await supabase
+        .from('newsletter_subscribers')
+        .select('email, unsubscribe_token, status')
+        .in('email', clean);
+      const tokenByEmail = new Map<string, string | null>();
+      for (const row of existingSubs ?? []) tokenByEmail.set(row.email, row.unsubscribe_token);
+      // Skip any addresses that are already explicitly unsubscribed
+      const blockedEmails = new Set<string>(
+        (existingSubs ?? []).filter((s: { status: string }) => s.status === 'unsubscribed').map((s: { email: string }) => s.email),
+      );
+      subs = clean
+        .filter((e) => !blockedEmails.has(e))
+        .map((email) => ({ email, unsubscribe_token: tokenByEmail.get(email) ?? null }));
+    } else if (sendMode === 'selected' && Array.isArray(selected_emails) && selected_emails.length > 0) {
+      const clean = Array.from(new Set(
+        selected_emails
+          .filter((e: unknown): e is string => typeof e === 'string')
+          .map((e: string) => e.trim().toLowerCase())
+      )).slice(0, 5000);
+      const { data: selectedSubs, error: selErr } = await supabase
+        .from('newsletter_subscribers')
+        .select('email, unsubscribe_token')
+        .eq('status', 'active')
+        .in('email', clean);
+      if (selErr) throw selErr;
+      subs = selectedSubs ?? [];
+    } else {
+      // Default: send to all active subscribers
+      const { data: allSubs, error: subsErr } = await supabase
+        .from('newsletter_subscribers')
+        .select('email, unsubscribe_token')
+        .eq('status', 'active');
+      if (subsErr) throw subsErr;
+      subs = allSubs ?? [];
+    }
+
+    if (subs.length === 0) {
+      return new Response(JSON.stringify({ error: 'No valid recipients' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
     // Best-effort: create a campaign record so we can track opens/clicks.
     // If this fails the broadcast still goes out — tracking just won't be linked.
@@ -372,7 +423,11 @@ serve(async (req) => {
     let failed = 0;
     for (const sub of subs || []) {
       try {
-        const unsubUrl = `https://sleepybabyy.com/unsubscribe?token=${sub.unsubscribe_token}`;
+        // Custom recipients may not have a token — fall back to the contact page
+        // so the email still complies with the List-Unsubscribe requirement.
+        const unsubUrl = sub.unsubscribe_token
+          ? `https://sleepybabyy.com/unsubscribe?token=${sub.unsubscribe_token}`
+          : `https://sleepybabyy.com/contact?reason=unsubscribe&email=${encodeURIComponent(sub.email)}`;
         const userName = await getName(sub.email);
         const html = buildNewsletterEmail({ title: subject, subtitle: subtitleStr, body, tip: tipStr, ctaText, ctaUrl, userName, unsubscribeUrl: unsubUrl });
         const tags: { name: string; value: string }[] = [{ name: 'type', value: 'newsletter' }];
