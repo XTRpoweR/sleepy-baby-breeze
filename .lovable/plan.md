@@ -1,84 +1,52 @@
-# خطة تحسين صفحة الاشتراك (Subscription)
+## الهدف
+إصلاح أربع مشكلات في إيميل الترحيب (`send-welcome-email`).
 
-بعد مراجعة `src/pages/Subscription.tsx`, `src/components/subscription/SubscriptionPlans.tsx`, و `src/hooks/useSubscription.tsx` وجدت عدة مشاكل سأعالجها:
+## التغييرات
 
-## المشاكل الحالية
+### 1. منع إرسال إيميل ترحيب مكرر
+**السبب**: `onAuthStateChange` في `src/hooks/useAuth.tsx` يطلق `SIGNED_IN` عدة مرات (تبديل تبويب، تحديث، إعادة تحقق). آلية الـ dedupe في الـ Edge Function تعتمد على قراءة ثم تحديث `welcome_email_sent_at` وهذا يسمح بسباق (race condition) عند طلبين متزامنين.
 
-1. **لا يوجد تمييز بين الترقية والتخفيض**: الكود يعرض فقط زر "الخطة الحالية" أو "ابدأ التجربة" لكل خطة، دون توضيح ما إذا كانت ترقية (Upgrade) أو تخفيض (Downgrade) بناءً على الخطة الحالية للمستخدم.
-2. **لا توجد لوحة "حالة الاشتراك" واضحة**: شريط Premium/Basic صغير ومخفي في الزاوية، لا يعرض تاريخ التجديد، الخطة، السعر، أو حالة الإلغاء.
-3. **حالة الإلغاء غير ظاهرة**: عند `status === 'canceled'` أو عند إلغاء التجديد التلقائي، لا يظهر للمستخدم أي تنبيه أو خيار لإعادة التفعيل.
-4. **سياسة الاسترداد غير متطابقة**: الصفحة تذكر "15-Day Money-Back Guarantee" بينما طلبت 14 يوم، وهي مكررة في عدة أماكن دون شرح كيفية الطلب.
-5. **التصميم غير متناسق**: الألوان (orange/purple/emerald/blue) متنوعة جداً وغير متوافقة مع نظام التصميم. الصفحة تستخدم ألوان مباشرة (`bg-blue-50`, `text-gray-900`) بدل tokens الـ design system.
-6. **محتوى ثابت بالإنجليزية** في صفحة Subscription نفسها (Features, Testimonials, FAQ, Money-Back) رغم وجود نظام i18n.
-7. **زر "Manage" صغير ومخفي** ولا يوضح ماذا يفعل (يفتح Stripe portal).
+**الحل**:
+- في `useAuth.tsx`: إضافة `useRef` (`welcomeSentRef`) لمنع الاستدعاء أكثر من مرة في نفس الجلسة، مع تخزين قيمة في `sessionStorage` بمفتاح `welcome_sent_${user.id}` لمنع التكرار حتى بعد إعادة التحميل.
+- في `send-welcome-email/index.ts`: استبدال نمط "اقرأ ثم حدّث" بـ **UPDATE شرطي ذرّي**:
+  ```
+  UPDATE profiles SET welcome_email_sent_at = now()
+  WHERE id = user_id AND welcome_email_sent_at IS NULL
+  RETURNING id
+  ```
+  إذا لم يُرجع صفّاً → تم الإرسال سابقاً، تخطّى. الإرسال يتم فقط عند نجاح المطالبة (claim).
 
-## التغييرات المقترحة
+### 2. اللغة الافتراضية الإنجليزية
+**السبب**: الكود يستخدم `navigator.language` مما يُنتج عربية لأي متصفح إعداداته عربية بغضّ النظر عن لغة الموقع المختارة.
 
-### 1. إعادة هيكلة `src/pages/Subscription.tsx`
-
-- بناء **بطاقة "حالة اشتراكك الحالية" (Current Subscription Status)** كقسم بارز في الأعلى تعرض:
-  - اسم الخطة الحالية + شارة (Active / Trialing / Canceled / Free)
-  - السعر والدورة (شهري/ربع سنوي/سنوي)
-  - تاريخ التجديد القادم أو تاريخ انتهاء الوصول إذا تم الإلغاء
-  - أيام التجربة المتبقية إذا كانت تجربة
-  - زرين واضحين: "إدارة الاشتراك" (Stripe Portal) و"إلغاء الاشتراك" (يفتح Portal أيضاً)
-  - **إذا كان الاشتراك ملغى**: تنبيه برتقالي/أصفر "اشتراكك ملغى — ستفقد الوصول في [التاريخ]" مع زر "إعادة تفعيل".
-- إعادة استخدام نظام التصميم (`bg-background`, `text-foreground`, `bg-card`, `text-muted-foreground`, `border-border`) بدل ألوان tailwind المباشرة.
-- ترجمة كل النصوص الثابتة عبر `t()`.
-
-### 2. تعديل `SubscriptionPlans.tsx` لدعم الترقية/التخفيض الديناميكية
-
-- حساب رتبة كل خطة (`free=0, monthly=1, quarterly=2, annual=3`)
-- بناءً على الخطة الحالية، تغيير نص الزر وأيقونته:
-  - نفس الخطة → "خطتك الحالية" (معطّل)
-  - رتبة أعلى → "ترقية إلى هذه الخطة" مع سهم صاعد
-  - رتبة أقل → "التخفيض إلى هذه الخطة" مع نص رمادي + ملاحظة "سيتم التطبيق في نهاية الدورة الحالية"
-  - مستخدم بدون اشتراك → "ابدأ التجربة المجانية"
-- إضافة شارة "خطتك الحالية" على البطاقة المطابقة.
-- توحيد الألوان لتستخدم `--primary` و `--accent` من الـ design system بدل orange/purple/emerald الصارخة (نحتفظ بشارات بسيطة لتمييز Most Popular / Best Value فقط).
-
-### 3. توحيد سياسة الاسترداد
-
-- توحيد على **14 يوم** (كما طلبت) في:
-  - بطاقة "Money-Back Guarantee" داخل Subscription.tsx
-  - قسم FAQ
-  - أي مكان آخر يذكرها (Pricing.tsx، Footer)
-- إضافة شرح موجز: "للاسترداد، اضغط على 'إدارة الاشتراك' ثم 'طلب استرداد' خلال 14 يوماً، أو راسلنا على [support@sleepybabyy.com](mailto:support@sleepybabyy.com) وسنرد خلال 24 ساعة."
-- إضافة زر مباشر "طلب استرداد" يفتح بريد إلكتروني جاهز إلى [support@sleepybabyy.com](mailto:support@sleepybabyy.com).
-
-### 4. إعادة تصميم احترافي ومتناسق
-
-- استخدام نظام الـ tokens الموجود (HSL في `index.css`):
-  - الخلفية: `bg-background` مع تدرج خفيف `from-background via-background to-muted/30`
-  - البطاقات: `bg-card border-border shadow-sm hover:shadow-lg`
-  - النصوص: `text-foreground` و `text-muted-foreground`
-  - Accent: `text-primary` و `bg-primary/10`
-- نمط مشابه لـ Stripe / Linear / Notion: مساحات بيضاء أكثر، حدود أنعم، تظليل خفيف، typography هرمي واضح.
-- إزالة التدرجات المتعددة الألوان (orange→amber, purple→pink, emerald→teal) واستبدالها بـ accent واحد متناسق.
-
-### 5. ترجمة المحتوى
-
-- إضافة مفاتيح ترجمة جديدة في `src/locales/*/common.json` تحت `subscription.*`:
-  - `currentStatus.*`, `manageButton`, `cancelButton`, `reactivateButton`, `cancelledBanner`, `refundPolicy.*`, `requestRefund`, إلخ.
-  - تحديث FAQ ليستخدم الترجمة بدل النصوص الإنجليزية الصلبة.
-
-## الملفات التي ستتعدّل
-
+**الحل**: في `useAuth.tsx` قراءة اللغة من i18n الفعلية للموقع:
 ```
-src/pages/Subscription.tsx                 (إعادة كتابة كاملة - تصميم نظيف + بطاقة حالة)
-src/components/subscription/SubscriptionPlans.tsx   (منطق ترقية/تخفيض + توحيد ألوان)
-src/components/subscription/CurrentSubscriptionCard.tsx   (مكون جديد)
-src/locales/{en,de,es,fr,it,el,fi,sv,ar}/common.json   (مفاتيح subscription.*)
+import i18n from '@/i18n';
+const lang = i18n.language?.split('-')[0] || 'en';
 ```
+هذا يطابق اللغة المختارة فعلياً من المستخدم في الواجهة (الافتراضي en).
 
-## ملاحظة هامة
+### 3. إصلاح "ردّ على هذا الإيميل"
+**المشكلة**: المرسل `noreply@sleepybabyy.com` يوحي بعدم قبول الردود، رغم أن `reply_to` مضبوط على support.
 
-تغيير الباقة فعلياً (proration / upgrade / downgrade) يتم عبر **Stripe Customer Portal** الذي يدعمه `customer-portal` edge function الموجود مسبقاً. لذا لن أضيف منطق Stripe خلفي جديد — فقط أمرّر النية الصحيحة (ترقية/تخفيض) للمستخدم وأفتح له Portal، أو أنشئ checkout جديد إذا كان قادماً من Free.
+**الحل** في `send-welcome-email/index.ts`:
+- تغيير `FROM` إلى `'SleepyBabyy Support <support@sleepybabyy.com>'` ليتطابق الاسم مع وجهة الردّ.
+- الإبقاء على `reply_to: support@sleepybabyy.com`.
+- تعديل نص الترجمات: استبدال جملة "ردّ على هذا الإيميل أو راسلنا على" بـ "راسلنا على" فقط في جميع اللغات التسع، حتى لا نعد بشيء قد لا يعمل عبر بعض عملاء البريد.
 
-## أسئلة قبل التنفيذ
+### 4. إضافة الشعار في أعلى الإيميل
+**الحل** في `buildHtml`:
+- استبدال نص `SleepyBabyy 🌙` في الهيدر بصورة شعار:
+  ```html
+  <img src="https://sleepybabyy.com/logo.png" alt="SleepyBabyy" width="180"
+       style="display:block;margin:0 auto;max-width:180px;height:auto;">
+  ```
+- إبقاء خلفية التدرّج البنفسجي/الوردي.
+- توسيط الصورة باستخدام `text-align:center` على الخلية الأم.
 
-1. **سياسة الاسترداد**: 14 يوم أم 15 يوم؟ (الحالي 15، طلبت 14)
-2. **زر "إلغاء الاشتراك"**: هل تفضّل فتح Stripe Portal مباشرة، أم نافذة تأكيد داخلية ثم Portal؟
-3. **التخفيض (Downgrade)**: هل نسمح بالتخفيض من الصفحة (يفتح Portal تلقائياً) أم نخفيه ونتركه للمستخدم في Portal فقط؟
+## الملفات المعدّلة
+- `src/hooks/useAuth.tsx` — guard ذاكرة + sessionStorage، استخدام لغة i18n.
+- `supabase/functions/send-welcome-email/index.ts` — UPDATE ذرّي، تغيير FROM، نصوص الترجمات، شعار في الهيدر.
 
-بخصوص سياسة الاستمراري كما موجود في الموقع تأكد ونفذ، وبخصوص الغاء الاشتراك  أُفضل ان تكون نافذه داخليه مثل باقي المواقع وشغاله وفعاله، ولكن لا اريد ان تتأثر اي وظيفة 
+## التحقق
+- نشر الـ Edge Function، تسجيل حساب جديد، التحقق من وصول إيميل واحد فقط بلغة الموقع، رأس فيه شعار، والمرسل support@.
