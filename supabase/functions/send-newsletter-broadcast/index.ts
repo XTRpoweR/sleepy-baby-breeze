@@ -10,10 +10,15 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Minimal safe markdown -> HTML (bold, italic, links, line breaks, lists)
+// Minimal safe markdown -> HTML. Images must come before links (!\[ vs \[).
 function renderMarkdown(input: string): string {
   // Escape first
   let s = escapeHtml(input);
+
+  // Images: ![alt](https://url) — must run before links so they don't match
+  s = s.replace(/!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)/g, (_m, alt, url) => {
+    return `<img src="${url}" alt="${alt}" style="max-width:100%;height:auto;border-radius:12px;margin:12px 0;display:block;">`;
+  });
 
   // Links: [text](https://url)
   s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_m, text, url) => {
@@ -269,7 +274,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    const { subject, body, test_email, cta_text, cta_url, subtitle, tip, mode, selected_emails, custom_emails } = await req.json();
+    const { subject, body, test_email, cta_text, cta_url, subtitle, tip, mode, selected_emails, custom_emails, scheduled_for } = await req.json();
     if (!subject || !body || typeof subject !== 'string' || typeof body !== 'string') {
       return new Response(JSON.stringify({ error: 'subject and body required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
@@ -281,6 +286,44 @@ serve(async (req) => {
     const ctaUrl = typeof cta_url === 'string' ? cta_url.slice(0, 500) : undefined;
     const subtitleStr = typeof subtitle === 'string' ? subtitle.slice(0, 200) : undefined;
     const tipStr = typeof tip === 'string' ? tip.slice(0, 500) : undefined;
+    const sendMode = typeof mode === 'string' ? mode : 'all';
+
+    // Scheduling: if scheduled_for is provided, save and return without sending.
+    // pg_cron + process-scheduled-newsletters will pick it up when due.
+    if (scheduled_for && typeof scheduled_for === 'string') {
+      const scheduledDate = new Date(scheduled_for);
+      if (isNaN(scheduledDate.getTime())) {
+        return new Response(JSON.stringify({ error: 'Invalid scheduled_for date' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      if (scheduledDate.getTime() < Date.now() - 30000) {
+        return new Response(JSON.stringify({ error: 'scheduled_for must be in the future' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const { data: scheduled, error: scheduleErr } = await supabase
+        .from('newsletter_scheduled_campaigns')
+        .insert({
+          subject,
+          subtitle: subtitleStr ?? null,
+          body,
+          tip: tipStr ?? null,
+          cta_text: ctaText ?? null,
+          cta_url: ctaUrl ?? null,
+          mode: sendMode,
+          selected_emails: Array.isArray(selected_emails) ? selected_emails : [],
+          custom_emails: Array.isArray(custom_emails) ? custom_emails : [],
+          scheduled_for: scheduledDate.toISOString(),
+          created_by: user.id,
+        })
+        .select('id, scheduled_for')
+        .single();
+      if (scheduleErr) {
+        return new Response(JSON.stringify({ error: 'Failed to schedule', detail: scheduleErr.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      return new Response(JSON.stringify({
+        success: true, scheduled: true,
+        scheduled_id: scheduled.id,
+        scheduled_for: scheduled.scheduled_for,
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
     // Helper: lookup name from profiles by email
     async function getName(email: string): Promise<string | undefined> {
@@ -342,7 +385,6 @@ serve(async (req) => {
     // - 'custom': arbitrary emails (may or may not be subscribers)
     type Recipient = { email: string; unsubscribe_token: string | null };
     let subs: Recipient[] = [];
-    const sendMode = typeof mode === 'string' ? mode : 'all';
 
     if (sendMode === 'custom' && Array.isArray(custom_emails) && custom_emails.length > 0) {
       // Sanitize + dedupe; keep only valid-looking emails (server-side trust boundary)
