@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { MessageSquare, Mail, BarChart3, Users, ArrowLeft } from 'lucide-react';
+import { MessageSquare, Mail, BarChart3, Users, ArrowLeft, Shield } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -65,6 +65,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { to: '/admin/campaigns', icon: BarChart3, label: 'Campaigns', enabled: true, badge: 0 },
     { to: '/admin/analytics', icon: BarChart3, label: 'Analytics', enabled: true, badge: 0 },
     { to: '/admin/users', icon: Users, label: 'Users', enabled: true, badge: 0 },
+    { to: '/admin/team', icon: Shield, label: 'Team', enabled: true, badge: 0 },
   ];
 
   return (
