@@ -61,6 +61,7 @@ const LandingSleep = lazy(() => import("./pages/LandingSleep"));
 const UpgradePreview = lazy(() => import("./pages/UpgradePreview"));
 const DashboardPreview = lazy(() => import("./pages/DashboardPreview"));
 const ProfileModalPreview = lazy(() => import("./pages/ProfileModalPreview"));
+const DashboardFeaturesPreview = lazy(() => import("./pages/DashboardFeaturesPreview"));
 import { OnboardingGate } from "./components/onboarding/OnboardingGate";
 
 // Create queryClient outside of component to avoid recreation on each render
@@ -115,6 +116,7 @@ const App: React.FC = () => {
                       <Route path="/dev/upgrade-preview" element={<UpgradePreview />} />
                       <Route path="/dev/dashboard-preview" element={<DashboardPreview />} />
                       <Route path="/dev/profile-modal-preview" element={<ProfileModalPreview />} />
+                      <Route path="/dev/dashboard-features-preview" element={<DashboardFeaturesPreview />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/reset-password" element={<EnhancedPasswordReset />} />
                       <Route path="/security" element={<Navigate to="/account?tab=security" replace />} />

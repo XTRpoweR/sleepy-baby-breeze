@@ -206,17 +206,26 @@ const AdminNewsletter = () => {
           .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
       }
 
-      const { data, error } = await supabase.functions.invoke('send-newsletter-broadcast', {
-        body: payload,
-        headers: { Authorization: `Bearer ${token}` },
+      // Call the edge function directly so we can read the response body on error.
+      // supabase.functions.invoke() hides non-2xx response bodies behind a generic
+      // "Edge Function returned a non-2xx status code" message, which makes it
+      // impossible to tell the user why the send actually failed.
+      const supabaseUrl = (supabase as unknown as { supabaseUrl: string }).supabaseUrl
+        ?? import.meta.env.VITE_SUPABASE_URL
+        ?? 'https://wjxxgccfazpkdfzbcgen.supabase.co';
+      const resp = await fetch(`${supabaseUrl}/functions/v1/send-newsletter-broadcast`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
       });
-      if (error || (data as { error?: string })?.error) {
-        throw new Error(
-          (data as { detail?: string; error?: string })?.detail ||
-            (data as { error?: string })?.error ||
-            error?.message ||
-            'Send failed',
-        );
+      const respText = await resp.text();
+      let data: { sent?: number; total?: number; campaign_id?: string; error?: string; detail?: string } = {};
+      try { data = JSON.parse(respText); } catch { /* not JSON */ }
+      if (!resp.ok || data.error) {
+        throw new Error(data.detail || data.error || respText || `HTTP ${resp.status}`);
       }
 
       const result = data as { sent: number; total: number; campaign_id?: string };
