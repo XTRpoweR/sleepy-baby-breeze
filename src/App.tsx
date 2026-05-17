@@ -56,6 +56,8 @@ const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminCampaigns = lazy(() => import("./pages/admin/AdminCampaigns"));
 const AdminCampaignDetail = lazy(() => import("./pages/admin/AdminCampaignDetail"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminTeam = lazy(() => import("./pages/admin/AdminTeam"));
+const InviteAccept = lazy(() => import("./pages/InviteAccept"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const LandingSleep = lazy(() => import("./pages/LandingSleep"));
 const UpgradePreview = lazy(() => import("./pages/UpgradePreview"));
@@ -63,6 +65,7 @@ const DashboardPreview = lazy(() => import("./pages/DashboardPreview"));
 const ProfileModalPreview = lazy(() => import("./pages/ProfileModalPreview"));
 const DashboardFeaturesPreview = lazy(() => import("./pages/DashboardFeaturesPreview"));
 const NewsletterFeaturesPreview = lazy(() => import("./pages/NewsletterFeaturesPreview"));
+const AdminTeamPreview = lazy(() => import("./pages/AdminTeamPreview"));
 import { OnboardingGate } from "./components/onboarding/OnboardingGate";
 
 // Create queryClient outside of component to avoid recreation on each render
@@ -119,6 +122,7 @@ const App: React.FC = () => {
                       <Route path="/dev/profile-modal-preview" element={<ProfileModalPreview />} />
                       <Route path="/dev/dashboard-features-preview" element={<DashboardFeaturesPreview />} />
                       <Route path="/dev/newsletter-features-preview" element={<NewsletterFeaturesPreview />} />
+                      <Route path="/dev/admin-team-preview" element={<AdminTeamPreview />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/reset-password" element={<EnhancedPasswordReset />} />
                       <Route path="/security" element={<Navigate to="/account?tab=security" replace />} />
@@ -158,6 +162,8 @@ const App: React.FC = () => {
                       <Route path="/admin/campaigns/:id" element={<AdminCampaignDetail />} />
                       <Route path="/admin/analytics" element={<AdminAnalytics />} />
                       <Route path="/admin/users" element={<AdminUsers />} />
+                      <Route path="/admin/team" element={<AdminTeam />} />
+                      <Route path="/invite/:token" element={<InviteAccept />} />
                       <Route path="/404" element={<NotFound />} />
                       <Route path="*" element={<Navigate to="/404" replace />} />
                     </Routes>
