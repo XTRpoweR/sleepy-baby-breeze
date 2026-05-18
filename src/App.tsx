@@ -50,6 +50,7 @@ const EnhancedPasswordReset = lazy(() => import("./components/auth/EnhancedPassw
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const ChatAssistant = lazy(() => import("./components/chat/ChatAssistant"));
 const AiMusicBridge = lazy(() => import("./components/chat/AiMusicBridge").then((m) => ({ default: m.AiMusicBridge })));
+const InstallPwaBanner = lazy(() => import("./components/pwa/InstallPwaBanner").then((m) => ({ default: m.InstallPwaBanner })));
 const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
 const AdminThread = lazy(() => import("./pages/admin/AdminThread"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
@@ -176,6 +177,9 @@ const App: React.FC = () => {
                   </Suspense>
                   <Suspense fallback={null}>
                     <AiMusicBridge />
+                  </Suspense>
+                  <Suspense fallback={null}>
+                    <InstallPwaBanner />
                   </Suspense>
                   <CookieConsentBanner />
                   <CookieSettingsButton />
