@@ -152,7 +152,8 @@ export const loadMetaPixel = (granted: boolean): void => {
       // Default to revoked so the very first call is anonymous if consent missing
       window.fbq?.('consent', granted ? 'grant' : 'revoke');
       window.fbq?.('init', META_PIXEL_ID);
-      window.fbq?.('track', 'PageView');
+      // PageView is fired by usePageViewTracking via fbqTrack so it carries an
+      // event_id and is relayed to the Conversions API for deduplication.
     } catch {
       /* ignore */
     }
