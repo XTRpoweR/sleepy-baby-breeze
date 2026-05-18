@@ -94,7 +94,8 @@ const Auth = () => {
             toast({ title: "Account created", description: "Please check your email to verify your account." });
           } else {
             toast({ title: "Welcome!", description: "Account created and signed in!" });
-            navigate('/onboarding', { replace: true });
+            // Honor an explicit redirect target (e.g. team invitations) over onboarding
+            navigate(redirectTo || '/onboarding', { replace: true });
           }
         }
       }
