@@ -188,7 +188,12 @@ const AdminTeam = () => {
                 const meta = ROLE_META[m.role];
                 const Icon = meta.icon;
                 const isYou = m.user_id === me;
-                const initial = (m.full_name || m.email || '?').charAt(0).toUpperCase();
+                // Show full_name if available, otherwise fall back to the email
+                // local-part (before @) so members without a profile name don't
+                // appear as "Unknown".
+                const emailLocal = m.email ? m.email.split('@')[0] : '';
+                const displayName = m.full_name || emailLocal || 'Team member';
+                const initial = (displayName || '?').charAt(0).toUpperCase();
                 const canEdit = canManageTeam && !isYou && currentRank > meta.rank;
                 return (
                   <div key={m.id} className="px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors">
@@ -197,9 +202,7 @@ const AdminTeam = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium">
-                          {m.full_name || m.email || 'Unknown'}
-                        </span>
+                        <span className="text-sm font-medium">{displayName}</span>
                         {isYou && (
                           <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 font-medium">
                             YOU
