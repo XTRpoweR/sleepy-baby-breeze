@@ -231,6 +231,20 @@ const tools = [
       parameters: { type: "object", properties: {} },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "connect_human_support",
+      description:
+        "Open the in-app human support form so the user can submit a ticket to support@sleepybabyy.com. Call this when the user wants a real person, asks for a refund/billing dispute, is frustrated, reports a bug you cannot solve, or requests anything account-specific. Available to ALL users (free and Premium).",
+      parameters: {
+        type: "object",
+        properties: {
+          reason: { type: "string", description: "Short reason: 'refund', 'billing', 'bug', 'general', 'frustrated'" },
+        },
+      },
+    },
+  },
 ];
 
 async function executeTool(
@@ -498,6 +512,14 @@ async function executeTool(
           ok: true,
           result: { stopped: true },
           client_action: { type: "stop_music" },
+        };
+      }
+
+      case "connect_human_support": {
+        return {
+          ok: true,
+          result: { opened: true, reason: args.reason || "general" },
+          client_action: { type: "open_support_dialog", reason: args.reason || "general" },
         };
       }
 

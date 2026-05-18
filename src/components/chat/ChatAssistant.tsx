@@ -73,6 +73,18 @@ export const ChatAssistant = () => {
     }
   }, [messages, isStreaming]);
 
+  // AI tool `connect_human_support` dispatches this event — auto-open the
+  // human support dialog so the user can submit a ticket without clicking
+  // the LifeBuoy icon themselves.
+  useEffect(() => {
+    const handler = () => {
+      setOpen(true);
+      setSupportOpen(true);
+    };
+    window.addEventListener('ai:open-support', handler);
+    return () => window.removeEventListener('ai:open-support', handler);
+  }, []);
+
   if (!user) return null;
   if (HIDDEN_ROUTES.some((r) => location.pathname.startsWith(r))) return null;
 

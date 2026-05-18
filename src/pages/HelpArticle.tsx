@@ -1862,10 +1862,10 @@ Premium features are designed to grow with your family and provide increasing va
 - Cross-platform sync issues
 
 ### Contact Information
-- **Email**: billing@sleepybabyy.com
-- **Live Chat**: Available during business hours for premium subscribers
-- **Phone**: Premium subscribers receive priority phone support
-- **Response Time**: 24-48 hours for billing inquiries
+- **Email**: support@sleepybabyy.com
+- **Contact form**: [sleepybabyy.com/contact](/contact)
+- **In-app chat**: Tap the chat icon, then the lifebuoy button to reach human support
+- **Response Time**: within 24 hours for billing inquiries
 
 ### Information to Provide
 - Account email address
@@ -2088,9 +2088,8 @@ Managing your subscription should be hassle-free. If you encounter any issues or
 
 ### How to Contact Support
 **Premium Subscribers**:
-- Live chat during business hours (9 AM - 6 PM EST)
-- Priority email support (billing@sleepybabyy.com)
-- Phone support for urgent billing issues
+- Priority email support: support@sleepybabyy.com
+- In-app chat with lifebuoy handoff to a human agent
 - 24-hour response time guarantee
 
 **Free Account Users**:
