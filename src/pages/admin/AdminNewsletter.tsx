@@ -39,6 +39,8 @@ import {
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useAdminRole } from '@/hooks/useAdminRole';
+import { Lock } from 'lucide-react';
 
 interface Sub {
   id: string;
@@ -138,6 +140,9 @@ const NEWSLETTER_TEMPLATES = [
 ];
 
 const AdminNewsletter = () => {
+  // Role-based gating: Member sees read-only view, Editor can write/save draft
+  // but not send, Manager+ can do everything.
+  const { canWrite, canPublish, role } = useAdminRole();
   const [subs, setSubs] = useState<Sub[]>([]);
   const [loading, setLoading] = useState(true);
   const [subject, setSubject] = useState('');
@@ -633,7 +638,25 @@ const AdminNewsletter = () => {
           </div>
         </div>
 
-        {/* Composer */}
+        {/* Read-only banner for Members (cannot write/send) */}
+        {!canWrite && (
+          <Card className="p-4 bg-amber-50 border-amber-200">
+            <div className="flex items-start gap-3">
+              <Lock className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-amber-900">Read-only access</p>
+                <p className="text-xs text-amber-700 mt-1">
+                  As a <strong>{role === 'member' ? 'Member' : role}</strong>, you can view subscribers
+                  and campaigns but cannot compose or send newsletters. Ask your CEO or Executive to upgrade your role.
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Composer + Recipients — hidden for Members (read-only) */}
+        {canWrite && (
+          <>
         <Card className="p-5 space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2">
@@ -642,6 +665,11 @@ const AdminNewsletter = () => {
               {currentDraftId && (
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">
                   EDITING DRAFT
+                </span>
+              )}
+              {!canPublish && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-medium flex items-center gap-1">
+                  <Lock className="h-2.5 w-2.5" /> DRAFT-ONLY
                 </span>
               )}
             </div>
@@ -942,19 +970,28 @@ const AdminNewsletter = () => {
             )}
           </div>
 
-          {/* Big Send button */}
+          {/* Big Send button — only Manager+ can actually publish */}
           <div className="flex justify-end pt-3 border-t">
-            <Button
-              onClick={handleSend}
-              disabled={sending || recipientCount === 0}
-              size="lg"
-              className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-md shadow-purple-500/30 rounded-full px-6"
-            >
-              {timing === 'later' ? <Calendar className="h-4 w-4 mr-2" /> : <Send className="h-4 w-4 mr-2" />}
-              {sendLabel}
-            </Button>
+            {canPublish ? (
+              <Button
+                onClick={handleSend}
+                disabled={sending || recipientCount === 0}
+                size="lg"
+                className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white border-0 shadow-md shadow-purple-500/30 rounded-full px-6"
+              >
+                {timing === 'later' ? <Calendar className="h-4 w-4 mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+                {sendLabel}
+              </Button>
+            ) : (
+              <div className="flex items-center gap-3 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                <Lock className="h-3.5 w-3.5" />
+                <span>Editors can only save drafts. Ask your CEO/Manager to send.</span>
+              </div>
+            )}
           </div>
         </Card>
+          </>
+        )}
 
         {/* Scheduled queue */}
         {scheduledList.length > 0 && (
