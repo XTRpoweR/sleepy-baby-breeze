@@ -9,6 +9,7 @@ import { Search, Shield, Baby as BabyIcon, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/hooks/useAuth';
+import { useAdminRole } from '@/hooks/useAdminRole';
 
 interface AdminUser {
   id: string;
@@ -50,6 +51,9 @@ const planBadge = (plan: string | null) => {
 
 const AdminUsers = () => {
   const { user: currentUser } = useAuth();
+  // Only the CEO can flip the is_admin switch (granting/revoking workspace
+  // access). Other roles still see the column for context, but it's read-only.
+  const { isCeo } = useAdminRole();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -241,7 +245,7 @@ const AdminUsers = () => {
                           <Switch
                             checked={u.is_admin}
                             onCheckedChange={() => toggleAdmin(u)}
-                            disabled={u.id === currentUser?.id}
+                            disabled={!isCeo || u.id === currentUser?.id}
                           />
                         </td>
                       </tr>

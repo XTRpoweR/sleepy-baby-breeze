@@ -141,8 +141,9 @@ const NEWSLETTER_TEMPLATES = [
 
 const AdminNewsletter = () => {
   // Role-based gating: Member sees read-only view, Editor can write/save draft
-  // but not send, Manager+ can do everything.
-  const { canWrite, canPublish, role } = useAdminRole();
+  // but not send, Manager+ can do everything. Destructive subscriber actions
+  // (deactivate / permanent delete) are CEO-only.
+  const { canWrite, canPublish, role, isCeo } = useAdminRole();
   const [subs, setSubs] = useState<Sub[]>([]);
   const [loading, setLoading] = useState(true);
   const [subject, setSubject] = useState('');
@@ -1137,7 +1138,7 @@ const AdminNewsletter = () => {
                     >
                       {s.status}
                     </Badge>
-                    {s.status === 'active' ? (
+                    {isCeo && (s.status === 'active' ? (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -1157,16 +1158,18 @@ const AdminNewsletter = () => {
                       >
                         <RotateCcw className="h-3.5 w-3.5" />
                       </Button>
+                    ))}
+                    {isCeo && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => hardDelete(s)}
+                        title="Permanently delete"
+                        className="text-muted-foreground hover:text-rose-600 h-8 w-8"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => hardDelete(s)}
-                      title="Permanently delete"
-                      className="text-muted-foreground hover:text-rose-600 h-8 w-8"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </Button>
                   </div>
                 </div>
               ))}

@@ -61,7 +61,7 @@ const ROLE_META: Record<AdminRole, { label: string; icon: typeof Crown; color: s
 };
 
 const AdminTeam = () => {
-  const { role: currentRole, rank: currentRank, canInvite, canManageTeam } = useAdminRole();
+  const { role: currentRole, rank: currentRank, canInvite, canManageTeam, isCeo } = useAdminRole();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [recentActivity, setRecentActivity] = useState<RecentInvite[]>([]);
@@ -160,6 +160,11 @@ const AdminTeam = () => {
   };
 
   const removeMember = async (member: TeamMember) => {
+    // Hard delete: CEO only. Executives can change roles but not remove people.
+    if (!isCeo) {
+      toast.error('Only the CEO can remove team members. Ask the CEO for permission.');
+      return;
+    }
     if (!confirm(`Remove ${member.full_name || member.email} from the team?`)) return;
     const { error } = await supabase
       .from('admin_team_members')
@@ -278,7 +283,13 @@ const AdminTeam = () => {
                         {meta.label}
                       </span>
                       {canEdit && (
-                        <RoleMenu currentRole={m.role} currentRank={currentRank} onChange={(r) => updateRole(m, r)} onRemove={() => removeMember(m)} />
+                        <RoleMenu
+                          currentRole={m.role}
+                          currentRank={currentRank}
+                          onChange={(r) => updateRole(m, r)}
+                          onRemove={() => removeMember(m)}
+                          canRemove={isCeo}
+                        />
                       )}
                     </div>
                   </div>
@@ -318,16 +329,19 @@ const AdminTeam = () => {
                       <Icon className="w-3 h-3" />
                       {meta.label}
                     </span>
-                    {canInvite && (
-                      <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1">
+                      {canInvite && (
                         <Button variant="ghost" size="icon" onClick={() => resendInvitation(inv)} title="Resend" className="h-8 w-8">
                           <RefreshCw className="h-3.5 w-3.5" />
                         </Button>
+                      )}
+                      {/* Canceling an invitation deletes the record — CEO only */}
+                      {isCeo && (
                         <Button variant="ghost" size="icon" onClick={() => cancelInvitation(inv)} title="Cancel" className="h-8 w-8 hover:text-rose-600">
                           <X className="h-3.5 w-3.5" />
                         </Button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -435,7 +449,8 @@ const RoleMenu: React.FC<{
   currentRank: number;
   onChange: (r: AdminRole) => void;
   onRemove: () => void;
-}> = ({ currentRole, currentRank, onChange, onRemove }) => {
+  canRemove: boolean;
+}> = ({ currentRole, currentRank, onChange, onRemove, canRemove }) => {
   // Can assign roles equal or lower than the actor's rank (and never CEO)
   const assignable = (['executive', 'manager', 'editor', 'member'] as AdminRole[]).filter(
     (r) => ROLE_META[r].rank <= currentRank
@@ -469,11 +484,15 @@ const RoleMenu: React.FC<{
             </DropdownMenuItem>
           );
         })}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onRemove} className="text-xs text-rose-600 focus:text-rose-600 focus:bg-rose-50">
-          <Trash2 className="w-3 h-3 mr-2" />
-          Remove from team
-        </DropdownMenuItem>
+        {canRemove && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onRemove} className="text-xs text-rose-600 focus:text-rose-600 focus:bg-rose-50">
+              <Trash2 className="w-3 h-3 mr-2" />
+              Remove from team
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
