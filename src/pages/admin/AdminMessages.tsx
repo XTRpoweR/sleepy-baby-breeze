@@ -6,8 +6,9 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Inbox, MessageSquare } from 'lucide-react';
+import { Search, Inbox, MessageSquare, Lock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useAdminRole } from '@/hooks/useAdminRole';
 
 interface ContactMessage {
   id: string;
@@ -34,6 +35,9 @@ interface Thread {
 
 const AdminMessages = () => {
   const navigate = useNavigate();
+  // Member is denied access to customer messages entirely (private support
+  // conversations shouldn't be visible to read-only viewers).
+  const { canWrite, role, loading: roleLoading } = useAdminRole();
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread' | 'replied' | 'closed'>('all');
@@ -101,6 +105,26 @@ const AdminMessages = () => {
   });
 
   const unreadCount = threads.filter((t) => t.unread).length;
+
+  // Block Member-level access to customer messages (privacy of support convos).
+  if (!roleLoading && !canWrite) {
+    return (
+      <AdminLayout>
+        <div className="max-w-2xl mx-auto pt-8">
+          <Card className="p-8 text-center">
+            <div className="w-14 h-14 rounded-full bg-amber-100 mx-auto flex items-center justify-center mb-4">
+              <Lock className="h-7 w-7 text-amber-600" />
+            </div>
+            <h2 className="text-xl font-bold mb-2">Restricted area</h2>
+            <p className="text-sm text-muted-foreground">
+              As a <strong>{role || 'guest'}</strong> you don't have access to customer support
+              messages. Ask your CEO or Manager to upgrade your role if you need to help with replies.
+            </p>
+          </Card>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
