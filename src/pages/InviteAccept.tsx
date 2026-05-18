@@ -36,6 +36,7 @@ const InviteAccept = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [accepting, setAccepting] = useState(false);
+  const [autoAccepted, setAutoAccepted] = useState(false);
 
   // Fetch invitation info on mount
   useEffect(() => {
@@ -84,6 +85,19 @@ const InviteAccept = () => {
       setAccepting(false);
     }
   };
+
+  // Auto-accept the moment the user lands here already signed-in with the
+  // invited email — so the flow "click email -> sign in -> admin" feels seamless,
+  // with no extra confirm-click in the middle.
+  useEffect(() => {
+    if (autoAccepted) return;
+    if (loading || authLoading) return;
+    if (!info || !user || !token) return;
+    if ((user.email || '').toLowerCase() !== info.email.toLowerCase()) return;
+    setAutoAccepted(true);
+    accept();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info, user, token, loading, authLoading, autoAccepted]);
 
   if (loading || authLoading) {
     return (
@@ -164,7 +178,7 @@ const InviteAccept = () => {
                   Sign in with <strong>{info.email}</strong> to accept this invitation.
                 </div>
                 <Button
-                  onClick={() => navigate(`/auth?next=${encodeURIComponent(`/invite/${token}`)}`)}
+                  onClick={() => navigate(`/auth?redirect=${encodeURIComponent(`/invite/${token}`)}`)}
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white"
                 >
                   Sign in to accept
@@ -182,7 +196,7 @@ const InviteAccept = () => {
                   variant="outline"
                   onClick={async () => {
                     await supabase.auth.signOut();
-                    navigate(`/auth?next=${encodeURIComponent(`/invite/${token}`)}`);
+                    navigate(`/auth?redirect=${encodeURIComponent(`/invite/${token}`)}`);
                   }}
                   className="w-full"
                 >

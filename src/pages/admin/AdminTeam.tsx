@@ -6,6 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { useAdminRole, AdminRole } from '@/hooks/useAdminRole';
 import {
@@ -180,7 +188,12 @@ const AdminTeam = () => {
                 const meta = ROLE_META[m.role];
                 const Icon = meta.icon;
                 const isYou = m.user_id === me;
-                const initial = (m.full_name || m.email || '?').charAt(0).toUpperCase();
+                // Show full_name if available, otherwise fall back to the email
+                // local-part (before @) so members without a profile name don't
+                // appear as "Unknown".
+                const emailLocal = m.email ? m.email.split('@')[0] : '';
+                const displayName = m.full_name || emailLocal || 'Team member';
+                const initial = (displayName || '?').charAt(0).toUpperCase();
                 const canEdit = canManageTeam && !isYou && currentRank > meta.rank;
                 return (
                   <div key={m.id} className="px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition-colors">
@@ -189,9 +202,7 @@ const AdminTeam = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium">
-                          {m.full_name || m.email || 'Unknown'}
-                        </span>
+                        <span className="text-sm font-medium">{displayName}</span>
                         {isYou && (
                           <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-800 font-medium">
                             YOU
@@ -310,65 +321,54 @@ const AdminTeam = () => {
 };
 
 // ---------- Role change menu ----------
+// Uses Radix DropdownMenu (via shadcn) so it portals out of the Card's
+// overflow-hidden container — previously the menu was clipped and invisible.
 const RoleMenu: React.FC<{
   currentRole: AdminRole;
   currentRank: number;
   onChange: (r: AdminRole) => void;
   onRemove: () => void;
 }> = ({ currentRole, currentRank, onChange, onRemove }) => {
-  const [open, setOpen] = useState(false);
   // Can assign roles equal or lower than the actor's rank (and never CEO)
   const assignable = (['executive', 'manager', 'editor', 'member'] as AdminRole[]).filter(
     (r) => ROLE_META[r].rank <= currentRank
   );
 
   return (
-    <div className="relative">
-      <Button variant="ghost" size="icon" onClick={() => setOpen(!open)} className="h-8 w-8">
-        <MoreVertical className="h-4 w-4" />
-      </Button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-9 z-20 bg-white border border-slate-200 rounded-lg shadow-lg w-44 py-1">
-            <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-slate-400">Change role</div>
-            {assignable.map((r) => {
-              const meta = ROLE_META[r];
-              const Icon = meta.icon;
-              const isCurrent = r === currentRole;
-              return (
-                <button
-                  key={r}
-                  onClick={() => {
-                    onChange(r);
-                    setOpen(false);
-                  }}
-                  disabled={isCurrent}
-                  className={`w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 hover:bg-slate-50 ${
-                    isCurrent ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-                >
-                  <Icon className={`w-3 h-3 ${meta.text}`} />
-                  {meta.label}
-                  {isCurrent && <Check className="w-3 h-3 ml-auto text-emerald-500" />}
-                </button>
-              );
-            })}
-            <div className="my-1 border-t border-slate-100" />
-            <button
-              onClick={() => {
-                onRemove();
-                setOpen(false);
-              }}
-              className="w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 text-rose-600 hover:bg-rose-50"
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <MoreVertical className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-slate-400">
+          Change role
+        </DropdownMenuLabel>
+        {assignable.map((r) => {
+          const meta = ROLE_META[r];
+          const Icon = meta.icon;
+          const isCurrent = r === currentRole;
+          return (
+            <DropdownMenuItem
+              key={r}
+              onClick={() => !isCurrent && onChange(r)}
+              disabled={isCurrent}
+              className="text-xs"
             >
-              <Trash2 className="w-3 h-3" />
-              Remove from team
-            </button>
-          </div>
-        </>
-      )}
-    </div>
+              <Icon className={`w-3 h-3 mr-2 ${meta.text}`} />
+              {meta.label}
+              {isCurrent && <Check className="w-3 h-3 ml-auto text-emerald-500" />}
+            </DropdownMenuItem>
+          );
+        })}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onRemove} className="text-xs text-rose-600 focus:text-rose-600 focus:bg-rose-50">
+          <Trash2 className="w-3 h-3 mr-2" />
+          Remove from team
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
