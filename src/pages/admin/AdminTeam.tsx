@@ -43,6 +43,15 @@ interface Invitation {
   created_at: string;
 }
 
+interface RecentInvite {
+  id: string;
+  email: string;
+  role: AdminRole;
+  accepted_at: string | null;
+  canceled_at: string | null;
+  created_at: string;
+}
+
 const ROLE_META: Record<AdminRole, { label: string; icon: typeof Crown; color: string; bg: string; text: string; rank: number }> = {
   ceo:       { label: 'CEO',       icon: Crown,       color: 'from-amber-500 via-yellow-500 to-amber-600', bg: 'bg-gradient-to-r from-amber-100 to-yellow-100', text: 'text-amber-800', rank: 5 },
   executive: { label: 'Executive', icon: Gem,         color: 'from-purple-500 to-pink-500',                bg: 'bg-gradient-to-r from-purple-100 to-pink-100',  text: 'text-purple-700', rank: 4 },
@@ -55,6 +64,7 @@ const AdminTeam = () => {
   const { role: currentRole, rank: currentRank, canInvite, canManageTeam } = useAdminRole();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [recentActivity, setRecentActivity] = useState<RecentInvite[]>([]);
   const [loading, setLoading] = useState(true);
   const [showInvite, setShowInvite] = useState(false);
   const [me, setMe] = useState<string | null>(null);
@@ -64,8 +74,9 @@ const AdminTeam = () => {
   }, []);
 
   const load = async () => {
-    const [mRes, iRes] = await Promise.all([
+    const [mRes, iRes, aRes] = await Promise.all([
       supabase.from('admin_team_view').select('*').order('joined_at', { ascending: true }),
+      // Pending (not accepted, not canceled, not expired)
       supabase
         .from('admin_invitations')
         .select('id, email, role, expires_at, accepted_at, canceled_at, created_at')
@@ -73,14 +84,62 @@ const AdminTeam = () => {
         .is('canceled_at', null)
         .gt('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false }),
+      // Recent activity: accepted or canceled in the last 30 days (for visibility)
+      supabase
+        .from('admin_invitations')
+        .select('id, email, role, accepted_at, canceled_at, created_at')
+        .or('accepted_at.not.is.null,canceled_at.not.is.null')
+        .gt('created_at', new Date(Date.now() - 30 * 86400 * 1000).toISOString())
+        .order('created_at', { ascending: false })
+        .limit(10),
     ]);
     if (mRes.data) setMembers(mRes.data as TeamMember[]);
     if (iRes.data) setInvitations(iRes.data as Invitation[]);
+    if (aRes.data) setRecentActivity(aRes.data as RecentInvite[]);
     setLoading(false);
   };
 
   useEffect(() => {
     load();
+  }, []);
+
+  // Realtime: refresh whenever the team or invitations table changes.
+  // Also show a celebratory toast when a pending invitation gets accepted,
+  // so the admin sees confirmation without refreshing.
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-team-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'admin_team_members' },
+        () => {
+          load();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'admin_invitations' },
+        (payload) => {
+          // Was just accepted?
+          const before = payload.old as { accepted_at: string | null } | null;
+          const after = payload.new as { accepted_at: string | null; email: string } | null;
+          if (before && after && !before.accepted_at && after.accepted_at) {
+            toast.success(`🎉 ${after.email} accepted the invitation!`, { duration: 6000 });
+          }
+          load();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'admin_invitations' },
+        () => {
+          load();
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const updateRole = async (member: TeamMember, newRole: AdminRole) => {
@@ -269,6 +328,52 @@ const AdminTeam = () => {
                         </Button>
                       </div>
                     )}
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        )}
+
+        {/* Recent activity — accepted / canceled invitations */}
+        {recentActivity.length > 0 && (
+          <Card className="overflow-hidden">
+            <div className="p-4 border-b flex items-center gap-2">
+              <RefreshCw className="h-4 w-4 text-purple-500" />
+              <h2 className="font-semibold text-sm">Recent activity</h2>
+              <span className="text-xs text-muted-foreground ml-auto">Last 30 days</span>
+            </div>
+            <div className="divide-y max-h-[300px] overflow-y-auto">
+              {recentActivity.map((a) => {
+                const meta = ROLE_META[a.role];
+                const Icon = meta.icon;
+                const accepted = !!a.accepted_at;
+                const eventTime = accepted ? a.accepted_at! : (a.canceled_at ?? a.created_at);
+                return (
+                  <div key={a.id} className="px-4 py-2.5 flex items-center gap-3 hover:bg-muted/30">
+                    <div
+                      className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        accepted ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                      }`}
+                    >
+                      {accepted ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm">
+                        <strong className="font-medium">{a.email}</strong>
+                        <span className={`ml-1.5 ${accepted ? 'text-emerald-700' : 'text-rose-700'}`}>
+                          {accepted ? 'accepted' : 'canceled'}
+                        </span>
+                        <span className="text-muted-foreground"> the invitation</span>
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {formatDistanceToNow(new Date(eventTime), { addSuffix: true })}
+                      </p>
+                    </div>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium ${meta.bg} ${meta.text}`}>
+                      <Icon className="w-3 h-3" />
+                      {meta.label}
+                    </span>
                   </div>
                 );
               })}
