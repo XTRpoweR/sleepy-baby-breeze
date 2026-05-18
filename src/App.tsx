@@ -49,6 +49,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const EnhancedPasswordReset = lazy(() => import("./components/auth/EnhancedPasswordReset"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const ChatAssistant = lazy(() => import("./components/chat/ChatAssistant"));
+const AiMusicBridge = lazy(() => import("./components/chat/AiMusicBridge").then((m) => ({ default: m.AiMusicBridge })));
 const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
 const AdminThread = lazy(() => import("./pages/admin/AdminThread"));
 const AdminNewsletter = lazy(() => import("./pages/admin/AdminNewsletter"));
@@ -57,6 +58,7 @@ const AdminCampaigns = lazy(() => import("./pages/admin/AdminCampaigns"));
 const AdminCampaignDetail = lazy(() => import("./pages/admin/AdminCampaignDetail"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const AdminTeam = lazy(() => import("./pages/admin/AdminTeam"));
+const AdminKnowledge = lazy(() => import("./pages/admin/AdminKnowledge"));
 const InviteAccept = lazy(() => import("./pages/InviteAccept"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const LandingSleep = lazy(() => import("./pages/LandingSleep"));
@@ -163,6 +165,7 @@ const App: React.FC = () => {
                       <Route path="/admin/analytics" element={<AdminAnalytics />} />
                       <Route path="/admin/users" element={<AdminUsers />} />
                       <Route path="/admin/team" element={<AdminTeam />} />
+                      <Route path="/admin/knowledge" element={<AdminKnowledge />} />
                       <Route path="/invite/:token" element={<InviteAccept />} />
                       <Route path="/404" element={<NotFound />} />
                       <Route path="*" element={<Navigate to="/404" replace />} />
@@ -170,6 +173,9 @@ const App: React.FC = () => {
                   </Suspense>
                   <Suspense fallback={null}>
                     <ChatAssistant />
+                  </Suspense>
+                  <Suspense fallback={null}>
+                    <AiMusicBridge />
                   </Suspense>
                   <CookieConsentBanner />
                   <CookieSettingsButton />

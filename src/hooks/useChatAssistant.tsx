@@ -158,6 +158,18 @@ export const useChatAssistant = () => {
       });
 
       actions.forEach(notifyAction);
+
+      // Dispatch client-side actions (e.g. music play/stop) — these are
+      // surfaced by the edge function and handled by AiMusicBridge.
+      const clientActions: any[] = (data as any)?.client_actions || [];
+      for (const ca of clientActions) {
+        if (ca.type === 'play_music') {
+          window.dispatchEvent(new CustomEvent('ai:play-music', { detail: { url: ca.url, name: ca.name, track_id: ca.track_id } }));
+        } else if (ca.type === 'stop_music') {
+          window.dispatchEvent(new CustomEvent('ai:stop-music'));
+        }
+      }
+
       loadConversations();
     } catch (e) {
       console.error('sendMessage error:', e);
