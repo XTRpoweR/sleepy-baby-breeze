@@ -760,5 +760,24 @@
       "ctaDowngrade": "Switch to this plan",
       "downgradeNote": "Takes effect at the end of your current billing period."
     }
+  },
+  "pwa": {
+    "title": "Install SleepyBabyy on your home screen",
+    "subtitle": "Fast access and instant notifications — just like a real app.",
+    "install": "Install now",
+    "later": "Later",
+    "close": "Close",
+    "ios": {
+      "title": "Install on iPhone / iPad",
+      "description": "Safari on iPhone needs one step from you to add the app to your home screen.",
+      "step1Title": "Tap the Share button",
+      "step1Note": "At the bottom (iPhone) or top (iPad).",
+      "step2Title": "Choose \"Add to Home Screen\"",
+      "step2Note": "Scroll down a little in the menu.",
+      "step3Title": "Tap \"Add\"",
+      "step3Note": "You'll find the SleepyBabyy icon on your home screen, just like any app.",
+      "tip": "💡 After installing, open the app from the icon and enable notifications — reminders will reach you even when the site isn't open.",
+      "gotIt": "Got it"
+    }
   }
 }

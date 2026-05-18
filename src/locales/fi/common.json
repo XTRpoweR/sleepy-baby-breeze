@@ -710,5 +710,24 @@
         "desc": "Mittaa mainostemme tehokkuutta (Meta Pixel) ja personoi näkemääsi."
       }
     }
+  },
+  "pwa": {
+    "title": "Asenna SleepyBabyy aloitusnäytölle",
+    "subtitle": "Nopea pääsy ja välittömät ilmoitukset — kuten oikea sovellus.",
+    "install": "Asenna nyt",
+    "later": "Myöhemmin",
+    "close": "Sulje",
+    "ios": {
+      "title": "Asenna iPhonelle / iPadille",
+      "description": "Safari iPhonella vaatii yhden vaiheen sinulta sovelluksen lisäämiseksi aloitusnäytölle.",
+      "step1Title": "Napauta Jaa-painiketta",
+      "step1Note": "Alhaalla (iPhone) tai ylhäällä (iPad).",
+      "step2Title": "Valitse \"Lisää aloitusnäyttöön\"",
+      "step2Note": "Vieritä valikossa hieman alaspäin.",
+      "step3Title": "Napauta \"Lisää\"",
+      "step3Note": "Löydät SleepyBabyy-kuvakkeen aloitusnäytöltäsi kuten minkä tahansa sovelluksen.",
+      "tip": "💡 Asennuksen jälkeen avaa sovellus kuvakkeesta ja ota ilmoitukset käyttöön — muistutukset tavoittavat sinut sivuston ulkopuolellakin.",
+      "gotIt": "Selvä"
+    }
   }
 }

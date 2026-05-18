@@ -710,5 +710,24 @@
         "desc": "Mesure l'efficacité de nos publicités (Meta Pixel) et personnalise ce que vous voyez."
       }
     }
+  },
+  "pwa": {
+    "title": "Installer SleepyBabyy sur votre écran d'accueil",
+    "subtitle": "Accès rapide et notifications instantanées — comme une vraie application.",
+    "install": "Installer",
+    "later": "Plus tard",
+    "close": "Fermer",
+    "ios": {
+      "title": "Installer sur iPhone / iPad",
+      "description": "Safari sur iPhone nécessite une étape pour ajouter l'application à l'écran d'accueil.",
+      "step1Title": "Touchez le bouton Partager",
+      "step1Note": "En bas (iPhone) ou en haut (iPad).",
+      "step2Title": "Choisissez « Sur l'écran d'accueil »",
+      "step2Note": "Faites défiler un peu dans le menu.",
+      "step3Title": "Touchez « Ajouter »",
+      "step3Note": "L'icône SleepyBabyy apparaîtra sur votre écran d'accueil, comme une application.",
+      "tip": "💡 Après l'installation, ouvrez l'application depuis l'icône et activez les notifications — les rappels arriveront même hors du site.",
+      "gotIt": "Compris"
+    }
   }
 }

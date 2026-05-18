@@ -710,5 +710,24 @@
         "desc": "Misst die Wirksamkeit unserer Anzeigen (Meta Pixel) und personalisiert, was Sie sehen."
       }
     }
+  },
+  "pwa": {
+    "title": "SleepyBabyy auf dem Startbildschirm installieren",
+    "subtitle": "Schneller Zugriff und sofortige Benachrichtigungen — wie eine echte App.",
+    "install": "Jetzt installieren",
+    "later": "Später",
+    "close": "Schließen",
+    "ios": {
+      "title": "Auf iPhone / iPad installieren",
+      "description": "Safari auf dem iPhone benötigt einen Schritt von dir, um die App zum Startbildschirm hinzuzufügen.",
+      "step1Title": "Tippe auf die Teilen-Schaltfläche",
+      "step1Note": "Unten (iPhone) oder oben (iPad).",
+      "step2Title": "Wähle „Zum Home-Bildschirm“",
+      "step2Note": "Scrolle im Menü etwas nach unten.",
+      "step3Title": "Tippe auf „Hinzufügen“",
+      "step3Note": "Das SleepyBabyy-Symbol erscheint auf deinem Startbildschirm wie jede andere App.",
+      "tip": "💡 Öffne die App nach der Installation über das Symbol und aktiviere Benachrichtigungen — Erinnerungen erreichen dich auch außerhalb der Seite.",
+      "gotIt": "Verstanden"
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Download, Smartphone, Share, Plus, X } from 'lucide-react';
@@ -49,6 +50,7 @@ const recentlyDismissed = (): boolean => {
  */
 export const InstallPwaBanner: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [iosOpen, setIosOpen] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -124,10 +126,10 @@ export const InstallPwaBanner: React.FC = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm leading-tight">
-              ثبّت SleepyBabyy على شاشتك الرئيسية
+              {t('pwa.title')}
             </p>
             <p className="text-xs text-white/85 mt-1 leading-snug">
-              للوصول السريع والإشعارات الفورية — مثل أي تطبيق.
+              {t('pwa.subtitle')}
             </p>
             <div className="flex items-center gap-2 mt-3">
               <Button
@@ -136,7 +138,7 @@ export const InstallPwaBanner: React.FC = () => {
                 className="bg-white text-purple-700 hover:bg-white/90 h-8 px-3 text-xs font-semibold"
               >
                 <Download className="h-3.5 w-3.5 mr-1.5" />
-                ثبّت الآن
+                {t('pwa.install')}
               </Button>
               <Button
                 onClick={handleDismiss}
@@ -144,14 +146,14 @@ export const InstallPwaBanner: React.FC = () => {
                 variant="ghost"
                 className="text-white/90 hover:bg-white/10 hover:text-white h-8 px-2 text-xs"
               >
-                لاحقاً
+                {t('pwa.later')}
               </Button>
             </div>
           </div>
           <button
             onClick={handleDismiss}
             className="text-white/70 hover:text-white p-1 -m-1"
-            aria-label="إغلاق"
+            aria-label={t('pwa.close')}
           >
             <X className="h-4 w-4" />
           </button>
@@ -164,11 +166,9 @@ export const InstallPwaBanner: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Smartphone className="h-5 w-5 text-purple-600" />
-              التثبيت على iPhone / iPad
+              {t('pwa.ios.title')}
             </DialogTitle>
-            <DialogDescription>
-              متصفح Safari على iPhone يحتاج خطوة واحدة منك لإضافة التطبيق إلى الشاشة الرئيسية.
-            </DialogDescription>
+            <DialogDescription>{t('pwa.ios.description')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
@@ -177,11 +177,9 @@ export const InstallPwaBanner: React.FC = () => {
               </div>
               <div className="flex-1 text-sm">
                 <p className="font-medium mb-1 flex items-center gap-1.5">
-                  اضغط زر المشاركة <Share className="h-4 w-4 inline" />
+                  {t('pwa.ios.step1Title')} <Share className="h-4 w-4 inline" />
                 </p>
-                <p className="text-muted-foreground text-xs">
-                  في الأسفل (iPhone) أو الأعلى (iPad).
-                </p>
+                <p className="text-muted-foreground text-xs">{t('pwa.ios.step1Note')}</p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
@@ -190,11 +188,9 @@ export const InstallPwaBanner: React.FC = () => {
               </div>
               <div className="flex-1 text-sm">
                 <p className="font-medium mb-1 flex items-center gap-1.5">
-                  اختر «Add to Home Screen» <Plus className="h-4 w-4 inline" />
+                  {t('pwa.ios.step2Title')} <Plus className="h-4 w-4 inline" />
                 </p>
-                <p className="text-muted-foreground text-xs">
-                  انزل في القائمة قليلاً لتجدها.
-                </p>
+                <p className="text-muted-foreground text-xs">{t('pwa.ios.step2Note')}</p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
@@ -202,14 +198,12 @@ export const InstallPwaBanner: React.FC = () => {
                 3
               </div>
               <div className="flex-1 text-sm">
-                <p className="font-medium mb-1">اضغط «Add»</p>
-                <p className="text-muted-foreground text-xs">
-                  ستجد أيقونة SleepyBabyy على شاشتك الرئيسية مثل أي تطبيق.
-                </p>
+                <p className="font-medium mb-1">{t('pwa.ios.step3Title')}</p>
+                <p className="text-muted-foreground text-xs">{t('pwa.ios.step3Note')}</p>
               </div>
             </div>
             <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900">
-              💡 بعد التثبيت، افتح التطبيق من الأيقونة وفعّل الإشعارات — ستصلك التذكيرات حتى لو لم تكن داخل الموقع.
+              {t('pwa.ios.tip')}
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
@@ -221,7 +215,7 @@ export const InstallPwaBanner: React.FC = () => {
               }}
               size="sm"
             >
-              فهمت
+              {t('pwa.ios.gotIt')}
             </Button>
           </div>
         </DialogContent>

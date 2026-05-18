@@ -712,5 +712,24 @@
         "desc": "Mäter effektiviteten av våra annonser (Meta Pixel) och anpassar vad du ser."
       }
     }
+  },
+  "pwa": {
+    "title": "Installera SleepyBabyy på din startskärm",
+    "subtitle": "Snabb åtkomst och direkta aviseringar — som en riktig app.",
+    "install": "Installera nu",
+    "later": "Senare",
+    "close": "Stäng",
+    "ios": {
+      "title": "Installera på iPhone / iPad",
+      "description": "Safari på iPhone behöver ett steg från dig för att lägga till appen på startskärmen.",
+      "step1Title": "Tryck på Dela-knappen",
+      "step1Note": "Längst ned (iPhone) eller högst upp (iPad).",
+      "step2Title": "Välj \"Lägg till på hemskärmen\"",
+      "step2Note": "Scrolla ner lite i menyn.",
+      "step3Title": "Tryck på \"Lägg till\"",
+      "step3Note": "Du hittar SleepyBabyy-ikonen på din startskärm precis som vilken app som helst.",
+      "tip": "💡 Efter installationen, öppna appen från ikonen och aktivera aviseringar — påminnelser når dig även utanför webbplatsen.",
+      "gotIt": "Förstått"
+    }
   }
 }
