@@ -288,8 +288,8 @@ const AdminTeam = () => {
           )}
         </Card>
 
-        {/* Pending invitations */}
-        {invitations.length > 0 && (
+        {/* Pending invitations — Manager+ only (people who can act on them) */}
+        {canInvite && invitations.length > 0 && (
           <Card className="overflow-hidden">
             <div className="p-4 border-b flex items-center gap-2">
               <Clock className="h-4 w-4 text-amber-500" />
@@ -335,8 +335,10 @@ const AdminTeam = () => {
           </Card>
         )}
 
-        {/* Recent activity — accepted / canceled invitations */}
-        {recentActivity.length > 0 && (
+        {/* Recent activity — accepted / canceled invitations.
+            Only visible to leadership (CEO / Executive) since it reveals who
+            was invited; lower roles shouldn't see invite history of others. */}
+        {canManageTeam && recentActivity.length > 0 && (
           <Card className="overflow-hidden">
             <div className="p-4 border-b flex items-center gap-2">
               <RefreshCw className="h-4 w-4 text-purple-500" />
