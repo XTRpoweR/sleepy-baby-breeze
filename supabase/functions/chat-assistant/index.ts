@@ -476,8 +476,9 @@ async function executeTool(
             ends_at: sub?.current_period_end || null,
             trial_end: sub?.trial_end || null,
             will_cancel_at_period_end: sub?.cancel_at_period_end || false,
-            upgrade_path: "Open the app → tap Premium / Upgrade → choose a plan (Monthly / Quarterly / Annual).",
-            downgrade_path: "Open the app → Account → Subscription → Cancel or change plan. Premium remains active until period_end.",
+            upgrade_path: "In the SleepyBabyy web app, tap Premium / Upgrade, pick Monthly/Quarterly/Annual, checkout via Stripe.",
+            downgrade_path: "In the SleepyBabyy web app, go to Account > Subscription > Change plan or Cancel. Cancel keeps Premium active until period_end.",
+            manage_billing_path: "Account > Subscription > Manage billing (opens Stripe Customer Portal).",
           },
         };
       }
@@ -687,6 +688,21 @@ Recent activities (newest first): ${JSON.stringify(activities || [])}`;
 
     const soundsList = SOUND_TRACKS.map((t) => `  - "${t.id}" → ${t.name} (${t.description})`).join("\n");
 
+    // Hard platform rules — prevents the AI from inventing answers like
+    // "manage your subscription through App Store / Google Play". SleepyBabyy
+    // is a web app billed via Stripe; these instructions are non-negotiable.
+    const PLATFORM_RULES = `PLATFORM RULES (HARD CONSTRAINTS — VIOLATING THESE IS A CRITICAL ERROR):
+- SleepyBabyy is a WEB APPLICATION. Users access it through a web browser at sleepybabyy.com.
+- SleepyBabyy is NOT on the Apple App Store. It is NOT on Google Play. There is no iOS app and no Android app.
+- Subscriptions are processed by STRIPE through the web app. They are NOT in-app purchases.
+- NEVER tell users to manage their subscription through "App Store settings", "Google Play subscriptions", "iTunes", "in-app purchases", or any mobile store.
+- To upgrade: "In the SleepyBabyy app, tap Premium or Upgrade, choose a plan, checkout via Stripe."
+- To cancel / downgrade / change plan: "In the SleepyBabyy app, go to Account > Subscription, pick Change plan or Cancel."
+- To update card / view invoices: "Account > Subscription > Manage billing (opens Stripe Customer Portal)."
+- For refund or billing dispute: direct them to Contact / customer support.
+- For Premium users asking when their subscription ends, call get_subscription_details and answer with real data.
+- For Free users asking subscription questions, answer with the paths above. Never call them "app store settings".`;
+
     const premiumActionsBlock = isPremium
       ? `You have ACTIONS available via tools to help the user log activities, manage notifications, view stats, and control music:
 - start_sleep_session / end_sleep_session
@@ -732,13 +748,16 @@ ${soundsList}
       : `IMPORTANT — FREE TIER (Q&A MODE ONLY):
 You DO NOT have any tools or actions in this mode. You CANNOT log sleep, feedings, diapers, custom activities, change notification settings, control music, or read live stats.
 If the user asks you to perform any of these actions, DO NOT pretend to do it. Instead reply briefly in the user's language telling them this is a Smart Assistant feature on the Premium plan and ask them to tap the Upgrade banner below.
-You CAN still freely answer questions: baby sleep tips, app help, schedules, milestones, PRICING (use the values below — they're authoritative), feature explanations, etc.`;
+You CAN still freely answer questions: baby sleep tips, app help, schedules, milestones, PRICING (use the values below — they're authoritative), feature explanations, etc.
+Subscription questions: answer using the PLATFORM RULES above — never refer users to App Store or Google Play.`;
 
     const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app.
 
 CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message. Never mix.
 
 USER PLAN: ${isPremium ? "Premium (Smart Assistant — full actions enabled)" : "Free / Basic (Q&A only — no actions)"}.
+
+${PLATFORM_RULES}
 
 ${premiumActionsBlock}
 
