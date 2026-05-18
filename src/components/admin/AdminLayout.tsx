@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { MessageSquare, Mail, BarChart3, Users, ArrowLeft, Shield } from 'lucide-react';
+import { MessageSquare, Mail, BarChart3, Users, ArrowLeft, Shield, Brain } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useAdminRole } from '@/hooks/useAdminRole';
 import { toast } from 'sonner';
@@ -12,7 +12,7 @@ interface AdminLayoutProps {
 
 export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { isAdmin, loading } = useIsAdmin();
-  const { canWrite } = useAdminRole();
+  const { canWrite, isCeo } = useAdminRole();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -71,6 +71,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     { to: '/admin/analytics', icon: BarChart3, label: 'Analytics', enabled: true, badge: 0 },
     { to: '/admin/users', icon: Users, label: 'Users', enabled: true, badge: 0 },
     { to: '/admin/team', icon: Shield, label: 'Team', enabled: true, badge: 0 },
+    ...(isCeo ? [{ to: '/admin/knowledge', icon: Brain, label: 'AI Knowledge', enabled: true, badge: 0 }] : []),
   ];
 
   return (

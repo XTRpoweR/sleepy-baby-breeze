@@ -11,6 +11,17 @@ const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 
+// Static catalogue of sound tracks available in the app. Must match the
+// list in src/hooks/useAudioPlayer.tsx — the AI uses this to offer choices.
+const SOUND_TRACKS = [
+  { id: "heavy-rain-drops", name: "Heavy Rain", description: "Heavy rain drops for relaxation.", url: "/sounds/mixkit-heavy-rain-drops-2399.mp3" },
+  { id: "water-fountain-healing", name: "Water Fountain", description: "Healing music with a peaceful fountain.", url: "/sounds/water-fountain-healing-music-239455.mp3" },
+  { id: "waves-sad-piano", name: "Waves & Piano", description: "Calming piano + ocean waves.", url: "/sounds/waves-and-tears-sad-piano-music-with-calm-ocean-waves-8164.mp3" },
+  { id: "dark-atmosphere-rain", name: "Atmospheric Rain", description: "Deep atmospheric rain.", url: "/sounds/dark-atmosphere-with-rain-352570.mp3" },
+  { id: "nature-investigation", name: "Nature Ambient", description: "Natural ambient sounds.", url: "/sounds/nature-investigation-255161.mp3" },
+  { id: "soft-birds-sound", name: "Soft Birds", description: "Gentle bird chirping.", url: "/sounds/soft-birds-sound-304132.mp3" },
+];
+
 type ApiSuccess = {
   ok: true;
   conversationId?: string;
@@ -43,10 +54,7 @@ const tools = [
         type: "object",
         properties: {
           baby_id: { type: "string", description: "Baby profile UUID" },
-          start_time: {
-            type: "string",
-            description: "ISO timestamp when sleep started. Default: now.",
-          },
+          start_time: { type: "string", description: "ISO timestamp when sleep started. Default: now." },
           notes: { type: "string" },
         },
         required: ["baby_id"],
@@ -57,13 +65,12 @@ const tools = [
     type: "function",
     function: {
       name: "end_sleep_session",
-      description:
-        "End the most recent open sleep session for a baby (sets end_time and duration).",
+      description: "End the most recent open sleep session for a baby.",
       parameters: {
         type: "object",
         properties: {
           baby_id: { type: "string" },
-          end_time: { type: "string", description: "ISO timestamp. Default: now." },
+          end_time: { type: "string" },
           notes: { type: "string" },
         },
         required: ["baby_id"],
@@ -79,18 +86,11 @@ const tools = [
         type: "object",
         properties: {
           baby_id: { type: "string" },
-          feeding_type: {
-            type: "string",
-            enum: ["breast", "bottle", "solid"],
-          },
-          amount_ml: { type: "number", description: "For bottle feeds (ml)" },
+          feeding_type: { type: "string", enum: ["breast", "bottle", "solid"] },
+          amount_ml: { type: "number" },
           duration_minutes: { type: "number" },
-          side: {
-            type: "string",
-            enum: ["left", "right", "both"],
-            description: "For breastfeeding",
-          },
-          start_time: { type: "string", description: "ISO timestamp. Default: now." },
+          side: { type: "string", enum: ["left", "right", "both"] },
+          start_time: { type: "string" },
           notes: { type: "string" },
         },
         required: ["baby_id", "feeding_type"],
@@ -106,10 +106,7 @@ const tools = [
         type: "object",
         properties: {
           baby_id: { type: "string" },
-          diaper_type: {
-            type: "string",
-            enum: ["wet", "dirty", "both"],
-          },
+          diaper_type: { type: "string", enum: ["wet", "dirty", "both"] },
           start_time: { type: "string" },
           notes: { type: "string" },
         },
@@ -140,7 +137,7 @@ const tools = [
     function: {
       name: "update_notification_settings",
       description:
-        "Update the user's notification preferences (enable/disable notifications, types, quiet hours).",
+        "Update specific notification preferences. Use this for partial updates (e.g. only feeding reminders, or only quiet hours).",
       parameters: {
         type: "object",
         properties: {
@@ -149,13 +146,10 @@ const tools = [
           sleep_reminders: { type: "boolean" },
           milestone_reminders: { type: "boolean" },
           pattern_alerts: { type: "boolean" },
-          feeding_interval: {
-            type: "number",
-            description: "Minutes between feeding reminders",
-          },
+          feeding_interval: { type: "number" },
           quiet_hours_enabled: { type: "boolean" },
-          quiet_hours_start: { type: "string", description: "HH:MM" },
-          quiet_hours_end: { type: "string", description: "HH:MM" },
+          quiet_hours_start: { type: "string" },
+          quiet_hours_end: { type: "string" },
         },
       },
     },
@@ -163,9 +157,77 @@ const tools = [
   {
     type: "function",
     function: {
-      name: "list_babies",
+      name: "enable_all_notifications",
       description:
-        "List all baby profiles the user has access to. Use when user has multiple babies and you need them to choose.",
+        "Turn ON all notifications at once (master switch + every notification type). Use immediately, without confirmation, when the user says 'turn on all notifications' / 'كلها' / 'شغل الكل'.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "disable_all_notifications",
+      description:
+        "Turn OFF all notifications at once (master switch + every notification type). Use immediately, without confirmation, when the user says 'turn off all notifications' / 'اطفئها كلها' / 'اوقف الكل'.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "list_babies",
+      description: "List all baby profiles the user has access to.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_baby_stats",
+      description:
+        "Get detailed statistics for a specific baby — today's totals (sleep, feedings, diapers), last activity times, and 7-day averages. Use when the user asks 'how much did baby sleep today', 'كم نام اليوم', 'show stats', etc.",
+      parameters: {
+        type: "object",
+        properties: {
+          baby_id: { type: "string", description: "Baby profile UUID. Omit to use the active baby." },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "get_subscription_details",
+      description:
+        "Get the user's current subscription: plan tier, status, when it ends/renews, and how to upgrade or downgrade. Use when user asks 'when does my subscription end', 'how do I upgrade', 'how to cancel', 'متى ينتهي اشتراكي', 'كيف ارقي اشتراكي'.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "play_music",
+      description:
+        "Play a sound/lullaby in the SleepyBabyy player. If the user did NOT specify a track, FIRST list available choices in your reply and ask them to pick — do not call this tool yet. Once they pick, call with track_id. If they say 'any' / 'whatever' / 'اي شيء', pick one yourself.",
+      parameters: {
+        type: "object",
+        properties: {
+          track_id: {
+            type: "string",
+            description: "One of: heavy-rain-drops, water-fountain-healing, waves-sad-piano, dark-atmosphere-rain, nature-investigation, soft-birds-sound.",
+            enum: SOUND_TRACKS.map((t) => t.id),
+          },
+        },
+        required: ["track_id"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "stop_music",
+      description:
+        "Stop the currently playing sound/lullaby. Use immediately when the user says 'stop music', 'اوقف الموسيقى', 'اطفئ الصوت'.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -175,7 +237,7 @@ async function executeTool(
   name: string,
   args: any,
   ctx: { admin: any; userId: string; defaultBabyId: string | null },
-): Promise<{ ok: boolean; result?: any; error?: string }> {
+): Promise<{ ok: boolean; result?: any; error?: string; client_action?: any }> {
   const { admin, userId, defaultBabyId } = ctx;
   const babyId = args.baby_id || defaultBabyId;
 
@@ -233,13 +295,9 @@ async function executeTool(
           .maybeSingle();
         if (!open) return { ok: false, error: "No open sleep session" };
         const endTime = args.end_time || new Date().toISOString();
-        const duration = Math.max(
-          1,
-          Math.round(
-            (new Date(endTime).getTime() - new Date(open.start_time).getTime()) /
-              60000,
-          ),
-        );
+        const duration = Math.max(1, Math.round(
+          (new Date(endTime).getTime() - new Date(open.start_time).getTime()) / 60000,
+        ));
         const { data, error } = await admin
           .from("baby_activities")
           .update({
@@ -257,16 +315,11 @@ async function executeTool(
       case "log_feeding": {
         if (!babyId) return { ok: false, error: "No baby selected" };
         const startTime = args.start_time || new Date().toISOString();
-        const metadata: any = {
-          feeding_type: args.feeding_type,
-          logged_via: "chat_assistant",
-        };
+        const metadata: any = { feeding_type: args.feeding_type, logged_via: "chat_assistant" };
         if (args.amount_ml) metadata.amount_ml = args.amount_ml;
         if (args.side) metadata.side = args.side;
         const endTime = args.duration_minutes
-          ? new Date(
-              new Date(startTime).getTime() + args.duration_minutes * 60000,
-            ).toISOString()
+          ? new Date(new Date(startTime).getTime() + args.duration_minutes * 60000).toISOString()
           : undefined;
         const { data, error } = await admin
           .from("baby_activities")
@@ -294,10 +347,7 @@ async function executeTool(
             activity_type: "diaper",
             start_time: args.start_time || new Date().toISOString(),
             notes: args.notes || null,
-            metadata: {
-              diaper_type: args.diaper_type,
-              logged_via: "chat_assistant",
-            },
+            metadata: { diaper_type: args.diaper_type, logged_via: "chat_assistant" },
           })
           .select()
           .single();
@@ -315,10 +365,7 @@ async function executeTool(
             start_time: args.start_time || new Date().toISOString(),
             duration_minutes: args.duration_minutes,
             notes: args.notes || args.activity_name,
-            metadata: {
-              activity_name: args.activity_name,
-              logged_via: "chat_assistant",
-            },
+            metadata: { activity_name: args.activity_name, logged_via: "chat_assistant" },
           })
           .select()
           .single();
@@ -328,45 +375,129 @@ async function executeTool(
 
       case "update_notification_settings": {
         const allowed = [
-          "notifications_enabled",
-          "feeding_reminders",
-          "sleep_reminders",
-          "milestone_reminders",
-          "pattern_alerts",
-          "feeding_interval",
-          "quiet_hours_enabled",
-          "quiet_hours_start",
-          "quiet_hours_end",
+          "notifications_enabled", "feeding_reminders", "sleep_reminders",
+          "milestone_reminders", "pattern_alerts", "feeding_interval",
+          "quiet_hours_enabled", "quiet_hours_start", "quiet_hours_end",
         ];
         const update: any = {};
-        for (const k of allowed) {
-          if (args[k] !== undefined) update[k] = args[k];
-        }
-        if (Object.keys(update).length === 0) {
-          return { ok: false, error: "No settings provided" };
-        }
-        const { data: existing } = await admin
-          .from("notification_settings")
-          .select("id")
+        for (const k of allowed) if (args[k] !== undefined) update[k] = args[k];
+        if (Object.keys(update).length === 0) return { ok: false, error: "No settings provided" };
+        return await upsertNotificationSettings(admin, userId, update);
+      }
+
+      case "enable_all_notifications": {
+        return await upsertNotificationSettings(admin, userId, {
+          notifications_enabled: true,
+          feeding_reminders: true,
+          sleep_reminders: true,
+          milestone_reminders: true,
+          pattern_alerts: true,
+        });
+      }
+
+      case "disable_all_notifications": {
+        return await upsertNotificationSettings(admin, userId, {
+          notifications_enabled: false,
+          feeding_reminders: false,
+          sleep_reminders: false,
+          milestone_reminders: false,
+          pattern_alerts: false,
+        });
+      }
+
+      case "get_baby_stats": {
+        if (!babyId) return { ok: false, error: "No baby selected" };
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+        const { data: today } = await admin
+          .from("baby_activities")
+          .select("activity_type, duration_minutes, start_time, metadata")
+          .eq("baby_id", babyId)
+          .gte("start_time", startOfDay);
+        const { data: week } = await admin
+          .from("baby_activities")
+          .select("activity_type, duration_minutes, start_time")
+          .eq("baby_id", babyId)
+          .gte("start_time", sevenDaysAgo);
+
+        const todayList = today || [];
+        const weekList = week || [];
+        const sleepTodayMin = todayList
+          .filter((a: any) => a.activity_type === "sleep")
+          .reduce((s: number, a: any) => s + (a.duration_minutes || 0), 0);
+        const feedingsToday = todayList.filter((a: any) => a.activity_type === "feeding").length;
+        const diapersToday = todayList.filter((a: any) => a.activity_type === "diaper").length;
+
+        const days7 = 7;
+        const sleepWeekMin = weekList
+          .filter((a: any) => a.activity_type === "sleep")
+          .reduce((s: number, a: any) => s + (a.duration_minutes || 0), 0);
+        const avgSleepPerDayMin = Math.round(sleepWeekMin / days7);
+        const avgFeedingsPerDay = (weekList.filter((a: any) => a.activity_type === "feeding").length / days7).toFixed(1);
+        const avgDiapersPerDay = (weekList.filter((a: any) => a.activity_type === "diaper").length / days7).toFixed(1);
+
+        const lastSleep = todayList.filter((a: any) => a.activity_type === "sleep").sort((a: any, b: any) => +new Date(b.start_time) - +new Date(a.start_time))[0];
+        const lastFeed = todayList.filter((a: any) => a.activity_type === "feeding").sort((a: any, b: any) => +new Date(b.start_time) - +new Date(a.start_time))[0];
+
+        return {
+          ok: true,
+          result: {
+            today: {
+              sleep_minutes: sleepTodayMin,
+              sleep_hours: +(sleepTodayMin / 60).toFixed(1),
+              feedings: feedingsToday,
+              diapers: diapersToday,
+              last_sleep_start: lastSleep?.start_time || null,
+              last_feeding_start: lastFeed?.start_time || null,
+            },
+            seven_day_average: {
+              sleep_minutes_per_day: avgSleepPerDayMin,
+              sleep_hours_per_day: +(avgSleepPerDayMin / 60).toFixed(1),
+              feedings_per_day: avgFeedingsPerDay,
+              diapers_per_day: avgDiapersPerDay,
+            },
+          },
+        };
+      }
+
+      case "get_subscription_details": {
+        const { data: sub } = await admin
+          .from("subscriptions")
+          .select("subscription_tier, status, current_period_end, cancel_at_period_end, trial_end")
           .eq("user_id", userId)
           .maybeSingle();
-        if (existing) {
-          const { data, error } = await admin
-            .from("notification_settings")
-            .update(update)
-            .eq("user_id", userId)
-            .select()
-            .single();
-          if (error) return { ok: false, error: error.message };
-          return { ok: true, result: data };
-        }
-        const { data, error } = await admin
-          .from("notification_settings")
-          .insert({ user_id: userId, ...update })
-          .select()
-          .single();
-        if (error) return { ok: false, error: error.message };
-        return { ok: true, result: data };
+        return {
+          ok: true,
+          result: {
+            tier: sub?.subscription_tier || "free",
+            status: sub?.status || "none",
+            ends_at: sub?.current_period_end || null,
+            trial_end: sub?.trial_end || null,
+            will_cancel_at_period_end: sub?.cancel_at_period_end || false,
+            upgrade_path: "Open the app → tap Premium / Upgrade → choose a plan (Monthly / Quarterly / Annual).",
+            downgrade_path: "Open the app → Account → Subscription → Cancel or change plan. Premium remains active until period_end.",
+          },
+        };
+      }
+
+      case "play_music": {
+        const track = SOUND_TRACKS.find((t) => t.id === args.track_id);
+        if (!track) return { ok: false, error: "Unknown track" };
+        return {
+          ok: true,
+          result: { track_id: track.id, name: track.name },
+          client_action: { type: "play_music", track_id: track.id, name: track.name, url: track.url },
+        };
+      }
+
+      case "stop_music": {
+        return {
+          ok: true,
+          result: { stopped: true },
+          client_action: { type: "stop_music" },
+        };
       }
 
       default:
@@ -377,6 +508,49 @@ async function executeTool(
   }
 }
 
+async function upsertNotificationSettings(admin: any, userId: string, update: any) {
+  const { data: existing } = await admin
+    .from("notification_settings")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (existing) {
+    const { data, error } = await admin
+      .from("notification_settings")
+      .update(update)
+      .eq("user_id", userId)
+      .select()
+      .single();
+    if (error) return { ok: false, error: error.message };
+    return { ok: true, result: data };
+  }
+  const { data, error } = await admin
+    .from("notification_settings")
+    .insert({ user_id: userId, ...update })
+    .select()
+    .single();
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, result: data };
+}
+
+function formatPricingBlock(pricing: any): string {
+  if (!pricing || !pricing.plans) return "Pricing info is currently being updated.";
+  const currency = pricing.currency || "USD";
+  const lines = pricing.plans.map((p: any) => {
+    const price = p.price === 0 ? "Free" : `${currency === "USD" ? "$" : ""}${p.price} ${currency !== "USD" ? currency : ""}/${p.interval}`.trim();
+    const equiv = p.equivalent_per_month ? ` (~$${p.equivalent_per_month}/month)` : "";
+    const badge = p.badge ? ` — ${p.badge}` : "";
+    const highlights = p.highlights?.length ? ` — ${p.highlights.join(", ")}` : "";
+    return `- **${p.name}**: ${price}${equiv}${badge}${highlights}`;
+  });
+  return [
+    `PRICING (authoritative — always use these exact values, never invent prices):`,
+    ...lines,
+    pricing.billing_note ? `Note: ${pricing.billing_note}` : "",
+    pricing.trial_available ? "A free trial may be available on signup." : "",
+  ].filter(Boolean).join("\n");
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -385,11 +559,7 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return jsonResponse({
-        ok: false,
-        error: "Unauthorized",
-        message: "Please sign in again to use the assistant.",
-      }, 401);
+      return jsonResponse({ ok: false, error: "Unauthorized", message: "Please sign in again to use the assistant." }, 401);
     }
 
     const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -397,11 +567,7 @@ Deno.serve(async (req) => {
     });
     const { data: userData, error: userError } = await userClient.auth.getUser();
     if (userError || !userData.user) {
-      return jsonResponse({
-        ok: false,
-        error: "Unauthorized",
-        message: "Please sign in again to use the assistant.",
-      }, 401);
+      return jsonResponse({ ok: false, error: "Unauthorized", message: "Please sign in again to use the assistant." }, 401);
     }
     const userId = userData.user.id;
 
@@ -412,29 +578,29 @@ Deno.serve(async (req) => {
       .eq("user_id", userId)
       .maybeSingle();
 
-    const tierOk = sub && (sub.subscription_tier === "premium" || sub.subscription_tier === "premium_annual");
+    const tierOk = sub && (sub.subscription_tier === "premium" || sub.subscription_tier === "premium_annual" || sub.subscription_tier === "premium_quarterly");
     const statusOk = sub && (sub.status === "active" || sub.status === "trialing");
     const periodOk = !sub?.current_period_end || new Date(sub.current_period_end) > new Date();
     const isPremium = !!(tierOk && statusOk && periodOk);
+
+    // Load dynamic app knowledge (prices, features, news) — CEO can edit
+    // these from /admin/knowledge without redeploying the function.
+    const { data: knowledge } = await admin
+      .from("app_knowledge")
+      .select("pricing, features, latest_news, extra_notes")
+      .eq("id", 1)
+      .maybeSingle();
 
     const body = await req.json().catch(() => ({}));
     const message = typeof body?.message === "string" ? body.message.trim() : "";
     const incomingConvId = typeof body?.conversationId === "string" ? body.conversationId : undefined;
 
     if (!message) {
-      return jsonResponse({
-        ok: false,
-        error: "Message required",
-        message: "Please type a message first.",
-      }, 400);
+      return jsonResponse({ ok: false, error: "Message required", message: "Please type a message first." }, 400);
     }
 
     if (message.length > 4000) {
-      return jsonResponse({
-        ok: false,
-        error: "Message too long",
-        message: "Please shorten your message and try again.",
-      }, 400);
+      return jsonResponse({ ok: false, error: "Message too long", message: "Please shorten your message and try again." }, 400);
     }
 
     let conversationId = incomingConvId;
@@ -445,11 +611,7 @@ Deno.serve(async (req) => {
         .eq("id", conversationId)
         .maybeSingle();
       if (!conv || conv.user_id !== userId) {
-        return jsonResponse({
-          ok: false,
-          error: "Conversation not found",
-          message: "This conversation is no longer available. Please start a new chat.",
-        }, 404);
+        return jsonResponse({ ok: false, error: "Conversation not found", message: "This conversation is no longer available. Please start a new chat." }, 404);
       }
     } else {
       const title = message.slice(0, 60);
@@ -458,9 +620,7 @@ Deno.serve(async (req) => {
         .insert({ user_id: userId, title })
         .select("id")
         .single();
-      if (convErr || !newConv) {
-        throw convErr || new Error("Failed to create conversation");
-      }
+      if (convErr || !newConv) throw convErr || new Error("Failed to create conversation");
       conversationId = newConv.id;
     }
 
@@ -469,9 +629,7 @@ Deno.serve(async (req) => {
       role: "user",
       content: message,
     });
-    if (saveUserMessage.error) {
-      throw saveUserMessage.error;
-    }
+    if (saveUserMessage.error) throw saveUserMessage.error;
 
     const { data: history, error: historyError } = await admin
       .from("chat_messages")
@@ -516,27 +674,65 @@ All accessible babies: ${JSON.stringify(allBabies)}
 Recent activities (newest first): ${JSON.stringify(activities || [])}`;
     }
 
+    const pricingBlock = formatPricingBlock(knowledge?.pricing);
+    const featuresBlock = knowledge?.features?.length
+      ? `APP FEATURES:\n${(knowledge.features as string[]).map((f) => `- ${f}`).join("\n")}`
+      : "";
+    const newsBlock = knowledge?.latest_news
+      ? `LATEST UPDATES:\n${knowledge.latest_news}`
+      : "";
+    const extraBlock = knowledge?.extra_notes
+      ? `ADDITIONAL CONTEXT:\n${knowledge.extra_notes}`
+      : "";
+
+    const soundsList = SOUND_TRACKS.map((t) => `  - "${t.id}" → ${t.name} (${t.description})`).join("\n");
+
     const premiumActionsBlock = isPremium
-      ? `You have ACTIONS available via tools to help the user log activities and manage notifications:
+      ? `You have ACTIONS available via tools to help the user log activities, manage notifications, view stats, and control music:
 - start_sleep_session / end_sleep_session
-- log_feeding (breast/bottle/solid, with amount/duration/side)
-- log_diaper (wet/dirty/both)
-- log_custom_activity (bath, play, medicine, milestones…)
-- update_notification_settings (enable/disable notifications, types, quiet hours)
+- log_feeding / log_diaper / log_custom_activity
+- update_notification_settings (partial updates: just one or two fields)
+- enable_all_notifications / disable_all_notifications (turn EVERYTHING on or off)
+- get_baby_stats (today's totals + 7-day averages)
+- get_subscription_details (when sub ends, how to upgrade/downgrade)
+- play_music / stop_music (play one of the built-in sounds)
 - list_babies (when user has multiple)
 
 WORKFLOW FOR ACTIONS — VERY IMPORTANT:
-1. When the user requests an action ("log a feeding", "بدأ النوم", "turn off notifications"):
-   a. If there are MULTIPLE babies and none is active, ask which one FIRST.
-   b. Otherwise use the active baby's id from BABY CONTEXT — DO NOT call list_babies unnecessarily.
-2. Ask for confirmation with a short summary (one short line).
-3. As soon as the user confirms, CALL THE TOOL IMMEDIATELY in the SAME response.
-4. After the tool runs, reply with a SHORT success line.
-5. On error, briefly explain and offer next step.`
+
+1. ACTIVITY LOGGING (sleep, feeding, diaper, custom):
+   a. If MULTIPLE babies exist and none is active, ask which one FIRST.
+   b. Confirm briefly (one short line), then on user "yes" call the tool IMMEDIATELY in the SAME response.
+
+2. NOTIFICATIONS — SMART FLOW:
+   When the user asks to "turn on notifications" / "شغل الإشعارات" (without specifying which):
+   → REPLY: "Do you want to enable ALL notifications, or a specific type (feeding, sleep, milestones, patterns)?"
+   → If user replies "all" / "كلها" / "everything" → Call enable_all_notifications IMMEDIATELY, no further confirmation.
+   → If user names a specific type → Use update_notification_settings (set only that field to true) IMMEDIATELY.
+   Same flow for "turn off" / "اطفئ" — ask same question, then disable_all_notifications or update_notification_settings.
+
+3. MUSIC — SHORT LIST FLOW:
+   When the user asks to "play music" / "شغل موسيقى" without specifying which track:
+   → REPLY with a SHORT picklist (3-4 items max) like:
+     "Sure — pick one:
+      1. Heavy Rain
+      2. Water Fountain
+      3. Waves & Piano
+      Or say 'any' and I'll pick."
+   → When they pick (by name, number, or "any"), call play_music IMMEDIATELY.
+   Available track_ids:
+${soundsList}
+   For "stop music" / "اوقف الموسيقى" → call stop_music IMMEDIATELY, no confirmation needed.
+
+4. STATS: When the user asks about today's sleep / feeds / diapers or weekly averages, call get_baby_stats IMMEDIATELY (no confirmation needed — it's a read).
+
+5. SUBSCRIPTION QUESTIONS: When asked about plan, renewal, cancellation, upgrade — call get_subscription_details IMMEDIATELY then answer with the real data.
+
+6. After any tool runs, reply with a SHORT success line.`
       : `IMPORTANT — FREE TIER (Q&A MODE ONLY):
-You DO NOT have any tools or actions in this mode. You CANNOT log sleep, feedings, diapers, custom activities, or change notification settings.
+You DO NOT have any tools or actions in this mode. You CANNOT log sleep, feedings, diapers, custom activities, change notification settings, control music, or read live stats.
 If the user asks you to perform any of these actions, DO NOT pretend to do it. Instead reply briefly in the user's language telling them this is a Smart Assistant feature on the Premium plan and ask them to tap the Upgrade banner below.
-You CAN still freely answer questions: baby sleep tips, app help, schedules, milestones, pricing, etc.`;
+You CAN still freely answer questions: baby sleep tips, app help, schedules, milestones, PRICING (use the values below — they're authoritative), feature explanations, etc.`;
 
     const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app.
 
@@ -546,21 +742,18 @@ USER PLAN: ${isPremium ? "Premium (Smart Assistant — full actions enabled)" : 
 
 ${premiumActionsBlock}
 
-PRICING — IMPORTANT (only mention these exact plans, never invent prices or packages):
-SleepyBabyy has exactly TWO plans:
-1. **Basic (Free)** — 1 baby profile, basic activity tracking, limited history.
-2. **Premium** — Unlimited baby profiles, full history, family sharing, advanced analytics, premium sound library, photo memories, smart notifications, pediatrician reports, data export, priority support, AND the **AI Assistant**.
-   - **Monthly:** $29.99/month (originally $49.99 — 40% OFF promo)
-   - **Annual:** $299.99/year (saves ~$59.89 vs monthly, ~$24.99/month equivalent)
-   - A free trial may be available on signup.
+${pricingBlock}
 
-Prices are billed in USD. The app displays converted prices in the user's local currency for convenience, but billing is USD.
-There is **NO lifetime package**, **NO $4.99 plan**, **NO $9.99 plan**. Never mention these.
-For exact local price, tell the user to tap **Premium / Upgrade** in the app.
+${featuresBlock}
+
+${newsBlock}
+
+${extraBlock}
 
 Other guidelines:
 - For app questions, answer normally with markdown.
-- Ground baby-data answers in BABY CONTEXT. Never invent data.
+- Ground baby-data answers in BABY CONTEXT or get_baby_stats. Never invent data.
+- For exact local price, tell the user to tap **Premium / Upgrade** in the app.
 - Be concise.
 
 BABY CONTEXT:
@@ -573,6 +766,7 @@ ${babyContext}`;
 
     const MAX_TURNS = 4;
     const toolEvents: any[] = [];
+    const clientActions: any[] = [];
 
     for (let turn = 0; turn < MAX_TURNS; turn++) {
       const isFinalAttempt = turn === MAX_TURNS - 1;
@@ -593,29 +787,14 @@ ${babyContext}`;
 
       if (!aiResp.ok) {
         if (aiResp.status === 429) {
-          return jsonResponse({
-            ok: false,
-            error: "rate_limit",
-            message: "Too many requests right now. Please try again in a moment.",
-            conversationId,
-          }, 429);
+          return jsonResponse({ ok: false, error: "rate_limit", message: "Too many requests right now. Please try again in a moment.", conversationId }, 429);
         }
         if (aiResp.status === 402) {
-          return jsonResponse({
-            ok: false,
-            error: "credits",
-            message: "AI credits are exhausted.",
-            conversationId,
-          }, 402);
+          return jsonResponse({ ok: false, error: "credits", message: "AI credits are exhausted.", conversationId }, 402);
         }
         const errorText = await aiResp.text();
         console.error("AI gateway error:", aiResp.status, errorText);
-        return jsonResponse({
-          ok: false,
-          error: "ai_error",
-          message: "The assistant is temporarily unavailable. Please try again shortly.",
-          conversationId,
-        }, 500);
+        return jsonResponse({ ok: false, error: "ai_error", message: "The assistant is temporarily unavailable. Please try again shortly.", conversationId }, 500);
       }
 
       const aiJson = await aiResp.json();
@@ -643,7 +822,8 @@ ${babyContext}`;
           conversationId,
           content: finalText,
           actions: toolEvents,
-        });
+          ...(clientActions.length ? { client_actions: clientActions } : {}),
+        } as any);
       }
 
       messages.push({
@@ -654,31 +834,25 @@ ${babyContext}`;
 
       for (const tc of toolCalls) {
         let parsedArgs: any = {};
-        try {
-          parsedArgs = JSON.parse(tc.function.arguments || "{}");
-        } catch {
-          parsedArgs = {};
-        }
+        try { parsedArgs = JSON.parse(tc.function.arguments || "{}"); } catch { parsedArgs = {}; }
         const result = await executeTool(tc.function.name, parsedArgs, {
           admin,
           userId,
           defaultBabyId: activeBaby?.id || null,
         });
         toolEvents.push({ tool: tc.function.name, args: parsedArgs, result });
+        if (result.client_action) clientActions.push(result.client_action);
+        // Don't leak client_action into the model context — it's frontend-only
+        const modelResult = { ok: result.ok, ...(result.result !== undefined ? { result: result.result } : {}), ...(result.error ? { error: result.error } : {}) };
         messages.push({
           role: "tool",
           tool_call_id: tc.id,
-          content: JSON.stringify(result),
+          content: JSON.stringify(modelResult),
         });
       }
     }
 
-    return jsonResponse({
-      ok: false,
-      error: "loop_exhausted",
-      message: "The assistant could not finish this reply. Please try again.",
-      conversationId,
-    }, 500);
+    return jsonResponse({ ok: false, error: "loop_exhausted", message: "The assistant could not finish this reply. Please try again.", conversationId }, 500);
   } catch (e) {
     console.error("chat-assistant error:", e);
     return jsonResponse({

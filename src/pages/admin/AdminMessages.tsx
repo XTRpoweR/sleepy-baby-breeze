@@ -6,8 +6,9 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Inbox, MessageSquare, Lock } from 'lucide-react';
+import { Search, Inbox, MessageSquare, Lock, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { toast } from 'sonner';
 import { useAdminRole } from '@/hooks/useAdminRole';
 
 interface ContactMessage {
@@ -37,7 +38,7 @@ const AdminMessages = () => {
   const navigate = useNavigate();
   // Member is denied access to customer messages entirely (private support
   // conversations shouldn't be visible to read-only viewers).
-  const { canWrite, role, loading: roleLoading } = useAdminRole();
+  const { canWrite, role, loading: roleLoading, isCeo } = useAdminRole();
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread' | 'replied' | 'closed'>('all');
@@ -195,8 +196,31 @@ const AdminMessages = () => {
                       <p className="text-sm font-medium text-foreground/80 truncate">{t.subject || '(no subject)'}</p>
                       <p className="text-sm text-muted-foreground truncate mt-0.5">{t.last_message}</p>
                     </div>
-                    <div className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatDistanceToNow(new Date(t.last_at), { addSuffix: true })}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <div className="text-xs text-muted-foreground whitespace-nowrap">
+                        {formatDistanceToNow(new Date(t.last_at), { addSuffix: true })}
+                      </div>
+                      {isCeo && (
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!confirm(`Delete the conversation with ${t.sender_email}? This cannot be undone.`)) return;
+                            const { error } = await supabase
+                              .from('contact_messages')
+                              .delete()
+                              .eq('thread_id', t.thread_id);
+                            if (error) {
+                              toast.error(error.message || 'Failed to delete');
+                              return;
+                            }
+                            toast.success('Conversation deleted');
+                          }}
+                          className="p-1.5 rounded-md hover:bg-red-50 text-red-500 hover:text-red-600 transition-colors"
+                          title="Delete conversation"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </Card>

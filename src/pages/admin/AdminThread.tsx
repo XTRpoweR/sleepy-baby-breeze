@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Send, X, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Send, X, ChevronDown, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useAdminRole } from '@/hooks/useAdminRole';
@@ -39,7 +39,7 @@ const AdminThread = () => {
   const { threadId } = useParams<{ threadId: string }>();
   const navigate = useNavigate();
   // Member is denied access to support conversations entirely. Editor+ can read & reply.
-  const { canWrite, role, loading: roleLoading } = useAdminRole();
+  const { canWrite, role, loading: roleLoading, isCeo } = useAdminRole();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [loading, setLoading] = useState(true);
   const [reply, setReply] = useState('');
@@ -114,6 +114,18 @@ const AdminThread = () => {
     load();
   };
 
+  const handleDelete = async () => {
+    if (!threadId) return;
+    if (!confirm('Delete this entire conversation? This cannot be undone.')) return;
+    const { error } = await supabase.from('contact_messages').delete().eq('thread_id', threadId);
+    if (error) {
+      toast.error(error.message || 'Failed to delete');
+      return;
+    }
+    toast.success('Conversation deleted');
+    navigate('/admin/messages');
+  };
+
   const initial = (sender?.sender_name || sender?.sender_email || '?')[0]?.toUpperCase();
 
   // Member cannot read individual support threads — match AdminMessages gate.
@@ -153,9 +165,21 @@ const AdminThread = () => {
               <p className="text-xs text-muted-foreground truncate">{sender?.sender_email}</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={handleClose}>
-            <X className="h-4 w-4 mr-1" /> Close
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleClose}>
+              <X className="h-4 w-4 mr-1" /> Close
+            </Button>
+            {isCeo && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDelete}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              >
+                <Trash2 className="h-4 w-4 mr-1" /> Delete
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Messages */}
