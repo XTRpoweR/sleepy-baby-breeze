@@ -710,5 +710,24 @@
         "desc": "Misura l'efficacia dei nostri annunci (Meta Pixel) e personalizza ciò che vedi."
       }
     }
+  },
+  "pwa": {
+    "title": "Installa SleepyBabyy nella schermata Home",
+    "subtitle": "Accesso rapido e notifiche istantanee — come un'app vera.",
+    "install": "Installa ora",
+    "later": "Più tardi",
+    "close": "Chiudi",
+    "ios": {
+      "title": "Installa su iPhone / iPad",
+      "description": "Safari su iPhone richiede un passaggio per aggiungere l'app alla schermata Home.",
+      "step1Title": "Tocca il pulsante Condividi",
+      "step1Note": "In basso (iPhone) o in alto (iPad).",
+      "step2Title": "Scegli «Aggiungi a Home»",
+      "step2Note": "Scorri un po' nel menu.",
+      "step3Title": "Tocca «Aggiungi»",
+      "step3Note": "Troverai l'icona di SleepyBabyy nella schermata Home come una normale app.",
+      "tip": "💡 Dopo l'installazione, apri l'app dall'icona e attiva le notifiche — i promemoria arriveranno anche fuori dal sito.",
+      "gotIt": "Ho capito"
+    }
   }
 }

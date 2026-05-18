@@ -710,5 +710,24 @@
         "desc": "Mide la eficacia de nuestros anuncios (Meta Pixel) y personaliza lo que ves."
       }
     }
+  },
+  "pwa": {
+    "title": "Instala SleepyBabyy en tu pantalla de inicio",
+    "subtitle": "Acceso rápido y notificaciones al instante — como una app real.",
+    "install": "Instalar ahora",
+    "later": "Más tarde",
+    "close": "Cerrar",
+    "ios": {
+      "title": "Instalar en iPhone / iPad",
+      "description": "Safari en iPhone necesita un paso tuyo para añadir la app a la pantalla de inicio.",
+      "step1Title": "Toca el botón Compartir",
+      "step1Note": "Abajo (iPhone) o arriba (iPad).",
+      "step2Title": "Elige «Añadir a pantalla de inicio»",
+      "step2Note": "Desplázate un poco en el menú.",
+      "step3Title": "Toca «Añadir»",
+      "step3Note": "Encontrarás el icono de SleepyBabyy en tu pantalla de inicio, como cualquier app.",
+      "tip": "💡 Tras instalar, abre la app desde el icono y activa las notificaciones — los recordatorios te llegarán aunque no estés en el sitio.",
+      "gotIt": "Entendido"
+    }
   }
 }
