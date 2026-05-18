@@ -11,6 +11,11 @@ import { loadMetaPixel, loadConsent } from './utils/consentManager';
 // Initialize performance optimizations
 preloadCriticalResources();
 
+// Capture Facebook click ID (?fbclid=...) → _fbc cookie + localStorage.
+// First-party, non-PII; safe to run pre-consent. Highest-ROI Pixel improvement.
+// MUST run before loadMetaPixel so the first PageView carries _fbc.
+captureFbclid();
+
 // Load Meta Pixel immediately with the correct consent state.
 // If the user hasn't decided yet (or declined), it loads in REVOKED mode so
 // Meta still receives anonymous, non-PII signals for Modeled Conversions
@@ -21,10 +26,6 @@ try {
 } catch {
   /* ignore */
 }
-
-// Capture Facebook click ID (?fbclid=...) → _fbc cookie + localStorage.
-// First-party, non-PII; safe to run pre-consent. Highest-ROI Pixel improvement.
-captureFbclid();
 
 const container = document.getElementById("root");
 if (!container) {
