@@ -11,9 +11,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Send, X, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Send, X, ChevronDown, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useAdminRole } from '@/hooks/useAdminRole';
 
 interface Msg {
   id: string;
@@ -37,6 +38,8 @@ const TEMPLATES = [
 const AdminThread = () => {
   const { threadId } = useParams<{ threadId: string }>();
   const navigate = useNavigate();
+  // Editor+ can reply to customer messages; Member is read-only.
+  const { canWrite, role } = useAdminRole();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [loading, setLoading] = useState(true);
   const [reply, setReply] = useState('');
@@ -164,7 +167,16 @@ const AdminThread = () => {
             )}
           </div>
 
-          {/* Reply box */}
+          {/* Reply box — only roles with write access (Editor+) can reply */}
+          {!canWrite ? (
+            <div className="border-t p-4 bg-amber-50 text-xs text-amber-800 flex items-start gap-2">
+              <Lock className="h-3.5 w-3.5 flex-shrink-0 mt-0.5" />
+              <span>
+                As a <strong>{role || 'guest'}</strong> you can view messages but cannot reply.
+                Ask your CEO or Manager to upgrade your role.
+              </span>
+            </div>
+          ) : (
           <div className="border-t p-3 bg-background space-y-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -198,6 +210,7 @@ const AdminThread = () => {
               </Button>
             </div>
           </div>
+          )}
         </Card>
       </div>
     </AdminLayout>
