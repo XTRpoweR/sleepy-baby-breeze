@@ -215,7 +215,7 @@ const AdminUsers = () => {
                       <th className="px-4 py-3 font-medium">Babies</th>
                       <th className="px-4 py-3 font-medium">Last active</th>
                       <th className="px-4 py-3 font-medium">Joined</th>
-                      <th className="px-4 py-3 font-medium text-right">Admin</th>
+                      {isCeo && <th className="px-4 py-3 font-medium text-right">Admin</th>}
                     </tr>
                   </thead>
                   <tbody className="divide-y">
@@ -241,13 +241,15 @@ const AdminUsers = () => {
                           {u.last_active_at ? formatDistanceToNow(new Date(u.last_active_at), { addSuffix: true }) : '—'}
                         </td>
                         <td className="px-4 py-3 text-muted-foreground text-xs">{format(new Date(u.created_at), 'MMM d, yyyy')}</td>
-                        <td className="px-4 py-3 text-right">
-                          <Switch
-                            checked={u.is_admin}
-                            onCheckedChange={() => toggleAdmin(u)}
-                            disabled={!isCeo || u.id === currentUser?.id}
-                          />
-                        </td>
+                        {isCeo && (
+                          <td className="px-4 py-3 text-right">
+                            <Switch
+                              checked={u.is_admin}
+                              onCheckedChange={() => toggleAdmin(u)}
+                              disabled={u.id === currentUser?.id}
+                            />
+                          </td>
+                        )}
                       </tr>
                     ))}
                   </tbody>
@@ -278,11 +280,13 @@ const AdminUsers = () => {
                           )}
                         </div>
                       </div>
-                      <Switch
-                        checked={u.is_admin}
-                        onCheckedChange={() => toggleAdmin(u)}
-                        disabled={u.id === currentUser?.id}
-                      />
+                      {isCeo && (
+                        <Switch
+                          checked={u.is_admin}
+                          onCheckedChange={() => toggleAdmin(u)}
+                          disabled={u.id === currentUser?.id}
+                        />
+                      )}
                     </div>
                   </div>
                 ))}

@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { MessageSquare, Mail, BarChart3, Users, ArrowLeft, Shield } from 'lucide-react';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { useAdminRole } from '@/hooks/useAdminRole';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -11,6 +12,7 @@ interface AdminLayoutProps {
 
 export const AdminLayout = ({ children }: AdminLayoutProps) => {
   const { isAdmin, loading } = useIsAdmin();
+  const { canWrite } = useAdminRole();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -59,8 +61,11 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   if (!isAdmin) return null;
 
+  // Member doesn't get a Messages link — support conversations are private
+  // and the page itself blocks them anyway. Hide it from the sidebar so they
+  // don't see something they can't open.
   const navItems = [
-    { to: '/admin/messages', icon: MessageSquare, label: 'Messages', enabled: true, badge: unreadCount },
+    ...(canWrite ? [{ to: '/admin/messages', icon: MessageSquare, label: 'Messages', enabled: true, badge: unreadCount }] : []),
     { to: '/admin/newsletter', icon: Mail, label: 'Newsletter', enabled: true, badge: 0 },
     { to: '/admin/campaigns', icon: BarChart3, label: 'Campaigns', enabled: true, badge: 0 },
     { to: '/admin/analytics', icon: BarChart3, label: 'Analytics', enabled: true, badge: 0 },

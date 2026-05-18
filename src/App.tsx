@@ -154,7 +154,7 @@ const App: React.FC = () => {
                       <Route path="/blog/:slug" element={<BlogArticle />} />
                       <Route path="/careers" element={<Careers />} />
                       <Route path="/unsubscribe" element={<Unsubscribe />} />
-                      <Route path="/admin" element={<Navigate to="/admin/messages" replace />} />
+                      <Route path="/admin" element={<Navigate to="/admin/newsletter" replace />} />
                       <Route path="/admin/messages" element={<AdminMessages />} />
                       <Route path="/admin/messages/:threadId" element={<AdminThread />} />
                       <Route path="/admin/newsletter" element={<AdminNewsletter />} />
