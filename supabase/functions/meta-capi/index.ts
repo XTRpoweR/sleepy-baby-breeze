@@ -30,6 +30,7 @@ async function sha256Hex(input: string): Promise<string> {
 interface CapiPayload {
   event_name: string;
   event_id?: string;
+  event_time?: number; // unix seconds; falls back to server time when absent
   event_source_url?: string;
   event_referrer?: string;
   action_source?: "website" | "email" | "app" | "phone_call" | "chat" | "physical_store" | "system_generated" | "other";
@@ -104,7 +105,7 @@ Deno.serve(async (req) => {
       data: [
         {
           event_name: body.event_name,
-          event_time: Math.floor(Date.now() / 1000),
+          event_time: body.event_time ?? Math.floor(Date.now() / 1000),
           event_id: body.event_id, // for browser+server dedupe
           event_source_url: body.event_source_url,
           action_source: body.action_source ?? "website",
