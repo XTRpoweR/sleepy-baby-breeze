@@ -250,7 +250,7 @@ const tools = [
 async function executeTool(
   name: string,
   args: any,
-  ctx: { admin: any; userId: string; defaultBabyId: string | null },
+  ctx: { admin: any; userId: string; defaultBabyId: string | null; subscription?: any },
 ): Promise<{ ok: boolean; result?: any; error?: string; client_action?: any }> {
   const { admin, userId, defaultBabyId } = ctx;
   const babyId = args.baby_id || defaultBabyId;
@@ -477,24 +477,10 @@ async function executeTool(
       }
 
       case "get_subscription_details": {
-        const { data: sub } = await admin
-          .from("subscriptions")
-          .select("subscription_tier, status, current_period_end, cancel_at_period_end, trial_end")
-          .eq("user_id", userId)
-          .maybeSingle();
-        return {
-          ok: true,
-          result: {
-            tier: sub?.subscription_tier || "free",
-            status: sub?.status || "none",
-            ends_at: sub?.current_period_end || null,
-            trial_end: sub?.trial_end || null,
-            will_cancel_at_period_end: sub?.cancel_at_period_end || false,
-            upgrade_path: "In the SleepyBabyy web app, tap Premium / Upgrade, pick Monthly/Quarterly/Annual, checkout via Stripe.",
-            downgrade_path: "In the SleepyBabyy web app, go to Account > Subscription > Change plan or Cancel. Cancel keeps Premium active until period_end.",
-            manage_billing_path: "Account > Subscription > Manage billing (opens Stripe Customer Portal).",
-          },
-        };
+        // Return the pre-computed subscription object built at request start —
+        // contains the real plan label, billing cycle, dates, and the canonical
+        // upgrade/downgrade paths. Single source of truth.
+        return { ok: true, result: (ctx as any).subscription };
       }
 
       case "play_music": {
@@ -597,7 +583,7 @@ Deno.serve(async (req) => {
     const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const { data: sub } = await admin
       .from("subscriptions")
-      .select("subscription_tier, status, current_period_end")
+      .select("subscription_tier, status, billing_cycle, current_period_end, trial_end, is_trial")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -605,6 +591,32 @@ Deno.serve(async (req) => {
     const statusOk = sub && (sub.status === "active" || sub.status === "trialing");
     const periodOk = !sub?.current_period_end || new Date(sub.current_period_end) > new Date();
     const isPremium = !!(tierOk && statusOk && periodOk);
+
+    // Build a single subscription object with the real DB values + canonical
+    // paths. Forced into the prompt verbatim so the AI cannot hallucinate the
+    // user's plan (root cause of the earlier "you're on Free" bug).
+    const planLabel = (() => {
+      if (!sub || sub.subscription_tier === "free" || !sub.subscription_tier) return "Basic (Free)";
+      const t = sub.subscription_tier;
+      const c = sub.billing_cycle || "";
+      if (t === "premium_annual" || c === "annual" || c === "yearly") return "Premium Annual ($69.99/year)";
+      if (t === "premium_quarterly" || c === "quarterly") return "Premium Quarterly ($19.99/3 months)";
+      if (t === "premium" && (c === "monthly" || c === "")) return "Premium Monthly ($7.99/month)";
+      if (t.startsWith("premium")) return "Premium";
+      return t;
+    })();
+    const subscription = {
+      plan_label: planLabel,
+      subscription_tier: sub?.subscription_tier || "free",
+      status: sub?.status || "none",
+      billing_cycle: sub?.billing_cycle || null,
+      is_trial: sub?.is_trial || false,
+      trial_end: sub?.trial_end || null,
+      current_period_end: sub?.current_period_end || null,
+      upgrade_path: "In the SleepyBabyy web app: tap Premium / Upgrade, choose Monthly / Quarterly / Annual, checkout via Stripe.",
+      downgrade_path: "Account > Subscription > Change plan or Cancel. Cancel keeps Premium active until current_period_end.",
+      manage_billing_path: "Account > Subscription > Manage billing (Stripe Customer Portal).",
+    };
 
     // Load dynamic app knowledge (prices, features, news) — CEO can edit
     // these from /admin/knowledge without redeploying the function.
@@ -773,13 +785,33 @@ If the user asks you to perform any of these actions, DO NOT pretend to do it. I
 You CAN still freely answer questions: baby sleep tips, app help, schedules, milestones, PRICING (use the values below — they're authoritative), feature explanations, etc.
 Subscription questions: answer using the PLATFORM RULES above — never refer users to App Store or Google Play.`;
 
+    // Forced subscription facts — the AI must quote these verbatim when asked
+    // about plan / renewal / expiry. Fixes the earlier hallucination where a
+    // Premium user was told they were on Free.
+    const userSubBlock = `USER_SUBSCRIPTION (REAL DATA FROM DATABASE — NEVER GUESS, NEVER INVENT):
+- Plan: ${planLabel}
+- subscription_tier: ${sub?.subscription_tier || "free"}
+- status: ${sub?.status || "none"}
+- billing_cycle: ${sub?.billing_cycle || "(none)"}
+- is_trial: ${sub?.is_trial ? "true" : "false"}
+- trial_end: ${sub?.trial_end || "(none)"}
+- current_period_end: ${sub?.current_period_end || "(none)"}
+- isPremium (computed): ${isPremium ? "true" : "false"}
+
+WHEN USER ASKS ABOUT THEIR PLAN / SUBSCRIPTION / RENEWAL / EXPIRY:
+  - Use the EXACT plan label above. NEVER say the user is on Free if Plan says Premium.
+  - If is_trial=true, mention it's a trial and quote trial_end.
+  - For "when does my subscription end" / "متى ينتهي اشتراكي", answer with current_period_end (formatted nicely in the user's language).
+  - For "what plan am I on" / "ماهي خطتي" / "what's my subscription", answer with the Plan label.
+  - DO NOT invent dates or plan names. Only values from this block.`;
+
     const systemPrompt = `You are the SleepyBabyy assistant — a friendly support agent and baby-care helper inside the SleepyBabyy app.
 
 CRITICAL LANGUAGE RULE: Always reply in the EXACT SAME language as the user's most recent message. Never mix.
 
-USER PLAN: ${isPremium ? "Premium (Smart Assistant — full actions enabled)" : "Free / Basic (Q&A only — no actions)"}.
-
 ${PLATFORM_RULES}
+
+${userSubBlock}
 
 ${premiumActionsBlock}
 
@@ -880,6 +912,7 @@ ${babyContext}`;
           admin,
           userId,
           defaultBabyId: activeBaby?.id || null,
+          subscription,
         });
         toolEvents.push({ tool: tc.function.name, args: parsedArgs, result });
         if (result.client_action) clientActions.push(result.client_action);
