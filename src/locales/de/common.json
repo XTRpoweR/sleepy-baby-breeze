@@ -138,7 +138,22 @@
       "subtitle": "Wähle aus unserer Bibliothek mit beruhigenden Geräuschen und hilfreichen Schlafanleitungen für dein Baby.",
       "loading": "Geräusche werden geladen...",
       "guidesTab": "Anleitungen & Artikel",
-      "soundsTab": "Geräusche"
+      "soundsTab": "Geräusche",
+      "articlesTab": "Schlafartikel & Tipps",
+      "hero": { "eyebrow": "Schlafenszeit", "title": "Beruhigende Klänge für dein Baby", "subtitle": "Wähle eine Spur oder stelle einen Schlaftimer für ruhiges Einschlafen ein." },
+      "timer": { "label": "Schlaftimer", "m15": "15 Min", "m30": "30 Min", "m60": "60 Min", "off": "Aus", "custom": "Anpassen" },
+      "search": "Klänge suchen...",
+      "tabs": { "browse": "Stöbern", "favorites": "Favoriten", "recent": "Zuletzt" },
+      "categories": { "all": "Alle", "nature": "Natur", "ambient": "Ambient", "lullaby": "Schlaflieder", "sleep": "Schlaf", "whiteNoise": "Weißes Rauschen" },
+      "nowPlaying": "Spielt jetzt",
+      "recommended": "Empfohlen",
+      "buffering": "Lädt...",
+      "noFavoritesTitle": "Noch keine Favoriten",
+      "noFavoritesHint": "Tippe auf das Herz, um Klänge zu speichern.",
+      "noRecentTitle": "Keine zuletzt gespielten Klänge",
+      "noRecentHint": "Spiele einen Klang ab, um ihn hier zu sehen.",
+      "playerStop": "Stopp", "playerPlay": "Abspielen", "playerPause": "Pause", "playerNext": "Weiter", "playerPrev": "Zurück", "playerLoop": "Wiederholen", "playerVolume": "Lautstärke",
+      "minutesShort": "Min"
     },
     "reports": {
       "title": "Berichte anzeigen",
@@ -729,5 +744,19 @@
       "tip": "💡 Öffne die App nach der Installation über das Symbol und aktiviere Benachrichtigungen — Erinnerungen erreichen dich auch außerhalb der Seite.",
       "gotIt": "Verstanden"
     }
+  },
+  "sleepArticles": {
+    "title": "Schlafartikel & Tipps",
+    "subtitle": "Evidenzbasierte Informationen, um den Schlaf deines Babys zu verstehen und zu verbessern.",
+    "personalization": { "forBaby": "Ausgewählt für {{name}} ({{age}})", "forBabyGeneric": "Artikel für dein Baby", "hint": "Wir schlagen Artikel passend zum Alter deines Babys vor. Du kannst den Filter jederzeit ändern.", "edit": "Voreinstellungen bearbeiten" },
+    "featured": { "eyebrow": "Diese Woche empfohlen" },
+    "read": "Artikel lesen", "save": "Speichern", "saved": "Gespeichert", "markedRead": "Gelesen",
+    "progress": "{{read}} von {{total}} gelesen",
+    "filters": { "ageLabel": "Alter", "topicLabel": "Thema" },
+    "ageGroups": { "All Ages": "Alle Alter", "0-3 months": "0-3 Monate", "4-12 months": "4-12 Monate", "12+ months": "12+ Monate", "4+ months": "4+ Monate" },
+    "topics": { "All Topics": "Alle Themen", "Sleep Development": "Schlafentwicklung", "Sleep Environment": "Schlafumgebung", "Sleep Training": "Schlaftraining", "Sleep Challenges": "Schlafprobleme", "Nap Schedules": "Nickerchen-Pläne" },
+    "minRead": "{{count}} Min Lesezeit",
+    "updated": "Aktualisiert {{date}}",
+    "empty": { "title": "Keine Artikel gefunden", "hint": "Probiere eine andere Altersgruppe oder ein anderes Thema." }
   }
 }

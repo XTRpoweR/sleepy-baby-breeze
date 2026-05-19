@@ -138,7 +138,50 @@
       "subtitle": "Choose from our library of calming sounds and helpful sleep guidance for your baby.",
       "loading": "Loading sounds...",
       "guidesTab": "Guides & Articles",
-      "soundsTab": "Sounds"
+      "soundsTab": "Sounds",
+      "articlesTab": "Sleep Articles & Tips",
+      "hero": {
+        "eyebrow": "Bedtime",
+        "title": "Calming sounds for your baby",
+        "subtitle": "Pick a track or set a sleep timer for a peaceful drift-off."
+      },
+      "timer": {
+        "label": "Sleep timer",
+        "m15": "15m",
+        "m30": "30m",
+        "m60": "60m",
+        "off": "Off",
+        "custom": "Custom"
+      },
+      "search": "Search sounds...",
+      "tabs": {
+        "browse": "Browse",
+        "favorites": "Favorites",
+        "recent": "Recent"
+      },
+      "categories": {
+        "all": "All",
+        "nature": "Nature",
+        "ambient": "Ambient",
+        "lullaby": "Lullabies",
+        "sleep": "Sleep",
+        "whiteNoise": "White noise"
+      },
+      "nowPlaying": "Now playing",
+      "recommended": "Recommended",
+      "buffering": "Buffering...",
+      "noFavoritesTitle": "No favorite sounds yet",
+      "noFavoritesHint": "Tap the heart on a sound to add it here.",
+      "noRecentTitle": "No recently played sounds",
+      "noRecentHint": "Play a sound to see it here.",
+      "playerStop": "Stop",
+      "playerPlay": "Play",
+      "playerPause": "Pause",
+      "playerNext": "Next",
+      "playerPrev": "Previous",
+      "playerLoop": "Loop",
+      "playerVolume": "Volume",
+      "minutesShort": "min"
     },
     "reports": {
       "title": "View Reports",
@@ -778,6 +821,49 @@
       "step3Note": "You'll find the SleepyBabyy icon on your home screen, just like any app.",
       "tip": "💡 After installing, open the app from the icon and enable notifications — reminders will reach you even when the site isn't open.",
       "gotIt": "Got it"
+    }
+  },
+  "sleepArticles": {
+    "title": "Sleep Articles & Tips",
+    "subtitle": "Evidence-based information to help you understand and improve your baby's sleep patterns.",
+    "personalization": {
+      "forBaby": "Curated for {{name}} ({{age}})",
+      "forBabyGeneric": "Curated articles for your baby",
+      "hint": "We suggest articles that match your baby's age. You can change the filter anytime.",
+      "edit": "Edit preferences"
+    },
+    "featured": {
+      "eyebrow": "Featured this week"
+    },
+    "read": "Read article",
+    "save": "Save",
+    "saved": "Saved",
+    "markedRead": "Read",
+    "progress": "{{read}} of {{total}} read",
+    "filters": {
+      "ageLabel": "Age",
+      "topicLabel": "Topic"
+    },
+    "ageGroups": {
+      "All Ages": "All ages",
+      "0-3 months": "0-3 months",
+      "4-12 months": "4-12 months",
+      "12+ months": "12+ months",
+      "4+ months": "4+ months"
+    },
+    "topics": {
+      "All Topics": "All topics",
+      "Sleep Development": "Sleep development",
+      "Sleep Environment": "Sleep environment",
+      "Sleep Training": "Sleep training",
+      "Sleep Challenges": "Sleep challenges",
+      "Nap Schedules": "Nap schedules"
+    },
+    "minRead": "{{count}} min read",
+    "updated": "Updated {{date}}",
+    "empty": {
+      "title": "No articles found",
+      "hint": "Try a different age group or topic."
     }
   }
 }
