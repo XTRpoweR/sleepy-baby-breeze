@@ -138,7 +138,22 @@
       "subtitle": "Choisissez parmi notre bibliothèque de sons apaisants et de conseils utiles pour le sommeil de votre bébé.",
       "loading": "Chargement des sons...",
       "guidesTab": "Guides et articles",
-      "soundsTab": "Sons"
+      "soundsTab": "Sons",
+      "articlesTab": "Articles et conseils sur le sommeil",
+      "hero": { "eyebrow": "Heure du dodo", "title": "Sons apaisants pour votre bébé", "subtitle": "Choisissez une piste ou réglez un minuteur pour un endormissement paisible." },
+      "timer": { "label": "Minuteur", "m15": "15 min", "m30": "30 min", "m60": "60 min", "off": "Éteint", "custom": "Personnalisé" },
+      "search": "Rechercher des sons...",
+      "tabs": { "browse": "Parcourir", "favorites": "Favoris", "recent": "Récents" },
+      "categories": { "all": "Tous", "nature": "Nature", "ambient": "Ambiance", "lullaby": "Berceuses", "sleep": "Sommeil", "whiteNoise": "Bruit blanc" },
+      "nowPlaying": "En cours de lecture",
+      "recommended": "Recommandé",
+      "buffering": "Chargement...",
+      "noFavoritesTitle": "Aucun favori pour l'instant",
+      "noFavoritesHint": "Touchez le cœur pour ajouter ici.",
+      "noRecentTitle": "Aucun son récent",
+      "noRecentHint": "Jouez un son pour le voir ici.",
+      "playerStop": "Arrêter", "playerPlay": "Jouer", "playerPause": "Pause", "playerNext": "Suivant", "playerPrev": "Précédent", "playerLoop": "Boucle", "playerVolume": "Volume",
+      "minutesShort": "min"
     },
     "reports": {
       "title": "Voir les rapports",
@@ -729,5 +744,19 @@
       "tip": "💡 Après l'installation, ouvrez l'application depuis l'icône et activez les notifications — les rappels arriveront même hors du site.",
       "gotIt": "Compris"
     }
+  },
+  "sleepArticles": {
+    "title": "Articles et conseils sur le sommeil",
+    "subtitle": "Informations fondées sur des preuves pour comprendre et améliorer le sommeil de votre bébé.",
+    "personalization": { "forBaby": "Sélectionnés pour {{name}} ({{age}})", "forBabyGeneric": "Articles pour votre bébé", "hint": "Nous suggérons des articles adaptés à l'âge de votre bébé. Vous pouvez changer le filtre quand vous voulez.", "edit": "Modifier les préférences" },
+    "featured": { "eyebrow": "À la une cette semaine" },
+    "read": "Lire l'article", "save": "Enregistrer", "saved": "Enregistré", "markedRead": "Lu",
+    "progress": "{{read}} sur {{total}} lus",
+    "filters": { "ageLabel": "Âge", "topicLabel": "Sujet" },
+    "ageGroups": { "All Ages": "Tous les âges", "0-3 months": "0-3 mois", "4-12 months": "4-12 mois", "12+ months": "12+ mois", "4+ months": "4+ mois" },
+    "topics": { "All Topics": "Tous les sujets", "Sleep Development": "Développement du sommeil", "Sleep Environment": "Environnement de sommeil", "Sleep Training": "Apprentissage du sommeil", "Sleep Challenges": "Difficultés de sommeil", "Nap Schedules": "Plannings de sieste" },
+    "minRead": "{{count}} min de lecture",
+    "updated": "Mis à jour {{date}}",
+    "empty": { "title": "Aucun article", "hint": "Essayez un autre âge ou un autre sujet." }
   }
 }

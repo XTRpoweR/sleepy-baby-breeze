@@ -138,7 +138,22 @@
       "subtitle": "Scegli dalla nostra libreria di suoni calmanti e guida utile per il sonno del tuo bambino.",
       "loading": "Caricamento suoni...",
       "guidesTab": "Guide e articoli",
-      "soundsTab": "Suoni"
+      "soundsTab": "Suoni",
+      "articlesTab": "Articoli e consigli sul sonno",
+      "hero": { "eyebrow": "Ora della nanna", "title": "Suoni rilassanti per il tuo bambino", "subtitle": "Scegli una traccia o imposta un timer del sonno per un addormentamento sereno." },
+      "timer": { "label": "Timer del sonno", "m15": "15 min", "m30": "30 min", "m60": "60 min", "off": "Spento", "custom": "Personalizza" },
+      "search": "Cerca suoni...",
+      "tabs": { "browse": "Sfoglia", "favorites": "Preferiti", "recent": "Recenti" },
+      "categories": { "all": "Tutti", "nature": "Natura", "ambient": "Ambient", "lullaby": "Ninne nanne", "sleep": "Sonno", "whiteNoise": "Rumore bianco" },
+      "nowPlaying": "In riproduzione",
+      "recommended": "Consigliato",
+      "buffering": "Caricamento...",
+      "noFavoritesTitle": "Ancora nessun preferito",
+      "noFavoritesHint": "Tocca il cuore per aggiungerlo qui.",
+      "noRecentTitle": "Nessun suono recente",
+      "noRecentHint": "Riproduci un suono per vederlo qui.",
+      "playerStop": "Ferma", "playerPlay": "Riproduci", "playerPause": "Pausa", "playerNext": "Successivo", "playerPrev": "Precedente", "playerLoop": "Ripeti", "playerVolume": "Volume",
+      "minutesShort": "min"
     },
     "reports": {
       "title": "Visualizza report",
@@ -729,5 +744,19 @@
       "tip": "💡 Dopo l'installazione, apri l'app dall'icona e attiva le notifiche — i promemoria arriveranno anche fuori dal sito.",
       "gotIt": "Ho capito"
     }
+  },
+  "sleepArticles": {
+    "title": "Articoli e consigli sul sonno",
+    "subtitle": "Informazioni basate sull'evidenza per capire e migliorare il sonno del tuo bambino.",
+    "personalization": { "forBaby": "Selezionati per {{name}} ({{age}})", "forBabyGeneric": "Articoli per il tuo bambino", "hint": "Suggeriamo articoli adatti all'età del tuo bambino. Puoi cambiare il filtro quando vuoi.", "edit": "Modifica preferenze" },
+    "featured": { "eyebrow": "In evidenza questa settimana" },
+    "read": "Leggi l'articolo", "save": "Salva", "saved": "Salvato", "markedRead": "Letto",
+    "progress": "{{read}} di {{total}} letti",
+    "filters": { "ageLabel": "Età", "topicLabel": "Argomento" },
+    "ageGroups": { "All Ages": "Tutte le età", "0-3 months": "0-3 mesi", "4-12 months": "4-12 mesi", "12+ months": "12+ mesi", "4+ months": "4+ mesi" },
+    "topics": { "All Topics": "Tutti gli argomenti", "Sleep Development": "Sviluppo del sonno", "Sleep Environment": "Ambiente di sonno", "Sleep Training": "Allenamento del sonno", "Sleep Challenges": "Difficoltà del sonno", "Nap Schedules": "Schemi di pisolino" },
+    "minRead": "{{count}} min di lettura",
+    "updated": "Aggiornato {{date}}",
+    "empty": { "title": "Nessun articolo", "hint": "Prova un'altra età o argomento." }
   }
 }

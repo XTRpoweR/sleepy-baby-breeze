@@ -138,7 +138,22 @@
       "subtitle": "Valitse kirjastostamme rauhoittavia ääniä ja hyödyllistä uni-ohjausta vauvallesi.",
       "loading": "Ladataan ääniä...",
       "guidesTab": "Oppaat ja artikkelit",
-      "soundsTab": "Äänet"
+      "soundsTab": "Äänet",
+      "articlesTab": "Uniartikkelit ja vinkit",
+      "hero": { "eyebrow": "Nukkumaanmenoaika", "title": "Rauhoittavia ääniä vauvallesi", "subtitle": "Valitse raita tai aseta uniajastin rauhalliseen nukahtamiseen." },
+      "timer": { "label": "Uniajastin", "m15": "15 min", "m30": "30 min", "m60": "60 min", "off": "Pois", "custom": "Mukautettu" },
+      "search": "Etsi ääniä...",
+      "tabs": { "browse": "Selaa", "favorites": "Suosikit", "recent": "Viimeisimmät" },
+      "categories": { "all": "Kaikki", "nature": "Luonto", "ambient": "Tunnelma", "lullaby": "Kehtolaulut", "sleep": "Uni", "whiteNoise": "Valkoinen kohina" },
+      "nowPlaying": "Toistossa",
+      "recommended": "Suositeltu",
+      "buffering": "Ladataan...",
+      "noFavoritesTitle": "Ei vielä suosikkeja",
+      "noFavoritesHint": "Napauta sydäntä lisätäksesi tähän.",
+      "noRecentTitle": "Ei viimeisimpiä ääniä",
+      "noRecentHint": "Toista ääni nähdäksesi sen täällä.",
+      "playerStop": "Pysäytä", "playerPlay": "Toista", "playerPause": "Tauko", "playerNext": "Seuraava", "playerPrev": "Edellinen", "playerLoop": "Toista", "playerVolume": "Äänenvoimakkuus",
+      "minutesShort": "min"
     },
     "reports": {
       "title": "Näytä raportit",
@@ -729,5 +744,19 @@
       "tip": "💡 Asennuksen jälkeen avaa sovellus kuvakkeesta ja ota ilmoitukset käyttöön — muistutukset tavoittavat sinut sivuston ulkopuolellakin.",
       "gotIt": "Selvä"
     }
+  },
+  "sleepArticles": {
+    "title": "Uniartikkelit ja vinkit",
+    "subtitle": "Tutkittua tietoa vauvasi unirytmien ymmärtämiseen ja parantamiseen.",
+    "personalization": { "forBaby": "Valittu {{name}}lle ({{age}})", "forBabyGeneric": "Artikkelit vauvallesi", "hint": "Ehdotamme artikkeleita vauvasi ikään sopien. Voit vaihtaa suodattimen milloin tahansa.", "edit": "Muokkaa asetuksia" },
+    "featured": { "eyebrow": "Tämän viikon nostot" },
+    "read": "Lue artikkeli", "save": "Tallenna", "saved": "Tallennettu", "markedRead": "Luettu",
+    "progress": "{{read}} / {{total}} luettu",
+    "filters": { "ageLabel": "Ikä", "topicLabel": "Aihe" },
+    "ageGroups": { "All Ages": "Kaikki iät", "0-3 months": "0-3 kk", "4-12 months": "4-12 kk", "12+ months": "12+ kk", "4+ months": "4+ kk" },
+    "topics": { "All Topics": "Kaikki aiheet", "Sleep Development": "Unen kehitys", "Sleep Environment": "Uniympäristö", "Sleep Training": "Uniopastus", "Sleep Challenges": "Unihaasteet", "Nap Schedules": "Päiväunten aikataulut" },
+    "minRead": "{{count}} min luku",
+    "updated": "Päivitetty {{date}}",
+    "empty": { "title": "Ei artikkeleita", "hint": "Kokeile toista ikäryhmää tai aihetta." }
   }
 }

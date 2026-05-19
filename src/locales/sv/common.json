@@ -138,7 +138,22 @@
       "subtitle": "Välj från vårt bibliotek med lugnande ljud och hjälpsam sömnvägledning för ditt barn.",
       "loading": "Laddar ljud...",
       "guidesTab": "Guider & artiklar",
-      "soundsTab": "Ljud"
+      "soundsTab": "Ljud",
+      "articlesTab": "Sömnartiklar & tips",
+      "hero": { "eyebrow": "Sovdags", "title": "Lugnande ljud för ditt barn", "subtitle": "Välj ett spår eller ställ in sovtimer för en lugn insomning." },
+      "timer": { "label": "Sovtimer", "m15": "15 min", "m30": "30 min", "m60": "60 min", "off": "Av", "custom": "Anpassad" },
+      "search": "Sök ljud...",
+      "tabs": { "browse": "Bläddra", "favorites": "Favoriter", "recent": "Senaste" },
+      "categories": { "all": "Alla", "nature": "Natur", "ambient": "Ambient", "lullaby": "Vaggvisor", "sleep": "Sömn", "whiteNoise": "Vitt brus" },
+      "nowPlaying": "Spelas nu",
+      "recommended": "Rekommenderas",
+      "buffering": "Laddar...",
+      "noFavoritesTitle": "Inga favoriter än",
+      "noFavoritesHint": "Tryck på hjärtat för att lägga till.",
+      "noRecentTitle": "Inga senaste ljud",
+      "noRecentHint": "Spela ett ljud för att se det här.",
+      "playerStop": "Stoppa", "playerPlay": "Spela", "playerPause": "Pausa", "playerNext": "Nästa", "playerPrev": "Föregående", "playerLoop": "Loop", "playerVolume": "Volym",
+      "minutesShort": "min"
     },
     "reports": {
       "title": "Visa rapporter",
@@ -731,5 +746,19 @@
       "tip": "💡 Efter installationen, öppna appen från ikonen och aktivera aviseringar — påminnelser når dig även utanför webbplatsen.",
       "gotIt": "Förstått"
     }
+  },
+  "sleepArticles": {
+    "title": "Sömnartiklar & tips",
+    "subtitle": "Evidensbaserad info för att förstå och förbättra ditt barns sömn.",
+    "personalization": { "forBaby": "Utvalda för {{name}} ({{age}})", "forBabyGeneric": "Artiklar för ditt barn", "hint": "Vi föreslår artiklar baserat på ditt barns ålder. Du kan ändra filtret när som helst.", "edit": "Redigera inställningar" },
+    "featured": { "eyebrow": "Veckans utvalda" },
+    "read": "Läs artikel", "save": "Spara", "saved": "Sparad", "markedRead": "Läst",
+    "progress": "{{read}} av {{total}} lästa",
+    "filters": { "ageLabel": "Ålder", "topicLabel": "Ämne" },
+    "ageGroups": { "All Ages": "Alla åldrar", "0-3 months": "0-3 mån", "4-12 months": "4-12 mån", "12+ months": "12+ mån", "4+ months": "4+ mån" },
+    "topics": { "All Topics": "Alla ämnen", "Sleep Development": "Sömnutveckling", "Sleep Environment": "Sömnmiljö", "Sleep Training": "Sömnträning", "Sleep Challenges": "Sömnutmaningar", "Nap Schedules": "Tupplursscheman" },
+    "minRead": "{{count}} min läsning",
+    "updated": "Uppdaterad {{date}}",
+    "empty": { "title": "Inga artiklar", "hint": "Pröva en annan ålder eller ämne." }
   }
 }
